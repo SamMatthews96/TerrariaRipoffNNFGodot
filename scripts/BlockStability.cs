@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 
 namespace TerrariaRipoffNNF.scripts;
 
 public class BlockStability {
     public bool IsSupportBlock { get; private set; }
+
     public float ExcessWeight => outboundBurden.Values.Aggregate(block.BlockResource.Weight,
         (current, outboundBurdenValue) => current - outboundBurdenValue);
+
     public bool IsStable => IsSupportBlock || ExcessWeight == 0;
 
     private Block block;
@@ -64,25 +67,32 @@ public class BlockStability {
         }
     }
 
-    /* 
-        (this group could contain only this block, or be an existing unstable group)
-            get the unstable group
-            recalculate the unstable blocks in that group
-
-        else, if it is resolved, it could be supporting an unstable group
-            get unstable group,
-            recalculate the unstable blocks in that group
-
-     */
     private void ResolveStability() {
         if (IsSupportBlock) return;
         ResolveExcessWeight();
         if (ExcessWeight > 0) {
-            //if a block is unresolved, then it belongs to an unstable group
-            // get unstable group, update group
-            // update supporting blocks tick damage
+            foreach (Block adjacentBlock in block.GetAdjacentBlocks().Values) {
+                if (adjacentBlock is null) continue;
+                adjacentBlock.Stability.unstableBlockGroup.Destroy();
+            }
+            CreateUnstableGroup();
         } else {
-            //if it is resolved, it could be supporting an unstable group
+            foreach (Block adjacentBlock in block.GetAdjacentBlocks().Values) {
+                if (adjacentBlock is null) continue;
+                if (adjacentBlock.Stability.unstableBlockGroup is null) continue;
+                List<Block> unstableBlocks = null;
+                //get the blocks in that unstable group
+                //get the excessWeighted ones
+                //destroy unstable group, resolve found blocks
+                adjacentBlock.Stability.unstableBlockGroup.Destroy();
+                foreach (Block unstableBlock in unstableBlocks) {
+                    unstableBlock.Stability.ResolveExcessWeight();
+                    if (unstableBlock.Stability.ExcessWeight > 0) {
+                        unstableBlock.Stability.CreateUnstableGroup();
+                        // review this
+                    }
+                }
+            }
         }
     }
 
@@ -96,8 +106,7 @@ public class BlockStability {
             IncreaseSupportPath(currentAugmentingPath, strengthDelta);
         }
     }
-    
-    
+
 
     //consider refining the representation of an augmenting path
     // currently it is a series of blocks, where the relative position is 
@@ -171,6 +180,8 @@ public class BlockStability {
     }
 
     public class UnstableBlockGroup {
+        private static List<UnstableBlockGroup> unstableBlockGroups;
+
         public readonly List<Block> UnstableBlocks;
         public readonly List<Block> BoundaryBlocks;
         public readonly List<Block> SupportingBlocks;
@@ -185,10 +196,20 @@ public class BlockStability {
             foreach (Block unstableBlock in unstableBlocks) {
                 unstableBlock.Stability.unstableBlockGroup = this;
             }
+
+            unstableBlockGroups.Add(this);
+        }
+
+        public void Destroy() {
+            foreach (Block unstableBlock in UnstableBlocks) {
+                unstableBlock.Stability.unstableBlockGroup = null;
+            }
+
+            unstableBlockGroups.Remove(this);
         }
     }
 
-    public UnstableBlockGroup GetUnstableGroup() {
+    public UnstableBlockGroup CreateUnstableGroup() {
         List<Block> unstableBlocks = new() { block };
         List<Block> boundaryBlocks = new() { block };
         List<Block> supportingBlocks = new();
@@ -215,6 +236,6 @@ public class BlockStability {
             boundaryBlocks = nextBoundaryBlocks;
         }
 
-        return new UnstableBlockGroup(unstableBlocks,boundaryBlocks,supportingBlocks);
+        return new UnstableBlockGroup(unstableBlocks, boundaryBlocks, supportingBlocks);
     }
 }
