@@ -22,26 +22,21 @@ public partial class World : Node2D {
         SpawnPlayer();
     }
 
-    private void SpawnPlayer() {
-        var player = playerPackedScene.Instantiate<CharacterBody2D>();
-        AddChild(player);
-    }
-
     private void Player_OnPlayerSpawned(object sender, EventArgs eventArgs) {
-        Print("on player spawned");
         Player player = (Player)sender;
 
         Vector2 playerPosition = player.Position;
         int playerXCell = (int)playerPosition.X;
         int playerYCell = (int)playerPosition.Y;
 
-        int xStartPosition = Math.Max(0, playerXCell - BLOCK_OBJECT_DISTANCE);
-        int yStartPosition = Math.Max(0, playerYCell - BLOCK_OBJECT_DISTANCE);
-        int xEndPosition = Math.Min(Block.WORLD_WIDTH, playerXCell + BLOCK_OBJECT_DISTANCE);
-        int yEndPosition = Math.Min(Block.WORLD_HEIGHT, playerYCell + BLOCK_OBJECT_DISTANCE);
+        int xStartPosition = Math.Max(0, playerXCell / BLOCK_SIZE - BLOCK_OBJECT_DISTANCE);
+        int yStartPosition = Math.Max(0, playerYCell / BLOCK_SIZE - BLOCK_OBJECT_DISTANCE);
+        int xEndPosition = Math.Min(Block.WORLD_WIDTH, playerXCell / BLOCK_SIZE + BLOCK_OBJECT_DISTANCE);
+        int yEndPosition = Math.Min(Block.WORLD_HEIGHT, playerYCell / BLOCK_SIZE + BLOCK_OBJECT_DISTANCE);
 
         List<Block> closeBlocks = Block.GetBlocksInArea(
             xStartPosition, yStartPosition, xEndPosition, yEndPosition);
+        Print(closeBlocks.Count);
         foreach (Block block in closeBlocks) {
             block.EnableBlockObject();
         }
@@ -56,11 +51,11 @@ public partial class World : Node2D {
         int playerXCell = (int)playerPosition.X;
         int playerYCell = (int)playerPosition.Y;
 
-        int xStartPosition = Math.Max(0, playerXCell + BLOCK_OBJECT_DISTANCE - 1);
-        int yStartPosition = Math.Max(0, playerYCell - BLOCK_OBJECT_DISTANCE);
-        int xEndPosition = Math.Min(Block.WORLD_WIDTH, playerXCell + BLOCK_OBJECT_DISTANCE);
-        int yEndPosition = Math.Min(Block.WORLD_HEIGHT, playerYCell + BLOCK_OBJECT_DISTANCE);
-
+        int xStartPosition = Math.Max(0, playerXCell / BLOCK_SIZE + BLOCK_OBJECT_DISTANCE - 1);
+        int yStartPosition = Math.Max(0, playerYCell / BLOCK_SIZE - BLOCK_OBJECT_DISTANCE);
+        int xEndPosition = Math.Min(Block.WORLD_WIDTH, playerXCell / BLOCK_SIZE + BLOCK_OBJECT_DISTANCE);
+        int yEndPosition = Math.Min(Block.WORLD_HEIGHT, playerYCell / BLOCK_SIZE + BLOCK_OBJECT_DISTANCE);
+        
         List<Block> closeBlocks = Block.GetBlocksInArea(
             xStartPosition, yStartPosition, xEndPosition, yEndPosition);
         foreach (Block block in closeBlocks) {
@@ -68,9 +63,15 @@ public partial class World : Node2D {
         }
     }
 
-    public StaticBody2D CreateBlockObject(Block block) {
+    private void SpawnPlayer() {
+        var player = playerPackedScene.Instantiate<Player>();
+        player.Position = new Vector2(50, -199);
+        AddChild(player);
+    }
+
+    public BlockObject CreateBlockObject(Block block) {
         Print("create block object");
-        StaticBody2D instance = blockPackedScene.Instantiate<StaticBody2D>();
+        var instance = blockPackedScene.Instantiate<BlockObject>();
         instance.Position = new Vector2(block.XPosition * BLOCK_SIZE, block.YPosition * BLOCK_SIZE);
         AddChild(instance);
         return instance;

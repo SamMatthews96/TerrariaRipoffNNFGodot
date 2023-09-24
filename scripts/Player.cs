@@ -34,7 +34,7 @@ public partial class Player : CharacterBody2D {
             velocity.Y += Gravity * (float)delta;
 
         // Handle Jump.
-        if (Input.IsActionJustPressed("ui_accept") && IsOnFloor())
+        if (Input.IsActionJustPressed("ui_accept") /*&& IsOnFloor()*/)
             velocity.Y = JUMP_VELOCITY;
 
         // Get the input direction and handle the movement/deceleration.
@@ -52,5 +52,6 @@ public partial class Player : CharacterBody2D {
         OnPlayerMovedCell?.Invoke(this,new OnPlayerMovedCellEventArgs {
             Direction = Direction.Down
         });
+        // Print(Position.X,Position.Y);
     }
 }

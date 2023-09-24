@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Godot;
+
+using static Godot.GD;
 
 namespace TerrariaRipoffNNF.scripts;
 
@@ -22,6 +25,7 @@ public class Block : IDamageable {
 
     public static List<Block> GetBlocksInArea(
         int xStartPosition, int yStartPosition, int xEndPosition, int yEndPosition) {
+        
         List<Block> blockList = new();
         for (int x = xStartPosition; x < xEndPosition; x++) {
             for (int y = yStartPosition; y < yEndPosition; y++) {
@@ -31,6 +35,8 @@ public class Block : IDamageable {
                 }
             }
         }
+        
+        Print(blockList.Count);
 
         return blockList;
     }
@@ -55,7 +61,7 @@ public class Block : IDamageable {
 
     public readonly BlockStability Stability;
     public readonly Health Health;
-    public BlockObject BlockObject { get; private set; }
+    public StaticBody2D BlockObject { get; private set; }
 
     private Block(int xPosition, int yPosition, BlockResource blockResource) {
         if (GetBlockAtPosition(xPosition, yPosition) is not null) {
@@ -96,7 +102,7 @@ public class Block : IDamageable {
     }
 
     public void EnableBlockObject() {
-        BlockObject ??= (BlockObject)World.Instance.CreateBlockObject(this);
+        BlockObject ??= World.Instance.CreateBlockObject(this);
     }
 
     public Direction GetDirectionOfBlock(Block target) {
