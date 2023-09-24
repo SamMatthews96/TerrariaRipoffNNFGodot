@@ -1,0 +1,304 @@
+﻿using System;
+using System.Collections.Generic;
+using GdMUT;
+using Godot;
+using TerrariaRipoffNNF.scripts;
+using static Godot.GD;
+
+namespace TerrariaRipoffNNF.tests;
+
+public class CreateBlock {
+    [CSTestFunction]
+    public static Result CreatesABlock() {
+        //ARRANGE
+        BlockResource blockSo = BlockTestHelpers.MakeBlockResource();
+        BlockTestHelpers.MakeCellEmpty(0, 0);
+
+        //ACT
+        Block block = Block.CreateBlock(0, 0, blockSo);
+
+        //ASSERT
+        return block is null ? Result.Failure : Result.Success;
+    }
+}
+
+public class DestroyBlock {
+    [CSTestFunction]
+    public static Result DeletesBlockFromWorldBlocks() {
+        //ARRANGE
+        Block block = BlockTestHelpers.MakeCellHaveBlock(0, 0);
+
+        //ACT
+        block.Destroy();
+
+        //ASSERT
+        var blockAtPosition = Block.GetBlockAtPosition(0, 0);
+        return blockAtPosition is null ? Result.Success : Result.Failure;
+    }
+}
+
+public class GetBlockBeneath {
+    [CSTestFunction]
+    public static Result ReturnsNullWhenAtBottom() {
+        //ARRANGE
+        Block block = BlockTestHelpers.MakeCellHaveBlock(0, 0);
+
+        //ACT
+        Block blockBeneath = block.GetBlockInDirection(Direction.Down);
+
+        //ASSERT
+        return blockBeneath is null ? Result.Success : Result.Failure;
+    }
+
+    [CSTestFunction]
+    public static Result ReturnsNullWhenNothingIsBelow() {
+        //ARRANGE
+        BlockTestHelpers.MakeCellEmpty(0, 0);
+        Block top = BlockTestHelpers.MakeCellHaveBlock(0, 1);
+
+        //ACT
+        Block blockBeneath = top.GetBlockInDirection(Direction.Down);
+
+        //ASSERT
+        return blockBeneath is null ? Result.Success : Result.Failure;
+    }
+
+    [CSTestFunction]
+    public static Result ReturnsBlockBelow() {
+        //ARRANGE
+        Block bottom = BlockTestHelpers.MakeCellHaveBlock(0, 0);
+        Block top = BlockTestHelpers.MakeCellHaveBlock(0, 1);
+
+        //ACT
+        Block blockFoundBeneath = top.GetBlockInDirection(Direction.Down);
+
+        //ASSERT
+        return bottom == blockFoundBeneath ? Result.Success : Result.Failure;
+    }
+}
+
+public class GetBlockAbove {
+    [CSTestFunction]
+    public static Result ReturnsNullWhenAtTop() {
+        //ARRANGE
+        Block block = BlockTestHelpers.MakeCellHaveBlock(0, Block.WORLD_HEIGHT - 1);
+
+        //ACT
+        Block blockAbove = block.GetBlockInDirection(Direction.Up);
+
+        //ASSERT
+        return blockAbove is null ? Result.Success : Result.Failure;
+    }
+
+    [CSTestFunction]
+    public static Result ReturnsNullWhenNothingIsAbove() {
+        //ARRANGE
+        BlockTestHelpers.MakeCellEmpty(0, 1);
+        Block bottom = BlockTestHelpers.MakeCellHaveBlock(0, 0);
+
+        //ACT
+        Block blockAbove = bottom.GetBlockInDirection(Direction.Up);
+
+        //ASSERT
+        return blockAbove is null ? Result.Success : Result.Failure;
+    }
+
+    [CSTestFunction]
+    public static Result ReturnsBlockAbove() {
+        //ARRANGE
+        Block bottom = BlockTestHelpers.MakeCellHaveBlock(0, 0);
+        Block top = BlockTestHelpers.MakeCellHaveBlock(0, 1);
+
+        //ACT
+        Block blockFound = bottom.GetBlockInDirection(Direction.Up);
+
+        //ASSERT
+        return top == blockFound ? Result.Success : Result.Failure;
+    }
+}
+
+public class GetBlockToLeft {
+    [CSTestFunction]
+    public static Result ReturnsNullWhenOnLeftSide() {
+        //ARRANGE
+        Block block = BlockTestHelpers.MakeCellHaveBlock(0, 0);
+
+        //ACT
+        Block blockFound = block.GetBlockInDirection(Direction.Left);
+
+        //ASSERT
+        return blockFound is null ? Result.Success : Result.Failure;
+    }
+
+    [CSTestFunction]
+    public static Result ReturnsNullWhenNothingIsLeft() {
+        //ARRANGE
+        BlockTestHelpers.MakeCellEmpty(0, 0);
+        Block right = BlockTestHelpers.MakeCellHaveBlock(1, 0);
+
+        //ACT
+        Block blockFound = right.GetBlockInDirection(Direction.Left);
+
+        //ASSERT
+        return blockFound is null ? Result.Success : Result.Failure;
+    }
+
+    [CSTestFunction]
+    public static Result ReturnsBlockToLeft() {
+        //ARRANGE
+        Block left = BlockTestHelpers.MakeCellHaveBlock(0, 0);
+        Block right = BlockTestHelpers.MakeCellHaveBlock(1, 0);
+
+        //ACT
+        Block blockFound = right.GetBlockInDirection(Direction.Left);
+
+        //ASSERT
+        return left == blockFound ? Result.Success : Result.Failure;
+    }
+}
+
+public class GetBlockToRight {
+    [CSTestFunction]
+    public static Result ReturnsNullWhenOnRight() {
+        //ARRANGE
+        Block block = BlockTestHelpers.MakeCellHaveBlock(Block.WORLD_WIDTH - 1, 0);
+
+        //ACT
+        Block blockFound = block.GetBlockInDirection(Direction.Right);
+
+        //ASSERT
+        return blockFound is null ? Result.Success : Result.Failure;
+    }
+
+    [CSTestFunction]
+    public static Result ReturnsNullWhenNothingIsRight() {
+        //ARRANGE
+        BlockTestHelpers.MakeCellEmpty(1, 0);
+        Block left = BlockTestHelpers.MakeCellHaveBlock(0, 0);
+
+        //ACT
+        Block blockFound = left.GetBlockInDirection(Direction.Right);
+
+        //ASSERT
+        return blockFound is null ? Result.Success : Result.Failure;
+    }
+
+    [CSTestFunction]
+    public static Result ReturnsBlockToRight() {
+        //ARRANGE
+        Block left = BlockTestHelpers.MakeCellHaveBlock(0, 0);
+        Block right = BlockTestHelpers.MakeCellHaveBlock(1, 0);
+
+        //ACT
+        Block blockFound = left.GetBlockInDirection(Direction.Right);
+
+        //ASSERT
+        return right == blockFound ? Result.Success : Result.Failure;
+    }
+}
+
+public class GetBlockAtPosition {
+    [CSTestFunction]
+    public static Result ReturnsNullIfCellEmpty() {
+        //ARRANGE
+        BlockTestHelpers.MakeCellEmpty(0, 0);
+
+        //ACT
+        Block blockFound = Block.GetBlockAtPosition(0, 0);
+
+        //ASSERT
+        return blockFound is null ? Result.Success : Result.Failure;
+    }
+
+    [CSTestFunction]
+    public static Result ReturnsBlockIfCellNotEmpty() {
+        //ARRANGE
+        BlockTestHelpers.MakeCellHaveBlock(0, 0);
+
+        //ACT
+        Block blockFound = Block.GetBlockAtPosition(0, 0);
+
+        //ASSERT
+        return blockFound is not null ? Result.Success : Result.Failure;
+    }
+}
+
+public class GetBlocksInArea {
+    [CSTestFunction]
+    public static Result ReturnsEmptyListIfNoBlocksInArea() {
+        //ARRANGE
+        for (int x = 0; x < 10; x++) {
+            for (int y = 0; y < 10; y++) {
+                BlockTestHelpers.MakeCellEmpty(x, y);
+            }
+        }
+
+        //ACT
+        List<Block> blocks = Block.GetBlocksInArea(0, 0, 4, 4);
+
+        //ASSERT
+        //Print(blocks.Count);
+        
+        return blocks.Count == 0 ? Result.Success : Result.Failure;
+    }
+
+    [CSTestFunction]
+    public static Result ReturnsListIfBlocksInArea() {
+        //ARRANGE
+        for (int x = 0; x < 10; x++) {
+            for (int y = 0; y < 10; y++) {
+                BlockTestHelpers.MakeCellEmpty(x, y);
+            }
+        }
+
+        BlockTestHelpers.MakeCellHaveBlock(0, 1);
+        BlockTestHelpers.MakeCellHaveBlock(0, 2);
+
+        //ACT
+        List<Block> blocks = Block.GetBlocksInArea(0, 0, 4, 4);
+
+        //ASSERT
+        return blocks.Count == 2 ? Result.Success : Result.Failure;
+    }
+}
+
+public class GetUnstableSection {
+    [CSTestFunction]
+    public static Result GetsAllBlocksThatAreInSection() {
+        //ARRANGE
+        BlockResource blockResource = new BlockResource {
+            Weight = 10f, TensileStrength = 3
+        };
+
+        for (int x = 0; x < 10; x++) {
+            for (int y = 0; y < 10; y++) {
+                BlockTestHelpers.MakeCellEmpty(x, y);
+            }
+        }
+
+        //ACT
+        Block.CreateBlock(0, 0, blockResource);
+        var support = Block.CreateBlock(0, 1, blockResource);
+
+        List<Block> supportedBlocks = new();
+        for (int x = 1; x < 4; x++) {
+            for (int y = 1; y < 4; y++) {
+                supportedBlocks.Add(Block.CreateBlock(x, y, blockResource));
+            }
+        }
+
+        //ASSERT
+        foreach (Block supportedBlock in supportedBlocks) {
+            var unstableSection = supportedBlock.Stability.GetUnstableSection();
+            if (supportedBlocks.Count != unstableSection.unstableBlocks.Count) return Result.Failure;
+
+            if (!supportedBlocks.TrueForAll(block =>
+                unstableSection.unstableBlocks.Contains(block)
+            )) return Result.Failure;
+            if (1 != unstableSection.supportingBlocks.Count) return Result.Failure;
+            if (!unstableSection.supportingBlocks.Contains(support)) return Result.Failure;
+        }
+
+        return Result.Success;
+    }
+}
