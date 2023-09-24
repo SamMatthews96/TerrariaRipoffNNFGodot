@@ -4,6 +4,7 @@ namespace TerrariaRipoffNNF.scripts;
 
 public class Health {
     public event EventHandler OnHealthReachingZero;
+    public event EventHandler OnHealthChanged; 
 
     private IDamageable parent;
     private readonly float maxHealth;
@@ -28,6 +29,7 @@ public class Health {
 
     private void ChangeHealth(float delta) {
         CurrentHealth += delta;
+        OnHealthChanged?.Invoke(this, EventArgs.Empty);
         if (CurrentHealth <= 0) {
             OnHealthReachingZero?.Invoke(this, EventArgs.Empty);
         }

@@ -6,13 +6,12 @@ namespace TerrariaRipoffNNF.scripts;
 
 public class BlockStability {
     public bool IsSupportBlock { get; private set; }
-
     public float ExcessWeight => outboundBurden.Values.Aggregate(block.BlockResource.Weight,
         (current, outboundBurdenValue) => current - outboundBurdenValue);
-
     public bool IsStable => IsSupportBlock || ExcessWeight == 0;
 
     private Block block;
+    private UnstableBlockGroup unstableBlockGroup = null;
 
     private readonly Dictionary<Direction, float> outboundBurden = new() {
         { Direction.Down, 0f },
@@ -30,13 +29,13 @@ public class BlockStability {
             SetAboveBlocksIsSupport(true);
         }
 
-        this.block.OnCreated += Block_OnCreated;
-        this.block.OnDestroyed += Block_OnDestroyed;
-        this.block.OnNeighbourDestroyed += Block_OnNeighbourDestroyed;
+        block.OnCreated += Block_OnCreated;
+        block.OnDestroyed += Block_OnDestroyed;
+        block.OnNeighbourDestroyed += Block_OnNeighbourDestroyed;
     }
 
     private void Block_OnCreated(object sender, EventArgs e) {
-        ResolveExcessWeight();
+        ResolveStability();
     }
 
     private void Block_OnDestroyed(object sender, EventArgs e) {
@@ -49,10 +48,10 @@ public class BlockStability {
 
         if (e.Direction == Direction.Down) {
             IsSupportBlock = false;
-            ResolveExcessWeight();
+            ResolveStability();
             SetAboveBlocksIsSupport(false);
         } else {
-            ResolveExcessWeight();
+            ResolveStability();
         }
     }
 
@@ -60,14 +59,34 @@ public class BlockStability {
         Block aboveBlock = block.GetBlockInDirection(Direction.Up);
         while (aboveBlock is not null) {
             aboveBlock.Stability.IsSupportBlock = value;
-            aboveBlock.Stability.ResolveExcessWeight();
+            aboveBlock.Stability.ResolveStability();
             aboveBlock = aboveBlock.GetBlockInDirection(Direction.Up);
         }
     }
 
-    private void ResolveExcessWeight() {
-        if (IsSupportBlock) return;
+    /* 
+        (this group could contain only this block, or be an existing unstable group)
+            get the unstable group
+            recalculate the unstable blocks in that group
 
+        else, if it is resolved, it could be supporting an unstable group
+            get unstable group,
+            recalculate the unstable blocks in that group
+
+     */
+    private void ResolveStability() {
+        if (IsSupportBlock) return;
+        ResolveExcessWeight();
+        if (ExcessWeight > 0) {
+            //if a block is unresolved, then it belongs to an unstable group
+            // get unstable group, update group
+            // update supporting blocks tick damage
+        } else {
+            //if it is resolved, it could be supporting an unstable group
+        }
+    }
+
+    private void ResolveExcessWeight() {
         while (ExcessWeight > 0) {
             List<Block> currentAugmentingPath = GetAugmentingPath();
             if (currentAugmentingPath is null) return;
@@ -77,6 +96,8 @@ public class BlockStability {
             IncreaseSupportPath(currentAugmentingPath, strengthDelta);
         }
     }
+    
+    
 
     //consider refining the representation of an augmenting path
     // currently it is a series of blocks, where the relative position is 
@@ -129,11 +150,8 @@ public class BlockStability {
         for (int i = 0; i < augmentingPath.Count - 1; i++) {
             var supported = augmentingPath[i];
             var supporting = augmentingPath[i + 1];
-
             Direction direction = supported.GetDirectionOfBlock(supporting);
-
             float existingSupportStrength = supported.Stability.outboundBurden[direction];
-
             minStrength = Math.Min(
                 minStrength, supporting.BlockResource.TensileStrength - existingSupportStrength);
         }
@@ -152,7 +170,25 @@ public class BlockStability {
         }
     }
 
-    public (List<Block> unstableBlocks, List<Block> supportingBlocks) GetUnstableSection() {
+    public class UnstableBlockGroup {
+        public readonly List<Block> UnstableBlocks;
+        public readonly List<Block> BoundaryBlocks;
+        public readonly List<Block> SupportingBlocks;
+
+        public UnstableBlockGroup(
+            List<Block> unstableBlocks, List<Block> boundaryBlocks, List<Block> supportingBlocks
+        ) {
+            UnstableBlocks = unstableBlocks;
+            BoundaryBlocks = boundaryBlocks;
+            SupportingBlocks = supportingBlocks;
+
+            foreach (Block unstableBlock in unstableBlocks) {
+                unstableBlock.Stability.unstableBlockGroup = this;
+            }
+        }
+    }
+
+    public UnstableBlockGroup GetUnstableGroup() {
         List<Block> unstableBlocks = new() { block };
         List<Block> boundaryBlocks = new() { block };
         List<Block> supportingBlocks = new();
@@ -179,6 +215,6 @@ public class BlockStability {
             boundaryBlocks = nextBoundaryBlocks;
         }
 
-        return (unstableBlocks, supportingBlocks);
+        return new UnstableBlockGroup(unstableBlocks,boundaryBlocks,supportingBlocks);
     }
 }

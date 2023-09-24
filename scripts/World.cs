@@ -36,7 +36,6 @@ public partial class World : Node2D {
 
         List<Block> closeBlocks = Block.GetBlocksInArea(
             xStartPosition, yStartPosition, xEndPosition, yEndPosition);
-        Print(closeBlocks.Count);
         foreach (Block block in closeBlocks) {
             block.EnableBlockObject();
         }
@@ -47,9 +46,8 @@ public partial class World : Node2D {
     private void Player_OnPlayerMovedCell(object sender, Player.OnPlayerMovedCellEventArgs eventArgs) {
         Player player = (Player)sender;
 
-        Vector2 playerPosition = player.Position;
-        int playerXCell = (int)playerPosition.X;
-        int playerYCell = (int)playerPosition.Y;
+        int playerXCell = (int)player.Position.X;
+        int playerYCell = (int)player.Position.Y;
 
         int xStartPosition = Math.Max(0, playerXCell / BLOCK_SIZE + BLOCK_OBJECT_DISTANCE - 1);
         int yStartPosition = Math.Max(0, playerYCell / BLOCK_SIZE - BLOCK_OBJECT_DISTANCE);
@@ -69,9 +67,9 @@ public partial class World : Node2D {
         AddChild(player);
     }
 
-    public BlockObject CreateBlockObject(Block block) {
-        Print("create block object");
-        var instance = blockPackedScene.Instantiate<BlockObject>();
+    public BlockNode CreateBlockObject(Block block) {
+        var instance = blockPackedScene.Instantiate<BlockNode>();
+        instance.Block = block;
         instance.Position = new Vector2(block.XPosition * BLOCK_SIZE, block.YPosition * BLOCK_SIZE);
         AddChild(instance);
         return instance;

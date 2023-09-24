@@ -6,7 +6,7 @@ using TerrariaRipoffNNF.scripts;
 using static Godot.GD;
 
 namespace TerrariaRipoffNNF.tests;
-
+#if TOOLS
 public class CreateBlock {
     [CSTestFunction]
     public static Result CreatesABlock() {
@@ -263,6 +263,7 @@ public class GetBlocksInArea {
 }
 
 public class GetUnstableSection {
+
     [CSTestFunction]
     public static Result GetsAllBlocksThatAreInSection() {
         //ARRANGE
@@ -288,17 +289,19 @@ public class GetUnstableSection {
         }
 
         //ASSERT
-        foreach (Block supportedBlock in supportedBlocks) {
-            var unstableSection = supportedBlock.Stability.GetUnstableSection();
-            if (supportedBlocks.Count != unstableSection.unstableBlocks.Count) return Result.Failure;
-
-            if (!supportedBlocks.TrueForAll(block =>
-                unstableSection.unstableBlocks.Contains(block)
-            )) return Result.Failure;
-            if (1 != unstableSection.supportingBlocks.Count) return Result.Failure;
-            if (!unstableSection.supportingBlocks.Contains(support)) return Result.Failure;
-        }
-
+        // foreach (Block supportedBlock in supportedBlocks) {
+        //     var unstableSection = supportedBlock.Stability.GetUnstableSection();
+        //     if (supportedBlocks.Count != unstableSection.unstableBlocks.Count) return Result.Failure;
+        //
+        //     if (!supportedBlocks.TrueForAll(block =>
+        //         unstableSection.unstableBlocks.Contains(block)
+        //     )) return Result.Failure;
+        //     if (1 != unstableSection.supportingBlocks.Count) return Result.Failure;
+        //     if (!unstableSection.supportingBlocks.Contains(support)) return Result.Failure;
+        // }
+        return Result.Failure;
         return Result.Success;
     }
+
 }
+#endif

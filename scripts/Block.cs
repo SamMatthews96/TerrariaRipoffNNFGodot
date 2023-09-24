@@ -36,8 +36,6 @@ public class Block : IDamageable {
             }
         }
         
-        Print(blockList.Count);
-
         return blockList;
     }
 
