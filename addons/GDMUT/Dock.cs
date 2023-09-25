@@ -99,8 +99,7 @@ public partial class Dock : Control
             {
                 testResult = (Result)test.Method.Invoke(null, null);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 testResult = new Result(false, $"Exception thrown: {e.Message}");
             }
 

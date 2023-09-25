@@ -46,6 +46,7 @@ public partial class TestResult : Control
             TYPE_NAME_FORMAT,
             _typeNameStr + $" ({numSuccess}/{_functions.Count})"
         );
+
         if (numSuccess == _functions.Count)
         {
             _typeName.Modulate = new Color(0, 1, 0);
