@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using static Godot.GD;
 
 namespace TerrariaRipoffNNF.scripts;
 
@@ -14,7 +15,7 @@ public class BlockStability {
     public bool IsStable => IsSupportBlock || ExcessWeight == 0;
 
     private Block block;
-    private UnstableBlockGroup unstableBlockGroup = null;
+    private UnstableBlockGroup unstableBlockGroup;
 
     private readonly Dictionary<Direction, float> outboundBurden = new() {
         { Direction.Down, 0f },
@@ -70,27 +71,35 @@ public class BlockStability {
     private void ResolveStability() {
         if (IsSupportBlock) return;
         ResolveExcessWeight();
+
         if (ExcessWeight > 0) {
+            //this block cannot be supported
             foreach (Block adjacentBlock in block.GetAdjacentBlocks().Values) {
-                if (adjacentBlock is null) continue;
+                adjacentBlock?.Stability.unstableBlockGroup?.Destroy();
+            }
+
+            try {
+                //CreateUnstableGroup();
+            }
+            catch (Exception e) {
+                Print(e.StackTrace);
+            }
+        } else {
+            //this block is stable
+
+            List<Block> excessWeightedBlocks = new();
+            foreach (var adjacentBlock in block.GetAdjacentBlocks().Values.Where(
+                         adjacentBlock => adjacentBlock?.Stability.unstableBlockGroup is not null)) {
+                excessWeightedBlocks.AddRange(
+                    adjacentBlock.Stability.unstableBlockGroup.GetBlocksWithExcessWeight());
                 adjacentBlock.Stability.unstableBlockGroup.Destroy();
             }
-            CreateUnstableGroup();
-        } else {
-            foreach (Block adjacentBlock in block.GetAdjacentBlocks().Values) {
-                if (adjacentBlock is null) continue;
-                if (adjacentBlock.Stability.unstableBlockGroup is null) continue;
-                List<Block> unstableBlocks = null;
-                //get the blocks in that unstable group
-                //get the excessWeighted ones
-                //destroy unstable group, resolve found blocks
-                adjacentBlock.Stability.unstableBlockGroup.Destroy();
-                foreach (Block unstableBlock in unstableBlocks) {
-                    unstableBlock.Stability.ResolveExcessWeight();
-                    if (unstableBlock.Stability.ExcessWeight > 0) {
-                        unstableBlock.Stability.CreateUnstableGroup();
-                        // review this
-                    }
+
+            foreach (Block excessWeightedBlock in excessWeightedBlocks.Where(
+                         excessWeightedBlock => excessWeightedBlock.Stability.unstableBlockGroup is null)) {
+                excessWeightedBlock.Stability.ResolveExcessWeight();
+                if (excessWeightedBlock.Stability.ExcessWeight > 0) {
+                    excessWeightedBlock.Stability.CreateUnstableGroup();
                 }
             }
         }
@@ -180,7 +189,7 @@ public class BlockStability {
     }
 
     public class UnstableBlockGroup {
-        private static List<UnstableBlockGroup> unstableBlockGroups;
+        private static List<UnstableBlockGroup> unstableBlockGroups = new ();
 
         public readonly List<Block> UnstableBlocks;
         public readonly List<Block> BoundaryBlocks;
@@ -200,6 +209,10 @@ public class BlockStability {
             unstableBlockGroups.Add(this);
         }
 
+        public List<Block> GetBlocksWithExcessWeight() {
+            return UnstableBlocks.Where(block => block.Stability.ExcessWeight > 0).ToList();
+        }
+
         public void Destroy() {
             foreach (Block unstableBlock in UnstableBlocks) {
                 unstableBlock.Stability.unstableBlockGroup = null;
@@ -213,8 +226,11 @@ public class BlockStability {
         List<Block> unstableBlocks = new() { block };
         List<Block> boundaryBlocks = new() { block };
         List<Block> supportingBlocks = new();
-
-        while (boundaryBlocks.Count > 0) {
+        
+        Print(block.XPosition,',',block.YPosition);
+        int count = 0;
+        while (boundaryBlocks.Count > 0 && count < 2) {
+            count ++;
             List<Block> nextBoundaryBlocks = new();
             foreach (Block unstableBlock in boundaryBlocks) {
                 foreach (var (direction, adjacentBlock) in unstableBlock.GetAdjacentBlocks()) {
@@ -234,6 +250,12 @@ public class BlockStability {
 
             unstableBlocks.AddRange(nextBoundaryBlocks);
             boundaryBlocks = nextBoundaryBlocks;
+            
+            Print(unstableBlocks.Count);
+            Print(boundaryBlocks.Count);
+            
+            Console.WriteLine("here");
+            //return null;
         }
 
         return new UnstableBlockGroup(unstableBlocks, boundaryBlocks, supportingBlocks);

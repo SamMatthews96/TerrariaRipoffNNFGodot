@@ -20,7 +20,7 @@ public partial class Player : CharacterBody2D {
     public float Gravity = ProjectSettings.GetSetting("physics/2d/default_gravity").AsSingle();
 
     public override void _Ready() {
-        OnPlayerSpawned += (sender, args) => { GD.Print("player spawned"); };
+        OnPlayerSpawned += (sender, args) => { Print("player spawned"); };
         OnPlayerSpawned?.Invoke(this,EventArgs.Empty);
     }
     
