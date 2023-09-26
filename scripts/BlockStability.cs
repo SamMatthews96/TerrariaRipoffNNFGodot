@@ -43,7 +43,9 @@ public class BlockStability {
     }
 
     private void Block_OnDestroyed(object sender, EventArgs e) {
+        unstableBlockGroup?.Destroy();
         block = null;
+        //temporary
     }
 
     private void Block_OnNeighbourDestroyed(
@@ -79,7 +81,7 @@ public class BlockStability {
             }
 
             try {
-                //CreateUnstableGroup();
+                CreateUnstableGroup();
             }
             catch (Exception e) {
                 Print(e.StackTrace);
@@ -189,7 +191,7 @@ public class BlockStability {
     }
 
     public class UnstableBlockGroup {
-        private static List<UnstableBlockGroup> unstableBlockGroups = new ();
+        private static List<UnstableBlockGroup> unstableBlockGroups = new();
 
         public readonly List<Block> UnstableBlocks;
         public readonly List<Block> BoundaryBlocks;
@@ -226,11 +228,8 @@ public class BlockStability {
         List<Block> unstableBlocks = new() { block };
         List<Block> boundaryBlocks = new() { block };
         List<Block> supportingBlocks = new();
-        
-        Print(block.XPosition,',',block.YPosition);
-        int count = 0;
-        while (boundaryBlocks.Count > 0 && count < 2) {
-            count ++;
+
+        while (boundaryBlocks.Count > 0) {
             List<Block> nextBoundaryBlocks = new();
             foreach (Block unstableBlock in boundaryBlocks) {
                 foreach (var (direction, adjacentBlock) in unstableBlock.GetAdjacentBlocks()) {
@@ -250,12 +249,6 @@ public class BlockStability {
 
             unstableBlocks.AddRange(nextBoundaryBlocks);
             boundaryBlocks = nextBoundaryBlocks;
-            
-            Print(unstableBlocks.Count);
-            Print(boundaryBlocks.Count);
-            
-            Console.WriteLine("here");
-            //return null;
         }
 
         return new UnstableBlockGroup(unstableBlocks, boundaryBlocks, supportingBlocks);

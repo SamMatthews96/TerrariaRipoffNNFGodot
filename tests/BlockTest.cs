@@ -25,15 +25,26 @@ public class CreateBlock {
 public class DestroyBlock {
     [CSTestFunction]
     public static Result DeletesBlockFromWorldBlocks() {
-        //ARRANGE
-        Block block = BlockTestHelpers.MakeCellHaveBlock(0, 0);
+        try {
+            //ARRANGE
+            Block block = BlockTestHelpers.MakeCellHaveBlock(0, 0);
+            BlockTestHelpers.MakeCellEmpty(1, 0);
+            BlockTestHelpers.MakeCellEmpty(0, 1);
+            BlockTestHelpers.MakeCellEmpty(1, 1);
 
-        //ACT
-        block.Destroy();
+            //ACT
+            block.Destroy();
 
-        //ASSERT
-        var blockAtPosition = Block.GetBlockAtPosition(0, 0);
-        return blockAtPosition is null ? Result.Success : Result.Failure;
+            //ASSERT
+            var blockAtPosition = Block.GetBlockAtPosition(0, 0);
+            return blockAtPosition is null ? Result.Success : Result.Failure;
+        }
+        catch (Exception e) {
+            Print(e.Message);
+            Print(e.StackTrace);
+            return Result.Failure;
+        }
+
     }
 }
 
