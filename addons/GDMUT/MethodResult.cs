@@ -38,7 +38,7 @@ public partial class MethodResult : Control
             test.Result = Result.Failure;
         }
         
-        SetSuccess(test.Result.IsSuccess, _result.ToString());
+        SetSuccess(test.Result.IsSuccess);
 
     }
     
