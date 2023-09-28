@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://addons/GDMUT/Dock.cs" id="1_dxr4g"]
 
-[node name="C# Testing" type="ScrollContainer" node_paths=PackedStringArray("_filter", "_multithreadedEnabled", "_numThreads", "_runTests", "_loadTests", "_testList")]
+[node name="C# Testing" type="ScrollContainer" node_paths=PackedStringArray("_filter", "_multithreadedEnabled", "_numThreads", "_runTests", "_loadTests", "_testTestButton", "_testList")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -15,6 +15,7 @@ _multithreadedEnabled = NodePath("VBoxContainer/HBoxContainer2/Multithreading")
 _numThreads = NodePath("VBoxContainer/HBoxContainer2/HBoxContainer/Threads")
 _runTests = NodePath("VBoxContainer/Run")
 _loadTests = NodePath("VBoxContainer/Load")
+_testTestButton = NodePath("VBoxContainer/TestTest")
 _testList = NodePath("VBoxContainer/TestList")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
@@ -75,6 +76,10 @@ text = "Load Tests"
 [node name="Run" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 text = "Run"
+
+[node name="TestTest" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "TestTest"
 
 [node name="RichTextLabel" type="RichTextLabel" parent="VBoxContainer"]
 layout_mode = 2

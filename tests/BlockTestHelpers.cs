@@ -20,4 +20,12 @@ internal static class BlockTestHelpers {
             MaxHealth = 50
         };
     }
+
+    public static void MakeBeginningEmpty(int square) {
+        for (int x = 0; x < square; x++) {
+            for (int y = 0; y < square; y++) {
+                Block.GetBlockAtPosition(x, y)?.Destroy();
+            }
+        }
+    }
 }

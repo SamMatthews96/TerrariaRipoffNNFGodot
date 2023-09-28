@@ -9,8 +9,21 @@ namespace TerrariaRipoffNNF.scripts;
 public class BlockStability {
     public bool IsSupportBlock { get; private set; }
 
-    public float ExcessWeight => outboundBurden.Values.Aggregate(block.BlockResource.Weight,
-        (current, outboundBurdenValue) => current - outboundBurdenValue);
+    public float ExcessWeight {
+        get {
+            foreach (float burdenValue in outboundBurden.Values) {
+                Print(burdenValue);
+            }
+
+
+            Print(block);
+            Print(block.BlockResource.Weight);
+
+
+            return outboundBurden.Values.Aggregate(block.BlockResource.Weight,
+                (current, outboundBurdenValue) => current - outboundBurdenValue);
+        }
+    }
 
     public bool IsStable => IsSupportBlock || ExcessWeight == 0;
 
@@ -43,9 +56,15 @@ public class BlockStability {
     }
 
     private void Block_OnDestroyed(object sender, EventArgs e) {
-        unstableBlockGroup?.Destroy();
+        if (unstableBlockGroup is not null) {
+            List<Block> weightedBlocks = unstableBlockGroup.GetBlocksWithExcessWeight();
+            unstableBlockGroup?.Destroy();
+            if (weightedBlocks.Count > 0) {
+                weightedBlocks[0].Stability.CreateUnstableGroup();
+            }
+        }
+
         block = null;
-        //temporary
     }
 
     private void Block_OnNeighbourDestroyed(
@@ -80,12 +99,7 @@ public class BlockStability {
                 adjacentBlock?.Stability.unstableBlockGroup?.Destroy();
             }
 
-            try {
-                CreateUnstableGroup();
-            }
-            catch (Exception e) {
-                Print(e.StackTrace);
-            }
+            CreateUnstableGroup();
         } else {
             //this block is stable
 
@@ -191,8 +205,6 @@ public class BlockStability {
     }
 
     public class UnstableBlockGroup {
-        private static List<UnstableBlockGroup> unstableBlockGroups = new();
-
         public readonly List<Block> UnstableBlocks;
         public readonly List<Block> BoundaryBlocks;
         public readonly List<Block> SupportingBlocks;
@@ -207,8 +219,6 @@ public class BlockStability {
             foreach (Block unstableBlock in unstableBlocks) {
                 unstableBlock.Stability.unstableBlockGroup = this;
             }
-
-            unstableBlockGroups.Add(this);
         }
 
         public List<Block> GetBlocksWithExcessWeight() {
@@ -219,8 +229,6 @@ public class BlockStability {
             foreach (Block unstableBlock in UnstableBlocks) {
                 unstableBlock.Stability.unstableBlockGroup = null;
             }
-
-            unstableBlockGroups.Remove(this);
         }
     }
 

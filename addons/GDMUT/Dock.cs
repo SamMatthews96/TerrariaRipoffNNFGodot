@@ -28,6 +28,9 @@ public partial class Dock : Control
     private Button _loadTests;
 
     [Export]
+    private Button _testTestButton;
+
+    [Export]
     private VBoxContainer _testList;
 
     private List<TestFunction> _tests = new();
@@ -39,6 +42,7 @@ public partial class Dock : Control
         base._EnterTree();
         _runTests.Pressed += RunTests;
         _loadTests.Pressed += LoadTests;
+        // _testTestButton.Pressed;
     }
 
     private void LoadTests()
@@ -95,8 +99,8 @@ public partial class Dock : Control
             var test = _tests[testIndex];
             GD.Print(test.Name);
             Result testResult;
-            try
-            {
+            try {
+                
                 testResult = (Result)test.Method.Invoke(null, null);
             }
             catch (Exception e) {

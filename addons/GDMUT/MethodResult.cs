@@ -26,18 +26,20 @@ public partial class MethodResult : Control
         
         var test = _function;
         GD.Print(test.Name);
-        Result testResult;
-        try
-        {
-            testResult = (Result)test.Method.Invoke(null, null);
-            GD.Print(testResult.IsSuccess);
+        
+        Func<Result> action = test.GetAction();
+        try {
+            test.Result = action();
         }
         catch (Exception e) {
-            testResult = new Result(false, $"Exception thrown: {e.Message}");
-            GD.Print(e.Message);
+            GD.Print($"Exception thrown: {e.Message}");
+            GD.Print(e.TargetSite);
+            GD.Print(e.StackTrace);
+            test.Result = Result.Failure;
         }
+        
+        SetSuccess(test.Result.IsSuccess, _result.ToString());
 
-        test.Result = testResult;
     }
     
     public void SetMethodResult(TestFunction function)

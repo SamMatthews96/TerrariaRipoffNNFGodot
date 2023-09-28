@@ -11,6 +11,7 @@ public class CreateBlock {
     [CSTestFunction]
     public static Result CreatesABlock() {
         //ARRANGE
+        BlockTestHelpers.MakeBeginningEmpty(3);
         BlockResource blockSo = BlockTestHelpers.MakeBlockResource();
         BlockTestHelpers.MakeCellEmpty(0, 0);
 
@@ -27,10 +28,9 @@ public class DestroyBlock {
     public static Result DeletesBlockFromWorldBlocks() {
         try {
             //ARRANGE
+            BlockTestHelpers.MakeBeginningEmpty(3);
             Block block = BlockTestHelpers.MakeCellHaveBlock(0, 0);
-            BlockTestHelpers.MakeCellEmpty(1, 0);
-            BlockTestHelpers.MakeCellEmpty(0, 1);
-            BlockTestHelpers.MakeCellEmpty(1, 1);
+
 
             //ACT
             block.Destroy();
@@ -52,6 +52,7 @@ public class GetBlockBeneath {
     [CSTestFunction]
     public static Result ReturnsNullWhenAtBottom() {
         //ARRANGE
+        BlockTestHelpers.MakeBeginningEmpty(3);
         Block block = BlockTestHelpers.MakeCellHaveBlock(0, 0);
 
         //ACT
@@ -64,7 +65,7 @@ public class GetBlockBeneath {
     [CSTestFunction]
     public static Result ReturnsNullWhenNothingIsBelow() {
         //ARRANGE
-        BlockTestHelpers.MakeCellEmpty(0, 0);
+        BlockTestHelpers.MakeBeginningEmpty(5);
         Block top = BlockTestHelpers.MakeCellHaveBlock(0, 1);
 
         //ACT
@@ -77,6 +78,7 @@ public class GetBlockBeneath {
     [CSTestFunction]
     public static Result ReturnsBlockBelow() {
         //ARRANGE
+        BlockTestHelpers.MakeBeginningEmpty(5);
         Block bottom = BlockTestHelpers.MakeCellHaveBlock(0, 0);
         Block top = BlockTestHelpers.MakeCellHaveBlock(0, 1);
 
@@ -132,6 +134,9 @@ public class GetBlockToLeft {
     [CSTestFunction]
     public static Result ReturnsNullWhenOnLeftSide() {
         //ARRANGE
+        BlockTestHelpers.MakeCellEmpty(0, 1);
+        BlockTestHelpers.MakeCellEmpty(1, 0);
+        BlockTestHelpers.MakeCellEmpty(1, 1);
         Block block = BlockTestHelpers.MakeCellHaveBlock(0, 0);
 
         //ACT
@@ -238,11 +243,8 @@ public class GetBlocksInArea {
     [CSTestFunction]
     public static Result ReturnsEmptyListIfNoBlocksInArea() {
         //ARRANGE
-        for (int x = 0; x < 10; x++) {
-            for (int y = 0; y < 10; y++) {
-                BlockTestHelpers.MakeCellEmpty(x, y);
-            }
-        }
+        BlockTestHelpers.MakeBeginningEmpty(10);
+
 
         //ACT
         List<Block> blocks = Block.GetBlocksInArea(0, 0, 4, 4);
@@ -256,11 +258,7 @@ public class GetBlocksInArea {
     [CSTestFunction]
     public static Result ReturnsListIfBlocksInArea() {
         //ARRANGE
-        for (int x = 0; x < 10; x++) {
-            for (int y = 0; y < 10; y++) {
-                BlockTestHelpers.MakeCellEmpty(x, y);
-            }
-        }
+        BlockTestHelpers.MakeBeginningEmpty(10);
 
         BlockTestHelpers.MakeCellHaveBlock(0, 1);
         BlockTestHelpers.MakeCellHaveBlock(0, 2);
@@ -300,17 +298,16 @@ public class GetUnstableSection {
         }
 
         //ASSERT
-        // foreach (Block supportedBlock in supportedBlocks) {
-        //     var unstableSection = supportedBlock.Stability.GetUnstableSection();
-        //     if (supportedBlocks.Count != unstableSection.unstableBlocks.Count) return Result.Failure;
-        //
-        //     if (!supportedBlocks.TrueForAll(block =>
-        //         unstableSection.unstableBlocks.Contains(block)
-        //     )) return Result.Failure;
-        //     if (1 != unstableSection.supportingBlocks.Count) return Result.Failure;
-        //     if (!unstableSection.supportingBlocks.Contains(support)) return Result.Failure;
-        // }
-        return Result.Failure;
+        foreach (Block supportedBlock in supportedBlocks) {
+            var unstableSection = supportedBlock.Stability.CreateUnstableGroup();
+            if (supportedBlocks.Count != unstableSection.UnstableBlocks.Count) return Result.Failure;
+        
+            if (!supportedBlocks.TrueForAll(block =>
+                unstableSection.UnstableBlocks.Contains(block)
+            )) return Result.Failure;
+            if (1 != unstableSection.SupportingBlocks.Count) return Result.Failure;
+            if (!unstableSection.SupportingBlocks.Contains(support)) return Result.Failure;
+        }
         return Result.Success;
     }
 

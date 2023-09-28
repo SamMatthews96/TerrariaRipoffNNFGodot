@@ -4,7 +4,6 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="addons\" />
     <Folder Include="scripts\testScripts\" />
   </ItemGroup>
   <ItemGroup>
