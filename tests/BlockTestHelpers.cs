@@ -4,7 +4,8 @@ namespace TerrariaRipoffNNF.tests;
 
 internal static class BlockTestHelpers {
     public static void MakeCellEmpty(int xPosition, int yPosition) {
-        Block.GetBlockAtPosition(xPosition, yPosition)?.Destroy();
+        Block block = Block.GetBlockAtPosition(xPosition, yPosition);
+        block?.Destroy();
     }
 
     public static Block MakeCellHaveBlock(int xPosition, int yPosition) {
