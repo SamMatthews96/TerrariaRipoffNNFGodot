@@ -271,45 +271,4 @@ public class GetBlocksInArea {
     }
 }
 
-public class GetUnstableSection {
-
-    [CSTestFunction]
-    public static Result GetsAllBlocksThatAreInSection() {
-        //ARRANGE
-        BlockResource blockResource = new BlockResource {
-            Weight = 10f, TensileStrength = 3
-        };
-
-        for (int x = 0; x < 10; x++) {
-            for (int y = 0; y < 10; y++) {
-                BlockTestHelpers.MakeCellEmpty(x, y);
-            }
-        }
-
-        //ACT
-        Block.CreateBlock(0, 0, blockResource);
-        var support = Block.CreateBlock(0, 1, blockResource);
-
-        List<Block> supportedBlocks = new();
-        for (int x = 1; x < 4; x++) {
-            for (int y = 1; y < 4; y++) {
-                supportedBlocks.Add(Block.CreateBlock(x, y, blockResource));
-            }
-        }
-
-        //ASSERT
-        foreach (Block supportedBlock in supportedBlocks) {
-            var unstableSection = supportedBlock.Stability.CreateUnstableGroup();
-            if (supportedBlocks.Count != unstableSection.UnstableBlocks.Count) return Result.Failure;
-        
-            if (!supportedBlocks.TrueForAll(block =>
-                unstableSection.UnstableBlocks.Contains(block)
-            )) return Result.Failure;
-            if (1 != unstableSection.SupportingBlocks.Count) return Result.Failure;
-            if (!unstableSection.SupportingBlocks.Contains(support)) return Result.Failure;
-        }
-        return Result.Success;
-    }
-
-}
 #endif

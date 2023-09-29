@@ -84,13 +84,14 @@ public class Block : IDamageable {
 
     public void Destroy() {
         OnDestroyed?.Invoke(this, EventArgs.Empty);
-        WorldBlocks[XPosition, YPosition] = null;
 
         foreach (var (direction, adjacentBlock) in GetAdjacentBlocks()) {
             adjacentBlock?.OnNeighbourDestroyed(this, new OnNeighbourDestroyedEventArgs {
                 Direction = DirectionMethods.Opposite(direction)
             });
         }
+        
+        WorldBlocks[XPosition, YPosition] = null;
     }
 
     public void TakeDamage(float delta) {

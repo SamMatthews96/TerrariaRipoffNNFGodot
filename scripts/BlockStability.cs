@@ -22,7 +22,6 @@ public class BlockStability {
     public bool IsStable => IsSupportBlock || ExcessWeight == 0;
 
     private Block block;
-    private UnstableBlockGroup unstableBlockGroup;
 
     private readonly Dictionary<Direction, float> outboundBurden = new() {
         { Direction.Down, 0f },
@@ -50,21 +49,7 @@ public class BlockStability {
     }
 
     private void Block_OnDestroyed(object sender, EventArgs e) {
-        if (unstableBlockGroup is null) {
-            block = null;
-        } else {
-            List<Block> weightedBlocks = unstableBlockGroup.GetBlocksWithExcessWeight();
-            unstableBlockGroup?.Destroy();
-            weightedBlocks.Remove(block);
-            block = null;
-
-            foreach (Block weightedBlock in weightedBlocks) {
-                weightedBlock.Stability.ResolveExcessWeight();
-                if (!(weightedBlock.Stability.ExcessWeight > 0)) continue;
-                weightedBlock.Stability.CreateUnstableGroup();
-                break;
-            }
-        }
+        block = null;
     }
 
     private void Block_OnNeighbourDestroyed(
@@ -73,10 +58,11 @@ public class BlockStability {
 
         if (e.Direction == Direction.Down) {
             IsSupportBlock = false;
-            ResolveStability();
+        }
+
+        ResolveStability();
+        if (e.Direction == Direction.Down) {
             SetAboveBlocksIsSupport(false);
-        } else {
-            ResolveStability();
         }
     }
 
@@ -92,35 +78,6 @@ public class BlockStability {
     private void ResolveStability() {
         if (IsSupportBlock) return;
         ResolveExcessWeight();
-        
-        foreach (Block adjacentBlock in block.GetAdjacentBlocks().Values) {
-            adjacentBlock?.Stability.unstableBlockGroup?.Destroy();
-        }
-
-        if (ExcessWeight > 0) {
-            //this block cannot be supported
-            foreach (Block adjacentBlock in block.GetAdjacentBlocks().Values) {
-                adjacentBlock?.Stability.unstableBlockGroup?.Destroy();
-            }
-
-            CreateUnstableGroup();
-        } else {
-            //this block is stable
-
-            List<Block> excessWeightedBlocks = new();
-            foreach (var adjacentBlock in block.GetAdjacentBlocks().Values) {
-                if (adjacentBlock?.Stability.unstableBlockGroup is null) continue;
-                excessWeightedBlocks.AddRange(
-                    adjacentBlock.Stability.unstableBlockGroup.GetBlocksWithExcessWeight());
-                adjacentBlock.Stability.unstableBlockGroup.Destroy();
-            }
-
-            foreach (Block excessWeightedBlock in excessWeightedBlocks) {
-                if (excessWeightedBlock.Stability.unstableBlockGroup is not null) continue;
-                excessWeightedBlock.Stability.ResolveExcessWeight();
-                excessWeightedBlock.Stability.CreateUnstableGroup();
-            }
-        }
     }
 
     private void ResolveExcessWeight() {
@@ -204,66 +161,5 @@ public class BlockStability {
             supportingBlock.Stability.outboundBurden[forwardDirection] -= strength;
             supportedBlock.Stability.outboundBurden[backwardDirection] += strength;
         }
-    }
-
-    public class UnstableBlockGroup {
-        public readonly List<Block> UnstableBlocks;
-        public readonly List<Block> BoundaryBlocks;
-        public readonly List<Block> SupportingBlocks;
-
-        public UnstableBlockGroup(
-            List<Block> unstableBlocks, List<Block> boundaryBlocks, List<Block> supportingBlocks
-        ) {
-            UnstableBlocks = unstableBlocks;
-            BoundaryBlocks = boundaryBlocks;
-            SupportingBlocks = supportingBlocks;
-
-            foreach (Block unstableBlock in unstableBlocks) {
-                if (unstableBlock.Stability.unstableBlockGroup is not null) {
-                    throw new Exception("unstable group is being overwritten");
-                }
-                unstableBlock.Stability.unstableBlockGroup = this;
-            }
-        }
-
-        public List<Block> GetBlocksWithExcessWeight() {
-            return UnstableBlocks.Where(block => block.Stability.ExcessWeight > 0).ToList();
-        }
-
-        public void Destroy() {
-            foreach (Block unstableBlock in UnstableBlocks) {
-                unstableBlock.Stability.unstableBlockGroup = null;
-            }
-        }
-    }
-
-    public UnstableBlockGroup CreateUnstableGroup() {
-        List<Block> unstableBlocks = new() { block };
-        List<Block> boundaryBlocks = new() { block };
-        List<Block> supportingBlocks = new();
-
-        while (boundaryBlocks.Count > 0) {
-            List<Block> nextBoundaryBlocks = new();
-            foreach (Block unstableBlock in boundaryBlocks) {
-                foreach (var (direction, adjacentBlock) in unstableBlock.GetAdjacentBlocks()) {
-                    if (adjacentBlock is null) continue;
-                    if (unstableBlocks.Contains(adjacentBlock)) continue;
-                    if (nextBoundaryBlocks.Contains(adjacentBlock)) continue;
-
-                    Direction forward = DirectionMethods.Opposite(direction);
-                    if (Math.Abs(adjacentBlock.Stability.outboundBurden[forward]
-                                 + adjacentBlock.BlockResource.TensileStrength) < 0.001f) {
-                        supportingBlocks.Add(adjacentBlock);
-                    } else {
-                        nextBoundaryBlocks.Add(adjacentBlock);
-                    }
-                }
-            }
-
-            unstableBlocks.AddRange(nextBoundaryBlocks);
-            boundaryBlocks = nextBoundaryBlocks;
-        }
-
-        return new UnstableBlockGroup(unstableBlocks, boundaryBlocks, supportingBlocks);
     }
 }
