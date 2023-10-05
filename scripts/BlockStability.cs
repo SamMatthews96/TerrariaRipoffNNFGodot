@@ -9,17 +9,10 @@ namespace TerrariaRipoffNNF.scripts;
 public class BlockStability {
     public bool IsSupportBlock { get; private set; }
 
-    public float ExcessWeight {
-        get {
-            Print(block);
-            Print(block.BlockResource.Weight);
+    public float ExcessWeight => outboundBurden.Values.Aggregate(block.BlockResource.Weight,
+        (current, outboundBurdenValue) => current - outboundBurdenValue);
 
-            return outboundBurden.Values.Aggregate(block.BlockResource.Weight,
-                (current, outboundBurdenValue) => current - outboundBurdenValue);
-        }
-    }
-
-    public bool IsStable => IsSupportBlock || ExcessWeight == 0;
+    public bool IsStable { get; private set; } = true;
 
     private Block block;
 
@@ -32,6 +25,11 @@ public class BlockStability {
 
     public BlockStability(Block block) {
         this.block = block;
+        block.OnCreated += Block_OnCreated;
+        block.OnNeighbourDestroyed += Block_OnNeighbourDestroyed;
+    }
+
+    private void Block_OnCreated(object sender, EventArgs e) {
         Block blockBeneath = block.GetBlockInDirection(Direction.Down);
         IsSupportBlock = block.YPosition == 0 ||
                          (blockBeneath is not null && blockBeneath.Stability.IsSupportBlock);
@@ -39,17 +37,7 @@ public class BlockStability {
             SetAboveBlocksIsSupport(true);
         }
 
-        block.OnCreated += Block_OnCreated;
-        block.OnDestroyed += Block_OnDestroyed;
-        block.OnNeighbourDestroyed += Block_OnNeighbourDestroyed;
-    }
-
-    private void Block_OnCreated(object sender, EventArgs e) {
         ResolveStability();
-    }
-
-    private void Block_OnDestroyed(object sender, EventArgs e) {
-        block = null;
     }
 
     private void Block_OnNeighbourDestroyed(
@@ -76,30 +64,63 @@ public class BlockStability {
     }
 
     private void ResolveStability() {
-        if (IsSupportBlock) return;
+        if (IsSupportBlock) {
+            IsStable = true;
+            return;
+        }
+
         ResolveExcessWeight();
+        if (ExcessWeight == 0) {
+            var adjacentBlocks = block.GetAdjacentBlocks().Values;
+            Print($"{block.XPosition},{block.YPosition}");
+            foreach (Block adjacentBlock in adjacentBlocks) {
+                if (adjacentBlock is null) continue;
+                if (adjacentBlock.Stability.IsStable) continue;
+
+                Print($"{adjacentBlock.XPosition},{adjacentBlock.YPosition}");
+
+                (List<Block> unstableBlocks, List<Block> supportingBlocks) =
+                    adjacentBlock.Stability.GetInstabilityInformation();
+
+
+                foreach (Block unstableBlock in unstableBlocks) {
+                    Print("here");
+                    unstableBlock.Stability.ResolveExcessWeight();
+                    Print(unstableBlock.Stability.ExcessWeight);
+                    // if (unstableBlock.Stability.ExcessWeight > 0) break;
+                }
+
+                bool isGroupStable =
+                    unstableBlocks.TrueForAll(unstableBlock => unstableBlock.Stability.ExcessWeight == 0);
+
+                foreach (Block unstableBlock in unstableBlocks) {
+                    unstableBlock.Stability.IsStable = isGroupStable;
+                }
+            }
+        } else {
+            (List<Block> unstableBlocks, List<Block> supportingBlocks) = GetInstabilityInformation();
+            bool isGroupStable =
+                unstableBlocks.TrueForAll(unstableBlock => unstableBlock.Stability.ExcessWeight == 0);
+
+            foreach (Block unstableBlock in unstableBlocks) {
+                unstableBlock.Stability.IsStable = isGroupStable;
+            }
+        }
     }
 
     private void ResolveExcessWeight() {
         while (ExcessWeight > 0) {
             List<Block> currentAugmentingPath = GetAugmentingPath();
-            if (currentAugmentingPath is null) return;
+            Print("path");
+            Print(currentAugmentingPath);
+            if (currentAugmentingPath is null) break;
 
             float pathStrength = GetAugmentingPathStrength(currentAugmentingPath);
             float strengthDelta = ExcessWeight > pathStrength ? pathStrength : ExcessWeight;
             IncreaseSupportPath(currentAugmentingPath, strengthDelta);
         }
     }
-
-
-    //consider refining the representation of an augmenting path
-    // currently it is a series of blocks, where the relative position is 
-    //recalculated which iterating over it. Instead of saving the support
-    //path as a list, could it be saved as a list of Direction,Block pairs?
-
-    //reconsider the ways augmenting paths are calculated
-    //this way could potentially be very inefficient in larger structures, and have many
-    //redundant calculations. 
+    
     /*
         from current block list
         create a block list for each valid path that leads from it
@@ -108,12 +129,22 @@ public class BlockStability {
     private List<Block> GetAugmentingPath() {
         var currentPath = new List<Block> { block };
         var invalidBlocks = new List<Block>();
+        Print($"{block.XPosition},{block.YPosition}");
 
         while (!currentPath[^1].Stability.IsSupportBlock) {
             Dictionary<Direction, Block> adjacentBlocks = currentPath[^1].GetAdjacentBlocks();
             Block nextBlock = null;
+            Print("current");
+            Print($"{currentPath[^1].XPosition},{currentPath[^1].YPosition}");
             foreach (var (direction, adjacentBlock) in adjacentBlocks) {
+                Print(direction);
+                Print(adjacentBlock);
+            }
+
+            foreach (var (direction, adjacentBlock) in adjacentBlocks) {
+
                 if (adjacentBlock is null) continue;
+                
                 if (invalidBlocks.Contains(adjacentBlock)) continue;
                 if (currentPath.Contains(adjacentBlock)) continue;
 
@@ -129,7 +160,12 @@ public class BlockStability {
                 // in which case, blocks would be incorrectly considered as invalid
                 invalidBlocks.Add(currentPath[^1]);
                 currentPath.RemoveAt(currentPath.Count - 1);
+                // Print("remove");
+                // Print($"{currentPath[^1].XPosition},{currentPath[^1].YPosition}");
             } else {
+                // Print("add");
+                // Print($"{nextBlock.XPosition},{nextBlock.YPosition}");
+
                 currentPath.Add(nextBlock);
             }
         }
@@ -161,5 +197,37 @@ public class BlockStability {
             supportingBlock.Stability.outboundBurden[forwardDirection] -= strength;
             supportedBlock.Stability.outboundBurden[backwardDirection] += strength;
         }
+    }
+
+    /* if a block's weight cannot be resolved, it needs to set all neighbouring blocks to unstable
+     */
+    private (List<Block> unstableBlocks, List<Block> supportingBlocks) GetInstabilityInformation() {
+        List<Block> unstableBlocks = new List<Block> { block };
+        List<Block> boundaryBlocks = new List<Block> { block };
+        List<Block> supportingBlocks = new();
+
+        while (boundaryBlocks.Count != 0) {
+            List<Block> neighbouringBlocks = new();
+            foreach (Block boundaryBlock in boundaryBlocks) {
+                foreach (Block adjacentBlock in boundaryBlock.GetAdjacentBlocks().Values) {
+                    if (adjacentBlock is null) continue;
+                    if (unstableBlocks.Contains(adjacentBlock)) continue;
+                    if (neighbouringBlocks.Contains(adjacentBlock)) continue;
+
+                    if (adjacentBlock.Stability.IsStable) {
+                        if (!supportingBlocks.Contains(adjacentBlock)) {
+                            supportingBlocks.Add(adjacentBlock);
+                        }
+                    } else {
+                        neighbouringBlocks.Add(adjacentBlock);
+                    }
+                }
+            }
+
+            unstableBlocks.AddRange(neighbouringBlocks);
+            boundaryBlocks = neighbouringBlocks;
+        }
+
+        return (unstableBlocks, supportingBlocks);
     }
 }

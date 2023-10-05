@@ -16,7 +16,11 @@ public class Block : IDamageable {
 
 
     public static Block CreateBlock(int xPosition, int yPosition, BlockResource blockSo) {
-        return WorldBlocks[xPosition, yPosition] = new Block(xPosition, yPosition, blockSo);
+        Block block = new Block(xPosition, yPosition, blockSo);
+        WorldBlocks[xPosition, yPosition] = block;
+        block.OnCreated?.Invoke(block, EventArgs.Empty);
+
+        return block;
     }
 
     public static Block GetBlockAtPosition(int xPosition, int yPosition) {
@@ -75,7 +79,6 @@ public class Block : IDamageable {
         Health = new Health(this, blockResource.MaxHealth);
         Health.OnHealthReachingZero += Health_OnHealthReachingZero;
 
-        OnCreated?.Invoke(this, EventArgs.Empty);
     }
 
     private void Health_OnHealthReachingZero(object sender, EventArgs e) {
@@ -83,6 +86,7 @@ public class Block : IDamageable {
     }
 
     public void Destroy() {
+        WorldBlocks[XPosition, YPosition] = null;
         OnDestroyed?.Invoke(this, EventArgs.Empty);
 
         foreach (var (direction, adjacentBlock) in GetAdjacentBlocks()) {
@@ -91,7 +95,6 @@ public class Block : IDamageable {
             });
         }
         
-        WorldBlocks[XPosition, YPosition] = null;
     }
 
     public void TakeDamage(float delta) {

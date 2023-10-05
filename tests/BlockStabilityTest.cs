@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using TerrariaRipoffNNF.scripts;
 using GdMUT;
 using Godot;
@@ -356,8 +357,11 @@ public class ResolveExcessWeight {
         var three = Block.CreateBlock(2, 3, blockResource);
         var four = Block.CreateBlock(2, 2, blockResource);
 
+        GD.Print("newblock");
+        
         //ACT
         var newBlock = Block.CreateBlock(1, 2, blockResource);
+        
 
         //ASSERT
         if (!one.Stability.IsStable ||
