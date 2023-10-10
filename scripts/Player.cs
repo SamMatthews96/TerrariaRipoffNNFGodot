@@ -52,6 +52,5 @@ public partial class Player : CharacterBody2D {
         OnPlayerMovedCell?.Invoke(this,new OnPlayerMovedCellEventArgs {
             Direction = Direction.Down
         });
-        // Print(Position.X,Position.Y);
     }
 }

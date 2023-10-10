@@ -2,19 +2,21 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using Godot;
 using static Godot.GD;
 
 namespace TerrariaRipoffNNF.scripts;
 
 public class BlockStability {
     public bool IsSupportBlock { get; private set; }
+    public bool IsStable { get; private set; } = true;
 
     public float ExcessWeight => outboundBurden.Values.Aggregate(block.BlockResource.Weight,
         (current, outboundBurdenValue) => current - outboundBurdenValue);
 
-    public bool IsStable { get; private set; } = true;
+    public float ExcessBurden { get; private set; } = 0;
 
-    private Block block;
+    private readonly Block block;
 
     private readonly Dictionary<Direction, float> outboundBurden = new() {
         { Direction.Down, 0f },
@@ -71,23 +73,15 @@ public class BlockStability {
 
         ResolveExcessWeight();
         if (ExcessWeight == 0) {
-            var adjacentBlocks = block.GetAdjacentBlocks().Values;
-            Print($"{block.XPosition},{block.YPosition}");
-            foreach (Block adjacentBlock in adjacentBlocks) {
+            // this block is stable
+            foreach (Block adjacentBlock in block.GetAdjacentBlocks().Values) {
                 if (adjacentBlock is null) continue;
                 if (adjacentBlock.Stability.IsStable) continue;
 
-                Print($"{adjacentBlock.XPosition},{adjacentBlock.YPosition}");
-
-                (List<Block> unstableBlocks, List<Block> supportingBlocks) =
-                    adjacentBlock.Stability.GetInstabilityInformation();
-
+                List<Block> unstableBlocks = adjacentBlock.Stability.GetLocalUnstableBlocks();
 
                 foreach (Block unstableBlock in unstableBlocks) {
-                    Print("here");
                     unstableBlock.Stability.ResolveExcessWeight();
-                    Print(unstableBlock.Stability.ExcessWeight);
-                    // if (unstableBlock.Stability.ExcessWeight > 0) break;
                 }
 
                 bool isGroupStable =
@@ -96,23 +90,40 @@ public class BlockStability {
                 foreach (Block unstableBlock in unstableBlocks) {
                     unstableBlock.Stability.IsStable = isGroupStable;
                 }
+
+                if (!isGroupStable) {
+                    // List<(Direction, Block)> supportConnections = GetUnstableSupportConnections(unstableBlocks);
+                    // CalculateExcessBurdens(unstableBlocks, supportingConnections);
+                }
             }
         } else {
-            (List<Block> unstableBlocks, List<Block> supportingBlocks) = GetInstabilityInformation();
-            bool isGroupStable =
-                unstableBlocks.TrueForAll(unstableBlock => unstableBlock.Stability.ExcessWeight == 0);
+            // this block is unstable
+            Print("get instability info");
+            Print($"{block.XPosition},{block.YPosition}");
+
+            List<Block> unstableBlocks = GetLocalUnstableBlocks();
 
             foreach (Block unstableBlock in unstableBlocks) {
-                unstableBlock.Stability.IsStable = isGroupStable;
+                unstableBlock.Stability.IsStable = false;
             }
+            
+            Print(unstableBlocks.Count);
+            foreach (var unstableBlock in unstableBlocks) {
+                Print($"{unstableBlock.XPosition},{unstableBlock.YPosition}");
+            }
+
+            List<(Direction, Block)> supportConnections = GetUnstableSupportConnections(unstableBlocks);
+            Print(supportConnections.Count);
+            foreach (var supportConnection in supportConnections) {
+                Print($"{supportConnection.Item2.XPosition},{supportConnection.Item2.YPosition}");
+            }
+            // CalculateExcessBurdens(unstableBlocks, supportingConnections);
         }
     }
 
     private void ResolveExcessWeight() {
         while (ExcessWeight > 0) {
             List<Block> currentAugmentingPath = GetAugmentingPath();
-            Print("path");
-            Print(currentAugmentingPath);
             if (currentAugmentingPath is null) break;
 
             float pathStrength = GetAugmentingPathStrength(currentAugmentingPath);
@@ -120,31 +131,18 @@ public class BlockStability {
             IncreaseSupportPath(currentAugmentingPath, strengthDelta);
         }
     }
-    
-    /*
-        from current block list
-        create a block list for each valid path that leads from it
-        until stable is found, or out of options
-     */
+
     private List<Block> GetAugmentingPath() {
         var currentPath = new List<Block> { block };
         var invalidBlocks = new List<Block>();
-        Print($"{block.XPosition},{block.YPosition}");
 
         while (!currentPath[^1].Stability.IsSupportBlock) {
             Dictionary<Direction, Block> adjacentBlocks = currentPath[^1].GetAdjacentBlocks();
             Block nextBlock = null;
-            Print("current");
-            Print($"{currentPath[^1].XPosition},{currentPath[^1].YPosition}");
-            foreach (var (direction, adjacentBlock) in adjacentBlocks) {
-                Print(direction);
-                Print(adjacentBlock);
-            }
 
             foreach (var (direction, adjacentBlock) in adjacentBlocks) {
-
                 if (adjacentBlock is null) continue;
-                
+
                 if (invalidBlocks.Contains(adjacentBlock)) continue;
                 if (currentPath.Contains(adjacentBlock)) continue;
 
@@ -160,12 +158,7 @@ public class BlockStability {
                 // in which case, blocks would be incorrectly considered as invalid
                 invalidBlocks.Add(currentPath[^1]);
                 currentPath.RemoveAt(currentPath.Count - 1);
-                // Print("remove");
-                // Print($"{currentPath[^1].XPosition},{currentPath[^1].YPosition}");
             } else {
-                // Print("add");
-                // Print($"{nextBlock.XPosition},{nextBlock.YPosition}");
-
                 currentPath.Add(nextBlock);
             }
         }
@@ -199,12 +192,9 @@ public class BlockStability {
         }
     }
 
-    /* if a block's weight cannot be resolved, it needs to set all neighbouring blocks to unstable
-     */
-    private (List<Block> unstableBlocks, List<Block> supportingBlocks) GetInstabilityInformation() {
+    private List<Block> GetLocalUnstableBlocks() {
         List<Block> unstableBlocks = new List<Block> { block };
         List<Block> boundaryBlocks = new List<Block> { block };
-        List<Block> supportingBlocks = new();
 
         while (boundaryBlocks.Count != 0) {
             List<Block> neighbouringBlocks = new();
@@ -213,14 +203,9 @@ public class BlockStability {
                     if (adjacentBlock is null) continue;
                     if (unstableBlocks.Contains(adjacentBlock)) continue;
                     if (neighbouringBlocks.Contains(adjacentBlock)) continue;
+                    if (adjacentBlock.Stability.IsSupportBlock) continue;
 
-                    if (adjacentBlock.Stability.IsStable) {
-                        if (!supportingBlocks.Contains(adjacentBlock)) {
-                            supportingBlocks.Add(adjacentBlock);
-                        }
-                    } else {
-                        neighbouringBlocks.Add(adjacentBlock);
-                    }
+                    neighbouringBlocks.Add(adjacentBlock);
                 }
             }
 
@@ -228,6 +213,21 @@ public class BlockStability {
             boundaryBlocks = neighbouringBlocks;
         }
 
-        return (unstableBlocks, supportingBlocks);
+        return unstableBlocks;
     }
+
+    private static List<(Direction, Block)> GetUnstableSupportConnections(List<Block> unstableBlocks) {
+        List<(Direction, Block)> supportConnections = new();
+        foreach (Block unstableBlock in unstableBlocks) {
+            foreach (var (direction,adjacentBlock) in unstableBlock.GetAdjacentBlocks()) {
+                if (adjacentBlock is null) continue;
+                if (!adjacentBlock.Stability.IsSupportBlock) continue;
+                
+                supportConnections.Add((direction,adjacentBlock));
+            }
+        }
+        
+        return supportConnections;
+    }
+    
 }

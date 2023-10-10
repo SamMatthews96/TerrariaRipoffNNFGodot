@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using TerrariaRipoffNNF.scripts;
 using GdMUT;
 using Godot;
 
 namespace TerrariaRipoffNNF.tests;
 
-using System.Collections.Generic;
 
-//@todo add some more complex structure tests
-// both stable and unstable
 
 public class ResolveExcessWeight {
     [CSTestFunction]
@@ -253,6 +249,7 @@ public class ResolveExcessWeight {
                 BlockTestHelpers.MakeCellEmpty(x, y);
             }
         }
+        
 
         //ACT
         Block.CreateBlock(0, 0, BlockResource);
@@ -357,8 +354,6 @@ public class ResolveExcessWeight {
         var three = Block.CreateBlock(2, 3, blockResource);
         var four = Block.CreateBlock(2, 2, blockResource);
 
-        GD.Print("newblock");
-        
         //ACT
         var newBlock = Block.CreateBlock(1, 2, blockResource);
         
@@ -375,5 +370,39 @@ public class ResolveExcessWeight {
         }
 
         return Result.Success;
+    }
+}
+
+public class ResolveUnstableGroups {
+    [CSTestFunction]
+    public static Result SingleSupportHasExcessBurdenEqualToExcessWeight() {
+        //ARRANGE
+        BlockResource blockResource = new BlockResource {
+            Name = "test",
+            Weight = 10f,
+            TensileStrength = 30f,
+            MaxHealth = 50
+        };
+        BlockTestHelpers.MakeBeginningEmpty(10);
+
+        GD.Print("start");
+
+        
+        //ACT
+        
+        Block.CreateBlock(0, 0, blockResource);
+        Block.CreateBlock(0, 1, blockResource);
+        Block loadBearingBlock = Block.CreateBlock(1, 1, blockResource);
+        Block.CreateBlock(1, 2, blockResource);
+        Block.CreateBlock(1, 3, blockResource);
+        Block.CreateBlock(1, 4, blockResource);
+
+        //ASSERT
+        if (Math.Abs(loadBearingBlock.Stability.ExcessBurden - 10) < 0.0001f) {
+            return Result.Success;
+        }
+
+        return new Result(false, $"expected 10, received {loadBearingBlock.Stability.ExcessBurden}");
+
     }
 }
