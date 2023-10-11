@@ -8,14 +8,6 @@ using static Godot.GD;
 namespace TerrariaRipoffNNF.scripts;
 
 public class BlockStability {
-    public bool IsSupportBlock { get; private set; }
-    public bool IsStable { get; private set; } = true;
-
-    public float ExcessWeight => outboundBurden.Values.Aggregate(block.BlockResource.Weight,
-        (current, outboundBurdenValue) => current - outboundBurdenValue);
-
-    public float ExcessBurden { get; private set; } = 0;
-
     private readonly Block block;
 
     private readonly Dictionary<Direction, float> outboundBurden = new() {
@@ -24,6 +16,14 @@ public class BlockStability {
         { Direction.Left, 0f },
         { Direction.Right, 0f }
     };
+
+    public bool IsSupportBlock { get; private set; }
+    public bool IsStable { get; private set; } = true;
+
+    public float ExcessWeight => outboundBurden.Values.Aggregate(
+        block.BlockResource.Weight, (acc, currentBurdenValue) => acc - currentBurdenValue);
+
+    public float ExcessBurden { get; private set; } = 0;
 
     public BlockStability(Block block) {
         this.block = block;
@@ -92,14 +92,11 @@ public class BlockStability {
                 }
 
                 if (!isGroupStable) {
-                    // List<(Direction, Block)> supportConnections = GetUnstableSupportConnections(unstableBlocks);
-                    // CalculateExcessBurdens(unstableBlocks, supportingConnections);
+                    CalculateExcessBurdens(unstableBlocks);
                 }
             }
         } else {
             // this block is unstable
-            Print("get instability info");
-            Print($"{block.XPosition},{block.YPosition}");
 
             List<Block> unstableBlocks = GetLocalUnstableBlocks();
 
@@ -107,17 +104,7 @@ public class BlockStability {
                 unstableBlock.Stability.IsStable = false;
             }
             
-            Print(unstableBlocks.Count);
-            foreach (var unstableBlock in unstableBlocks) {
-                Print($"{unstableBlock.XPosition},{unstableBlock.YPosition}");
-            }
-
-            List<(Direction, Block)> supportConnections = GetUnstableSupportConnections(unstableBlocks);
-            Print(supportConnections.Count);
-            foreach (var supportConnection in supportConnections) {
-                Print($"{supportConnection.Item2.XPosition},{supportConnection.Item2.YPosition}");
-            }
-            // CalculateExcessBurdens(unstableBlocks, supportingConnections);
+            CalculateExcessBurdens(unstableBlocks);
         }
     }
 
@@ -219,15 +206,33 @@ public class BlockStability {
     private static List<(Direction, Block)> GetUnstableSupportConnections(List<Block> unstableBlocks) {
         List<(Direction, Block)> supportConnections = new();
         foreach (Block unstableBlock in unstableBlocks) {
-            foreach (var (direction,adjacentBlock) in unstableBlock.GetAdjacentBlocks()) {
+            foreach (var (direction, adjacentBlock) in unstableBlock.GetAdjacentBlocks()) {
                 if (adjacentBlock is null) continue;
                 if (!adjacentBlock.Stability.IsSupportBlock) continue;
-                
-                supportConnections.Add((direction,adjacentBlock));
+
+                supportConnections.Add((direction, adjacentBlock));
             }
         }
-        
+
         return supportConnections;
     }
-    
+
+    private static void CalculateExcessBurdens(List<Block> unstableBlocks) {
+        List<(Direction direction, Block block)> supportConnections = GetUnstableSupportConnections(unstableBlocks);
+        Print("start");
+        float totalWeight = unstableBlocks.Aggregate(
+            0f, (acc, unstableBlock) => acc + unstableBlock.BlockResource.Weight);
+        Print(totalWeight);
+
+        float totalSupportStrength = supportConnections.Aggregate(
+            0f, (acc, supportConnection) => supportConnection.block.BlockResource.TensileStrength);
+        Print(totalSupportStrength);
+
+        float relativeExcess = totalWeight / totalSupportStrength;
+        Print(relativeExcess);
+        foreach (var (direction,supportBlock) in supportConnections) {
+            Block supportedBlock = supportBlock.GetBlockInDirection(DirectionMethods.Opposite(direction));
+            supportedBlock.Stability.ExcessBurden = relativeExcess;
+        }
+    }
 }

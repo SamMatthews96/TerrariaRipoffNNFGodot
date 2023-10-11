@@ -380,7 +380,7 @@ public class ResolveUnstableGroups {
         BlockResource blockResource = new BlockResource {
             Name = "test",
             Weight = 10f,
-            TensileStrength = 30f,
+            TensileStrength = 20f,
             MaxHealth = 50
         };
         BlockTestHelpers.MakeBeginningEmpty(10);
@@ -398,11 +398,11 @@ public class ResolveUnstableGroups {
         Block.CreateBlock(1, 4, blockResource);
 
         //ASSERT
-        if (Math.Abs(loadBearingBlock.Stability.ExcessBurden - 10) < 0.0001f) {
+        if (Math.Abs(loadBearingBlock.Stability.ExcessBurden - 2) < 0.0001f) {
             return Result.Success;
         }
 
-        return new Result(false, $"expected 10, received {loadBearingBlock.Stability.ExcessBurden}");
+        return new Result(false, $"expected 2, received {loadBearingBlock.Stability.ExcessBurden}");
 
     }
 }
