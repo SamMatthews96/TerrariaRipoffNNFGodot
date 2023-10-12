@@ -40,8 +40,6 @@ public class DestroyBlock {
             return blockAtPosition is null ? Result.Success : Result.Failure;
         }
         catch (Exception e) {
-            Print(e.Message);
-            Print(e.StackTrace);
             return Result.Failure;
         }
 
@@ -250,7 +248,6 @@ public class GetBlocksInArea {
         List<Block> blocks = Block.GetBlocksInArea(0, 0, 4, 4);
 
         //ASSERT
-        //Print(blocks.Count);
         
         return blocks.Count == 0 ? Result.Success : Result.Failure;
     }

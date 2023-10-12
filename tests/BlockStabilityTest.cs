@@ -385,11 +385,7 @@ public class ResolveUnstableGroups {
         };
         BlockTestHelpers.MakeBeginningEmpty(10);
 
-        GD.Print("start");
-
-        
         //ACT
-        
         Block.CreateBlock(0, 0, blockResource);
         Block.CreateBlock(0, 1, blockResource);
         Block loadBearingBlock = Block.CreateBlock(1, 1, blockResource);

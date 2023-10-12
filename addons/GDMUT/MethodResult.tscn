@@ -11,26 +11,29 @@ grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1_pc067")
-_methodName = NodePath("VBoxContainer/MarginContainer/Name")
+_methodName = NodePath("VBoxContainer/HBoxContainer/Name")
 _result = NodePath("VBoxContainer/MarginContainer2/Result")
-_runTest = NodePath("VBoxContainer/Button")
+_runTest = NodePath("VBoxContainer/HBoxContainer/Button")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
+size_flags_stretch_ratio = 0.64
 
-[node name="Button" type="Button" parent="VBoxContainer"]
-layout_mode = 2
-text = "Run Test"
-alignment = 0
-
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
 
-[node name="Name" type="RichTextLabel" parent="VBoxContainer/MarginContainer"]
+[node name="Name" type="RichTextLabel" parent="VBoxContainer/HBoxContainer"]
 layout_mode = 2
 bbcode_enabled = true
 text = "Method Name"
 fit_content = true
+autowrap_mode = 0
+
+[node name="Button" type="Button" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 10
+text = "Run Test"
+alignment = 0
 
 [node name="MarginContainer2" type="MarginContainer" parent="VBoxContainer"]
 layout_mode = 2

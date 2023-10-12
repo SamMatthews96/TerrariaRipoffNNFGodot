@@ -219,17 +219,13 @@ public class BlockStability {
 
     private static void CalculateExcessBurdens(List<Block> unstableBlocks) {
         List<(Direction direction, Block block)> supportConnections = GetUnstableSupportConnections(unstableBlocks);
-        Print("start");
         float totalWeight = unstableBlocks.Aggregate(
             0f, (acc, unstableBlock) => acc + unstableBlock.BlockResource.Weight);
-        Print(totalWeight);
 
         float totalSupportStrength = supportConnections.Aggregate(
             0f, (acc, supportConnection) => supportConnection.block.BlockResource.TensileStrength);
-        Print(totalSupportStrength);
 
         float relativeExcess = totalWeight / totalSupportStrength;
-        Print(relativeExcess);
         foreach (var (direction,supportBlock) in supportConnections) {
             Block supportedBlock = supportBlock.GetBlockInDirection(DirectionMethods.Opposite(direction));
             supportedBlock.Stability.ExcessBurden = relativeExcess;
