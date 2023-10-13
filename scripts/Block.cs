@@ -9,17 +9,18 @@ namespace TerrariaRipoffNNF.scripts;
 public class Block : IDamageable {
     #region Static
 
+    public static EventHandler OnStaticCreated;
+
     public const int WORLD_WIDTH = 100;
     public const int WORLD_HEIGHT = 100;
 
     private static readonly Block[,] WorldBlocks = new Block[WORLD_WIDTH, WORLD_HEIGHT];
 
-
     public static Block CreateBlock(int xPosition, int yPosition, BlockResource blockSo) {
         Block block = new Block(xPosition, yPosition, blockSo);
         WorldBlocks[xPosition, yPosition] = block;
         block.OnCreated?.Invoke(block, EventArgs.Empty);
-
+        OnStaticCreated?.Invoke(block, EventArgs.Empty);
         return block;
     }
 
@@ -79,6 +80,7 @@ public class Block : IDamageable {
         Health = new Health(this, blockResource.MaxHealth);
         Health.OnHealthReachingZero += Health_OnHealthReachingZero;
 
+        
     }
 
     private void Health_OnHealthReachingZero(object sender, EventArgs e) {

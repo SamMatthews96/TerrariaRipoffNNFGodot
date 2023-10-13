@@ -4,9 +4,6 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="scripts\testScripts\" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="NUnit" Version="3.13.3" />
   </ItemGroup>
 </Project>

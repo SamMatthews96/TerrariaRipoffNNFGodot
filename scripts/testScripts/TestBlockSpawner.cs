@@ -13,7 +13,6 @@ public partial class TestBlockSpawner: Node2D {
     public override void _Ready() {
         for (int i = 0; i < 20; i++) {
             Block.CreateBlock(i, 0, blockResource);
-
         }
     }
 }
