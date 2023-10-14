@@ -81,13 +81,10 @@ public class BlockStability {
             ResolveAdjacentBlockStability();
         } else {
             // this block is unstable
-
             List<Block> unstableBlocks = GetLocalUnstableBlocks();
-
             foreach (Block unstableBlock in unstableBlocks) {
                 unstableBlock.Stability.IsStable = false;
             }
-
             CalculateExcessBurdens(unstableBlocks);
         }
     }
