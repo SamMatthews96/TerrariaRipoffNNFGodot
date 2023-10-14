@@ -9,7 +9,7 @@ public partial class TestManualBlockSpawner : Node2D {
     public override void _Ready() {
         testBlockResource = new BlockResource {
             Name = "test",
-            Weight = 2f,
+            Weight = 10f,
             TensileStrength = 30f,
             MaxHealth = 50
         };

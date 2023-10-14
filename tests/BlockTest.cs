@@ -257,6 +257,7 @@ public class GetBlocksInArea {
         //ARRANGE
         BlockTestHelpers.MakeBeginningEmpty(10);
 
+        BlockTestHelpers.MakeCellHaveBlock(0, 0);
         BlockTestHelpers.MakeCellHaveBlock(0, 1);
         BlockTestHelpers.MakeCellHaveBlock(0, 2);
 
@@ -264,7 +265,7 @@ public class GetBlocksInArea {
         List<Block> blocks = Block.GetBlocksInArea(0, 0, 4, 4);
 
         //ASSERT
-        return blocks.Count == 2 ? Result.Success : Result.Failure;
+        return blocks.Count == 3 ? Result.Success : Result.Failure;
     }
 }
 

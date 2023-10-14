@@ -22,6 +22,18 @@ public partial class World : Node2D {
         Player.OnPlayerSpawned += Player_OnPlayerSpawned;
         SpawnPlayer();
     }
+    
+    private void OnBlockTickDamage() {
+        for (int x = 0; x < Block.WORLD_WIDTH; x++) {
+            for (int y = 0; y < Block.WORLD_HEIGHT; y++) {
+                Block block = Block.GetBlockAtPosition(x, y);
+                if (block is null) continue;
+                if (block.Stability.ExcessBurden == 0) continue;
+                
+                block.TakeDamage(block.Stability.ExcessBurden);
+            }
+        }
+    }
 
     private void Block_OnStaticCreated(object sender, EventArgs _) {
         Block block = (Block)sender;

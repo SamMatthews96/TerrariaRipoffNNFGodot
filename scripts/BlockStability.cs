@@ -68,12 +68,14 @@ public class BlockStability {
     private void ResolveStability() {
         if (IsSupportBlock) {
             IsStable = true;
+            ExcessBurden = 0;
             return;
         }
 
         ResolveExcessWeight();
         if (ExcessWeight == 0) {
             // this block is stable
+            ExcessBurden = 0;
             foreach (Block adjacentBlock in block.GetAdjacentBlocks().Values) {
                 if (adjacentBlock is null) continue;
                 if (adjacentBlock.Stability.IsStable) continue;
@@ -91,7 +93,11 @@ public class BlockStability {
                     unstableBlock.Stability.IsStable = isGroupStable;
                 }
 
-                if (!isGroupStable) {
+                if (isGroupStable) {
+                    foreach (Block unstableBlock in unstableBlocks) {
+                        unstableBlock.Stability.ExcessBurden = 0;
+                    }
+                } else  {
                     CalculateExcessBurdens(unstableBlocks);
                 }
             }
@@ -103,7 +109,7 @@ public class BlockStability {
             foreach (Block unstableBlock in unstableBlocks) {
                 unstableBlock.Stability.IsStable = false;
             }
-            
+
             CalculateExcessBurdens(unstableBlocks);
         }
     }
@@ -223,10 +229,19 @@ public class BlockStability {
             0f, (acc, unstableBlock) => acc + unstableBlock.BlockResource.Weight);
 
         float totalSupportStrength = supportConnections.Aggregate(
-            0f, (acc, supportConnection) => supportConnection.block.BlockResource.TensileStrength);
+            0f, (acc, supportConnection) => acc + supportConnection.block.BlockResource.TensileStrength);
 
-        float relativeExcess = totalWeight / totalSupportStrength;
-        foreach (var (direction,supportBlock) in supportConnections) {
+        if (totalSupportStrength == 0) {
+            Print(unstableBlocks.Count);
+            foreach (Block unstableBlock in unstableBlocks) {
+                unstableBlock.Stability.ExcessBurden = 1000;
+            }
+
+            return;
+        }
+
+        float relativeExcess = (totalWeight - totalSupportStrength) / totalSupportStrength;
+        foreach (var (direction, supportBlock) in supportConnections) {
             Block supportedBlock = supportBlock.GetBlockInDirection(DirectionMethods.Opposite(direction));
             supportedBlock.Stability.ExcessBurden = relativeExcess;
         }

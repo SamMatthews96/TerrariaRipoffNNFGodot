@@ -90,6 +90,7 @@ public class Block : IDamageable {
     public void Destroy() {
         WorldBlocks[XPosition, YPosition] = null;
         OnDestroyed?.Invoke(this, EventArgs.Empty);
+        BlockObject?.QueueFree();
 
         foreach (var (direction, adjacentBlock) in GetAdjacentBlocks()) {
             adjacentBlock?.OnNeighbourDestroyed(this, new OnNeighbourDestroyedEventArgs {

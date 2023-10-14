@@ -12,3 +12,9 @@ script = ExtResource("2_4tbo1")
 
 [node name="TestManualBlockSpawner" type="Node2D" parent="."]
 script = ExtResource("3_d30rs")
+
+[node name="BlockTickDamage" type="Timer" parent="."]
+wait_time = 0.1
+autostart = true
+
+[connection signal="timeout" from="BlockTickDamage" to="." method="OnBlockTickDamage"]

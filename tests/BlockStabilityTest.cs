@@ -5,9 +5,9 @@ using Godot;
 
 namespace TerrariaRipoffNNF.tests;
 
-
-
 public class ResolveExcessWeight {
+    
+    
     [CSTestFunction]
     public static Result ExcessWeightIsBlockWeightWhenOnTopOfStableBlock() {
         //ARRANGE
@@ -388,17 +388,85 @@ public class ResolveUnstableGroups {
         //ACT
         Block.CreateBlock(0, 0, blockResource);
         Block.CreateBlock(0, 1, blockResource);
+        
         Block loadBearingBlock = Block.CreateBlock(1, 1, blockResource);
         Block.CreateBlock(1, 2, blockResource);
         Block.CreateBlock(1, 3, blockResource);
         Block.CreateBlock(1, 4, blockResource);
+        //TotalWeight = 5*10 = 40f
+        //TensileStrength = 20
+        // expected: 40 - 20 / 20 = 1f
 
         //ASSERT
-        if (Math.Abs(loadBearingBlock.Stability.ExcessBurden - 2) < 0.0001f) {
+        if (Math.Abs(loadBearingBlock.Stability.ExcessBurden - 1) < 0.0001f) {
             return Result.Success;
         }
 
-        return new Result(false, $"expected 2, received {loadBearingBlock.Stability.ExcessBurden}");
-
+        return new Result(false, $"expected 1, received {loadBearingBlock.Stability.ExcessBurden}");
     }
+    
+    [CSTestFunction]
+    public static Result UnsupportedBlockIsDestroyed() {
+        //ARRANGE
+        BlockResource blockResource = new BlockResource {
+            Name = "test",
+            Weight = 10f,
+            TensileStrength = 20f,
+            MaxHealth = 50
+        };
+        BlockTestHelpers.MakeBeginningEmpty(10);
+
+        //ACT
+        
+        Block block = Block.CreateBlock(1, 1, blockResource);
+        
+
+        //ASSERT
+        if (block.Stability.ExcessBurden >= 1000) {
+            return Result.Success;
+        }
+
+        return new Result(false, $"expected 1000, received {block.Stability.ExcessBurden}");
+    }
+    
+    [CSTestFunction]
+    public static Result TwoSupportsShareBurden() {
+        //ARRANGE
+        BlockResource blockResource = new BlockResource {
+            Name = "test",
+            Weight = 10f,
+            TensileStrength = 20f,
+            MaxHealth = 50
+        };
+        BlockTestHelpers.MakeBeginningEmpty(10);
+
+        //ACT
+        
+        Block.CreateBlock(0, 0, blockResource);
+        Block.CreateBlock(0, 1, blockResource);
+        Block.CreateBlock(3, 0, blockResource);
+        Block.CreateBlock(3, 1, blockResource);
+        
+        Block supportOne = Block.CreateBlock(1, 1, blockResource);
+        Block supportTwo = Block.CreateBlock(2, 1, blockResource);
+        Block.CreateBlock(1, 2, blockResource);
+        Block.CreateBlock(2, 2, blockResource);
+        Block.CreateBlock(2, 3, blockResource);
+        //TotalWeight = 5*10 = 50f
+        //TensileStrength = 40
+        // expected: 50 - 40 / 40 = 0.25f
+        
+
+        //ASSERT
+        if (Math.Abs(supportOne.Stability.ExcessBurden - 0.25f) > 0.0001f) {
+            return new Result(false, $"expected 0.25, received {supportOne.Stability.ExcessBurden}");
+        }
+        if (Math.Abs(supportTwo.Stability.ExcessBurden - 0.25f) > 0.0001f) {
+            return new Result(false, $"expected 1000, received {supportTwo.Stability.ExcessBurden}");
+        }
+        
+        return Result.Success;
+        
+    }
+    
 }
