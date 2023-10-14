@@ -69,38 +69,16 @@ public class BlockStability {
         if (IsSupportBlock) {
             IsStable = true;
             ExcessBurden = 0;
+            ResolveAdjacentBlockStability();
             return;
         }
 
         ResolveExcessWeight();
+
         if (ExcessWeight == 0) {
             // this block is stable
             ExcessBurden = 0;
-            foreach (Block adjacentBlock in block.GetAdjacentBlocks().Values) {
-                if (adjacentBlock is null) continue;
-                if (adjacentBlock.Stability.IsStable) continue;
-
-                List<Block> unstableBlocks = adjacentBlock.Stability.GetLocalUnstableBlocks();
-
-                foreach (Block unstableBlock in unstableBlocks) {
-                    unstableBlock.Stability.ResolveExcessWeight();
-                }
-
-                bool isGroupStable =
-                    unstableBlocks.TrueForAll(unstableBlock => unstableBlock.Stability.ExcessWeight == 0);
-
-                foreach (Block unstableBlock in unstableBlocks) {
-                    unstableBlock.Stability.IsStable = isGroupStable;
-                }
-
-                if (isGroupStable) {
-                    foreach (Block unstableBlock in unstableBlocks) {
-                        unstableBlock.Stability.ExcessBurden = 0;
-                    }
-                } else  {
-                    CalculateExcessBurdens(unstableBlocks);
-                }
-            }
+            ResolveAdjacentBlockStability();
         } else {
             // this block is unstable
 
@@ -111,6 +89,34 @@ public class BlockStability {
             }
 
             CalculateExcessBurdens(unstableBlocks);
+        }
+    }
+
+    private void ResolveAdjacentBlockStability() {
+        foreach (Block adjacentBlock in block.GetAdjacentBlocks().Values) {
+            if (adjacentBlock is null) continue;
+            if (adjacentBlock.Stability.IsStable) continue;
+
+            List<Block> unstableBlocks = adjacentBlock.Stability.GetLocalUnstableBlocks();
+
+            foreach (Block unstableBlock in unstableBlocks) {
+                unstableBlock.Stability.ResolveExcessWeight();
+            }
+
+            bool isGroupStable =
+                unstableBlocks.TrueForAll(unstableBlock => unstableBlock.Stability.ExcessWeight == 0);
+
+            foreach (Block unstableBlock in unstableBlocks) {
+                unstableBlock.Stability.IsStable = isGroupStable;
+            }
+
+            if (isGroupStable) {
+                foreach (Block unstableBlock in unstableBlocks) {
+                    unstableBlock.Stability.ExcessBurden = 0;
+                }
+            } else  {
+                CalculateExcessBurdens(unstableBlocks);
+            }
         }
     }
 
