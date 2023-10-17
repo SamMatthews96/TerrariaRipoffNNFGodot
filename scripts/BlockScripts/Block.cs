@@ -14,7 +14,7 @@ public class Block : IDamageable {
     public const int WORLD_WIDTH = 100;
     public const int WORLD_HEIGHT = 100;
 
-    private static readonly Block[,] WorldBlocks = new Block[WORLD_WIDTH, WORLD_HEIGHT];
+    public static readonly Block[,] WorldBlocks = new Block[WORLD_WIDTH, WORLD_HEIGHT];
 
     public static Block CreateBlock(int xPosition, int yPosition, BlockResource blockSo) {
         Block block = new Block(xPosition, yPosition, blockSo);

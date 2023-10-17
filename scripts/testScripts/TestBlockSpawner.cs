@@ -1,7 +1,7 @@
 ﻿using Godot;
 using static Godot.GD;
 
-namespace TerrariaRipoffNNF.scripts; 
+namespace TerrariaRipoffNNF.scripts.testScripts; 
 
 public partial class TestBlockSpawner: Node2D {
     private BlockResource blockResource = new BlockResource {
@@ -14,5 +14,6 @@ public partial class TestBlockSpawner: Node2D {
         for (int i = 0; i < 20; i++) {
             Block.CreateBlock(i, 0, blockResource);
         }
+        QueueFree();
     }
 }

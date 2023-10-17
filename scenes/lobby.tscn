@@ -1,0 +1,29 @@
+[gd_scene load_steps=2 format=3 uid="uid://ch7tkd1w813u1"]
+
+[ext_resource type="Script" path="res://scripts/MultiplayerController.cs" id="1_cddji"]
+
+[node name="lobby" type="Control" node_paths=PackedStringArray("hostButton", "joinButton")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_cddji")
+hostButton = NodePath("HostButton")
+joinButton = NodePath("JoinButton")
+
+[node name="HostButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 121.0
+offset_top = 48.0
+offset_right = 366.0
+offset_bottom = 92.0
+text = "Host"
+
+[node name="JoinButton" type="Button" parent="."]
+offset_left = 434.0
+offset_top = 46.0
+offset_right = 679.0
+offset_bottom = 90.0
+text = "Join"

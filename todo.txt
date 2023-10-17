@@ -1,0 +1,2 @@
+﻿learn godot multiplayer
+ensure current project is synced between players
