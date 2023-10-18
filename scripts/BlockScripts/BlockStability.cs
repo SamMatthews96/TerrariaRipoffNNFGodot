@@ -236,7 +236,6 @@ public class BlockStability {
             0f, (acc, supportConnection) => acc + supportConnection.block.BlockResource.TensileStrength);
 
         if (totalSupportStrength == 0) {
-            Print(unstableBlocks.Count);
             foreach (Block unstableBlock in unstableBlocks) {
                 unstableBlock.Stability.ExcessBurden = 1000;
             }

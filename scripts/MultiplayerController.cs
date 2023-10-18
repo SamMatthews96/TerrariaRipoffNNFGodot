@@ -41,18 +41,17 @@ public partial class MultiplayerController : Control {
             }
         }
 
-        RpcId(id, nameof(Test), resourceIds);
+        RpcId(id, nameof(LoadWorldBlocksFromServer), resourceIds);
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
-    private void Test(string[] resourceIds) {
+    private void LoadWorldBlocksFromServer(string[] resourceIds) {
         int xPosition = 0;
         int yPosition = 0;
         foreach (string resourceId in resourceIds) {
             if (resourceId != "") {
                 BlockResource resource = Load<BlockResource>($"res://BlockResources/{resourceId}.tres");
                 Block.CreateBlock(xPosition, yPosition, resource);
-                
             }
 
             yPosition++;
