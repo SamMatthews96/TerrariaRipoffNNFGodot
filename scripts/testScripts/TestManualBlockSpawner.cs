@@ -1,7 +1,9 @@
 using Godot;
 using System;
 using TerrariaRipoffNNF.scripts;
+using TerrariaRipoffNNF.scripts.BlockScripts;
 using static Godot.GD;
+using BlockResource = TerrariaRipoffNNF.scripts.BlockScripts.BlockResource;
 
 public partial class TestManualBlockSpawner : Node2D {
     private BlockResource testBlockResource;

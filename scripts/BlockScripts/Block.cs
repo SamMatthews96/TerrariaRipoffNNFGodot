@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using Godot;
 
-using static Godot.GD;
-
-namespace TerrariaRipoffNNF.scripts;
+namespace TerrariaRipoffNNF.scripts.BlockScripts;
 
 public class Block : IDamageable {
     #region Static

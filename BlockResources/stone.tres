@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="BlockResource" load_steps=2 format=3 uid="uid://b7gdx82md0rsf"]
+
+[ext_resource type="Script" path="res://scripts/BlockScripts/BlockResource.cs" id="1_m8ijs"]
+
+[resource]
+script = ExtResource("1_m8ijs")
+Name = "stone"
+Weight = 10.0
+TensileStrength = 30.0
+MaxHealth = 50.0

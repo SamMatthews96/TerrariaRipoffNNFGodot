@@ -1,6 +1,8 @@
 ﻿using System;
 using GdMUT;
 using TerrariaRipoffNNF.scripts;
+using TerrariaRipoffNNF.scripts.BlockScripts;
+using BlockResource = TerrariaRipoffNNF.scripts.BlockScripts.BlockResource;
 
 
 namespace TerrariaRipoffNNF.tests;

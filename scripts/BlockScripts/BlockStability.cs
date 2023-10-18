@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Godot;
+using TerrariaRipoffNNF.scripts.BlockScripts;
 using static Godot.GD;
 
 namespace TerrariaRipoffNNF.scripts;

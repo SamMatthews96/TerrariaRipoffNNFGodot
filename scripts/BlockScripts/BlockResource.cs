@@ -1,10 +1,14 @@
-﻿using Godot;
+﻿
+using Godot;
 
-namespace TerrariaRipoffNNF.scripts; 
+namespace TerrariaRipoffNNF.scripts.BlockScripts; 
 
+[GlobalClass]
 public partial class BlockResource : Resource {
-    [Export] public string Name;
-    [Export] public float Weight;
-    [Export] public float TensileStrength;
-    [Export] public float MaxHealth;
+    [Export] public string Name { get; set; }
+    [Export] public float Weight { get; set; }
+    [Export] public float TensileStrength { get; set; }
+    [Export] public float MaxHealth { get; set; }
+    
 }
+
