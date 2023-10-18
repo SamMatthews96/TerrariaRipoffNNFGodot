@@ -2,112 +2,122 @@ using Godot;
 using static Godot.GD;
 using TerrariaRipoffNNF.scripts.BlockScripts;
 
-namespace TerrariaRipoffNNF.scripts; 
+namespace TerrariaRipoffNNF.scripts;
 
 public partial class MultiplayerController : Control {
-	[Export] private int port = 8910;
-	[Export] private string address = "127.0.0.1";
-	private ENetMultiplayerPeer peer;
+    [Export] private int port = 8910;
+    [Export] private string address = "127.0.0.1";
+    private ENetMultiplayerPeer peer;
 
-	private string sceneDirectory = "res://scenes/world.tscn";
-	private string testBlockSpawnerDirectory = "res://gameObjects/testBlockSpawner.tscn";
+    private string sceneDirectory = "res://scenes/world.tscn";
+    private string testBlockSpawnerDirectory = "res://gameObjects/testBlockSpawner.tscn";
 
-	[Export] private Button hostButton;
-	[Export] private Button joinButton;
+    [Export] private Button hostButton;
+    [Export] private Button joinButton;
 
-	// Called when the node enters the scene tree for the first time.
-	public override void _Ready() {
-		Multiplayer.PeerConnected += PeerConnected;
-		Multiplayer.PeerDisconnected += PeerDisconnected;
-		Multiplayer.ConnectedToServer += ConnectedToServer;
-		Multiplayer.ConnectionFailed += ConnectionFailed;
+    // Called when the node enters the scene tree for the first time.
+    public override void _Ready() {
+        Multiplayer.PeerConnected += PeerConnected;
+        Multiplayer.PeerDisconnected += PeerDisconnected;
+        Multiplayer.ConnectedToServer += ConnectedToServer;
+        Multiplayer.ConnectionFailed += ConnectionFailed;
 
-		hostButton.Pressed += OnHostButtonPressed;
-		joinButton.Pressed += OnJoinButtonPressed;
-	}
+        hostButton.Pressed += OnHostButtonPressed;
+        joinButton.Pressed += OnJoinButtonPressed;
+    }
 
-	private void PeerConnected(long id) {
-		Print("Player Connected " + id);
-		if (Multiplayer.IsServer()) {
-			for (int x = 0; x < Block.WORLD_WIDTH; x++) {
-				for (int y = 0; y < Block.WORLD_HEIGHT; y++) {
-					Block block = Block.GetBlockAtPosition(x, y);
-					if (block is null) continue;
-					string resourceId = block.BlockResource.Name;
-					RpcId(id, nameof(Test), id, resourceId);
-					break;
-				}
-			}
-			
-		}
-	}
+    private void PeerConnected(long id) {
+        Print("Player Connected " + id);
+        if (!Multiplayer.IsServer()) return;
+        
+        string[] resourceIds = new string[Block.WORLD_WIDTH * Block.WORLD_HEIGHT];
 
-	[Rpc(MultiplayerApi.RpcMode.AnyPeer)]
-	private void Test(long id, string resourceId) {
-		Print("ran on player: " + id);
-		BlockResource resource = Load<BlockResource>($"res://BlockResources/{resourceId}.tres");
-		Print(resource.Name);
-		Print(resource.Weight);
-	}
+        for (int x = 0; x < Block.WORLD_WIDTH; x++) {
+            for (int y = 0; y < Block.WORLD_HEIGHT; y++) {
+                Block block = Block.GetBlockAtPosition(x, y);
+                if (block is null) continue;
+                string resourceId = block.BlockResource.Name;
+                resourceIds[x * Block.WORLD_WIDTH + y] = resourceId;
+            }
+        }
 
-	private void PeerDisconnected(long id) {
-		Print("Player Disconnected");
-	}
+        RpcId(id, nameof(Test), resourceIds);
+    }
 
-	private void ConnectedToServer() {
-		Print("Connected to Server");
-		Print(Multiplayer.IsServer());
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    private void Test(string[] resourceIds) {
+        int xPosition = 0;
+        int yPosition = 0;
+        foreach (string resourceId in resourceIds) {
+            if (resourceId != "") {
+                BlockResource resource = Load<BlockResource>($"res://BlockResources/{resourceId}.tres");
+                Block.CreateBlock(xPosition, yPosition, resource);
+                
+            }
 
-	}
+            yPosition++;
+            if (yPosition == Block.WORLD_HEIGHT) {
+                xPosition++;
+                yPosition = 0;
+            }
+        }
+    }
 
-	private void ConnectionFailed() {
-		Print("Disconnected from Server");
-	}
+    private void PeerDisconnected(long id) {
+        Print("Player Disconnected");
+    }
 
-	private void OnHostButtonPressed() {
-		peer = new ENetMultiplayerPeer();
-		var error = peer.CreateServer(port);
-		if (error != Error.Ok) {
-			Print("error cannot host! :" + error);
-			return;
-		}
+    private void ConnectedToServer() {
+        Print("Connected to Server");
+        Print(Multiplayer.IsServer());
+    }
 
-		peer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
+    private void ConnectionFailed() {
+        Print("Disconnected from Server");
+    }
 
-		Multiplayer.MultiplayerPeer = peer;
-		Print("Hosting");
+    private void OnHostButtonPressed() {
+        peer = new ENetMultiplayerPeer();
+        var error = peer.CreateServer(port);
+        if (error != Error.Ok) {
+            Print("error cannot host! :" + error);
+            return;
+        }
 
-		HostGame();
-	}
+        peer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
 
-	private void OnJoinButtonPressed() {
-		peer = new ENetMultiplayerPeer();
-		Error error = peer.CreateClient(address, port);
-		if (error != Error.Ok) {
-			Print("error cannot join! :" + error);
-			return;
-		}
+        Multiplayer.MultiplayerPeer = peer;
+        Print("Hosting");
 
-		peer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
-		Multiplayer.MultiplayerPeer = peer;
-		Print("Joining Game!");
-		
-		JoinGame();
-	}
-	
-	private void HostGame() {
-		Node2D scene = ResourceLoader.Load<PackedScene>(sceneDirectory).Instantiate<Node2D>();
-		GetTree().Root.AddChild(scene);
-		Node2D worldLoader = ResourceLoader.Load<PackedScene>(testBlockSpawnerDirectory).Instantiate<Node2D>();
-		GetTree().Root.AddChild(worldLoader);
-		Hide();
-	}
+        HostGame();
+    }
 
-	private void JoinGame() {
-		Node2D scene = ResourceLoader.Load<PackedScene>(sceneDirectory).Instantiate<Node2D>();
-		GetTree().Root.AddChild(scene);
-		Hide();
-	}
+    private void OnJoinButtonPressed() {
+        peer = new ENetMultiplayerPeer();
+        Error error = peer.CreateClient(address, port);
+        if (error != Error.Ok) {
+            Print("error cannot join! :" + error);
+            return;
+        }
 
-	
+        peer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
+        Multiplayer.MultiplayerPeer = peer;
+        Print("Joining Game!");
+
+        JoinGame();
+    }
+
+    private void HostGame() {
+        Node2D scene = ResourceLoader.Load<PackedScene>(sceneDirectory).Instantiate<Node2D>();
+        GetTree().Root.AddChild(scene);
+        Node2D worldLoader = ResourceLoader.Load<PackedScene>(testBlockSpawnerDirectory).Instantiate<Node2D>();
+        GetTree().Root.AddChild(worldLoader);
+        Hide();
+    }
+
+    private void JoinGame() {
+        Node2D scene = ResourceLoader.Load<PackedScene>(sceneDirectory).Instantiate<Node2D>();
+        GetTree().Root.AddChild(scene);
+        Hide();
+    }
 }
