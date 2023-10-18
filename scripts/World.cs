@@ -21,7 +21,6 @@ public partial class World : Node2D {
 		Instance = this;
 		Block.OnStaticCreated += Block_OnStaticCreated;
 		Player.OnPlayerSpawned += Player_OnPlayerSpawned;
-		SpawnPlayer();
 	}
 	
 	private void OnBlockTickDamage() {

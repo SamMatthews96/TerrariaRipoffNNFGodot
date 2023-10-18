@@ -1,2 +1,21 @@
-﻿learn godot multiplayer
+﻿
 ensure current project is synced between players
+
+block interactions should be server authoritative
+player position can be client authoritative
+
+UI
+    inventory
+    player health
+    
+game items
+    ferrium (Metal I)
+    rough stone (Stone I)
+    pine (Wood I)
+    
+crafting
+    torch
+    workbench
+        wood planks
+        
+        

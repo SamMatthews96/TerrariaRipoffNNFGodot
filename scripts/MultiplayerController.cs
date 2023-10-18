@@ -11,6 +11,7 @@ public partial class MultiplayerController : Control {
 
     private string sceneDirectory = "res://scenes/world.tscn";
     private string testBlockSpawnerDirectory = "res://gameObjects/testBlockSpawner.tscn";
+    private string playerDirectory = "res://gameObjects/player.tscn";
 
     [Export] private Button hostButton;
     [Export] private Button joinButton;
@@ -41,11 +42,17 @@ public partial class MultiplayerController : Control {
             }
         }
 
-        RpcId(id, nameof(LoadWorldBlocksFromServer), resourceIds);
+        RpcId(id, nameof(JoinGame), resourceIds);
+
+        
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
-    private void LoadWorldBlocksFromServer(string[] resourceIds) {
+    private void JoinGame(string[] resourceIds) {
+        Node2D scene = ResourceLoader.Load<PackedScene>(sceneDirectory).Instantiate<Node2D>();
+        GetTree().Root.AddChild(scene);
+        Hide();
+        
         int xPosition = 0;
         int yPosition = 0;
         foreach (string resourceId in resourceIds) {
@@ -60,6 +67,11 @@ public partial class MultiplayerController : Control {
                 yPosition = 0;
             }
         }
+        
+        Node2D player = ResourceLoader.Load<PackedScene>(playerDirectory).Instantiate<Node2D>();
+        scene.AddChild(player);
+        Node2D player2 = ResourceLoader.Load<PackedScene>(playerDirectory).Instantiate<Node2D>();
+        scene.AddChild(player2);
     }
 
     private void PeerDisconnected(long id) {
@@ -88,7 +100,14 @@ public partial class MultiplayerController : Control {
         Multiplayer.MultiplayerPeer = peer;
         Print("Hosting");
 
-        HostGame();
+        Node2D scene = ResourceLoader.Load<PackedScene>(sceneDirectory).Instantiate<Node2D>();
+        GetTree().Root.AddChild(scene);
+        Node2D worldLoader = ResourceLoader.Load<PackedScene>(testBlockSpawnerDirectory).Instantiate<Node2D>();
+        GetTree().Root.AddChild(worldLoader);
+        Hide();
+        
+        Node2D player = ResourceLoader.Load<PackedScene>(playerDirectory).Instantiate<Node2D>();
+        scene.AddChild(player);
     }
 
     private void OnJoinButtonPressed() {
@@ -102,21 +121,5 @@ public partial class MultiplayerController : Control {
         peer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
         Multiplayer.MultiplayerPeer = peer;
         Print("Joining Game!");
-
-        JoinGame();
-    }
-
-    private void HostGame() {
-        Node2D scene = ResourceLoader.Load<PackedScene>(sceneDirectory).Instantiate<Node2D>();
-        GetTree().Root.AddChild(scene);
-        Node2D worldLoader = ResourceLoader.Load<PackedScene>(testBlockSpawnerDirectory).Instantiate<Node2D>();
-        GetTree().Root.AddChild(worldLoader);
-        Hide();
-    }
-
-    private void JoinGame() {
-        Node2D scene = ResourceLoader.Load<PackedScene>(sceneDirectory).Instantiate<Node2D>();
-        GetTree().Root.AddChild(scene);
-        Hide();
     }
 }
