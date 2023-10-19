@@ -7,6 +7,7 @@ using static Godot.GD;
 namespace TerrariaRipoffNNF.scripts;
 
 public partial class World : Node2D {
+	[Export] public Node2D PlayersContainer;
 	public static World Instance { get; private set; }
 
 	private const int BLOCK_OBJECT_DISTANCE = 10;
@@ -16,7 +17,7 @@ public partial class World : Node2D {
 	private PackedScene playerPackedScene = Load<PackedScene>("res://gameObjects/player.tscn");
 
 	private List<Player> players = new();
-
+	
 	public override void _Ready() {
 		Instance = this;
 		Block.OnStaticCreated += Block_OnStaticCreated;
