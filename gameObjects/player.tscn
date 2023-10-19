@@ -12,8 +12,9 @@ properties/0/spawn = true
 properties/0/sync = true
 properties/0/watch = false
 
-[node name="Player" type="CharacterBody2D"]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("multiplayerSynchronizer")]
 script = ExtResource("1_xp8db")
+multiplayerSynchronizer = NodePath("MultiplayerSynchronizer")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, -7.62939e-06)

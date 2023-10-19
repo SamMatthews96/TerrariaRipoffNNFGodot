@@ -5,6 +5,7 @@ using static Godot.GD;
 namespace TerrariaRipoffNNF.scripts;
 
 public partial class Player : CharacterBody2D {
+    [Export] private MultiplayerSynchronizer multiplayerSynchronizer;
     public static event EventHandler OnPlayerSpawned;
     public event EventHandler<OnPlayerMovedCellEventArgs> OnPlayerMovedCell;
 
@@ -19,6 +20,10 @@ public partial class Player : CharacterBody2D {
     public float Gravity = ProjectSettings.GetSetting("physics/2d/default_gravity").AsSingle();
 
     public override void _Ready() {
+        multiplayerSynchronizer.SetMultiplayerAuthority(int.Parse(Name));
+        Print("_Ready");
+
+        Print(Name);
         OnPlayerSpawned?.Invoke(this, EventArgs.Empty);
     }
 
