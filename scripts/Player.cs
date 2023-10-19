@@ -6,12 +6,15 @@ namespace TerrariaRipoffNNF.scripts;
 
 public partial class Player : CharacterBody2D {
     [Export] private MultiplayerSynchronizer multiplayerSynchronizer;
+    [Export] private Camera2D camera;
     public static event EventHandler OnPlayerSpawned;
     public event EventHandler<OnPlayerMovedCellEventArgs> OnPlayerMovedCell;
 
     public class OnPlayerMovedCellEventArgs : EventArgs {
         public Direction Direction;
     }
+    
+    public Player LocalPlayer { get; private set; }
 
     public const float SPEED = 300.0f;
     public const float JUMP_VELOCITY = -400.0f;
@@ -21,10 +24,11 @@ public partial class Player : CharacterBody2D {
 
     public override void _Ready() {
         multiplayerSynchronizer.SetMultiplayerAuthority(int.Parse(Name));
-        Print("_Ready");
-
-        Print(Name);
         OnPlayerSpawned?.Invoke(this, EventArgs.Empty);
+
+        if (Multiplayer.GetUniqueId() != int.Parse(Name)) return;
+        LocalPlayer = this;
+        camera.Enabled = true;
     }
 
     public override void _PhysicsProcess(double delta) {

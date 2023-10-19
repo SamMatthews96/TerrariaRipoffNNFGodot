@@ -1,8 +1,5 @@
 ﻿
-ensure current project is synced between players
-
 block interactions should be server authoritative
-player position can be client authoritative
 
 UI
     inventory
@@ -18,4 +15,5 @@ crafting
     workbench
         wood planks
         
-        
+Block Stability should be counted periodically, not immediately
+    created and destroyed block stability should queue, and that queue be processed at some arbitrary period
