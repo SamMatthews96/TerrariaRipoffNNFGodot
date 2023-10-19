@@ -22,7 +22,8 @@ public class BlockStability {
     public bool IsStable { get; private set; } = true;
 
     public float ExcessWeight => outboundBurden.Values.Aggregate(
-        block.BlockResource.Weight, (acc, currentBurdenValue) => acc - currentBurdenValue);
+        block.BlockResource.Weight, 
+        (acc, currentBurdenValue) => acc - currentBurdenValue);
 
     public float ExcessBurden { get; private set; } = 0;
 
