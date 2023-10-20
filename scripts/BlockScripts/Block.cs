@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Godot;
+using TerrariaRipoffNNF.scripts.Resources;
 
 namespace TerrariaRipoffNNF.scripts.BlockScripts;
 
@@ -28,7 +29,6 @@ public class Block : IDamageable {
 
 	public static List<Block> GetBlocksInArea(
 		int xStartPosition, int yStartPosition, int xEndPosition, int yEndPosition) {
-		
 		List<Block> blockList = new();
 		for (int x = xStartPosition; x < xEndPosition; x++) {
 			for (int y = yStartPosition; y < yEndPosition; y++) {
@@ -38,7 +38,7 @@ public class Block : IDamageable {
 				}
 			}
 		}
-		
+
 		return blockList;
 	}
 
@@ -74,11 +74,8 @@ public class Block : IDamageable {
 		BlockResource = blockResource;
 
 		Stability = new BlockStability(this);
-
 		Health = new Health(this, blockResource.MaxHealth);
 		Health.OnHealthReachingZero += Health_OnHealthReachingZero;
-
-		
 	}
 
 	private void Health_OnHealthReachingZero(object sender, EventArgs e) {
@@ -95,7 +92,6 @@ public class Block : IDamageable {
 				Direction = DirectionMethods.Opposite(direction)
 			});
 		}
-		
 	}
 
 	public void TakeDamage(float delta) {

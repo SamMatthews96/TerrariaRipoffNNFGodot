@@ -1,6 +1,7 @@
 using Godot;
-using static Godot.GD;
 using TerrariaRipoffNNF.scripts.BlockScripts;
+using TerrariaRipoffNNF.scripts.Resources;
+using static Godot.GD;
 
 namespace TerrariaRipoffNNF.scripts;
 
@@ -10,8 +11,8 @@ public partial class MultiplayerController : Control {
 	private ENetMultiplayerPeer peer;
 
 	private string sceneDirectory = "res://scenes/world.tscn";
-	private string testBlockSpawnerDirectory = "res://gameObjects/testBlockSpawner.tscn";
-	private string playerDirectory = "res://gameObjects/player.tscn";
+	private string testBlockSpawnerDirectory = "res://scenes/test_block_spawner.tscn";
+	private string playerDirectory = "res://scenes/player.tscn";
 
 	[Export] private Button hostButton;
 	[Export] private Button joinButton;
@@ -61,7 +62,7 @@ public partial class MultiplayerController : Control {
 		int yPosition = 0;
 		foreach (string resourceId in resourceIds) {
 			if (resourceId != "") {
-				BlockResource resource = Load<BlockResource>($"res://BlockResources/{resourceId}.tres");
+				BlockResource resource = Load<BlockResource>($"res://Resources/Blocks/{resourceId}.tres");
 				Block.CreateBlock(xPosition, yPosition, resource);
 			}
 

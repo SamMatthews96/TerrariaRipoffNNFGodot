@@ -1,9 +1,10 @@
-using Godot;
 using System;
-using TerrariaRipoffNNF.scripts;
+using Godot;
 using TerrariaRipoffNNF.scripts.BlockScripts;
+using TerrariaRipoffNNF.scripts.Resources;
 using static Godot.GD;
-using BlockResource = TerrariaRipoffNNF.scripts.BlockScripts.BlockResource;
+
+namespace TerrariaRipoffNNF.scripts.testScripts; 
 
 public partial class TestManualBlockSpawner : Node2D {
     [Export] private BlockResource testBlockResource;
@@ -21,7 +22,7 @@ public partial class TestManualBlockSpawner : Node2D {
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void RpcCreateBlock(int xPosition, int yPosition, string resourceId) {
-        BlockResource resource = Load<BlockResource>($"res://BlockResources/{resourceId}.tres");
+        BlockResource resource = Load<BlockResource>($"res://Resources/Blocks/{resourceId}.tres");
         Block.CreateBlock(xPosition, yPosition, resource);
     }
 

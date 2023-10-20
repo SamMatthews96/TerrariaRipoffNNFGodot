@@ -13,8 +13,8 @@ public partial class World : Node2D {
 	private const int BLOCK_OBJECT_DISTANCE = 10;
 	public const int BLOCK_SIZE = 50;
 
-	private PackedScene blockPackedScene = Load<PackedScene>("res://gameObjects/block.tscn");
-	private PackedScene playerPackedScene = Load<PackedScene>("res://gameObjects/player.tscn");
+	private PackedScene blockPackedScene = Load<PackedScene>("res://scenes/block.tscn");
+	private PackedScene playerPackedScene = Load<PackedScene>("res://scenes/player.tscn");
 
 	private List<Player> players = new();
 	

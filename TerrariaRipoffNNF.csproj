@@ -9,7 +9,4 @@
   <ItemGroup>
     <Content Include="todo.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="scripts\BlockResources\" />
-  </ItemGroup>
 </Project>

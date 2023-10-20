@@ -1,6 +1,5 @@
-﻿using TerrariaRipoffNNF.scripts;
-using TerrariaRipoffNNF.scripts.BlockScripts;
-using BlockResource = TerrariaRipoffNNF.scripts.BlockScripts.BlockResource;
+﻿using TerrariaRipoffNNF.scripts.BlockScripts;
+using TerrariaRipoffNNF.scripts.Resources;
 
 namespace TerrariaRipoffNNF.tests; 
 

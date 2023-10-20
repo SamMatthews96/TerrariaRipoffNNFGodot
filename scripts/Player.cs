@@ -4,15 +4,20 @@ using static Godot.GD;
 
 namespace TerrariaRipoffNNF.scripts;
 
-public partial class Player : CharacterBody2D {
+public partial class Player : CharacterBody2D, IDamageable {
     [Export] private MultiplayerSynchronizer multiplayerSynchronizer;
     [Export] private Camera2D camera;
+
+    public Health Health;
+    
     public static event EventHandler OnPlayerSpawned;
     public event EventHandler<OnPlayerMovedCellEventArgs> OnPlayerMovedCell;
 
     public class OnPlayerMovedCellEventArgs : EventArgs {
         public Direction Direction;
     }
+
+    public event EventHandler<IDamageable.OnHitEventArgs> OnHit;
     
     public Player LocalPlayer { get; private set; }
 
@@ -29,6 +34,13 @@ public partial class Player : CharacterBody2D {
         if (Multiplayer.GetUniqueId() != int.Parse(Name)) return;
         LocalPlayer = this;
         camera.Enabled = true;
+
+        Health = new Health(this, 100);
+        
+        GameInterface gameInterface = Load<PackedScene>("res://scenes/game_interface.tscn")
+            .Instantiate<GameInterface>();
+        gameInterface.SetPlayer(this);
+        GetTree().Root.AddChild(gameInterface);
     }
 
     public override void _PhysicsProcess(double delta) {

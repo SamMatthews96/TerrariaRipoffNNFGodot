@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using GdMUT;
-using Godot;
 using TerrariaRipoffNNF.scripts;
 using TerrariaRipoffNNF.scripts.BlockScripts;
-using static Godot.GD;
-using BlockResource = TerrariaRipoffNNF.scripts.BlockScripts.BlockResource;
+using TerrariaRipoffNNF.scripts.Resources;
 
 namespace TerrariaRipoffNNF.tests;
 #if TOOLS

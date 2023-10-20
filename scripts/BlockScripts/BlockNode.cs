@@ -1,7 +1,6 @@
 ﻿using Godot;
-using TerrariaRipoffNNF.scripts.BlockScripts;
 
-namespace TerrariaRipoffNNF.scripts; 
+namespace TerrariaRipoffNNF.scripts.BlockScripts; 
 
 public partial class BlockNode : StaticBody2D {
     public Block Block { get; set; }

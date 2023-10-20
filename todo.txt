@@ -4,9 +4,31 @@
             name
             space
             subtypes
-                block
-                
             description
+            
+Inventory item types
+    name
+    icon
+    description
+    inventorySpace
+    stackable
+    
+    all can be items in inventory, or items on the ground
+    
+    Placeable
+        Block
+            destroy() - create 
+            blockResource
+        Construct
+    Equipable
+        equip()
+        Weapon
+            Main hand
+            Off hand
+            Two hand
+        Ability
+        Armor
+        
             
 
 UI

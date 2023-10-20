@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="MaterialResource" load_steps=2 format=3 uid="uid://cbep3u56tpo5g"]
+
+[ext_resource type="Script" path="res://scripts/Resources/MaterialResource.cs" id="1_642jm"]
+
+[resource]
+script = ExtResource("1_642jm")
+Types = PackedStringArray("wood")
+Rank = 1
+Name = "Wood"
+Description = ""
+InventorySpace = 1.0
+IsStackable = true

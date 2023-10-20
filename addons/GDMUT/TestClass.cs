@@ -1,6 +1,6 @@
 #if TOOLS
-using Godot;
 using System.Collections.Generic;
+using Godot;
 using static Godot.GD;
 
 namespace GdMUT.Components;
@@ -58,7 +58,7 @@ public partial class TestClass : Control {
 	}
 
 	public void AddMethodResult(TestFunction function) {
-		var methodResultScene = GD.Load<PackedScene>("res://addons/GDMUT/MethodResult.tscn");
+		var methodResultScene = Load<PackedScene>("res://addons/GDMUT/MethodResult.tscn");
 		var methodResult = methodResultScene.Instantiate<MethodResult>();
 		methodResult.SetMethodResult(function);
 		_methodList.AddChild(methodResult);

@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://dm3ggqrjn6260"]
-
-[ext_resource type="Script" path="res://scripts/testScripts/TestBlockSpawner.cs" id="1_ur8pm"]
-
-[node name="TestBlockSpawner" type="Node2D"]
-script = ExtResource("1_ur8pm")

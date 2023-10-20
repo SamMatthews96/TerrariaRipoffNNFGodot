@@ -1,8 +1,8 @@
 [gd_scene load_steps=6 format=3 uid="uid://cetcc7dey432d"]
 
-[ext_resource type="Script" path="res://scripts/BlockScripts/BlockNode.cs" id="1_v8yf1"]
-[ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://icon.svg" id="2_tlp5a"]
-[ext_resource type="Script" path="res://scripts/testScripts/BlockLabel.cs" id="3_1t2d4"]
+[ext_resource type="Script" path="res://scripts/BlockScripts/BlockNode.cs" id="1_50afw"]
+[ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://icon.svg" id="2_3iqh4"]
+[ext_resource type="Script" path="res://scripts/testScripts/BlockLabel.cs" id="3_40shq"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_j3xm1"]
 size = Vector2(50, 50)
@@ -11,7 +11,7 @@ size = Vector2(50, 50)
 font_size = 21
 
 [node name="Block" type="StaticBody2D"]
-script = ExtResource("1_v8yf1")
+script = ExtResource("1_50afw")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_j3xm1")
@@ -20,7 +20,7 @@ metadata/_edit_lock_ = true
 [node name="Sprite2D" type="Sprite2D" parent="."]
 modulate = Color(0.286275, 0.286275, 0.286275, 1)
 scale = Vector2(0.4, 0.4)
-texture = ExtResource("2_tlp5a")
+texture = ExtResource("2_3iqh4")
 metadata/_edit_lock_ = true
 
 [node name="BlockLabel" type="Label" parent="."]
@@ -32,4 +32,4 @@ text = "100"
 label_settings = SubResource("LabelSettings_sr1e1")
 horizontal_alignment = 1
 vertical_alignment = 1
-script = ExtResource("3_1t2d4")
+script = ExtResource("3_40shq")

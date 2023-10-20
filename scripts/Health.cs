@@ -1,4 +1,5 @@
 ﻿using System;
+using Godot;
 
 namespace TerrariaRipoffNNF.scripts; 
 
@@ -7,19 +8,19 @@ public class Health {
     public event EventHandler OnHealthChanged; 
 
     private IDamageable parent;
-    private readonly float maxHealth;
+    public float MaxHealth { get; private set; }
     public float CurrentHealth { get; private set; }
 
     public Health(IDamageable parent, float maxHealth) {
         this.parent = parent;
-        this.maxHealth = maxHealth;
-        CurrentHealth = this.maxHealth;
+        MaxHealth = maxHealth;
+        CurrentHealth = MaxHealth;
         parent.OnHit += IDamageable_OnHit;
     }
 
     public Health(IDamageable parent, float maxHealth, float currentHealth) {
         this.parent = parent;
-        this.maxHealth = maxHealth;
+        MaxHealth = maxHealth;
         CurrentHealth = currentHealth;
     }
 
@@ -34,8 +35,8 @@ public class Health {
             OnHealthReachingZero?.Invoke(this, EventArgs.Empty);
         }
 
-        if (CurrentHealth > maxHealth) {
-            CurrentHealth = maxHealth;
+        if (CurrentHealth > MaxHealth) {
+            CurrentHealth = MaxHealth;
         }
     }
 }

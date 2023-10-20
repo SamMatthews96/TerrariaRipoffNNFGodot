@@ -52,7 +52,9 @@ public static class TestLoader {
                     $"Method {method.Name} in {method.DeclaringType} does not return Result. Skipping it..."
                     );
                 continue;
-            } else if (!method.IsStatic) {
+            }
+
+            if (!method.IsStatic) {
                 GD.PushError(
                     $"Method {method.Name} in {method.DeclaringType} is not static. Skipping it..."
                     );
@@ -60,7 +62,7 @@ public static class TestLoader {
             }
 
             tests.Add(
-                new TestFunction() {
+                new TestFunction {
                     Name = method.Name,
                     Type = method.DeclaringType,
                     Method = method
@@ -71,7 +73,5 @@ public static class TestLoader {
 }
 
 [AttributeUsage(AttributeTargets.Method)]
-public class CSTestFunctionAttribute : Attribute {
-    public CSTestFunctionAttribute() { }
-}
+public class CSTestFunctionAttribute : Attribute { }
 #endif

@@ -1,11 +1,9 @@
 #if TOOLS
 
-using Godot;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
+using Godot;
 
 namespace GdMUT.Components;
 
@@ -43,7 +41,7 @@ public partial class Dock : Control {
 			if (_testDictionary.TryGetValue(function.Type, out List<TestFunction> testList)) {
 				testList.Add(function);
 			} else {
-				_testDictionary.Add(function.Type, new List<TestFunction>() { function });
+				_testDictionary.Add(function.Type, new List<TestFunction> { function });
 			}
 		}
 

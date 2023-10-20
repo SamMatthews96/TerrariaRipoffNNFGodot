@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
-using Godot;
-using TerrariaRipoffNNF.scripts.BlockScripts;
-using static Godot.GD;
 
-namespace TerrariaRipoffNNF.scripts;
+namespace TerrariaRipoffNNF.scripts.BlockScripts;
 
 public class BlockStability {
     private readonly Block block;
@@ -25,7 +21,7 @@ public class BlockStability {
         block.BlockResource.Weight, 
         (acc, currentBurdenValue) => acc - currentBurdenValue);
 
-    public float ExcessBurden { get; private set; } = 0;
+    public float ExcessBurden { get; private set; }
 
     public BlockStability(Block block) {
         this.block = block;
