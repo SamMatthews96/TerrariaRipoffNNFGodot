@@ -40,7 +40,8 @@ public partial class Player : CharacterBody2D, IDamageable {
         GameInterface gameInterface = Load<PackedScene>("res://scenes/game_interface.tscn")
             .Instantiate<GameInterface>();
         gameInterface.SetPlayer(this);
-        GetTree().Root.AddChild(gameInterface);
+        
+        camera.AddChild(gameInterface);
     }
 
     public override void _PhysicsProcess(double delta) {
