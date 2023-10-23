@@ -2,11 +2,12 @@
 
 [ext_resource type="Script" path="res://scripts/World.cs" id="1_buqtx"]
 [ext_resource type="Script" path="res://scripts/testScripts/TestManualBlockSpawner.cs" id="3_d30rs"]
-[ext_resource type="Resource" uid="uid://b7gdx82md0rsf" path="res://Resources/Blocks/stone.tres" id="3_p4vqo"]
+[ext_resource type="Resource" uid="uid://ctoltwj06ugw2" path="res://Resources/Blocks/stone.tres" id="3_p4vqo"]
 
-[node name="World" type="Node2D" node_paths=PackedStringArray("PlayersContainer")]
+[node name="World" type="Node2D" node_paths=PackedStringArray("PlayersContainer", "CanvasLayer")]
 script = ExtResource("1_buqtx")
 PlayersContainer = NodePath("Players Container")
+CanvasLayer = NodePath("CanvasLayer")
 
 [node name="TestManualBlockSpawner" type="Node2D" parent="."]
 script = ExtResource("3_d30rs")
@@ -17,5 +18,7 @@ wait_time = 0.1
 autostart = true
 
 [node name="Players Container" type="Node2D" parent="."]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [connection signal="timeout" from="BlockTickDamage" to="." method="OnBlockTickDamage"]

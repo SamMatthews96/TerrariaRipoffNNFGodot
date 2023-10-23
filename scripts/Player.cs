@@ -9,6 +9,7 @@ public partial class Player : CharacterBody2D, IDamageable {
     [Export] private Camera2D camera;
 
     public Health Health;
+    public Inventory Inventory;
     
     public static event EventHandler OnPlayerSpawned;
     public event EventHandler<OnPlayerMovedCellEventArgs> OnPlayerMovedCell;
@@ -36,12 +37,13 @@ public partial class Player : CharacterBody2D, IDamageable {
         camera.Enabled = true;
 
         Health = new Health(this, 100);
+        Inventory = new Inventory();
         
         GameInterface gameInterface = Load<PackedScene>("res://scenes/game_interface.tscn")
             .Instantiate<GameInterface>();
         gameInterface.SetPlayer(this);
         
-        camera.AddChild(gameInterface);
+        World.Instance.CanvasLayer.AddChild(gameInterface);
     }
 
     public override void _PhysicsProcess(double delta) {

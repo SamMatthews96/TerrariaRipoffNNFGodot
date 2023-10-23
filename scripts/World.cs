@@ -8,6 +8,7 @@ namespace TerrariaRipoffNNF.scripts;
 
 public partial class World : Node2D {
 	[Export] public Node2D PlayersContainer;
+	[Export] public CanvasLayer CanvasLayer;
 	public static World Instance { get; private set; }
 
 	private const int BLOCK_OBJECT_DISTANCE = 10;

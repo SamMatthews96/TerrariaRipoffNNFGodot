@@ -6,6 +6,9 @@
             subtypes
             description
             
+        items both on the ground and in inventory
+        ItemInventory, ItemPickUp
+            
 Inventory item types
     name
     icon
