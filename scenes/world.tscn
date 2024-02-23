@@ -1,24 +1,15 @@
-[gd_scene load_steps=4 format=3 uid="uid://dxqeumnkw4j5p"]
+[gd_scene load_steps=2 format=3 uid="uid://dh7wnhsk4t6b7"]
 
-[ext_resource type="Script" path="res://scripts/World.cs" id="1_buqtx"]
-[ext_resource type="Script" path="res://scripts/testScripts/TestManualBlockSpawner.cs" id="3_d30rs"]
-[ext_resource type="Resource" uid="uid://ctoltwj06ugw2" path="res://Resources/Blocks/stone.tres" id="3_p4vqo"]
+[ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://icon.svg" id="1_5wfq2"]
 
-[node name="World" type="Node2D" node_paths=PackedStringArray("PlayersContainer", "CanvasLayer")]
-script = ExtResource("1_buqtx")
-PlayersContainer = NodePath("Players Container")
-CanvasLayer = NodePath("CanvasLayer")
+[node name="World" type="Node2D"]
 
-[node name="TestManualBlockSpawner" type="Node2D" parent="."]
-script = ExtResource("3_d30rs")
-testBlockResource = ExtResource("3_p4vqo")
+[node name="RichTextLabel" type="RichTextLabel" parent="."]
+offset_right = 251.0
+offset_bottom = 74.0
+text = "WORLD SCENE"
 
-[node name="BlockTickDamage" type="Timer" parent="."]
-wait_time = 0.1
-autostart = true
-
-[node name="Players Container" type="Node2D" parent="."]
-
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-
-[connection signal="timeout" from="BlockTickDamage" to="." method="OnBlockTickDamage"]
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(171, 119)
+scale = Vector2(2.24, 1.287)
+texture = ExtResource("1_5wfq2")

@@ -1,8 +1,0 @@
-[gd_scene load_steps=3 format=3 uid="uid://bj5fevhskkkq"]
-
-[ext_resource type="Script" path="res://scripts/testScripts/TestBlockSpawner.cs" id="1_o2bhi"]
-[ext_resource type="Resource" uid="uid://ctoltwj06ugw2" path="res://Resources/Blocks/stone.tres" id="2_gmggv"]
-
-[node name="TestBlockSpawner" type="Node2D"]
-script = ExtResource("1_o2bhi")
-resource = ExtResource("2_gmggv")

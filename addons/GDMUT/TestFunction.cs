@@ -17,7 +17,7 @@ public class TestFunction
             if (Method is null) throw new Exception();
             return (Func<Result>)Delegate.CreateDelegate(typeof(Func<Result>), null, Method);
         }
-        catch (Exception e) {
+        catch (Exception) {
             return () => {
                 GD.Print($"couldn't convert {Name} to Action");
                 return Result.Failure;

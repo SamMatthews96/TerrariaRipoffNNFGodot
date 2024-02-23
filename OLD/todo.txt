@@ -1,0 +1,87 @@
+﻿Inventory system
+    Item system
+        item resource
+            name
+            space
+            subtypes
+            description
+            
+        items both on the ground and in inventory
+        ItemInventory, ItemPickUp
+            
+Inventory item types
+    name
+    icon
+    description
+    inventorySpace
+    stackable
+    
+    all can be items in inventory, or items on the ground
+    
+    Placeable
+        Block
+            destroy() - create 
+            blockResource
+        Construct
+    Equipable
+        equip()
+        Weapon
+            Main hand
+            Off hand
+            Two hand
+        Ability
+        Armor
+        
+            
+
+UI
+    make a list of all the elements of the UI
+        Inventory
+        Crafting Menu
+        Player Health
+        
+        Health bar
+        Action Bars
+        Map
+        Character Panel
+            Equipment
+        
+        Main menu
+            Settings
+                Video
+                Audio
+                Controls
+            Leave Game
+            Quit Game
+            
+            
+    create a flow for how the user might interact with the interface
+        positioning, where each item can be found (how to change settings, how to equip gear)
+        
+        
+    CRAP
+        Contrast
+            Colour, weight, size, font, objects style in relation to others
+            emphasis on important elements, such as individual words
+            focal point
+        Repetition
+            Make similar elements have the same layout
+            Including elements that are not on screen at the same time 
+        Alignment
+            Make sure elements are aligned
+        Proximity
+            Keep related elements together to emphasise that they are related
+
+    
+game items
+    ferrium (Metal I)
+    rough stone (Stone I)
+    pine (Wood I)
+    
+crafting
+    torch
+    workbench
+        wood planks
+        
+Block Stability should be counted periodically, not immediately
+    created and destroyed block stability should queue, and that queue be processed at some arbitrary period

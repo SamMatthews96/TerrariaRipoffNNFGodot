@@ -7,6 +7,6 @@
     <PackageReference Include="NUnit" Version="3.13.3" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="todo.txt" />
+    <Content Include="OLD\todo.txt" />
   </ItemGroup>
 </Project>
