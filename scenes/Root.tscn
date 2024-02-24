@@ -1,8 +1,13 @@
-[gd_scene load_steps=4 format=3 uid="uid://dxqeumnkw4j5p"]
+[gd_scene load_steps=9 format=3 uid="uid://dxqeumnkw4j5p"]
 
 [ext_resource type="PackedScene" uid="uid://4c67gixp10at" path="res://scenes/LoginScreen.tscn" id="1_sp2ny"]
 [ext_resource type="Script" path="res://scripts/MultiplayerManager.cs" id="2_0ytrm"]
-[ext_resource type="Script" path="res://scenes/Logger.cs" id="3_db3ib"]
+[ext_resource type="Script" path="res://testObjects/Logger.cs" id="3_c4nns"]
+[ext_resource type="Script" path="res://scripts/PlayerManager.cs" id="4_1dugc"]
+[ext_resource type="PackedScene" uid="uid://dh7wnhsk4t6b7" path="res://scenes/World.tscn" id="4_jt8d7"]
+[ext_resource type="PackedScene" uid="uid://bx6lgpicpfal4" path="res://scenes/Player.tscn" id="5_ahhfo"]
+[ext_resource type="Script" path="res://testObjects/InputTest.cs" id="7_m3jb3"]
+[ext_resource type="Script" path="res://scenes/WorldManager.cs" id="8_iu5ei"]
 
 [node name="Root" type="Node"]
 
@@ -16,9 +21,24 @@ offset_bottom = 56.0
 script = ExtResource("2_0ytrm")
 
 [node name="Logger" type="Node" parent="."]
-script = ExtResource("3_db3ib")
+script = ExtResource("3_c4nns")
+
+[node name="PlayerManager" type="Node" parent="."]
+script = ExtResource("4_1dugc")
+packedPlayer = ExtResource("5_ahhfo")
+
+[node name="InputTest" type="Node" parent="."]
+script = ExtResource("7_m3jb3")
+
+[node name="WorldManager" type="Node" parent="."]
+script = ExtResource("8_iu5ei")
+world = ExtResource("4_jt8d7")
 
 [connection signal="HostButtonDown" from="LoginScreen" to="MultiplayerManager" method="OnLoginScreenHostButtonDown"]
 [connection signal="JoinButtonDown" from="LoginScreen" to="MultiplayerManager" method="OnLoginScreenJoinButtonDown"]
-[connection signal="HostedGame" from="MultiplayerManager" to="Logger" method="OnHostedGame"]
-[connection signal="NewPlayerJoined" from="MultiplayerManager" to="Logger" method="OnNewPlayerJoined"]
+[connection signal="ConnectedToServer" from="MultiplayerManager" to="Logger" method="OnConnectedToServer"]
+[connection signal="ConnectedToServer" from="MultiplayerManager" to="WorldManager" method="OnConnectedToServer"]
+[connection signal="PeerConnected" from="MultiplayerManager" to="Logger" method="OnPeerConnected"]
+[connection signal="PeerConnected" from="MultiplayerManager" to="WorldManager" method="OnPeerConnected"]
+[connection signal="StartedServer" from="MultiplayerManager" to="Logger" method="OnStartedServer"]
+[connection signal="StartedServer" from="MultiplayerManager" to="WorldManager" method="OnStartedServer"]
