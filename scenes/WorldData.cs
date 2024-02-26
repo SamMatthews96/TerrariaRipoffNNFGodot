@@ -8,7 +8,6 @@ public partial class WorldData : Node {
 
 	[Export] private BlockType testBlockType;
 	
-	// Called when the node enters the scene tree for the first time.
 	public override void _Ready() {
 		savedBlocks = new SavedBlock[worldWidth, worldHeight];
 		for (int x = 0; x < worldWidth; x++) {
