@@ -3,11 +3,10 @@
 [ext_resource type="Script" path="res://scripts/Player.cs" id="1_8yy3a"]
 [ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://icon.svg" id="1_unqtr"]
 
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_26t5m"]
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_3bb8o"]
 properties/0/path = NodePath(".:position")
 properties/0/spawn = true
-properties/0/sync = true
-properties/0/watch = false
+properties/0/replication_mode = 1
 
 [node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("multiplayerSynchronizer")]
 script = ExtResource("1_8yy3a")
@@ -18,4 +17,4 @@ scale = Vector2(0.335, 0.72)
 texture = ExtResource("1_unqtr")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
-replication_config = SubResource("SceneReplicationConfig_26t5m")
+replication_config = SubResource("SceneReplicationConfig_3bb8o")

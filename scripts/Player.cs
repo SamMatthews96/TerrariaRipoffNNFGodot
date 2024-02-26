@@ -9,16 +9,9 @@ public partial class Player : CharacterBody2D {
 	[Export] private MultiplayerSynchronizer multiplayerSynchronizer;
 	[Export] private float speed = 300f;
 
-	private int horizontalInput = 0;
+	private int horizontalInput;
 	
-	public static Player LocalPlayer { get; private set; }
-
 	public override void _Ready() {
-		multiplayerSynchronizer.SetMultiplayerAuthority(int.Parse(Name));
-		if (Multiplayer.GetUniqueId() == int.Parse(Name)) {
-			LocalPlayer = this;
-			InputTest.Instance.HorizontalInputChanged += input => horizontalInput = input;
-		}
 	}
 
 	public override void _Process(double delta) {

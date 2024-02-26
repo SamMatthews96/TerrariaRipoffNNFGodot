@@ -4,16 +4,24 @@ using TerrariaRipoffNNF.scripts;
 
 public partial class PlayerManager : Node {
 	[Export] private PackedScene packedPlayer;
-	
-	public static PlayerManager Instance { get; set; }
+	[Export] private MultiplayerSpawner spawner;
 
 	public override void _Ready() {
-		Instance = this;
+		int thisPlayerId = Multiplayer.GetUniqueId();
+		GD.Print("PlayerManager " + thisPlayerId);
+		spawner.SetMultiplayerAuthority(thisPlayerId);
 	}
-	
-	public void SpawnPlayer(int playerId) {
+
+	private void OnConnectedToServer() {
 		Player newPlayer = packedPlayer.Instantiate<Player>();
-		newPlayer.Name = playerId.ToString();
+		int playerId = Multiplayer.GetUniqueId();
+		newPlayer.Name = new StringName(playerId.ToString());
+		AddChild(newPlayer);
+	}
+
+	private void OnStartedServer() {
+		Player newPlayer = packedPlayer.Instantiate<Player>();
+		newPlayer.Name = new StringName("1");
 		AddChild(newPlayer);
 	}
 	

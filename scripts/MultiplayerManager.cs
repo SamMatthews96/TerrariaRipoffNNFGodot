@@ -12,16 +12,16 @@ public partial class MultiplayerManager : Node {
     public delegate void StartedServerEventHandler();
 
     [Signal]
-    public delegate void ConnectedToServerEventHandler();
-
-    [Signal]
-    public delegate void ConnectionFailedEventHandler();
-
-    [Signal]
     public delegate void PeerConnectedEventHandler(long playerId);
 
     [Signal]
     public delegate void PeerDisconnectedEventHandler(long playerId);
+
+    [Signal]
+    public delegate void ConnectedToServerEventHandler();
+
+    [Signal]
+    public delegate void ConnectionFailedEventHandler();
 
     public override void _Ready() {
         Multiplayer.PeerConnected += id => EmitSignal(SignalName.PeerConnected, id);
@@ -54,4 +54,10 @@ public partial class MultiplayerManager : Node {
         peer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
         Multiplayer.MultiplayerPeer = peer;
     }
+
+    // [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    // private void ClientReceiveServerData() {
+    //     
+    //     // EmitSignal(SignalName.ReceivedServerData, serverData);
+    // }
 }

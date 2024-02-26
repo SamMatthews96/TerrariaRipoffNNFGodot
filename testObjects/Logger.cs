@@ -17,5 +17,9 @@ public partial class Logger : Node {
 		int thisPlayerId = Multiplayer.MultiplayerPeer.GetUniqueId();
 		GD.Print(thisPlayerId + " joined by " + playerId);
 	}
+
+	private void OnServerPeerConnected(int playerId) {
+		GD.Print("Server joined by " + playerId);
+	}
 	
 }

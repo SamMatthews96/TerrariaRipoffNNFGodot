@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="BlockType" load_steps=3 format=3 uid="uid://c75w5w4os8k5o"]
+
+[ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://icon.svg" id="1_57q38"]
+[ext_resource type="Script" path="res://Resources/Scripts/BlockType.cs" id="1_puber"]
+
+[resource]
+script = ExtResource("1_puber")
+Weight = 5.0
+TensileStrength = 20.0
+MaxHealth = 100.0
+Texture = ExtResource("1_57q38")
