@@ -37,12 +37,10 @@ public partial class PlayerManager : Node {
 		newPlayer.Position = new Vector2(newX * blockSize, newY * blockSize);
 		AddChild(newPlayer);
 		Rpc(nameof(OnPlayerCreatedOnServer));
-		GD.Print("run rpc");
 	}
 
 	[Rpc(CallLocal = true)]
 	private void OnPlayerCreatedOnServer() {
-		GD.Print("OnPlayerCreatedOnServer");
 		EmitSignal(SignalName.CreatedPlayerOnServer);
 	}
 

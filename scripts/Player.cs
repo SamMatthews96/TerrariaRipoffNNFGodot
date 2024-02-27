@@ -26,8 +26,8 @@ public partial class Player : CharacterBody2D {
         }
 
         PlayerManager.Instance.CreatedPlayerOnServer += () => {
+            // instead of setting authority on signal, set the location remotely from the server?
             multiplayerSynchronizer.SetMultiplayerAuthority(peerId);
-            Print("set auth" + peerId);
         };
     }
     
