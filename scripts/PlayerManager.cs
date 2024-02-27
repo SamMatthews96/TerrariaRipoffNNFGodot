@@ -30,9 +30,8 @@ public partial class PlayerManager : Node {
 
         int xSpawnCoords = WorldManager.Instance.ServerData.SpawnX;
         int ySpawnCoords = WorldManager.Instance.ServerData.SpawnY;
+        GD.Print(ySpawnCoords);
 
-        // this will probably need to be done a lot, where to put it
-        // newPlayer.Position = new Vector2(newX * blockSize, newY * blockSize);
         AddChild(newPlayer);
         Rpc(nameof(OnPlayerCreatedOnServer), xSpawnCoords, ySpawnCoords);
     }

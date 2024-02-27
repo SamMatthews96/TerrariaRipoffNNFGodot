@@ -22,6 +22,7 @@ public partial class Player : CharacterBody2D {
     public override void _EnterTree() {
         int peerId = Name.ToString()!.ToInt();
         multiplayerSynchronizer.SetMultiplayerAuthority(peerId);
+        Print("_EnterTree");
 
         if (peerId == Multiplayer.GetUniqueId()) {
             LocalPlayer = this;
@@ -30,10 +31,7 @@ public partial class Player : CharacterBody2D {
 
         PlayerManager.Instance.CreatedPlayerOnServer += (xSpawnCoords, ySpawnCoords) => {
             int blockSize = WorldManager.Instance.BlockSize;
-            
-            // reconsider this, it requires duplication everywhere
             Position = new Vector2(xSpawnCoords * blockSize, ySpawnCoords * blockSize);
-            
             EmitSignal(SignalName.LocalPlayerEnteredLocation, XCoords, YCoords);
         };
     }
