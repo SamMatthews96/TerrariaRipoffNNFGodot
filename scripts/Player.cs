@@ -18,17 +18,19 @@ public partial class Player : CharacterBody2D {
 
     public override void _EnterTree() {
         int peerId = Name.ToString()!.ToInt();
-
+        multiplayerSynchronizer.SetMultiplayerAuthority(peerId);
+        
         if (peerId == Multiplayer.GetUniqueId()) {
             LocalPlayer = this;
             InputManager.Instance.HorizontalInputChanged += newInput => horizontalInput = newInput;
-            EmitSignal(SignalName.LocalPlayerEnteredLocation, 0, 0);
+            // EmitSignal(SignalName.LocalPlayerEnteredLocation, 0, 0);
         }
 
-        PlayerManager.Instance.CreatedPlayerOnServer += () => {
-            // instead of setting authority on signal, set the location remotely from the server?
-            multiplayerSynchronizer.SetMultiplayerAuthority(peerId);
+        PlayerManager.Instance.CreatedPlayerOnServer += (xSpawnCoords, ySpawnCoords) => {
+            int blockSize = WorldManager.Instance.BlockSize;
+            Position = new Vector2(xSpawnCoords * blockSize, ySpawnCoords * blockSize);
         };
+
     }
     
     
@@ -38,6 +40,7 @@ public partial class Player : CharacterBody2D {
         if (this != LocalPlayer) return;
 
         Position += new Vector2((float)delta * speed * horizontalInput, 0);
+        
     }
 }
 
