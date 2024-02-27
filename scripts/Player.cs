@@ -18,7 +18,6 @@ public partial class Player : CharacterBody2D {
 
     public override void _EnterTree() {
         int peerId = Name.ToString()!.ToInt();
-        Print(Multiplayer.GetUniqueId() +  " set multiplayer authority on " + peerId);
 
         if (peerId == Multiplayer.GetUniqueId()) {
             LocalPlayer = this;
@@ -26,8 +25,9 @@ public partial class Player : CharacterBody2D {
             EmitSignal(SignalName.LocalPlayerEnteredLocation, 0, 0);
         }
 
-        PlayerManager.Instance.CreatedPlayerOnServer += (x, y) => {
+        PlayerManager.Instance.CreatedPlayerOnServer += () => {
             multiplayerSynchronizer.SetMultiplayerAuthority(peerId);
+            Print("set auth" + peerId);
         };
     }
     

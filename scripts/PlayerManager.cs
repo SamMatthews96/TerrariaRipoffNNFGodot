@@ -8,7 +8,7 @@ public partial class PlayerManager : Node {
 	[Export] private PackedScene packedPlayer;
 
 	[Signal]
-	public delegate void CreatedPlayerOnServerEventHandler(int x, int y);
+	public delegate void CreatedPlayerOnServerEventHandler();
 
 
 	public override void _Ready() {
@@ -36,9 +36,15 @@ public partial class PlayerManager : Node {
 		// this will probably need to be done a lot, where to put it
 		newPlayer.Position = new Vector2(newX * blockSize, newY * blockSize);
 		AddChild(newPlayer);
-		EmitSignal(SignalName.CreatedPlayerOnServer, newX * blockSize, newY * blockSize);
+		Rpc(nameof(OnPlayerCreatedOnServer));
+		GD.Print("run rpc");
 	}
-	
-	
-	
+
+	[Rpc(CallLocal = true)]
+	private void OnPlayerCreatedOnServer() {
+		GD.Print("OnPlayerCreatedOnServer");
+		EmitSignal(SignalName.CreatedPlayerOnServer);
+	}
+
+
 }
