@@ -33,7 +33,8 @@ public partial class PlayerManager : Node {
         GD.Print(ySpawnCoords);
 
         AddChild(newPlayer);
-        Rpc(nameof(OnPlayerCreatedOnServer), xSpawnCoords, ySpawnCoords);
+        RpcId(peerId,nameof(OnPlayerCreatedOnServer),
+            xSpawnCoords, ySpawnCoords);
     }
 
     [Rpc(CallLocal = true)]
