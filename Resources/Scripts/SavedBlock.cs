@@ -6,9 +6,13 @@ public partial class SavedBlock : Resource {
     public int XPosition { get; private set; }
     public int YPosition { get; private set; }
 
-    public SavedBlock(BlockType blockType) {
+    public SavedBlock(BlockType blockType, int xPosition, int yPosition) {
         BlockType = blockType;
+        XPosition = xPosition;
+        YPosition = yPosition;
     }
+    
+    
     
     /*
      *  when savedBlock updated, (created, deleted, updated health)
@@ -28,10 +32,5 @@ public partial class SavedBlock : Resource {
      *      rpc server: validate, delete SavedBlock, emit savedBlockDeleted
      *  server is source of truth
      *
-     *  when Player Spawned
-     *  when Player Moved
-     *      emit event with position
-     *      Rpc that player, send server data: list of SavedBlocks,
-     *      On retrieval: check existing blocks nearby, spawn as appropriate
      */
 }

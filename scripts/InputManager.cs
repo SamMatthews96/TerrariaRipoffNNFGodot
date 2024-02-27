@@ -4,11 +4,14 @@ using System;
 public partial class InputManager : Node {
     private const string RUN_LEFT = "runLeft";
     private const string RUN_RIGHT = "runRight";
+    
+    public static InputManager Instance { get; private set; }
 
     [Signal]
     public delegate void HorizontalInputChangedEventHandler(int horizontalInput);
 
     public override void _Ready() {
+        Instance = this;
     }
 
     public override void _Process(double delta) {
@@ -33,6 +36,5 @@ public partial class InputManager : Node {
         } else {
             EmitSignal(SignalName.HorizontalInputChanged, 0);
         }
-
     }
 }

@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://djhvb3tbxby6h"]
+
+[ext_resource type="Script" path="res://scripts/ServerData.cs" id="1_73r4r"]
+[ext_resource type="Resource" uid="uid://c75w5w4os8k5o" path="res://Resources/BlockType/Stone.tres" id="2_p12ru"]
+
+[node name="ServerData" type="Node"]
+script = ExtResource("1_73r4r")
+WorldWidth = 10
+WorldHeight = 10
+SpawnX = 5
+SpawnY = 5
+testBlockType = ExtResource("2_p12ru")

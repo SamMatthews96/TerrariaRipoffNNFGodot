@@ -5,22 +5,49 @@ using static Godot.GD;
 namespace TerrariaRipoffNNF.scripts;
 
 public partial class Player : CharacterBody2D {
-	
-	[Export] private MultiplayerSynchronizer multiplayerSynchronizer;
-	[Export] private float speed = 300f;
+    private static Player LocalPlayer { get; set; }
+    
+    [Export] private MultiplayerSynchronizer multiplayerSynchronizer;
+    [Export] private float speed = 300f;
 
-	private int horizontalInput;
-	
-	public override void _Ready() {
-	}
+    [Signal]
+    public delegate void LocalPlayerEnteredLocationEventHandler(
+        int xCoords, int yCoords, int prevXCoords = int.MaxValue, int prevYCoords = int.MaxValue);
 
-	public override void _Process(double delta) {
-		Position += new Vector2((float)delta * speed * horizontalInput, 0);
-	}
+    private int horizontalInput;
 
-	
+    public override void _EnterTree() {
+        int peerId = Name.ToString()!.ToInt();
+        Print(Multiplayer.GetUniqueId() +  " set multiplayer authority on " + peerId);
 
-	
-	
-	
+        if (peerId == Multiplayer.GetUniqueId()) {
+            LocalPlayer = this;
+            InputManager.Instance.HorizontalInputChanged += newInput => horizontalInput = newInput;
+            EmitSignal(SignalName.LocalPlayerEnteredLocation, 0, 0);
+        }
+
+        PlayerManager.Instance.CreatedPlayerOnServer += (x, y) => {
+            multiplayerSynchronizer.SetMultiplayerAuthority(peerId);
+        };
+    }
+    
+    
+
+
+    public override void _Process(double delta) {
+        if (this != LocalPlayer) return;
+
+        Position += new Vector2((float)delta * speed * horizontalInput, 0);
+    }
 }
+
+/*
+
+
+ *  when Player Spawned
+ *  when Player Moved
+ *      emit event with position
+ *      Rpc that player, send server data: list of SavedBlocks,
+ *      On retrieval: check existing blocks nearby, spawn as appropriate
+
+*/
