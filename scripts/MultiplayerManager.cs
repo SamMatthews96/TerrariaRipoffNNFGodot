@@ -7,6 +7,7 @@ public partial class MultiplayerManager : Node {
     [Export] private int port = 8910;
     [Export] private string address = "127.0.0.1";
     private ENetMultiplayerPeer peer;
+    public const int HOST_ID = 1;
 
     [Signal]
     public delegate void StartedServerEventHandler();

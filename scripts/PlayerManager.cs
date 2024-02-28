@@ -16,7 +16,7 @@ public partial class PlayerManager : Node {
 
     private void OnConnectedToServer() {
         int playerId = Multiplayer.GetUniqueId();
-        RpcId(1, nameof(CreatePlayerOnServer), playerId);
+        RpcId(MultiplayerManager.HOST_ID, nameof(CreatePlayerOnServer), playerId);
     }
 
     private void OnCreatedServerWorldManager() {

@@ -23,25 +23,42 @@ public partial class WorldManager : Node {
 		AddChild(ServerData);
 		EmitSignal(SignalName.CreatedServerWorldManager);
 	}
-
-	private void OnCreatedLocalPlayer(int xSpawnCoords, int ySpawnCoords) {
-		// spawn active blocks from nearby
-		GD.Print("OnCreatedLocalPlayer");
-		Player.LocalPlayer.LocalPlayerMoved +=
-			(xCoords, yCoords, prevXCoords, prevYCoords) => {
-				GD.Print("LocalPlayerMoved");
-				// spawn / despawn active blocks from nearby
-			};
-	}
-	
 	
 	/*
 	 * player.LocalPlayerEnteredLocation += (x,y,x,y) => {
 	 *		delete active blocks that are out of range
 	 *		get server info of active blocks within range
-	 *		
 	 * }
-	 * 
 	 */
+
+	private void OnCreatedLocalPlayer(int xSpawnCoords, int ySpawnCoords) {
+		Player.LocalPlayer.LocalPlayerMoved += OnLocalPlayerMoved;
+		int peerId = Multiplayer.GetUniqueId();
+
+		// spawn active blocks from nearby
+		RpcId(MultiplayerManager.HOST_ID, nameof(SendNewBlocksToPeer),
+			peerId,xSpawnCoords,ySpawnCoords);
+	}
+
+	private void OnLocalPlayerMoved(int xCoords, int yCoords, int prevXCoords, int prevYCoords) {
+		int peerId = Multiplayer.GetUniqueId();
+		// spawn + despawn active blocks from nearby
+		RpcId(MultiplayerManager.HOST_ID, nameof(SendNewBlocksToPeer),
+			peerId,xCoords,yCoords,prevXCoords,prevYCoords);
+	}
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+	private void SendNewBlocksToPeer(int peerId,
+		int xCoords, int yCoords, int prevXCoords = int.MaxValue, int prevYCoords = int.MaxValue) {
+		// get the new blocks
+		
+
+		RpcId(peerId, nameof(ReceiveNewBlocksFromServer));
+	}
+
+	[Rpc(CallLocal = true)]
+	private void ReceiveNewBlocksFromServer() {
+		
+	}
 	
 }
