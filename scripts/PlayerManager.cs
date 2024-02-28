@@ -8,7 +8,7 @@ public partial class PlayerManager : Node {
     [Export] private PackedScene packedPlayer;
 
     [Signal]
-    public delegate void CreatedPlayerOnServerEventHandler(int xSpawnCoords, int ySpawnCoords);
+    public delegate void CreatedLocalPlayerEventHandler(int xSpawnCoords, int ySpawnCoords);
 
     public override void _Ready() {
         Instance = this;
@@ -30,15 +30,14 @@ public partial class PlayerManager : Node {
 
         int xSpawnCoords = WorldManager.Instance.ServerData.SpawnX;
         int ySpawnCoords = WorldManager.Instance.ServerData.SpawnY;
-        GD.Print(ySpawnCoords);
 
         AddChild(newPlayer);
-        RpcId(peerId,nameof(OnPlayerCreatedOnServer),
+        RpcId(peerId,nameof(OnPlayerCreatedOnServer), 
             xSpawnCoords, ySpawnCoords);
     }
 
     [Rpc(CallLocal = true)]
     private void OnPlayerCreatedOnServer(int xSpawnCoords, int ySpawnCoords) {
-        EmitSignal(SignalName.CreatedPlayerOnServer, xSpawnCoords, ySpawnCoords);
+        EmitSignal(SignalName.CreatedLocalPlayer, xSpawnCoords, ySpawnCoords);
     }
 }

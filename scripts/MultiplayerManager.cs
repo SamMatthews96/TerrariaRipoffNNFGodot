@@ -54,10 +54,4 @@ public partial class MultiplayerManager : Node {
         peer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
         Multiplayer.MultiplayerPeer = peer;
     }
-
-    // [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
-    // private void ClientReceiveServerData() {
-    //     
-    //     // EmitSignal(SignalName.ReceivedServerData, serverData);
-    // }
 }
