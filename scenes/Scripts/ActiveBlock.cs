@@ -1,19 +1,22 @@
+using System;
 using Godot;
+using TerrariaRipoffNNF.Resources.Scripts;
 
 namespace TerrariaRipoffNNF.Scenes.Scripts; 
 
 public partial class ActiveBlock : Node2D {
+	[Export] private static PackedScene packedActiveBlock = 
+		ResourceLoader.Load<PackedScene>("res://Scenes/ActiveBlock.tscn");
+
+	public static ActiveBlock Instantiate(BlockType blockType, Vector2 position) {
+		ActiveBlock newBlock = packedActiveBlock.Instantiate<ActiveBlock>();
+		newBlock.Position = position;
+		newBlock.blockType = blockType;
+		newBlock.sprite.Texture = blockType.Texture;
+		return newBlock;
+	}
 
 	[Export] private Sprite2D sprite;
-	public TerrariaRipoffNNF.Resources.Scripts.BlockType BlockType { get; set; }
-
-	public override void _Ready() {
-		sprite.Texture = BlockType.Texture;
-	}
-
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
-	{
-		
-	}
+	private BlockType blockType;
+	
 }

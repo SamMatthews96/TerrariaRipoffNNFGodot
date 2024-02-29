@@ -12,7 +12,6 @@ public partial class WorldManager : Node {
     public delegate void CreatedServerWorldManagerEventHandler();
 
     [Export] private PackedScene packedServerData;
-    [Export] private PackedScene packedActiveBlock;
     [Export] public int BlockSize { get; private set; } = 40;
     [Export] public int ActiveBlockViewDistance { get; private set; } = 10;
 
@@ -49,19 +48,13 @@ public partial class WorldManager : Node {
         int yStart = Math.Max(0, yCoords - ActiveBlockViewDistance);
         int yEnd = Math.Min(ServerData.WorldHeight - 1, yCoords + ActiveBlockViewDistance);
 
-        List<(int x, int y)> coordinates = new();
+        Array savedBlocks = new();
         for (int x = xStart; x < xEnd; x++) {
             for (int y = yStart; y < yEnd; y++) {
-                coordinates.Add((x, y));
-                
-            }
-        }
-
-        Array savedBlocks = new();
-        foreach ((int x, int y) in coordinates) {
-            var block = ServerData.GetSavedBlock(x, y);
-            if (block is not null) {
-                savedBlocks.Add(block.Serialize());
+                var block = ServerData.GetSavedBlock(x, y);
+                if (block is not null) {
+                    savedBlocks.Add(block.Serialize());
+                }
             }
         }
 
@@ -85,9 +78,8 @@ public partial class WorldManager : Node {
     }
 
     private void CreateActiveBlock(BlockType blockType, int xPosition, int yPosition) {
-        ActiveBlock newBlock = packedActiveBlock.Instantiate<ActiveBlock>();
-        newBlock.Position = new Vector2(xPosition * BlockSize, yPosition * BlockSize);
-        newBlock.BlockType = blockType;
+        Vector2 position = new Vector2(xPosition * BlockSize, yPosition * BlockSize);
+        ActiveBlock newBlock = ActiveBlock.Instantiate(blockType, position);
         AddChild(newBlock);
     }
 }

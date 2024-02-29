@@ -8,9 +8,9 @@ properties/0/path = NodePath(".:position")
 properties/0/spawn = true
 properties/0/replication_mode = 1
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("multiplayerSynchronizer")]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("positionSynchronizer")]
 script = ExtResource("1_8yy3a")
-multiplayerSynchronizer = NodePath("PositionSync")
+positionSynchronizer = NodePath("PositionSync")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.335, 0.72)
