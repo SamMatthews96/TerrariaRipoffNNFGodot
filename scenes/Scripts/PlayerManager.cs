@@ -16,7 +16,6 @@ public partial class PlayerManager : Node {
 
     private void OnConnectedToServer() {
         int peerId = Multiplayer.GetUniqueId();
-        GD.Print("connected To Server");
         RpcId(MultiplayerManager.HOST_ID, nameof(CreatePlayerOnServer), peerId);
     }
 
@@ -39,8 +38,6 @@ public partial class PlayerManager : Node {
 
     [Rpc(CallLocal = true)]
     private void OnPlayerCreatedOnServer(int xSpawnCoords, int ySpawnCoords) {
-        GD.Print(Multiplayer.GetUniqueId() + " OnPlayerCreatedOnServer");
         EmitSignal(SignalName.CreatedLocalPlayer, xSpawnCoords, ySpawnCoords);
-        GD.Print(Multiplayer.GetUniqueId() + " OnPlayerCreatedOnServer");
     }
 }

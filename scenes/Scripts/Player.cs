@@ -6,7 +6,7 @@ namespace TerrariaRipoffNNF.Scenes.Scripts;
 public partial class Player : CharacterBody2D {
     public static Player LocalPlayer { get; private set; }
 
-    [Export] private MultiplayerSynchronizer multiplayerSynchronizer;
+    [Export] private MultiplayerSynchronizer positionSynchronizer;
     [Export] private float speed = 300f;
 
     private int XCoords => (int)Math.Round(Position.X / WorldManager.Instance.BlockSize);
@@ -20,9 +20,8 @@ public partial class Player : CharacterBody2D {
 
     public override void _EnterTree() {
         int peerId = Name.ToString()!.ToInt();
-        multiplayerSynchronizer.SetMultiplayerAuthority(peerId);
+        positionSynchronizer.SetMultiplayerAuthority(peerId);
         if (peerId != Multiplayer.GetUniqueId()) return;
-        GD.Print(peerId);
 
         LocalPlayer = this;
         InputManager.Instance.HorizontalInputChanged += newInput => horizontalInput = newInput;
@@ -44,11 +43,3 @@ public partial class Player : CharacterBody2D {
         }
     }
 }
-
-/*
- *  when Player Spawned
- *  when Player Moved
- *      emit event with position
- *      Rpc that player, send server data: list of SavedBlocks,
- *      On retrieval: check existing blocks nearby, spawn as appropriate
- */
