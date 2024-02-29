@@ -1,6 +1,6 @@
 using Godot;
-using System;
-using TerrariaRipoffNNF.scripts;
+
+namespace TerrariaRipoffNNF.testObjects; 
 
 public partial class Logger : Node {
 	private void OnStartedServer() {
