@@ -4,7 +4,7 @@ using TerrariaRipoffNNF.Resources.Scripts;
 
 namespace TerrariaRipoffNNF.Scenes.Scripts; 
 
-public partial class ActiveBlock : Node2D {
+public partial class ActiveBlock : StaticBody2D {
 	[Export] private static PackedScene packedActiveBlock = 
 		ResourceLoader.Load<PackedScene>("res://Scenes/ActiveBlock.tscn");
 

@@ -1,12 +1,20 @@
-[gd_scene load_steps=3 format=3 uid="uid://me8wg1m67cje"]
+[gd_scene load_steps=4 format=3 uid="uid://me8wg1m67cje"]
 
 [ext_resource type="Script" path="res://Scenes/Scripts/ActiveBlock.cs" id="1_e1mos"]
 [ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://testObjects/icon.svg" id="2_nw135"]
 
-[node name="ActiveBlock" type="Node2D" node_paths=PackedStringArray("sprite")]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_cnqwx"]
+size = Vector2(32, 32)
+
+[node name="ActiveBlock" type="StaticBody2D" node_paths=PackedStringArray("sprite")]
+collision_layer = 2
+collision_mask = 0
 script = ExtResource("1_e1mos")
 sprite = NodePath("Sprite2D")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.25, 0.25)
 texture = ExtResource("2_nw135")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_cnqwx")

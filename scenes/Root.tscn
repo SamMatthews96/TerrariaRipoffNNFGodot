@@ -38,6 +38,7 @@ spawn_limit = 5
 [node name="WorldManager" type="Node" parent="."]
 script = ExtResource("7_fy5pw")
 packedServerData = ExtResource("8_fc2oy")
+BlockSize = 30
 
 [connection signal="HostButtonDown" from="LoginScreen" to="MultiplayerManager" method="OnLoginScreenHostButtonDown"]
 [connection signal="JoinButtonDown" from="LoginScreen" to="MultiplayerManager" method="OnLoginScreenJoinButtonDown"]

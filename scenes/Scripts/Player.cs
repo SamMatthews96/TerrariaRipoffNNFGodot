@@ -35,11 +35,12 @@ public partial class Player : CharacterBody2D {
         if (this != LocalPlayer) return;
 
         (int previousXCoords, int previousYCoords) = (XCoords, YCoords);
-        Position += new Vector2((float)delta * speed * horizontalInput, 0);
-
+        Velocity = new Vector2(speed * horizontalInput, speed);
+        MoveAndSlide();
         if (previousXCoords != XCoords || previousYCoords != YCoords) {
             EmitSignal(SignalName.LocalPlayerMoved,
                 XCoords, YCoords, previousXCoords, previousYCoords);
         }
+         
     }
 }
