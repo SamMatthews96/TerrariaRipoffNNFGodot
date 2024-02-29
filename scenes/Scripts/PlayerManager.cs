@@ -1,6 +1,6 @@
 using Godot;
-using System.Collections.Generic;
-using TerrariaRipoffNNF.scripts;
+
+namespace TerrariaRipoffNNF.Scenes.Scripts; 
 
 public partial class PlayerManager : Node {
     public static PlayerManager Instance { get; private set; }
@@ -15,8 +15,9 @@ public partial class PlayerManager : Node {
     }
 
     private void OnConnectedToServer() {
-        int playerId = Multiplayer.GetUniqueId();
-        RpcId(MultiplayerManager.HOST_ID, nameof(CreatePlayerOnServer), playerId);
+        int peerId = Multiplayer.GetUniqueId();
+        GD.Print("connected To Server");
+        RpcId(MultiplayerManager.HOST_ID, nameof(CreatePlayerOnServer), peerId);
     }
 
     private void OnCreatedServerWorldManager() {
@@ -30,7 +31,7 @@ public partial class PlayerManager : Node {
 
         int xSpawnCoords = WorldManager.Instance.ServerData.SpawnX;
         int ySpawnCoords = WorldManager.Instance.ServerData.SpawnY;
-
+        
         AddChild(newPlayer);
         RpcId(peerId,nameof(OnPlayerCreatedOnServer), 
             xSpawnCoords, ySpawnCoords);
@@ -38,6 +39,8 @@ public partial class PlayerManager : Node {
 
     [Rpc(CallLocal = true)]
     private void OnPlayerCreatedOnServer(int xSpawnCoords, int ySpawnCoords) {
+        GD.Print(Multiplayer.GetUniqueId() + " OnPlayerCreatedOnServer");
         EmitSignal(SignalName.CreatedLocalPlayer, xSpawnCoords, ySpawnCoords);
+        GD.Print(Multiplayer.GetUniqueId() + " OnPlayerCreatedOnServer");
     }
 }

@@ -1,14 +1,14 @@
 [gd_scene load_steps=10 format=3 uid="uid://dxqeumnkw4j5p"]
 
-[ext_resource type="PackedScene" uid="uid://4c67gixp10at" path="res://scenes/LoginScreen.tscn" id="1_sp2ny"]
-[ext_resource type="Script" path="res://scripts/MultiplayerManager.cs" id="2_0ytrm"]
+[ext_resource type="PackedScene" uid="uid://4c67gixp10at" path="res://Scenes/LoginScreen.tscn" id="1_sp2ny"]
+[ext_resource type="Script" path="res://Scenes/Scripts/MultiplayerManager.cs" id="2_0ytrm"]
 [ext_resource type="Script" path="res://testObjects/Logger.cs" id="3_c4nns"]
-[ext_resource type="Script" path="res://scripts/PlayerManager.cs" id="4_1dugc"]
-[ext_resource type="PackedScene" uid="uid://bx6lgpicpfal4" path="res://scenes/Player.tscn" id="5_ahhfo"]
-[ext_resource type="Script" path="res://scripts/WorldManager.cs" id="7_fy5pw"]
-[ext_resource type="Script" path="res://scripts/InputManager.cs" id="7_m3jb3"]
-[ext_resource type="PackedScene" uid="uid://djhvb3tbxby6h" path="res://scenes/ServerData.tscn" id="8_fc2oy"]
-[ext_resource type="PackedScene" uid="uid://me8wg1m67cje" path="res://scenes/ActiveBlock.tscn" id="9_d0dfy"]
+[ext_resource type="Script" path="res://Scenes/Scripts/PlayerManager.cs" id="4_1dugc"]
+[ext_resource type="PackedScene" uid="uid://bx6lgpicpfal4" path="res://Scenes/Player.tscn" id="5_ahhfo"]
+[ext_resource type="Script" path="res://Scenes/Scripts/WorldManager.cs" id="7_fy5pw"]
+[ext_resource type="Script" path="res://Scenes/Scripts/InputManager.cs" id="7_m3jb3"]
+[ext_resource type="PackedScene" uid="uid://djhvb3tbxby6h" path="res://Scenes/ServerData.tscn" id="8_fc2oy"]
+[ext_resource type="PackedScene" uid="uid://me8wg1m67cje" path="res://Scenes/ActiveBlock.tscn" id="9_d0dfy"]
 
 [node name="Root" type="Node"]
 
@@ -32,8 +32,9 @@ script = ExtResource("4_1dugc")
 packedPlayer = ExtResource("5_ahhfo")
 
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="PlayerManager"]
-_spawnable_scenes = PackedStringArray("res://scenes/Player.tscn")
+_spawnable_scenes = PackedStringArray("res://Scenes/Player.tscn")
 spawn_path = NodePath("..")
+spawn_limit = 5
 
 [node name="WorldManager" type="Node" parent="."]
 script = ExtResource("7_fy5pw")

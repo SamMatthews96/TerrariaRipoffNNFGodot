@@ -1,5 +1,6 @@
 using Godot;
-using System;
+
+namespace TerrariaRipoffNNF.Scenes.Scripts; 
 
 public partial class InputManager : Node {
     private const string RUN_LEFT = "runLeft";

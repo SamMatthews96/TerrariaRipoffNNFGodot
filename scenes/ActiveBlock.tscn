@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://me8wg1m67cje"]
 
-[ext_resource type="Script" path="res://scripts/ActiveBlock.cs" id="1_e1mos"]
+[ext_resource type="Script" path="res://Scenes/Scripts/ActiveBlock.cs" id="1_e1mos"]
 [ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://testObjects/icon.svg" id="2_nw135"]
 
 [node name="ActiveBlock" type="Node2D" node_paths=PackedStringArray("sprite")]

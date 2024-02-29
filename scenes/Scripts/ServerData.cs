@@ -1,5 +1,7 @@
 using Godot;
-using System;
+using TerrariaRipoffNNF.Resources.Scripts;
+
+namespace TerrariaRipoffNNF.Scenes.Scripts; 
 
 public partial class ServerData : Node {
     private SavedBlock[,] savedBlocks;

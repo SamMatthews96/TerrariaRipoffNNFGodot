@@ -1,5 +1,6 @@
 using Godot;
-using System;
+
+namespace TerrariaRipoffNNF.Scenes.Scripts; 
 
 public partial class World : Node {
 	// Called when the node enters the scene tree for the first time.

@@ -2,6 +2,8 @@
 using Godot.Collections;
 using TerrariaRipoffNNF.scripts;
 
+namespace TerrariaRipoffNNF.Resources.Scripts; 
+
 [GlobalClass]
 public partial class SavedBlock : Resource, ISerializable {
     public BlockType BlockType { get; private set; }

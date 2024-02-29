@@ -1,11 +1,11 @@
 using Godot;
-using System;
+
+namespace TerrariaRipoffNNF.Scenes.Scripts; 
 
 public partial class ActiveBlock : Node2D {
 
 	[Export] private Sprite2D sprite;
-	public BlockType BlockType { get; set; }
-
+	public TerrariaRipoffNNF.Resources.Scripts.BlockType BlockType { get; set; }
 
 	public override void _Ready() {
 		sprite.Texture = BlockType.Texture;

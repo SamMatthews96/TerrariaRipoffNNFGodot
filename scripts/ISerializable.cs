@@ -1,6 +1,4 @@
-﻿using System;
-using Godot.Collections;
-
+﻿using Godot.Collections;
 
 namespace TerrariaRipoffNNF.scripts;
 

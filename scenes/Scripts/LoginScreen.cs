@@ -1,6 +1,6 @@
 using Godot;
-using System;
-using Microsoft.VisualBasic;
+
+namespace TerrariaRipoffNNF.Scenes.Scripts; 
 
 public partial class LoginScreen : Control {
 	[Signal]

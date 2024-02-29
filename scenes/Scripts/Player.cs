@@ -1,8 +1,7 @@
 using System;
 using Godot;
-using static Godot.GD;
 
-namespace TerrariaRipoffNNF.scripts;
+namespace TerrariaRipoffNNF.Scenes.Scripts;
 
 public partial class Player : CharacterBody2D {
     public static Player LocalPlayer { get; private set; }
@@ -22,9 +21,9 @@ public partial class Player : CharacterBody2D {
     public override void _EnterTree() {
         int peerId = Name.ToString()!.ToInt();
         multiplayerSynchronizer.SetMultiplayerAuthority(peerId);
-
         if (peerId != Multiplayer.GetUniqueId()) return;
-        
+        GD.Print(peerId);
+
         LocalPlayer = this;
         InputManager.Instance.HorizontalInputChanged += newInput => horizontalInput = newInput;
         PlayerManager.Instance.CreatedLocalPlayer += (xSpawnCoords, ySpawnCoords) => {

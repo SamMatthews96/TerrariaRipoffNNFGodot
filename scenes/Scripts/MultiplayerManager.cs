@@ -1,7 +1,7 @@
 using Godot;
 using static Godot.GD;
 
-namespace TerrariaRipoffNNF.scripts;
+namespace TerrariaRipoffNNF.Scenes.Scripts;
 
 public partial class MultiplayerManager : Node {
     [Export] private int port = 8910;

@@ -1,18 +1,15 @@
-using Godot;
 using System;
 using System.Collections.Generic;
-using Godot.Collections;
-using TerrariaRipoffNNF.scripts;
+using Godot;
 using Array = Godot.Collections.Array;
+using TerrariaRipoffNNF.Resources.Scripts;
+namespace TerrariaRipoffNNF.Scenes.Scripts; 
 
 public partial class WorldManager : Node {
     public static WorldManager Instance { get; private set; }
 
     [Signal]
     public delegate void CreatedServerWorldManagerEventHandler();
-
-    [Signal]
-    public delegate void CreatedActiveBlockEventHandler();
 
     [Export] private PackedScene packedServerData;
     [Export] private PackedScene packedActiveBlock;
@@ -47,19 +44,16 @@ public partial class WorldManager : Node {
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void GetSavedBlocksOnServer(int peerId, int xCoords, int yCoords) {
-        int worldWidth = ServerData.WorldWidth;
-        int worldHeight = ServerData.WorldHeight;
-
         int xStart = Math.Max(0, xCoords - ActiveBlockViewDistance);
-        int xEnd = Math.Min(worldWidth - 1, xCoords + ActiveBlockViewDistance);
+        int xEnd = Math.Min(ServerData.WorldWidth - 1, xCoords + ActiveBlockViewDistance);
         int yStart = Math.Max(0, yCoords - ActiveBlockViewDistance);
-        int yEnd = Math.Min(worldHeight - 1, yCoords + ActiveBlockViewDistance);
+        int yEnd = Math.Min(ServerData.WorldHeight - 1, yCoords + ActiveBlockViewDistance);
 
         List<(int x, int y)> coordinates = new();
-
         for (int x = xStart; x < xEnd; x++) {
             for (int y = yStart; y < yEnd; y++) {
                 coordinates.Add((x, y));
+                
             }
         }
 
