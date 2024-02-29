@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using Godot;
 using Array = Godot.Collections.Array;
 using TerrariaRipoffNNF.Resources.Scripts;
-namespace TerrariaRipoffNNF.Scenes.Scripts; 
+
+namespace TerrariaRipoffNNF.Scenes.Scripts;
 
 public partial class WorldManager : Node {
     public static WorldManager Instance { get; private set; }
@@ -16,6 +17,10 @@ public partial class WorldManager : Node {
     [Export] public int ActiveBlockViewDistance { get; private set; } = 10;
 
     public ServerData ServerData { get; private set; }
+
+    private int worldWidth;
+    private int worldHeight;
+    private ActiveBlock[,] activeBlocks;
 
     public override void _Ready() {
         Instance = this;
@@ -30,44 +35,85 @@ public partial class WorldManager : Node {
     private void OnCreatedLocalPlayer(int xSpawnCoords, int ySpawnCoords) {
         Player.LocalPlayer.LocalPlayerMoved += OnLocalPlayerMoved;
         int peerId = Multiplayer.GetUniqueId();
-        RpcId(MultiplayerManager.HOST_ID, nameof(GetSavedBlocksOnServer),
+        RpcId(MultiplayerManager.HOST_ID, nameof(ServerSendSavedBlocksOnSpawn),
             peerId, xSpawnCoords, ySpawnCoords);
     }
 
-    private void OnLocalPlayerMoved(int xCoords, int yCoords, int prevXCoords, int prevYCoords) {
+    private void OnLocalPlayerMoved(
+        int newXCoordinate, int newYCoordinate, int oldXCoordinate, int oldYCoordinate) {
         int peerId = Multiplayer.GetUniqueId();
-        // @todo delete activeBlocks that are out of range
-        // RpcId(MultiplayerManager.HOST_ID, nameof(GetSavedBlocksOnServer),
-        //     peerId, xCoords, yCoords, prevXCoords, prevYCoords);
+        RpcId(MultiplayerManager.HOST_ID, nameof(ServerSendSavedBlocksOnMove),
+            peerId, newXCoordinate, newYCoordinate, oldXCoordinate, oldYCoordinate);
+        DeleteActiveBlocksInRegion(newXCoordinate, newYCoordinate, oldXCoordinate, oldYCoordinate);
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    private void GetSavedBlocksOnServer(int peerId, int xCoords, int yCoords) {
-        int xStart = Math.Max(0, xCoords - ActiveBlockViewDistance);
-        int xEnd = Math.Min(ServerData.WorldWidth - 1, xCoords + ActiveBlockViewDistance);
-        int yStart = Math.Max(0, yCoords - ActiveBlockViewDistance);
-        int yEnd = Math.Min(ServerData.WorldHeight - 1, yCoords + ActiveBlockViewDistance);
+    private void ServerSendSavedBlocksOnSpawn(int peerId, int xCoordinate, int yCoordinate) {
+        worldWidth = ServerData.WorldWidth;
+        worldHeight = ServerData.WorldHeight;
+        
+        (int left, int right, int top, int bottom) = GetRegionBoundary(xCoordinate, yCoordinate);
 
-        Array savedBlocks = new();
-        for (int x = xStart; x < xEnd; x++) {
-            for (int y = yStart; y < yEnd; y++) {
+        Array savedBlocksSerialized = new();
+        for (int x = left; x < right; x++) {
+            for (int y = top; y < bottom; y++) {
                 var block = ServerData.GetSavedBlock(x, y);
                 if (block is not null) {
-                    savedBlocks.Add(block.Serialize());
+                    savedBlocksSerialized.Add(block.Serialize());
                 }
             }
         }
 
-        RpcId(peerId, nameof(CreateActiveBlocksOnPeer), savedBlocks);
+        RpcId(peerId, nameof(PeerCreateWorld),
+            ServerData.WorldWidth, ServerData.WorldHeight, savedBlocksSerialized);
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+    private void ServerSendSavedBlocksOnMove(
+        int peerId, int newXCoordinate, int newYCoordinate, int lastXCoordinate, int lastYCoordinate) {
+        (int newLeft, int newRight, int newTop, int newBottom) =
+            GetRegionBoundary(newXCoordinate, newYCoordinate);
+
+        Array savedBlocksSerialized = new();
+        for (int x = newLeft; x < newRight; x++) {
+            for (int y = newTop; y < newBottom; y++) {
+                if (Math.Abs(lastXCoordinate - x) < ActiveBlockViewDistance &&
+                    Math.Abs(lastYCoordinate - y) < ActiveBlockViewDistance)
+                    continue;
+
+                var block = ServerData.GetSavedBlock(x, y);
+                if (block is not null) {
+                    savedBlocksSerialized.Add(block.Serialize());
+                }
+            }
+        }
+
+        RpcId(peerId, nameof(PeerCreateActiveBlocks), savedBlocksSerialized);
+    }
+
+    private (int xStart, int xEnd, int yStart, int yEnd) GetRegionBoundary(int xCoord, int yCoord) {
+        int xStart = Math.Max(0, xCoord - ActiveBlockViewDistance);
+        int xEnd = Math.Min(worldWidth - 1, xCoord + ActiveBlockViewDistance);
+        int yStart = Math.Max(0, yCoord - ActiveBlockViewDistance);
+        int yEnd = Math.Min(worldHeight - 1, yCoord + ActiveBlockViewDistance);
+        return (xStart, xEnd, yStart, yEnd);
     }
 
     [Rpc(CallLocal = true)]
-    private void CreateActiveBlocksOnPeer(Array array) {
+    private void PeerCreateWorld(int serverWorldWidth, int serverWorldHeight, Array savedBlocksSerialized) {
+        worldWidth = serverWorldWidth;
+        worldHeight = serverWorldHeight;
+        activeBlocks = new ActiveBlock[serverWorldWidth, serverWorldHeight];
+        PeerCreateActiveBlocks(savedBlocksSerialized);
+    }
+
+    [Rpc(CallLocal = true)]
+    private void PeerCreateActiveBlocks(Array savedBlocksSerialized) {
         try {
-            foreach (Godot.Collections.Dictionary<string, string> dic in array) {
-                int xPosition = dic["XPosition"].ToInt();
-                int yPosition = dic["YPosition"].ToInt();
-                BlockType blockTypeId = (BlockType)InstanceFromId(ulong.Parse(dic["BlockTypeId"]));
+            foreach (Godot.Collections.Dictionary<string, string> blockSerialized in savedBlocksSerialized) {
+                int xPosition = blockSerialized["XPosition"].ToInt();
+                int yPosition = blockSerialized["YPosition"].ToInt();
+                BlockType blockTypeId = (BlockType)InstanceFromId(ulong.Parse(blockSerialized["BlockTypeId"]));
                 CreateActiveBlock(blockTypeId, xPosition, yPosition);
             }
         }
@@ -78,8 +124,30 @@ public partial class WorldManager : Node {
     }
 
     private void CreateActiveBlock(BlockType blockType, int xPosition, int yPosition) {
+        if (activeBlocks[xPosition, yPosition] is not null) return;
+        
         Vector2 position = new Vector2(xPosition * BlockSize, yPosition * BlockSize);
         ActiveBlock newBlock = ActiveBlock.Instantiate(blockType, position);
+        activeBlocks[xPosition, yPosition] = newBlock;
         AddChild(newBlock);
+    }
+
+    private void DeleteActiveBlocksInRegion(
+        int newXCoordinate, int newYCoordinate, int oldXCoordinate, int oldYCoordinate) {
+        (int oldLeft, int oldRight, int oldTop, int oldBottom) =
+            GetRegionBoundary(oldXCoordinate, oldYCoordinate);
+        
+        for (int x = oldLeft; x < oldRight; x++) {
+            for (int y = oldTop; y < oldBottom; y++) {
+                if (Math.Abs(newXCoordinate - x) < ActiveBlockViewDistance &&
+                    Math.Abs(newYCoordinate - y) < ActiveBlockViewDistance)
+                    continue;
+                ActiveBlock activeBlock = activeBlocks[x, y];
+                if (activeBlock is null) continue;
+                
+                activeBlock.QueueFree();
+                activeBlocks[x, y] = null;
+            }
+        }
     }
 }
