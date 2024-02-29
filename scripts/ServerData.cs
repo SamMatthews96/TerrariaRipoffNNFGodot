@@ -15,9 +15,6 @@ public partial class ServerData : Node {
         for (int x = 0; x < WorldWidth; x++) {
             savedBlocks[x, 6] = new SavedBlock(testBlockType, x, 6);
         }
-        savedBlocks[0, 0] = new SavedBlock(testBlockType, 0, 0);
-        savedBlocks[1, 1] = new SavedBlock(testBlockType, 1, 1);
-        savedBlocks[1, 0] = new SavedBlock(testBlockType, 1, 0);
 
     }
 

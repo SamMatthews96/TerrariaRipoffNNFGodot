@@ -45,9 +45,6 @@ public partial class WorldManager : Node {
         //     peerId, xCoords, yCoords, prevXCoords, prevYCoords);
     }
 
-
-    // how to format the savedBlocks data when sending by RPC
-    // savedBlock: Resource, check the MustBeVariant tag
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void GetSavedBlocksOnServer(int peerId, int xCoords, int yCoords) {
         int worldWidth = ServerData.WorldWidth;
@@ -79,8 +76,6 @@ public partial class WorldManager : Node {
 
     [Rpc(CallLocal = true)]
     private void CreateActiveBlocksOnPeer(Array array) {
-        // BlockType block = Serializer.Deserialize<BlockType>(y[0]);
-        // GD.Print(block.Weight);
         try {
             foreach (Godot.Collections.Dictionary<string, string> dic in array) {
                 int xPosition = dic["XPosition"].ToInt();

@@ -5,8 +5,8 @@
 
 [node name="ServerData" type="Node"]
 script = ExtResource("1_73r4r")
-WorldWidth = 10
-WorldHeight = 10
+WorldWidth = 50
+WorldHeight = 50
 SpawnX = 5
 SpawnY = 5
 testBlockType = ExtResource("2_p12ru")
