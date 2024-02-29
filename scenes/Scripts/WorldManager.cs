@@ -32,6 +32,22 @@ public partial class WorldManager : Node {
         EmitSignal(SignalName.CreatedServerWorldManager);
     }
 
+
+    private void OnCreatedLocalPlayer(int xSpawnCoords, int ySpawnCoords) {
+        Player.LocalPlayer.LocalPlayerMoved += OnLocalPlayerMoved;
+        int peerId = Multiplayer.GetUniqueId();
+        RpcId(MultiplayerManager.HOST_ID, nameof(ServerSendSavedBlocksOnSpawn),
+            peerId, xSpawnCoords, ySpawnCoords);
+    }
+
+    private void OnLocalPlayerMoved(
+        int newXCoordinate, int newYCoordinate, int oldXCoordinate, int oldYCoordinate) {
+        int peerId = Multiplayer.GetUniqueId();
+        RpcId(MultiplayerManager.HOST_ID, nameof(ServerSendSavedBlocksOnMove),
+            peerId, newXCoordinate, newYCoordinate, oldXCoordinate, oldYCoordinate);
+        DeleteActiveBlocksInRegion(newXCoordinate, newYCoordinate, oldXCoordinate, oldYCoordinate);
+    }
+    
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void ServerSendSavedBlocksOnSpawn(int peerId, int xCoordinate, int yCoordinate) {
         worldWidth = ServerData.WorldWidth;
@@ -75,22 +91,7 @@ public partial class WorldManager : Node {
 
         RpcId(peerId, nameof(PeerCreateActiveBlocks), savedBlocksSerialized);
     }
-
-    private void OnCreatedLocalPlayer(int xSpawnCoords, int ySpawnCoords) {
-        Player.LocalPlayer.LocalPlayerMoved += OnLocalPlayerMoved;
-        int peerId = Multiplayer.GetUniqueId();
-        RpcId(MultiplayerManager.HOST_ID, nameof(ServerSendSavedBlocksOnSpawn),
-            peerId, xSpawnCoords, ySpawnCoords);
-    }
-
-    private void OnLocalPlayerMoved(
-        int newXCoordinate, int newYCoordinate, int oldXCoordinate, int oldYCoordinate) {
-        int peerId = Multiplayer.GetUniqueId();
-        RpcId(MultiplayerManager.HOST_ID, nameof(ServerSendSavedBlocksOnMove),
-            peerId, newXCoordinate, newYCoordinate, oldXCoordinate, oldYCoordinate);
-        DeleteActiveBlocksInRegion(newXCoordinate, newYCoordinate, oldXCoordinate, oldYCoordinate);
-    }
-
+    
     private (int xStart, int xEnd, int yStart, int yEnd) GetRegionBoundary(int xCoord, int yCoord) {
         int xStart = Math.Max(0, xCoord - ActiveBlockViewDistance);
         int xEnd = Math.Min(worldWidth - 1, xCoord + ActiveBlockViewDistance);
