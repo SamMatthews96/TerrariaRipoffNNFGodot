@@ -1,6 +1,9 @@
 using Godot;
 using System;
+using System.Collections.Generic;
+using Godot.Collections;
 using TerrariaRipoffNNF.scripts;
+using Array = Godot.Collections.Array;
 
 public partial class WorldManager : Node {
     public static WorldManager Instance { get; private set; }
@@ -8,9 +11,13 @@ public partial class WorldManager : Node {
     [Signal]
     public delegate void CreatedServerWorldManagerEventHandler();
 
+    [Signal]
+    public delegate void CreatedActiveBlockEventHandler();
+
     [Export] private PackedScene packedServerData;
-    [Export] public int BlockSize { get; private set; } = 100;
-    [Export] private int activeBlockViewDistance = 10;
+    [Export] private PackedScene packedActiveBlock;
+    [Export] public int BlockSize { get; private set; } = 40;
+    [Export] public int ActiveBlockViewDistance { get; private set; } = 10;
 
     public ServerData ServerData { get; private set; }
 
@@ -24,17 +31,9 @@ public partial class WorldManager : Node {
         EmitSignal(SignalName.CreatedServerWorldManager);
     }
 
-    /*
-     * player.LocalPlayerEnteredLocation += (x,y,x,y) => {
-     *		delete active blocks that are out of range
-     *		get server info of active blocks within range
-     * }
-     */
-
     private void OnCreatedLocalPlayer(int xSpawnCoords, int ySpawnCoords) {
         Player.LocalPlayer.LocalPlayerMoved += OnLocalPlayerMoved;
         int peerId = Multiplayer.GetUniqueId();
-
         RpcId(MultiplayerManager.HOST_ID, nameof(GetSavedBlocksOnServer),
             peerId, xSpawnCoords, ySpawnCoords);
     }
@@ -42,38 +41,64 @@ public partial class WorldManager : Node {
     private void OnLocalPlayerMoved(int xCoords, int yCoords, int prevXCoords, int prevYCoords) {
         int peerId = Multiplayer.GetUniqueId();
         // @todo delete activeBlocks that are out of range
-        RpcId(MultiplayerManager.HOST_ID, nameof(GetSavedBlocksOnServer),
-            peerId, xCoords, yCoords, prevXCoords, prevYCoords);
+        // RpcId(MultiplayerManager.HOST_ID, nameof(GetSavedBlocksOnServer),
+        //     peerId, xCoords, yCoords, prevXCoords, prevYCoords);
     }
 
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
-    private void GetSavedBlocksOnServer(int peerId,
-        int xCoords, int yCoords, int prevXCoords = int.MaxValue, int prevYCoords = int.MaxValue) {
-        // @todo get the new blocks
 
-        bool isOverlappingWithPrevious =
-            prevXCoords - xCoords < 2 * activeBlockViewDistance &&
-            prevYCoords - yCoords < 2 * activeBlockViewDistance;
+    // how to format the savedBlocks data when sending by RPC
+    // savedBlock: Resource, check the MustBeVariant tag
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+    private void GetSavedBlocksOnServer(int peerId, int xCoords, int yCoords) {
+        int worldWidth = ServerData.WorldWidth;
+        int worldHeight = ServerData.WorldHeight;
 
-        int xViewStart = Math.Max(0, xCoords - activeBlockViewDistance);
-        int xViewEnd = Math.Min(ServerData.WorldWidth - 1, xCoords + activeBlockViewDistance);
-        int yViewStart = Math.Max(0, yCoords - activeBlockViewDistance);
-        int yViewEnd = Math.Min(ServerData.WorldHeight - 1, yCoords + activeBlockViewDistance);
-        
-        
-        
-        /*
-         * if there is overlap, get start-end x,y of left region,
-         * remove blocks in common
-         * 
-         * for each coord of interest, get server data
-         */
+        int xStart = Math.Max(0, xCoords - ActiveBlockViewDistance);
+        int xEnd = Math.Min(worldWidth - 1, xCoords + ActiveBlockViewDistance);
+        int yStart = Math.Max(0, yCoords - ActiveBlockViewDistance);
+        int yEnd = Math.Min(worldHeight - 1, yCoords + ActiveBlockViewDistance);
 
-        // how to format the savedBlocks data when sending by RPC
-        // savedBlock: Resource, check the MustBeVariant tag
-        RpcId(peerId, nameof(CreateActiveBlocksOnPeer));
+        List<(int x, int y)> coordinates = new();
+
+        for (int x = xStart; x < xEnd; x++) {
+            for (int y = yStart; y < yEnd; y++) {
+                coordinates.Add((x, y));
+            }
+        }
+
+        Array savedBlocks = new();
+        foreach ((int x, int y) in coordinates) {
+            var block = ServerData.GetSavedBlock(x, y);
+            if (block is not null) {
+                savedBlocks.Add(block.Serialize());
+            }
+        }
+
+        RpcId(peerId, nameof(CreateActiveBlocksOnPeer), savedBlocks);
     }
 
     [Rpc(CallLocal = true)]
-    private void CreateActiveBlocksOnPeer() { }
+    private void CreateActiveBlocksOnPeer(Array array) {
+        // BlockType block = Serializer.Deserialize<BlockType>(y[0]);
+        // GD.Print(block.Weight);
+        try {
+            foreach (Godot.Collections.Dictionary<string, string> dic in array) {
+                int xPosition = dic["XPosition"].ToInt();
+                int yPosition = dic["YPosition"].ToInt();
+                BlockType blockTypeId = (BlockType)InstanceFromId(ulong.Parse(dic["BlockTypeId"]));
+                CreateActiveBlock(blockTypeId, xPosition, yPosition);
+            }
+        }
+        catch (Exception e) {
+            GD.Print("invalid data");
+            GD.Print(e);
+        }
+    }
+
+    private void CreateActiveBlock(BlockType blockType, int xPosition, int yPosition) {
+        ActiveBlock newBlock = packedActiveBlock.Instantiate<ActiveBlock>();
+        newBlock.Position = new Vector2(xPosition * BlockSize, yPosition * BlockSize);
+        newBlock.BlockType = blockType;
+        AddChild(newBlock);
+    }
 }
