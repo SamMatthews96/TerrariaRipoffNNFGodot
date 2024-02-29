@@ -13,7 +13,15 @@ public partial class ServerData : Node {
     public override void _Ready() {
         savedBlocks = new SavedBlock[WorldWidth, WorldHeight];
         for (int x = 0; x < WorldWidth; x++) {
-            savedBlocks[x, 0] = new SavedBlock(testBlockType, x, 0);
+            savedBlocks[x, 6] = new SavedBlock(testBlockType, x, 6);
         }
+        savedBlocks[0, 0] = new SavedBlock(testBlockType, 0, 0);
+        savedBlocks[1, 1] = new SavedBlock(testBlockType, 1, 1);
+        savedBlocks[1, 0] = new SavedBlock(testBlockType, 1, 0);
+
+    }
+
+    public SavedBlock GetSavedBlock(int x, int y) {
+        return savedBlocks[x, y];
     }
 }

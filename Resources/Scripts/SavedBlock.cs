@@ -1,10 +1,20 @@
 ﻿using Godot;
+using Godot.Collections;
+using TerrariaRipoffNNF.scripts;
 
 [GlobalClass]
-public partial class SavedBlock : Resource {
+public partial class SavedBlock : Resource, ISerializable {
     public BlockType BlockType { get; private set; }
     public int XPosition { get; private set; }
     public int YPosition { get; private set; }
+
+    public Dictionary Serialize() {
+        Dictionary serializedData = new Dictionary();
+        serializedData.Add("XPosition", XPosition);
+        serializedData.Add("YPosition", YPosition);
+        serializedData.Add("BlockTypeId", BlockType.GetInstanceId().ToString());
+        return serializedData;
+    }
 
     public SavedBlock(BlockType blockType, int xPosition, int yPosition) {
         BlockType = blockType;
