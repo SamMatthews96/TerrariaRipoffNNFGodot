@@ -43,5 +43,5 @@ packedServerData = ExtResource("8_fc2oy")
 [connection signal="JoinButtonDown" from="LoginScreen" to="MultiplayerManager" method="OnLoginScreenJoinButtonDown"]
 [connection signal="ConnectedToServer" from="MultiplayerManager" to="PlayerManager" method="OnConnectedToServer"]
 [connection signal="StartedServer" from="MultiplayerManager" to="WorldManager" method="OnStartedServer"]
-[connection signal="CreatedLocalPlayer" from="PlayerManager" to="WorldManager" method="OnCreatedLocalPlayer"]
+[connection signal="CreatedLocalPlayer" from="PlayerManager" to="WorldManager" method="OnLocalPlayerCreated"]
 [connection signal="CreatedServerWorldManager" from="WorldManager" to="PlayerManager" method="OnCreatedServerWorldManager"]

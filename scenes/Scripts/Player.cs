@@ -41,4 +41,8 @@ public partial class Player : CharacterBody2D {
                 XCoords, YCoords, previousXCoords, previousYCoords);
         }
     }
+    
+    /*
+     * 
+     */
 }
