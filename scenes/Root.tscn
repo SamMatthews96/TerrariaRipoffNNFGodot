@@ -1,6 +1,6 @@
 [gd_scene load_steps=9 format=3 uid="uid://dxqeumnkw4j5p"]
 
-[ext_resource type="PackedScene" uid="uid://4c67gixp10at" path="res://Scenes/LoginScreen.tscn" id="1_sp2ny"]
+[ext_resource type="PackedScene" uid="uid://4c67gixp10at" path="res://UI/Scenes/MultiplayerMenu.tscn" id="1_sp2ny"]
 [ext_resource type="Script" path="res://Scenes/Scripts/MultiplayerManager.cs" id="2_0ytrm"]
 [ext_resource type="Script" path="res://testObjects/Logger.cs" id="3_c4nns"]
 [ext_resource type="Script" path="res://Scenes/Scripts/PlayerManager.cs" id="4_1dugc"]
@@ -11,11 +11,7 @@
 
 [node name="Root" type="Node"]
 
-[node name="LoginScreen" parent="." instance=ExtResource("1_sp2ny")]
-offset_left = 613.0
-offset_top = 56.0
-offset_right = 613.0
-offset_bottom = 56.0
+[node name="MultiplayerMenu" parent="." instance=ExtResource("1_sp2ny")]
 
 [node name="MultiplayerManager" type="Node" parent="."]
 script = ExtResource("2_0ytrm")
@@ -39,8 +35,8 @@ spawn_limit = 5
 script = ExtResource("7_fy5pw")
 packedServerData = ExtResource("8_fc2oy")
 
-[connection signal="HostButtonDown" from="LoginScreen" to="MultiplayerManager" method="OnLoginScreenHostButtonDown"]
-[connection signal="JoinButtonDown" from="LoginScreen" to="MultiplayerManager" method="OnLoginScreenJoinButtonDown"]
+[connection signal="HostButtonDown" from="MultiplayerMenu" to="MultiplayerManager" method="OnLoginScreenHostButtonDown"]
+[connection signal="JoinButtonDown" from="MultiplayerMenu" to="MultiplayerManager" method="OnLoginScreenJoinButtonDown"]
 [connection signal="ConnectedToServer" from="MultiplayerManager" to="PlayerManager" method="OnConnectedToServer"]
 [connection signal="StartedServer" from="MultiplayerManager" to="WorldManager" method="OnStartedServer"]
 [connection signal="CreatedLocalPlayer" from="PlayerManager" to="WorldManager" method="OnLocalPlayerCreated"]

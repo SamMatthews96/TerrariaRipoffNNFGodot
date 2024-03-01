@@ -1,0 +1,40 @@
+[gd_scene load_steps=5 format=3 uid="uid://bddgrodfbw38t"]
+
+[ext_resource type="PackedScene" uid="uid://c0x5v4nep5b2s" path="res://UI/Scenes/MainMenu.tscn" id="1_1w5j6"]
+[ext_resource type="Script" path="res://Scenes/Scripts/MainMenuScene.cs" id="1_xeptv"]
+[ext_resource type="PackedScene" uid="uid://4c67gixp10at" path="res://UI/Scenes/MultiplayerMenu.tscn" id="2_4n13j"]
+[ext_resource type="PackedScene" uid="uid://dxbgkmaljcq2i" path="res://UI/Scenes/WorldMenu.tscn" id="3_1kw8d"]
+
+[node name="MainMenuScene" type="Node" node_paths=PackedStringArray("MainMenu", "MultiplayerMenu", "WorldMenu")]
+script = ExtResource("1_xeptv")
+MainMenu = NodePath("MainMenu")
+MultiplayerMenu = NodePath("MultiplayerMenu")
+WorldMenu = NodePath("WorldMenu")
+
+[node name="MainMenu" parent="." instance=ExtResource("1_1w5j6")]
+offset_left = 701.0
+offset_top = 30.0
+offset_right = -1219.0
+offset_bottom = -1050.0
+
+[node name="MultiplayerMenu" parent="." instance=ExtResource("2_4n13j")]
+visible = false
+offset_left = 702.0
+offset_top = 121.0
+offset_right = 702.0
+offset_bottom = 121.0
+
+[node name="WorldMenu" parent="." instance=ExtResource("3_1kw8d")]
+visible = false
+offset_left = 703.0
+offset_top = 245.0
+offset_right = -1217.0
+offset_bottom = -835.0
+
+[connection signal="MultiPlayerButtonDown" from="MainMenu" to="." method="OnMultiPlayerButtonDown"]
+[connection signal="SinglePlayerButtonDown" from="MainMenu" to="." method="OnSinglePlayerButtonDown"]
+[connection signal="BackButtonDown" from="MultiplayerMenu" to="." method="OnMultiPlayerMenuBackButtonDown"]
+[connection signal="HostButtonDown" from="MultiplayerMenu" to="." method="OnHostButtonDown"]
+[connection signal="JoinButtonDown" from="MultiplayerMenu" to="." method="OnJoinButtonDown"]
+[connection signal="BackButtonDown" from="WorldMenu" to="." method="OnWorldMenuBackButtonDown"]
+[connection signal="EnterWorldButtonDown" from="WorldMenu" to="." method="OnEnterWorldButtonDown"]

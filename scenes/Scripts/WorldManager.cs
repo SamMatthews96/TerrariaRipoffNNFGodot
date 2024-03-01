@@ -27,6 +27,8 @@ public partial class WorldManager : Node {
 
     private void OnStartedServer() {
         ServerData = packedServerData.Instantiate<ServerData>();
+        worldWidth = ServerData.WorldWidth;
+        worldHeight = ServerData.WorldHeight;
         AddChild(ServerData);
         EmitSignal(SignalName.CreatedServerWorldManager);
     }
@@ -48,9 +50,6 @@ public partial class WorldManager : Node {
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void ServerSendSavedBlocksOnCreated(int peerId, int xCoordinate, int yCoordinate) {
-        worldWidth = ServerData.WorldWidth;
-        worldHeight = ServerData.WorldHeight;
-
         (int left, int right, int top, int bottom) = GetRegionBoundary(xCoordinate, yCoordinate);
 
         Array savedBlocksSerialized = new();

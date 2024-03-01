@@ -43,6 +43,10 @@ public partial class Player : CharacterBody2D {
     }
     
     /*
-     * 
+     * states
+     *      falling
+     *      grounded
+     *      swimming
+     *      
      */
 }

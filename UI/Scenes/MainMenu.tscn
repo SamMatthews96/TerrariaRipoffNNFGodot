@@ -1,0 +1,36 @@
+[gd_scene load_steps=2 format=3 uid="uid://c0x5v4nep5b2s"]
+
+[ext_resource type="Script" path="res://UI/Scripts/MainMenu.cs" id="1_0ymt4"]
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -1920.0
+offset_bottom = -1080.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_0ymt4")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 386.0
+offset_bottom = 66.0
+alignment = 2
+
+[node name="SinglePlayerButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Single Player"
+
+[node name="MultiPlayerButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Multi-Player"
+
+[node name="ExitButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Exit"
+
+[connection signal="button_down" from="VBoxContainer/SinglePlayerButton" to="." method="OnSinglePlayerButtonDown"]
+[connection signal="button_down" from="VBoxContainer/MultiPlayerButton" to="." method="OnMultiPlayerButtonDown"]
+[connection signal="button_down" from="VBoxContainer/ExitButton" to="." method="OnExitButtonDown"]
