@@ -1,14 +1,14 @@
 using Godot;
 
-namespace TerrariaRipoffNNF.Scenes.Scripts; 
+namespace TerrariaRipoffNNF.Scenes.Scripts;
 
 public partial class PlayerManager : Node {
-    public static PlayerManager Instance { get; private set; }
-
     [Export] private PackedScene packedPlayer;
 
     [Signal]
     public delegate void CreatedLocalPlayerEventHandler(int xSpawnCoords, int ySpawnCoords);
+
+    public static PlayerManager Instance { get; private set; }
 
     public override void _Ready() {
         Instance = this;
@@ -30,9 +30,9 @@ public partial class PlayerManager : Node {
 
         int xSpawnCoords = WorldManager.Instance.ServerData.SpawnX;
         int ySpawnCoords = WorldManager.Instance.ServerData.SpawnY;
-        
+
         AddChild(newPlayer);
-        RpcId(peerId,nameof(OnPlayerCreatedOnServer), 
+        RpcId(peerId, nameof(OnPlayerCreatedOnServer),
             xSpawnCoords, ySpawnCoords);
     }
 

@@ -4,19 +4,18 @@ using Godot;
 namespace TerrariaRipoffNNF.Scenes.Scripts;
 
 public partial class Player : CharacterBody2D {
-    public static Player LocalPlayer { get; private set; }
-
-    [Export] private MultiplayerSynchronizer positionSynchronizer;
     [Export] private float speed = 300f;
-
-    private int XCoords => (int)Math.Round(Position.X / WorldManager.Instance.BlockSize);
-    private int YCoords => (int)Math.Round(Position.Y / WorldManager.Instance.BlockSize);
+    [Export] private MultiplayerSynchronizer positionSynchronizer;
+    private int horizontalInput;
 
     [Signal]
     public delegate void LocalPlayerMovedEventHandler(
         int xCoords, int yCoords, int prevXCoords, int prevYCoords);
 
-    private int horizontalInput;
+    public static Player LocalPlayer { get; private set; }
+
+    private int XCoords => (int)Math.Round(Position.X / WorldManager.BLOCK_SIZE);
+    private int YCoords => (int)Math.Round(Position.Y / WorldManager.BLOCK_SIZE);
 
     public override void _EnterTree() {
         int peerId = Name.ToString()!.ToInt();
@@ -26,12 +25,12 @@ public partial class Player : CharacterBody2D {
         LocalPlayer = this;
         InputManager.Instance.HorizontalInputChanged += newInput => horizontalInput = newInput;
         PlayerManager.Instance.CreatedLocalPlayer += (xSpawnCoords, ySpawnCoords) => {
-            int blockSize = WorldManager.Instance.BlockSize;
-            Position = new Vector2(xSpawnCoords * blockSize, ySpawnCoords * blockSize);
+            Position = new Vector2(
+                xSpawnCoords * WorldManager.BLOCK_SIZE, ySpawnCoords * WorldManager.BLOCK_SIZE);
         };
     }
 
-    public override void _Process(double delta) {
+    public override void _PhysicsProcess(double delta) {
         if (this != LocalPlayer) return;
 
         (int previousXCoords, int previousYCoords) = (XCoords, YCoords);
@@ -41,6 +40,5 @@ public partial class Player : CharacterBody2D {
             EmitSignal(SignalName.LocalPlayerMoved,
                 XCoords, YCoords, previousXCoords, previousYCoords);
         }
-         
     }
 }
