@@ -8,6 +8,8 @@ public partial class MainMenu : Control
 	public delegate void SinglePlayerButtonDownEventHandler();
 	[Signal]
 	public delegate void MultiPlayerButtonDownEventHandler();
+	[Signal]
+	public delegate void QuitButtonDownEventHandler();
 
 	private void OnSinglePlayerButtonDown() {
 		EmitSignal(SignalName.SinglePlayerButtonDown);
@@ -18,6 +20,6 @@ public partial class MainMenu : Control
 	}
 
 	private void OnExitButtonDown() {
-		GetTree().Quit();
+		EmitSignal(SignalName.QuitButtonDown);
 	}
 }
