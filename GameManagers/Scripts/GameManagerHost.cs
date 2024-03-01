@@ -1,13 +1,12 @@
 using Godot;
+using TerrariaRipoffNNF.Scenes.Scripts;
 using static Godot.GD;
 
-namespace TerrariaRipoffNNF.Scenes.Scripts;
+namespace TerrariaRipoffNNF.GameManagers.Scripts;
 
-public partial class MultiplayerManager : Node {
+public partial class GameManagerHost : GameManager {
     [Export] private int port = 8910;
-    [Export] private string address = "127.0.0.1";
     private ENetMultiplayerPeer peer;
-    public const int HOST_ID = 1;
 
     [Signal]
     public delegate void StartedServerEventHandler();
@@ -17,21 +16,15 @@ public partial class MultiplayerManager : Node {
 
     [Signal]
     public delegate void PeerDisconnectedEventHandler(long playerId);
-
-    [Signal]
-    public delegate void ConnectedToServerEventHandler();
-
-    [Signal]
-    public delegate void ConnectionFailedEventHandler();
+    
+    [Export] public ServerData ServerData { get; private set; }
 
     public override void _Ready() {
+        Instance = this;
+        
         Multiplayer.PeerConnected += id => EmitSignal(SignalName.PeerConnected, id);
         Multiplayer.PeerDisconnected += id => EmitSignal(SignalName.PeerDisconnected, id);
-        Multiplayer.ConnectedToServer += () => EmitSignal(SignalName.ConnectedToServer);
-        Multiplayer.ConnectionFailed += () => EmitSignal(SignalName.ConnectionFailed);
-    }
-
-    private void OnHostButtonDown() {
+        
         peer = new ENetMultiplayerPeer();
         var error = peer.CreateServer(port);
         if (error != Error.Ok) {
@@ -41,18 +34,7 @@ public partial class MultiplayerManager : Node {
 
         peer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
         Multiplayer.MultiplayerPeer = peer;
+        
         EmitSignal(SignalName.StartedServer);
-    }
-
-    private void OnLoginScreenJoinButtonDown() {
-        peer = new ENetMultiplayerPeer();
-        Error error = peer.CreateClient(address, port);
-        if (error != Error.Ok) {
-            Print("error cannot join! :" + error);
-            return;
-        }
-
-        peer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
-        Multiplayer.MultiplayerPeer = peer;
     }
 }

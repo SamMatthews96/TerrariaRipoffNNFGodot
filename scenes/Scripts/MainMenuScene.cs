@@ -1,50 +1,81 @@
-using Godot;
 using System;
-using System.Text;
+using Godot;
+
+namespace TerrariaRipoffNNF.Scenes.Scripts;
 
 public partial class MainMenuScene : Node {
-    [Export] private Control MainMenu;
-    [Export] private Control MultiplayerMenu;
-    [Export] private Control WorldMenu;
+    [Export] private Control mainMenu;
+    [Export] private Control multiplayerMenu;
+    [Export] private Control worldMenu;
+
+    [Export] private PackedScene packedGameManagerSinglePlayer;
+    [Export] private PackedScene packedGameManagerHost;
+    [Export] private PackedScene packedGameManagerClient;
 
     private bool isMultiplayerMode;
+    private bool isHost;
+
+    [Signal]
+    public delegate void StartedSinglePlayerGameEventHandler();
+
+    [Signal]
+    public delegate void StartedHostingMultiplayerGameEventHandler();
+
+    [Signal]
+    public delegate void JoiningMultiplayerGameEventHandler();
 
     private void OnSinglePlayerButtonDown() {
-        MainMenu.Hide();
-        WorldMenu.Show();
+        mainMenu.Hide();
+        worldMenu.Show();
     }
 
     private void OnMultiPlayerButtonDown() {
         isMultiplayerMode = true;
-        MainMenu.Hide();
-        MultiplayerMenu.Show();
+        mainMenu.Hide();
+        multiplayerMenu.Show();
     }
 
     private void OnHostButtonDown() {
-        MultiplayerMenu.Hide();
-        WorldMenu.Show();
+        isHost = true;
+        multiplayerMenu.Hide();
+        worldMenu.Show();
     }
 
     private void OnJoinButtonDown() {
-        GD.Print("JOIN");
+        isHost = false;
+        multiplayerMenu.Hide();
+        worldMenu.Show();
     }
 
     private void OnMultiPlayerMenuBackButtonDown() {
         isMultiplayerMode = false;
-        MultiplayerMenu.Hide();
-        MainMenu.Show();
+        multiplayerMenu.Hide();
+        mainMenu.Show();
     }
 
     private void OnEnterWorldButtonDown() {
-        GD.Print("ENTER WORLD");
+        Node gameManager;
+        if (!isMultiplayerMode) {
+            gameManager = packedGameManagerSinglePlayer.Instantiate();
+        } else if (isHost) {
+            gameManager = packedGameManagerHost.Instantiate();
+        } else {
+            gameManager = packedGameManagerClient.Instantiate();
+        }
+
+        GetTree().Root.AddChild(gameManager);
     }
 
     private void OnWorldMenuBackButtonDown() {
-        WorldMenu.Hide();
+        worldMenu.Hide();
         if (isMultiplayerMode) {
-            MultiplayerMenu.Show();
+            multiplayerMenu.Show();
         } else {
-            MainMenu.Show();
+            mainMenu.Show();
         }
+    }
+
+    private void OnExitButtonDown() {
+        GetTree().Quit();
     }
 }
