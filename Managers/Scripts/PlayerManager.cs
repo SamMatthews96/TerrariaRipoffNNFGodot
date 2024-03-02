@@ -7,7 +7,7 @@ public partial class PlayerManager : Node {
     [Export] private PackedScene packedPlayer;
 
     [Signal]
-    public delegate void CreatedLocalPlayerOnServerEventHandler();
+    public delegate void CreatedLocalPlayerOnServerEventHandler(Vector2 position);
 
     public static PlayerManager Instance { get; private set; }
 
@@ -16,23 +16,26 @@ public partial class PlayerManager : Node {
     }
 
     private void OnWorldCreated(int spawnX, int spawnY) {
-        GD.Print("CreatePlayerOnServer");
-        // CreatePlayerOnServer(GameManager.HOST_ID, x,y);
+        GD.Print(spawnX,spawnY);
+        int peerId = Multiplayer.GetUniqueId();
+        RpcId(GameManager.HOST_ID, nameof(CreatePlayerOnServer),
+            peerId, spawnX, spawnY);
     }
 
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void CreatePlayerOnServer(int peerId, int xSpawnCoords, int ySpawnCoords) {
         Player newPlayer = packedPlayer.Instantiate<Player>();
         newPlayer.Name = new StringName(peerId.ToString());
-        newPlayer.Position = new Vector2(
-            xSpawnCoords * WorldManager.BLOCK_SIZE, ySpawnCoords* WorldManager.BLOCK_SIZE);
+        Vector2 position = new Vector2(
+            xSpawnCoords * WorldManager.BLOCK_SIZE, ySpawnCoords * WorldManager.BLOCK_SIZE);
+        newPlayer.Position = position;
 
         AddChild(newPlayer);
-        RpcId(peerId, nameof(OnPlayerCreatedOnServer));
+        RpcId(peerId, nameof(OnPlayerCreatedOnServer), position);
     }
 
     [Rpc(CallLocal = true)]
-    private void OnPlayerCreatedOnServer() {
-        EmitSignal(SignalName.CreatedLocalPlayerOnServer);
+    private void OnPlayerCreatedOnServer(Vector2 position) {
+        EmitSignal(SignalName.CreatedLocalPlayerOnServer, position);
     }
 }

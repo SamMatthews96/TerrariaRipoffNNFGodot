@@ -22,9 +22,13 @@ public partial class Player : CharacterBody2D {
         int peerId = Name.ToString()!.ToInt();
         positionSynchronizer.SetMultiplayerAuthority(peerId);
         if (peerId != Multiplayer.GetUniqueId()) return;
-
+        
         LocalPlayer = this;
         InputManager.Instance.HorizontalInputChanged += newInput => horizontalInput = newInput;
+        PlayerManager.Instance.CreatedLocalPlayerOnServer += serverPosition => {
+            Position = serverPosition;
+        };
+
     }
 
     public override void _PhysicsProcess(double delta) {

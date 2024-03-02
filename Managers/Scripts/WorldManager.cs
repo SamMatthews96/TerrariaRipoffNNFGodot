@@ -47,7 +47,7 @@ public partial class WorldManager : Node {
             peerId, spawnX, spawnY);
     }
     
-    private void OnCreatedLocalPlayerOnServer() {
+    private void OnCreatedLocalPlayerOnServer(Vector2 position) {
         Player.LocalPlayer.LocalPlayerMoved += OnLocalPlayerMoved;
         int peerId = Multiplayer.GetUniqueId();
     }

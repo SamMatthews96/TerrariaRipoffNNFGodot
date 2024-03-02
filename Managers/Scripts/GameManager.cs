@@ -38,7 +38,6 @@ public partial class GameManager : Node {
         peer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
         Multiplayer.MultiplayerPeer = peer;
         EmitSignal(SignalName.StartedServer);
-        Print("StartedServer");
     }
 
     private void OnEnteredWorldClient() {
