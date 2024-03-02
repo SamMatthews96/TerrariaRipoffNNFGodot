@@ -33,7 +33,5 @@ public partial class GameManagerHost : GameManager {
         Multiplayer.MultiplayerPeer = peer;
 
         EmitSignal(SignalName.StartedServer);
-        // create world
-        // create player
     }
 }

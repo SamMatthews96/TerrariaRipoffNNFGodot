@@ -15,7 +15,7 @@ public partial class PlayerManager : Node {
         Instance = this;
     }
 
-    private void OnStartedServer() {
+    private void OnWorldCreated() {
         CreatePlayerOnServer(MultiplayerManager.HOST_ID);
     }
 

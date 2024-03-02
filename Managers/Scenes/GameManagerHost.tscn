@@ -1,14 +1,19 @@
-[gd_scene load_steps=4 format=3 uid="uid://bkqfwylm0rcx3"]
+[gd_scene load_steps=5 format=3 uid="uid://bkqfwylm0rcx3"]
 
 [ext_resource type="Script" path="res://Managers/Scripts/GameManagerHost.cs" id="1_5to5a"]
 [ext_resource type="PackedScene" uid="uid://dnyytwifc4xlb" path="res://Managers/Scenes/PlayerManager.tscn" id="1_j8hhe"]
 [ext_resource type="PackedScene" uid="uid://cfc060xa2l6o1" path="res://Managers/Scenes/WorldManager.tscn" id="3_osru7"]
+[ext_resource type="Script" path="res://Scenes/Scripts/InputManager.cs" id="4_yhrgm"]
 
 [node name="GameManagerHost" type="Node"]
 script = ExtResource("1_5to5a")
 
-[node name="PlayerManager" parent="." instance=ExtResource("1_j8hhe")]
-
 [node name="WorldManager" parent="." instance=ExtResource("3_osru7")]
 
+[node name="InputManager" type="Node" parent="."]
+script = ExtResource("4_yhrgm")
+
+[node name="PlayerManager" parent="." instance=ExtResource("1_j8hhe")]
+
 [connection signal="StartedServer" from="." to="WorldManager" method="OnStartedServer"]
+[connection signal="WorldCreated" from="WorldManager" to="PlayerManager" method="OnWorldCreated"]
