@@ -25,10 +25,6 @@ public partial class Player : CharacterBody2D {
 
         LocalPlayer = this;
         InputManager.Instance.HorizontalInputChanged += newInput => horizontalInput = newInput;
-        PlayerManager.Instance.CreatedLocalPlayer += (xSpawnCoords, ySpawnCoords) => {
-            Position = new Vector2(
-                xSpawnCoords * WorldManager.BLOCK_SIZE, ySpawnCoords * WorldManager.BLOCK_SIZE);
-        };
     }
 
     public override void _PhysicsProcess(double delta) {
@@ -42,12 +38,4 @@ public partial class Player : CharacterBody2D {
                 XCoords, YCoords, previousXCoords, previousYCoords);
         }
     }
-    
-    /*
-     * states
-     *      falling
-     *      grounded
-     *      swimming
-     *      
-     */
 }

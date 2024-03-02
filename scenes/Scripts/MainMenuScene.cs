@@ -1,5 +1,6 @@
 using System;
 using Godot;
+using Microsoft.VisualBasic;
 
 namespace TerrariaRipoffNNF.Scenes.Scripts;
 
@@ -8,21 +9,19 @@ public partial class MainMenuScene : Node {
     [Export] private Control multiplayerMenu;
     [Export] private Control worldMenu;
 
-    [Export] private PackedScene packedGameManagerSinglePlayer;
-    [Export] private PackedScene packedGameManagerHost;
-    [Export] private PackedScene packedGameManagerClient;
+    [Export] private PackedScene packedGameManager;
 
     private bool isMultiplayerMode;
     private bool isHost;
 
     [Signal]
-    public delegate void StartedSinglePlayerGameEventHandler();
+    public delegate void EnteredWorldSinglePlayerEventHandler();
 
     [Signal]
-    public delegate void StartedHostingMultiplayerGameEventHandler();
+    public delegate void EnteredWorldHostEventHandler();
 
     [Signal]
-    public delegate void JoiningMultiplayerGameEventHandler();
+    public delegate void EnteredWorldClientEventHandler();
 
     private void OnSinglePlayerButtonDown() {
         mainMenu.Hide();
@@ -54,16 +53,13 @@ public partial class MainMenuScene : Node {
     }
 
     private void OnEnterWorldButtonDown() {
-        Node gameManager;
         if (!isMultiplayerMode) {
-            gameManager = packedGameManagerSinglePlayer.Instantiate();
+            EmitSignal(SignalName.EnteredWorldSinglePlayer);
         } else if (isHost) {
-            gameManager = packedGameManagerHost.Instantiate();
+            EmitSignal(SignalName.EnteredWorldHost);
         } else {
-            gameManager = packedGameManagerClient.Instantiate();
+            EmitSignal(SignalName.EnteredWorldClient);
         }
-
-        GetTree().Root.AddChild(gameManager);
     }
 
     private void OnWorldMenuBackButtonDown() {

@@ -19,7 +19,8 @@ public partial class SavedBlock : Resource, ISerializable {
         Dictionary serializedData = new();
         serializedData.Add("XPosition", xPosition);
         serializedData.Add("YPosition", yPosition);
-        serializedData.Add("BlockTypeId", blockType.GetInstanceId().ToString());
+        serializedData.Add("ResourcePath", blockType.ResourcePath);
         return serializedData;
     }
+    
 }

@@ -7,7 +7,7 @@ public partial class PlayerManager : Node {
     [Export] private PackedScene packedPlayer;
 
     [Signal]
-    public delegate void CreatedLocalPlayerEventHandler(int xSpawnCoords, int ySpawnCoords);
+    public delegate void CreatedLocalPlayerOnServerEventHandler();
 
     public static PlayerManager Instance { get; private set; }
 
@@ -15,31 +15,24 @@ public partial class PlayerManager : Node {
         Instance = this;
     }
 
-    private void OnWorldCreated() {
-        CreatePlayerOnServer(MultiplayerManager.HOST_ID);
-    }
-
-    private void OnConnectedToServer() {
-        int peerId = Multiplayer.GetUniqueId();
-        RpcId(MultiplayerManager.HOST_ID, nameof(CreatePlayerOnServer), peerId);
+    private void OnWorldCreated(int spawnX, int spawnY) {
+        GD.Print("CreatePlayerOnServer");
+        // CreatePlayerOnServer(GameManager.HOST_ID, x,y);
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
-    private void CreatePlayerOnServer(int peerId) {
+    private void CreatePlayerOnServer(int peerId, int xSpawnCoords, int ySpawnCoords) {
         Player newPlayer = packedPlayer.Instantiate<Player>();
         newPlayer.Name = new StringName(peerId.ToString());
-
-        // @todo feed spawn coords in params
-        int xSpawnCoords = 5;
-        int ySpawnCoords = 5;
+        newPlayer.Position = new Vector2(
+            xSpawnCoords * WorldManager.BLOCK_SIZE, ySpawnCoords* WorldManager.BLOCK_SIZE);
 
         AddChild(newPlayer);
-        RpcId(peerId, nameof(OnPlayerCreatedOnServer),
-            xSpawnCoords, ySpawnCoords);
+        RpcId(peerId, nameof(OnPlayerCreatedOnServer));
     }
 
     [Rpc(CallLocal = true)]
-    private void OnPlayerCreatedOnServer(int xSpawnCoords, int ySpawnCoords) {
-        EmitSignal(SignalName.CreatedLocalPlayer, xSpawnCoords, ySpawnCoords);
+    private void OnPlayerCreatedOnServer() {
+        EmitSignal(SignalName.CreatedLocalPlayerOnServer);
     }
 }

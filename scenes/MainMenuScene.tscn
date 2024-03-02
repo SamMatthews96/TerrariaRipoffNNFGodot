@@ -1,9 +1,7 @@
-[gd_scene load_steps=9 format=3 uid="uid://bddgrodfbw38t"]
+[gd_scene load_steps=7 format=3 uid="uid://bddgrodfbw38t"]
 
 [ext_resource type="Script" path="res://Scenes/Scripts/MainMenuScene.cs" id="1_fxv78"]
-[ext_resource type="PackedScene" uid="uid://bqgy2isjkq88u" path="res://Managers/Scenes/GameManagerSinglePlayer.tscn" id="2_xkbas"]
-[ext_resource type="PackedScene" uid="uid://bkqfwylm0rcx3" path="res://Managers/Scenes/GameManagerHost.tscn" id="3_j1mcl"]
-[ext_resource type="PackedScene" uid="uid://470oqnickyx5" path="res://Managers/Scenes/GameManagerClient.tscn" id="4_q235b"]
+[ext_resource type="PackedScene" uid="uid://bkqfwylm0rcx3" path="res://Managers/Scenes/GameManager.tscn" id="2_g0o83"]
 [ext_resource type="PackedScene" uid="uid://c0x5v4nep5b2s" path="res://UI/Scenes/MainMenu.tscn" id="5_gmwlc"]
 [ext_resource type="PackedScene" uid="uid://4c67gixp10at" path="res://UI/Scenes/MultiplayerMenu.tscn" id="6_x1dwu"]
 [ext_resource type="PackedScene" uid="uid://dxbgkmaljcq2i" path="res://UI/Scenes/WorldMenu.tscn" id="7_5bbhf"]
@@ -14,9 +12,7 @@ script = ExtResource("1_fxv78")
 mainMenu = NodePath("MainMenu")
 multiplayerMenu = NodePath("MultiplayerMenu")
 worldMenu = NodePath("WorldMenu")
-packedGameManagerSinglePlayer = ExtResource("2_xkbas")
-packedGameManagerHost = ExtResource("3_j1mcl")
-packedGameManagerClient = ExtResource("4_q235b")
+packedGameManager = ExtResource("2_g0o83")
 
 [node name="MainMenu" parent="." instance=ExtResource("5_gmwlc")]
 offset_left = 701.0
@@ -41,6 +37,11 @@ offset_bottom = -835.0
 [node name="Logger" type="Node" parent="."]
 script = ExtResource("8_7q2s4")
 
+[node name="GameManager" parent="." instance=ExtResource("2_g0o83")]
+
+[connection signal="EnteredWorldClient" from="." to="GameManager" method="OnEnteredWorldClient"]
+[connection signal="EnteredWorldHost" from="." to="GameManager" method="OnEnteredWorldHost"]
+[connection signal="EnteredWorldSinglePlayer" from="." to="GameManager" method="OnEnteredWorldSinglePlayer"]
 [connection signal="MultiPlayerButtonDown" from="MainMenu" to="." method="OnMultiPlayerButtonDown"]
 [connection signal="QuitButtonDown" from="MainMenu" to="." method="OnExitButtonDown"]
 [connection signal="SinglePlayerButtonDown" from="MainMenu" to="." method="OnSinglePlayerButtonDown"]

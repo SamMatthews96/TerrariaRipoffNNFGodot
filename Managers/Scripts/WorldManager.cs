@@ -10,7 +10,6 @@ public partial class WorldManager : Node {
     public const int BLOCK_SIZE = 32;
     private const int BLOCK_RENDER_DISTANCE = 10;
 
-    [Export] private PackedScene packedServerData;
     private int worldWidth;
     private int worldHeight;
     private int spawnX;
@@ -19,7 +18,7 @@ public partial class WorldManager : Node {
     private SavedBlock[,] savedBlocks;
 
     [Signal]
-    public delegate void WorldCreatedEventHandler();
+    public delegate void WorldCreatedEventHandler(int spawnX, int spawnY);
 
     private void OnStartedServer() {
         // PH
@@ -38,18 +37,25 @@ public partial class WorldManager : Node {
 
         GetAndCreateBlocksOnSpawn(1, spawnX, spawnY);
     }
-    
-    private void OnLocalPlayerCreated(int xSpawnCoords, int ySpawnCoords) {
-        // Player.LocalPlayer.LocalPlayerMoved += OnLocalPlayerMoved;
+
+    private void OnConnectedToServer() {
+        spawnX = 10;
+        spawnY = 5;
+        
         int peerId = Multiplayer.GetUniqueId();
-        RpcId(MultiplayerManager.HOST_ID, nameof(GetAndCreateBlocksOnSpawn),
-            peerId, xSpawnCoords, ySpawnCoords);
+        RpcId(1, nameof(GetAndCreateBlocksOnSpawn),
+            peerId, spawnX, spawnY);
+    }
+    
+    private void OnCreatedLocalPlayerOnServer() {
+        Player.LocalPlayer.LocalPlayerMoved += OnLocalPlayerMoved;
+        int peerId = Multiplayer.GetUniqueId();
     }
 
     private void OnLocalPlayerMoved(
         int newXCoordinate, int newYCoordinate, int oldXCoordinate, int oldYCoordinate) {
         int peerId = Multiplayer.GetUniqueId();
-        RpcId(MultiplayerManager.HOST_ID, nameof(GetAndCreateBlocksOnMoved),
+        RpcId(GameManager.HOST_ID, nameof(GetAndCreateBlocksOnMoved),
             peerId, newXCoordinate, newYCoordinate, oldXCoordinate, oldYCoordinate);
         DeleteActiveBlocksInRegion(newXCoordinate, newYCoordinate, oldXCoordinate, oldYCoordinate);
     }
@@ -90,7 +96,7 @@ public partial class WorldManager : Node {
             }
         }
     
-        RpcId(peerId, nameof(PeerCreateWorld), worldWidth, worldHeight, savedBlocksSerialized);
+        RpcId(peerId, nameof(PeerCreateActiveBlocks), savedBlocksSerialized);
     }
 
     [Rpc(CallLocal = true)]
@@ -99,7 +105,7 @@ public partial class WorldManager : Node {
         worldHeight = serverWorldHeight;
         activeBlocks = new ActiveBlock[serverWorldWidth, serverWorldHeight];
         PeerCreateActiveBlocks(savedBlocksSerialized);
-        EmitSignal(SignalName.WorldCreated);
+        EmitSignal(SignalName.WorldCreated, spawnX, spawnY);
     }
 
     [Rpc(CallLocal = true)]
@@ -108,8 +114,8 @@ public partial class WorldManager : Node {
             foreach (Godot.Collections.Dictionary<string, string> blockSerialized in savedBlocksSerialized) {
                 int xPosition = blockSerialized["XPosition"].ToInt();
                 int yPosition = blockSerialized["YPosition"].ToInt();
-                BlockType blockTypeId = (BlockType)InstanceFromId(ulong.Parse(blockSerialized["BlockTypeId"]));
-                CreateActiveBlock(blockTypeId, xPosition, yPosition);
+                BlockType blockType = ResourceLoader.Load<BlockType>(blockSerialized["ResourcePath"]);
+                CreateActiveBlock(blockType, xPosition, yPosition);
             }
         }
         catch (Exception e) {
@@ -120,7 +126,6 @@ public partial class WorldManager : Node {
 
     private void CreateActiveBlock(BlockType blockType, int xPosition, int yPosition) {
         if (activeBlocks[xPosition, yPosition] is not null) return;
-
         Vector2 position = new Vector2(xPosition * BLOCK_SIZE, yPosition * BLOCK_SIZE);
         ActiveBlock newBlock = ActiveBlock.Instantiate(blockType, position);
         activeBlocks[xPosition, yPosition] = newBlock;
@@ -137,7 +142,9 @@ public partial class WorldManager : Node {
                 if (Math.Abs(newXCoordinate - x) < BLOCK_RENDER_DISTANCE &&
                     Math.Abs(newYCoordinate - y) < BLOCK_RENDER_DISTANCE)
                     continue;
-                activeBlocks[x, y]?.QueueFree();
+                if (activeBlocks[x, y] is null) continue;
+                activeBlocks[x, y].QueueFree();
+                activeBlocks[x, y] = null;
             }
         }
     }
