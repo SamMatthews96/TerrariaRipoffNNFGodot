@@ -9,4 +9,10 @@
   <ItemGroup>
     <Content Include="OLD\todo.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="GameManagers\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Remove="GameManagers\**" />
+  </ItemGroup>
 </Project>

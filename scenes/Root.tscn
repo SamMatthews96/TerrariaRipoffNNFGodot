@@ -1,14 +1,13 @@
-[gd_scene load_steps=10 format=3 uid="uid://dxqeumnkw4j5p"]
+[gd_scene load_steps=9 format=3 uid="uid://dxqeumnkw4j5p"]
 
 [ext_resource type="PackedScene" uid="uid://4c67gixp10at" path="res://UI/Scenes/MultiplayerMenu.tscn" id="1_sp2ny"]
-[ext_resource type="Script" path="res://Scenes/Scripts/MultiplayerManager.cs" id="2_0ytrm"]
-[ext_resource type="PackedScene" uid="uid://470oqnickyx5" path="res://GameManagers/Scenes/GameManagerClient.tscn" id="2_pfkad"]
+[ext_resource type="Script" path="res://Managers/Scripts/MultiplayerManager.cs" id="2_0ytrm"]
+[ext_resource type="PackedScene" uid="uid://470oqnickyx5" path="res://Managers/Scenes/GameManagerClient.tscn" id="2_pfkad"]
 [ext_resource type="Script" path="res://testObjects/Logger.cs" id="3_c4nns"]
 [ext_resource type="Script" path="res://Scenes/Scripts/PlayerManager.cs" id="4_1dugc"]
 [ext_resource type="PackedScene" uid="uid://bx6lgpicpfal4" path="res://Scenes/Player.tscn" id="5_ahhfo"]
-[ext_resource type="Script" path="res://Scenes/Scripts/WorldManager.cs" id="7_fy5pw"]
 [ext_resource type="Script" path="res://Scenes/Scripts/InputManager.cs" id="7_m3jb3"]
-[ext_resource type="PackedScene" uid="uid://djhvb3tbxby6h" path="res://Scenes/ServerData.tscn" id="8_fc2oy"]
+[ext_resource type="PackedScene" uid="uid://b2ruq48p6ytp" path="res://Managers/Scenes/WorldManager.tscn" id="8_dew1c"]
 
 [node name="Root" type="Node"]
 
@@ -32,15 +31,10 @@ _spawnable_scenes = PackedStringArray("res://Scenes/Player.tscn")
 spawn_path = NodePath("..")
 spawn_limit = 5
 
-[node name="WorldManager" type="Node" parent="."]
-script = ExtResource("7_fy5pw")
-packedServerData = ExtResource("8_fc2oy")
+[node name="WorldManager" parent="." instance=ExtResource("8_dew1c")]
 
 [connection signal="HostButtonDown" from="MultiplayerMenu" to="MultiplayerManager" method="OnHostButtonDown"]
 [connection signal="JoinButtonDown" from="MultiplayerMenu" to="MultiplayerManager" method="OnLoginScreenJoinButtonDown"]
 [connection signal="ConnectedToServer" from="MultiplayerManager" to="Logger" method="OnConnectedToServer"]
 [connection signal="ConnectedToServer" from="MultiplayerManager" to="PlayerManager" method="OnConnectedToServer"]
 [connection signal="PeerConnected" from="MultiplayerManager" to="Logger" method="OnPeerConnected"]
-[connection signal="StartedServer" from="MultiplayerManager" to="WorldManager" method="OnStartedServer"]
-[connection signal="CreatedLocalPlayer" from="PlayerManager" to="WorldManager" method="OnLocalPlayerCreated"]
-[connection signal="CreatedServerWorldManager" from="WorldManager" to="PlayerManager" method="OnCreatedServerWorldManager"]
