@@ -1,18 +1,14 @@
-[gd_scene load_steps=5 format=3 uid="uid://d05oxgj7w5piq"]
+[gd_scene load_steps=4 format=3 uid="uid://bkqfwylm0rcx3"]
 
 [ext_resource type="Script" path="res://Managers/Scripts/GameManagerHost.cs" id="1_5to5a"]
-[ext_resource type="PackedScene" uid="uid://djhvb3tbxby6h" path="res://Scenes/ServerData.tscn" id="2_gvrey"]
-[ext_resource type="PackedScene" uid="uid://c03lf4evmn8v7" path="res://Managers/Scenes/WorldManager.tscn" id="3_nm8uk"]
-[ext_resource type="PackedScene" uid="uid://dnyytwifc4xlb" path="res://Managers/Scenes/PlayerManager.tscn" id="4_fs1ln"]
+[ext_resource type="PackedScene" uid="uid://dnyytwifc4xlb" path="res://Managers/Scenes/PlayerManager.tscn" id="1_j8hhe"]
+[ext_resource type="PackedScene" uid="uid://cfc060xa2l6o1" path="res://Managers/Scenes/WorldManager.tscn" id="3_osru7"]
 
 [node name="GameManagerHost" type="Node"]
 script = ExtResource("1_5to5a")
 
-[node name="ServerData" parent="." node_paths=PackedStringArray("worldManager") instance=ExtResource("2_gvrey")]
-worldManager = NodePath("../WorldManager")
+[node name="PlayerManager" parent="." instance=ExtResource("1_j8hhe")]
 
-[node name="WorldManager" parent="." instance=ExtResource("3_nm8uk")]
+[node name="WorldManager" parent="." instance=ExtResource("3_osru7")]
 
-[node name="PlayerManager" parent="." instance=ExtResource("4_fs1ln")]
-
-[connection signal="StartedServer" from="." to="ServerData" method="OnStartedServer"]
+[connection signal="StartedServer" from="." to="WorldManager" method="OnStartedServer"]

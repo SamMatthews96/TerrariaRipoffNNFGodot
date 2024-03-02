@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace TerrariaRipoffNNF.GameManagers.Scripts; 
+namespace TerrariaRipoffNNF.Managers.Scripts; 
 
 public abstract partial class GameManager : Node {
     public const int HOST_ID = 1;

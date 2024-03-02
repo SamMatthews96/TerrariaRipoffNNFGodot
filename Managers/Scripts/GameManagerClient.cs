@@ -1,7 +1,7 @@
 using Godot;
 using static Godot.GD;
 
-namespace TerrariaRipoffNNF.GameManagers.Scripts;
+namespace TerrariaRipoffNNF.Managers.Scripts;
 
 public partial class GameManagerClient : GameManager {
     [Export] private int port = 8910;

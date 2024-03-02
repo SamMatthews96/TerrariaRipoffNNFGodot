@@ -1,6 +1,4 @@
 using Godot;
-using TerrariaRipoffNNF.GameManagers.Scripts;
-using TerrariaRipoffNNF.Scenes.Scripts;
 using static Godot.GD;
 
 namespace TerrariaRipoffNNF.Managers.Scripts;
@@ -8,7 +6,6 @@ namespace TerrariaRipoffNNF.Managers.Scripts;
 public partial class GameManagerHost : GameManager {
     [Export] private int port = 8910;
     private ENetMultiplayerPeer peer;
-
 
     [Signal]
     public delegate void StartedServerEventHandler();
@@ -18,7 +15,6 @@ public partial class GameManagerHost : GameManager {
 
     [Signal]
     public delegate void PeerDisconnectedEventHandler(long playerId);
-
 
     public override void _Ready() {
         Instance = this;

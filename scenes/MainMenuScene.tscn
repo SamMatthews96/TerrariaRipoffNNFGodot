@@ -1,37 +1,37 @@
 [gd_scene load_steps=9 format=3 uid="uid://bddgrodfbw38t"]
 
-[ext_resource type="Script" path="res://Scenes/Scripts/MainMenuScene.cs" id="1_goduv"]
-[ext_resource type="PackedScene" uid="uid://bqgy2isjkq88u" path="res://Managers/Scenes/GameManagerSinglePlayer.tscn" id="2_rklig"]
-[ext_resource type="PackedScene" uid="uid://d05oxgj7w5piq" path="res://Managers/Scenes/GameManagerHost.tscn" id="3_4j0x5"]
-[ext_resource type="PackedScene" uid="uid://470oqnickyx5" path="res://Managers/Scenes/GameManagerClient.tscn" id="4_wri3a"]
-[ext_resource type="PackedScene" uid="uid://c0x5v4nep5b2s" path="res://UI/Scenes/MainMenu.tscn" id="5_vbbuo"]
-[ext_resource type="PackedScene" uid="uid://4c67gixp10at" path="res://UI/Scenes/MultiplayerMenu.tscn" id="6_nt5fs"]
-[ext_resource type="PackedScene" uid="uid://dxbgkmaljcq2i" path="res://UI/Scenes/WorldMenu.tscn" id="7_srjyy"]
-[ext_resource type="Script" path="res://testObjects/Logger.cs" id="8_c835n"]
+[ext_resource type="Script" path="res://Scenes/Scripts/MainMenuScene.cs" id="1_fxv78"]
+[ext_resource type="PackedScene" uid="uid://bqgy2isjkq88u" path="res://Managers/Scenes/GameManagerSinglePlayer.tscn" id="2_xkbas"]
+[ext_resource type="PackedScene" uid="uid://bkqfwylm0rcx3" path="res://Managers/Scenes/GameManagerHost.tscn" id="3_j1mcl"]
+[ext_resource type="PackedScene" uid="uid://470oqnickyx5" path="res://Managers/Scenes/GameManagerClient.tscn" id="4_q235b"]
+[ext_resource type="PackedScene" uid="uid://c0x5v4nep5b2s" path="res://UI/Scenes/MainMenu.tscn" id="5_gmwlc"]
+[ext_resource type="PackedScene" uid="uid://4c67gixp10at" path="res://UI/Scenes/MultiplayerMenu.tscn" id="6_x1dwu"]
+[ext_resource type="PackedScene" uid="uid://dxbgkmaljcq2i" path="res://UI/Scenes/WorldMenu.tscn" id="7_5bbhf"]
+[ext_resource type="Script" path="res://testObjects/Logger.cs" id="8_7q2s4"]
 
 [node name="MainMenuScene" type="Node" node_paths=PackedStringArray("mainMenu", "multiplayerMenu", "worldMenu")]
-script = ExtResource("1_goduv")
+script = ExtResource("1_fxv78")
 mainMenu = NodePath("MainMenu")
 multiplayerMenu = NodePath("MultiplayerMenu")
 worldMenu = NodePath("WorldMenu")
-packedGameManagerSinglePlayer = ExtResource("2_rklig")
-packedGameManagerHost = ExtResource("3_4j0x5")
-packedGameManagerClient = ExtResource("4_wri3a")
+packedGameManagerSinglePlayer = ExtResource("2_xkbas")
+packedGameManagerHost = ExtResource("3_j1mcl")
+packedGameManagerClient = ExtResource("4_q235b")
 
-[node name="MainMenu" parent="." instance=ExtResource("5_vbbuo")]
+[node name="MainMenu" parent="." instance=ExtResource("5_gmwlc")]
 offset_left = 701.0
 offset_top = 30.0
 offset_right = -1219.0
 offset_bottom = -1050.0
 
-[node name="MultiplayerMenu" parent="." instance=ExtResource("6_nt5fs")]
+[node name="MultiplayerMenu" parent="." instance=ExtResource("6_x1dwu")]
 visible = false
 offset_left = 702.0
 offset_top = 121.0
 offset_right = 702.0
 offset_bottom = 121.0
 
-[node name="WorldMenu" parent="." instance=ExtResource("7_srjyy")]
+[node name="WorldMenu" parent="." instance=ExtResource("7_5bbhf")]
 visible = false
 offset_left = 703.0
 offset_top = 245.0
@@ -39,7 +39,7 @@ offset_right = -1217.0
 offset_bottom = -835.0
 
 [node name="Logger" type="Node" parent="."]
-script = ExtResource("8_c835n")
+script = ExtResource("8_7q2s4")
 
 [connection signal="MultiPlayerButtonDown" from="MainMenu" to="." method="OnMultiPlayerButtonDown"]
 [connection signal="QuitButtonDown" from="MainMenu" to="." method="OnExitButtonDown"]

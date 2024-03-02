@@ -1,8 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://c03lf4evmn8v7"]
+[gd_scene load_steps=2 format=3 uid="uid://cfc060xa2l6o1"]
 
 [ext_resource type="Script" path="res://Managers/Scripts/WorldManager.cs" id="1_ige1a"]
-[ext_resource type="PackedScene" uid="uid://djhvb3tbxby6h" path="res://Scenes/ServerData.tscn" id="2_3ogyb"]
 
 [node name="WorldManager" type="Node"]
 script = ExtResource("1_ige1a")
-packedServerData = ExtResource("2_3ogyb")

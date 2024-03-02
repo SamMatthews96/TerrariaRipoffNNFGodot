@@ -7,38 +7,70 @@ using Array = Godot.Collections.Array;
 namespace TerrariaRipoffNNF.Managers.Scripts;
 
 public partial class WorldManager : Node {
-    public const int BLOCK_RENDER_DISTANCE = 10;
     public const int BLOCK_SIZE = 32;
+    private const int BLOCK_RENDER_DISTANCE = 10;
 
     [Export] private PackedScene packedServerData;
     private int worldWidth;
     private int worldHeight;
+    private int spawnX;
+    private int spawnY;
     private ActiveBlock[,] activeBlocks;
+    private SavedBlock[,] savedBlocks;
 
     [Signal]
-    public delegate void CreatedServerWorldManagerEventHandler();
+    public delegate void CreatedWorldManagerEventHandler();
 
-    public static WorldManager Instance { get; private set; }
+    private void OnStartedServer() {
+        // PH
+        // load world data from disk
+        int spawnX = 5;
+        int spawnY = 5;
+        worldWidth = 50;
+        worldHeight = 50;
+        
+        BlockType blockType = ResourceLoader.Load<BlockType>("res://Resources/BlockType/Stone.tres");
+        savedBlocks = new SavedBlock[worldWidth, worldHeight];
+        for (int x = 0; x < worldWidth; x++) {
+            savedBlocks[x, 6] = new SavedBlock(blockType, x, 6);
+        }
+        // END PH
 
-    public override void _Ready() {
-        Instance = this;
+        GetAndCreateBlocks(1, spawnX, spawnY);
     }
     
-    // private void OnLocalPlayerCreated(int xSpawnCoords, int ySpawnCoords) {
-    //     // Player.LocalPlayer.LocalPlayerMoved += OnLocalPlayerMoved;
-    //     int peerId = Multiplayer.GetUniqueId();
-    //     RpcId(MultiplayerManager.HOST_ID, nameof(ServerData.Instance.GetAndCreateBlocks),
-    //         peerId, xSpawnCoords, ySpawnCoords);
-    // }
+    private void OnLocalPlayerCreated(int xSpawnCoords, int ySpawnCoords) {
+        // Player.LocalPlayer.LocalPlayerMoved += OnLocalPlayerMoved;
+        int peerId = Multiplayer.GetUniqueId();
+        RpcId(MultiplayerManager.HOST_ID, nameof(GetAndCreateBlocks),
+            peerId, xSpawnCoords, ySpawnCoords);
+    }
 
     private void OnLocalPlayerMoved(
         int newXCoordinate, int newYCoordinate, int oldXCoordinate, int oldYCoordinate) {
         int peerId = Multiplayer.GetUniqueId();
-        RpcId(MultiplayerManager.HOST_ID, nameof(ServerData.Instance.GetAndCreateNewBlocks),
-            peerId, newXCoordinate, newYCoordinate, oldXCoordinate, oldYCoordinate);
-        DeleteActiveBlocksInRegion(newXCoordinate, newYCoordinate, oldXCoordinate, oldYCoordinate);
+        // RpcId(MultiplayerManager.HOST_ID, nameof(GetAndCreateNewBlocks),
+        //     peerId, newXCoordinate, newYCoordinate, oldXCoordinate, oldYCoordinate);
+        // DeleteActiveBlocksInRegion(newXCoordinate, newYCoordinate, oldXCoordinate, oldYCoordinate);
     }
-    
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+    private void GetAndCreateBlocks(int peerId, int xCoord, int yCoord) {
+        (int xStart, int xEnd, int yStart, int yEnd) = GetRegionBoundary(xCoord, yCoord);
+
+        Array savedBlocksSerialized = new();
+        for (int x = xStart; x < xEnd; x++) {
+            for (int y = yStart; y < yEnd; y++) {
+                var block = savedBlocks[x, y];
+                if (block is not null) {
+                    savedBlocksSerialized.Add(block.Serialize());
+                }
+            }
+        }
+
+        RpcId(peerId, nameof(PeerCreateWorld), worldWidth, worldHeight, savedBlocksSerialized);
+    }
+
     [Rpc(CallLocal = true)]
     public void PeerCreateWorld(int serverWorldWidth, int serverWorldHeight, Array savedBlocksSerialized) {
         worldWidth = serverWorldWidth;

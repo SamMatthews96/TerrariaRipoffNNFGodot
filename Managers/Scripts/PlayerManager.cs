@@ -29,8 +29,9 @@ public partial class PlayerManager : Node {
         Player newPlayer = packedPlayer.Instantiate<Player>();
         newPlayer.Name = new StringName(peerId.ToString());
 
-        int xSpawnCoords = ServerData.Instance.SpawnX;
-        int ySpawnCoords = ServerData.Instance.SpawnY;
+        // @todo feed spawn coords in params
+        int xSpawnCoords = 5;
+        int ySpawnCoords = 5;
 
         AddChild(newPlayer);
         RpcId(peerId, nameof(OnPlayerCreatedOnServer),

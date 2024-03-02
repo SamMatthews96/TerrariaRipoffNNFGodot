@@ -1,4 +1,5 @@
 using Godot;
+using TerrariaRipoffNNF.Managers.Scripts;
 
 namespace TerrariaRipoffNNF.Scenes.Scripts;
 
@@ -16,7 +17,7 @@ public partial class PlayerManager : Node {
 
     private void OnConnectedToServer() {
         int peerId = Multiplayer.GetUniqueId();
-        RpcId(MultiplayerManager.HOST_ID, nameof(CreatePlayerOnServer), peerId);
+        RpcId(Managers.Scripts.MultiplayerManager.HOST_ID, nameof(CreatePlayerOnServer), peerId);
     }
 
     private void OnCreatedServerWorldManager() {
@@ -28,8 +29,10 @@ public partial class PlayerManager : Node {
         Player newPlayer = packedPlayer.Instantiate<Player>();
         newPlayer.Name = new StringName(peerId.ToString());
 
-        int xSpawnCoords = WorldManager.Instance.ServerData.SpawnX;
-        int ySpawnCoords = WorldManager.Instance.ServerData.SpawnY;
+        // int xSpawnCoords = WorldManager.Instance.SavedWorldDataManager.SpawnX;
+        int xSpawnCoords = 5;
+        // int ySpawnCoords = SavedWorldDataManager.SpawnY;
+        int ySpawnCoords = 5;
 
         AddChild(newPlayer);
         RpcId(peerId, nameof(OnPlayerCreatedOnServer),
