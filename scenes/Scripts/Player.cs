@@ -7,14 +7,19 @@ namespace TerrariaRipoffNNF.Scenes.Scripts;
 public partial class Player : CharacterBody2D {
     [Export] private float speed = 300f;
     [Export] private MultiplayerSynchronizer positionSynchronizer;
+    [Export] private float gravityCoefficient = 1600;
+    [Export] private float jumpStrength = 800;
+
     private int horizontalInput;
+    private bool isFalling;
+    private float xVelocity;
+    private float yVelocity;
 
     [Signal]
     public delegate void LocalPlayerMovedEventHandler(
         int xCoords, int yCoords, int prevXCoords, int prevYCoords);
 
     public static Player LocalPlayer { get; private set; }
-
     private int XCoords => (int)Math.Round(Position.X / WorldManager.BLOCK_SIZE);
     private int YCoords => (int)Math.Round(Position.Y / WorldManager.BLOCK_SIZE);
 
@@ -22,24 +27,40 @@ public partial class Player : CharacterBody2D {
         int peerId = Name.ToString()!.ToInt();
         positionSynchronizer.SetMultiplayerAuthority(peerId);
         if (peerId != Multiplayer.GetUniqueId()) return;
-        
+
         LocalPlayer = this;
         InputManager.Instance.HorizontalInputChanged += newInput => horizontalInput = newInput;
-        PlayerManager.Instance.CreatedLocalPlayerOnServer += serverPosition => {
-            Position = serverPosition;
-        };
-
+        InputManager.Instance.JumpPressed += OnJumpPressed;
+        PlayerManager.Instance.CreatedLocalPlayerOnServer += serverPosition => { Position = serverPosition; };
     }
 
     public override void _PhysicsProcess(double delta) {
         if (this != LocalPlayer) return;
 
         (int previousXCoords, int previousYCoords) = (XCoords, YCoords);
-        Velocity = new Vector2(speed * horizontalInput, speed);
+        
+        isFalling = !TestMove(Transform, new Vector2(0, 0.1f));
+
+        xVelocity = speed * horizontalInput;
+        if (isFalling) {
+            yVelocity += (float)delta * gravityCoefficient;
+        } else {
+            yVelocity = Math.Min(0, yVelocity);
+        }
+        Velocity = new Vector2(xVelocity, yVelocity);
         MoveAndSlide();
+
         if (previousXCoords != XCoords || previousYCoords != YCoords) {
             EmitSignal(SignalName.LocalPlayerMoved,
                 XCoords, YCoords, previousXCoords, previousYCoords);
         }
+    }
+
+    
+
+    private void OnJumpPressed() {
+        if (isFalling) return;
+        isFalling = true;
+        yVelocity = -jumpStrength;
     }
 }

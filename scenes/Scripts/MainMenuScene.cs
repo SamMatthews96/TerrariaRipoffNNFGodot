@@ -60,6 +60,9 @@ public partial class MainMenuScene : Node {
         } else {
             EmitSignal(SignalName.EnteredWorldClient);
         }
+        mainMenu.Hide();
+        multiplayerMenu.Hide();
+        worldMenu.Hide();
     }
 
     private void OnWorldMenuBackButtonDown() {

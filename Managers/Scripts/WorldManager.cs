@@ -31,7 +31,12 @@ public partial class WorldManager : Node {
         BlockType blockType = ResourceLoader.Load<BlockType>("res://Resources/BlockType/Stone.tres");
         savedBlocks = new SavedBlock[worldWidth, worldHeight];
         for (int x = 0; x < worldWidth; x++) {
-            savedBlocks[x, 6] = new SavedBlock(blockType, x, 6);
+            savedBlocks[x, 15] = new SavedBlock(blockType, x, 15);
+        }
+
+        for (int y = 10; y < 14; y++) {
+            savedBlocks[10,y] = new SavedBlock(blockType, 10, y);
+            savedBlocks[20,y] = new SavedBlock(blockType, 20, y);
         }
         // END PH
 
@@ -47,7 +52,7 @@ public partial class WorldManager : Node {
             peerId, spawnX, spawnY);
     }
     
-    private void OnCreatedLocalPlayerOnServer(Vector2 position) {
+    private void OnCreatedLocalPlayerOnServer(Vector2 _) {
         Player.LocalPlayer.LocalPlayerMoved += OnLocalPlayerMoved;
         int peerId = Multiplayer.GetUniqueId();
     }
