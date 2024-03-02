@@ -1,9 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://bddgrodfbw38t"]
+[gd_scene load_steps=8 format=3 uid="uid://bddgrodfbw38t"]
 
 [ext_resource type="Script" path="res://Scenes/Scripts/MainMenuScene.cs" id="1_fxv78"]
 [ext_resource type="PackedScene" uid="uid://bkqfwylm0rcx3" path="res://Managers/Scenes/GameManager.tscn" id="2_g0o83"]
 [ext_resource type="PackedScene" uid="uid://c0x5v4nep5b2s" path="res://UI/Scenes/MainMenu.tscn" id="5_gmwlc"]
 [ext_resource type="PackedScene" uid="uid://4c67gixp10at" path="res://UI/Scenes/MultiplayerMenu.tscn" id="6_x1dwu"]
+[ext_resource type="PackedScene" uid="uid://di1fam0sfyckw" path="res://Managers/Scenes/FileManager.tscn" id="7_4oual"]
 [ext_resource type="PackedScene" uid="uid://dxbgkmaljcq2i" path="res://UI/Scenes/WorldMenu.tscn" id="7_5bbhf"]
 [ext_resource type="Script" path="res://testObjects/Logger.cs" id="8_7q2s4"]
 
@@ -38,6 +39,8 @@ offset_bottom = -835.0
 script = ExtResource("8_7q2s4")
 
 [node name="GameManager" parent="." instance=ExtResource("2_g0o83")]
+
+[node name="FileManager" parent="." instance=ExtResource("7_4oual")]
 
 [connection signal="EnteredWorldClient" from="." to="GameManager" method="OnEnteredWorldClient"]
 [connection signal="EnteredWorldHost" from="." to="GameManager" method="OnEnteredWorldHost"]

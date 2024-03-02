@@ -21,5 +21,8 @@ public partial class Logger : Node {
 	private void OnServerPeerConnected(int playerId) {
 		GD.Print("Server joined by " + playerId);
 	}
+
+	private void OnCallEvent() {
+	}
 	
 }
