@@ -14,12 +14,19 @@ public partial class WorldMenu : Control {
     [Signal]
     public delegate void BackButtonDownEventHandler();
 
+    [Signal]
+    public delegate void CreateWorldButtonDownEventHandler();
+
     private void OnEnterWorldButtonDown() {
         EmitSignal(SignalName.EnterWorldButtonDown);
     }
 
     private void OnBackButtonDown() {
         EmitSignal(SignalName.BackButtonDown);
+    }
+
+    private void OnCreateWorldButtonDown() {
+        EmitSignal(SignalName.CreateWorldButtonDown);
     }
 
     private void OnWorldAdded(WorldBasicInfo worldBasicInfo) {

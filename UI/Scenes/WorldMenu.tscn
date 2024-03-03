@@ -37,3 +37,4 @@ offset_right = 679.0
 offset_bottom = 83.0
 
 [connection signal="button_down" from="BackButton" to="." method="OnBackButtonDown"]
+[connection signal="button_down" from="CreateWorldButton" to="." method="OnCreateWorldButtonDown"]

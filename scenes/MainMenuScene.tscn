@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://c5g412jf40xk"]
+[gd_scene load_steps=7 format=3 uid="uid://c5g412jf40xk"]
 
 [ext_resource type="Script" path="res://Scenes/Scripts/MainMenuScene.cs" id="1_fxv78"]
 [ext_resource type="PackedScene" uid="uid://bf2qjveyvxrtt" path="res://UI/Scenes/JoinMenu.tscn" id="2_0h1p6"]
 [ext_resource type="PackedScene" uid="uid://c0x5v4nep5b2s" path="res://UI/Scenes/MainMenu.tscn" id="5_gmwlc"]
+[ext_resource type="Script" path="res://Scenes/WorldCreator.cs" id="6_wwdcr"]
 [ext_resource type="PackedScene" uid="uid://4c67gixp10at" path="res://UI/Scenes/MultiplayerMenu.tscn" id="6_x1dwu"]
 [ext_resource type="PackedScene" uid="uid://dxbgkmaljcq2i" path="res://UI/Scenes/WorldMenu.tscn" id="7_5bbhf"]
 
@@ -20,6 +21,7 @@ worldMenu = NodePath("WorldMenu")
 joinMenu = NodePath("JoinMenu")
 
 [node name="MainMenu" parent="." instance=ExtResource("5_gmwlc")]
+visible = false
 layout_mode = 1
 offset_left = 701.0
 offset_top = 30.0
@@ -27,13 +29,13 @@ offset_right = -1219.0
 offset_bottom = -1050.0
 
 [node name="MultiplayerMenu" parent="." instance=ExtResource("6_x1dwu")]
+visible = false
 offset_left = 701.0
 offset_top = 30.0
 offset_right = 701.0
 offset_bottom = 30.0
 
 [node name="WorldMenu" parent="." instance=ExtResource("7_5bbhf")]
-visible = false
 layout_mode = 1
 offset_left = 434.0
 offset_top = 112.0
@@ -48,6 +50,9 @@ offset_top = 86.0
 offset_right = -1479.0
 offset_bottom = -994.0
 
+[node name="WorldCreator" type="Node" parent="."]
+script = ExtResource("6_wwdcr")
+
 [connection signal="MultiPlayerButtonDown" from="MainMenu" to="." method="OnMultiPlayerButtonDown"]
 [connection signal="QuitButtonDown" from="MainMenu" to="." method="OnExitButtonDown"]
 [connection signal="SinglePlayerButtonDown" from="MainMenu" to="." method="OnSinglePlayerButtonDown"]
@@ -55,6 +60,8 @@ offset_bottom = -994.0
 [connection signal="HostButtonDown" from="MultiplayerMenu" to="." method="OnHostButtonDown"]
 [connection signal="JoinButtonDown" from="MultiplayerMenu" to="." method="OnJoinButtonDown"]
 [connection signal="BackButtonDown" from="WorldMenu" to="." method="OnWorldMenuBackButtonDown"]
+[connection signal="CreateWorldButtonDown" from="WorldMenu" to="WorldCreator" method="OnCreateWorldButtonDown"]
 [connection signal="EnterWorldButtonDown" from="WorldMenu" to="." method="OnEnterWorldButtonDown"]
 [connection signal="BackButtonDown" from="JoinMenu" to="." method="OnJoinMenuBackButtonDown"]
 [connection signal="EnterWorldButtonDown" from="JoinMenu" to="." method="OnJoinMenuEnterWorldButtonDown"]
+[connection signal="WorldCreated" from="WorldCreator" to="." method="OnWorldCreated"]
