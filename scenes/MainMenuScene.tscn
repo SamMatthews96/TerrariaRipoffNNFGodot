@@ -1,50 +1,53 @@
-[gd_scene load_steps=8 format=3 uid="uid://bddgrodfbw38t"]
+[gd_scene load_steps=6 format=3 uid="uid://c5g412jf40xk"]
 
 [ext_resource type="Script" path="res://Scenes/Scripts/MainMenuScene.cs" id="1_fxv78"]
-[ext_resource type="PackedScene" uid="uid://bkqfwylm0rcx3" path="res://Managers/Scenes/GameManager.tscn" id="2_g0o83"]
+[ext_resource type="PackedScene" uid="uid://bf2qjveyvxrtt" path="res://UI/Scenes/JoinMenu.tscn" id="2_0h1p6"]
 [ext_resource type="PackedScene" uid="uid://c0x5v4nep5b2s" path="res://UI/Scenes/MainMenu.tscn" id="5_gmwlc"]
 [ext_resource type="PackedScene" uid="uid://4c67gixp10at" path="res://UI/Scenes/MultiplayerMenu.tscn" id="6_x1dwu"]
-[ext_resource type="PackedScene" uid="uid://di1fam0sfyckw" path="res://Managers/Scenes/FileManager.tscn" id="7_4oual"]
 [ext_resource type="PackedScene" uid="uid://dxbgkmaljcq2i" path="res://UI/Scenes/WorldMenu.tscn" id="7_5bbhf"]
-[ext_resource type="Script" path="res://testObjects/Logger.cs" id="8_7q2s4"]
 
-[node name="MainMenuScene" type="Node" node_paths=PackedStringArray("mainMenu", "multiplayerMenu", "worldMenu")]
+[node name="MainMenuScene" type="Control" node_paths=PackedStringArray("mainMenu", "multiplayerMenu", "worldMenu", "joinMenu")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_fxv78")
 mainMenu = NodePath("MainMenu")
 multiplayerMenu = NodePath("MultiplayerMenu")
 worldMenu = NodePath("WorldMenu")
-packedGameManager = ExtResource("2_g0o83")
+joinMenu = NodePath("JoinMenu")
 
 [node name="MainMenu" parent="." instance=ExtResource("5_gmwlc")]
+layout_mode = 1
 offset_left = 701.0
 offset_top = 30.0
 offset_right = -1219.0
 offset_bottom = -1050.0
 
 [node name="MultiplayerMenu" parent="." instance=ExtResource("6_x1dwu")]
-visible = false
-offset_left = 702.0
-offset_top = 121.0
-offset_right = 702.0
-offset_bottom = 121.0
+offset_left = 701.0
+offset_top = 30.0
+offset_right = 701.0
+offset_bottom = 30.0
 
 [node name="WorldMenu" parent="." instance=ExtResource("7_5bbhf")]
 visible = false
-offset_left = 703.0
-offset_top = 245.0
-offset_right = -1217.0
-offset_bottom = -835.0
+layout_mode = 1
+offset_left = 434.0
+offset_top = 112.0
+offset_right = -1486.0
+offset_bottom = -968.0
 
-[node name="Logger" type="Node" parent="."]
-script = ExtResource("8_7q2s4")
+[node name="JoinMenu" parent="." instance=ExtResource("2_0h1p6")]
+visible = false
+layout_mode = 1
+offset_left = 441.0
+offset_top = 86.0
+offset_right = -1479.0
+offset_bottom = -994.0
 
-[node name="GameManager" parent="." instance=ExtResource("2_g0o83")]
-
-[node name="FileManager" parent="." instance=ExtResource("7_4oual")]
-
-[connection signal="EnteredWorldClient" from="." to="GameManager" method="OnEnteredWorldClient"]
-[connection signal="EnteredWorldHost" from="." to="GameManager" method="OnEnteredWorldHost"]
-[connection signal="EnteredWorldSinglePlayer" from="." to="GameManager" method="OnEnteredWorldSinglePlayer"]
 [connection signal="MultiPlayerButtonDown" from="MainMenu" to="." method="OnMultiPlayerButtonDown"]
 [connection signal="QuitButtonDown" from="MainMenu" to="." method="OnExitButtonDown"]
 [connection signal="SinglePlayerButtonDown" from="MainMenu" to="." method="OnSinglePlayerButtonDown"]
@@ -53,3 +56,5 @@ script = ExtResource("8_7q2s4")
 [connection signal="JoinButtonDown" from="MultiplayerMenu" to="." method="OnJoinButtonDown"]
 [connection signal="BackButtonDown" from="WorldMenu" to="." method="OnWorldMenuBackButtonDown"]
 [connection signal="EnterWorldButtonDown" from="WorldMenu" to="." method="OnEnterWorldButtonDown"]
+[connection signal="BackButtonDown" from="JoinMenu" to="." method="OnJoinMenuBackButtonDown"]
+[connection signal="EnterWorldButtonDown" from="JoinMenu" to="." method="OnJoinMenuEnterWorldButtonDown"]

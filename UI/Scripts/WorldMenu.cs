@@ -1,19 +1,30 @@
+using System.Collections.Generic;
 using Godot;
+using TerrariaRipoffNNF.Resources.Scripts;
 
-namespace TerrariaRipoffNNF.UI.Scripts; 
+namespace TerrariaRipoffNNF.UI.Scripts;
 
-public partial class WorldMenu : Control
-{
-	[Signal]
-	public delegate void EnterWorldButtonDownEventHandler();
-	[Signal]
-	public delegate void BackButtonDownEventHandler();
+public partial class WorldMenu : Control {
+    [Export] private PackedScene worldButton;
+    [Export] private VBoxContainer worldButtonVContainer;
 
-	private void OnEnterWorldButtonDown() {
-		EmitSignal(SignalName.EnterWorldButtonDown);
-	}
+    [Signal]
+    public delegate void EnterWorldButtonDownEventHandler();
 
-	private void OnBackButtonDown() {
-		EmitSignal(SignalName.BackButtonDown);
-	}
+    [Signal]
+    public delegate void BackButtonDownEventHandler();
+
+    private void OnEnterWorldButtonDown() {
+        EmitSignal(SignalName.EnterWorldButtonDown);
+    }
+
+    private void OnBackButtonDown() {
+        EmitSignal(SignalName.BackButtonDown);
+    }
+
+    private void OnWorldAdded(WorldBasicInfo worldBasicInfo) {
+        Button newButton = worldButton.Instantiate<Button>();
+        newButton.Text = worldBasicInfo.Name;
+        worldButtonVContainer.AddChild(newButton);
+    }
 }

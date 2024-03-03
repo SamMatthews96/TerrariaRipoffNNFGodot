@@ -13,19 +13,27 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_spjuy")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
-layout_mode = 0
-offset_right = 383.0
-offset_bottom = 260.0
-
-[node name="EnterWorldButton" type="Button" parent="VBoxContainer"]
+[node name="BackButton" type="Button" parent="."]
 layout_mode = 2
-text = "Enter World (PH)
-"
-
-[node name="BackButton" type="Button" parent="VBoxContainer"]
-layout_mode = 2
+offset_left = 484.0
+offset_top = 410.0
+offset_right = 867.0
+offset_bottom = 441.0
 text = "Back"
 
-[connection signal="button_down" from="VBoxContainer/EnterWorldButton" to="." method="OnEnterWorldButtonDown"]
-[connection signal="button_down" from="VBoxContainer/BackButton" to="." method="OnBackButtonDown"]
+[node name="CreateWorldButton" type="Button" parent="."]
+layout_mode = 2
+offset_left = 58.0
+offset_top = 411.0
+offset_right = 441.0
+offset_bottom = 442.0
+text = "Create World"
+
+[node name="WorldButtonVContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 263.0
+offset_top = 36.0
+offset_right = 679.0
+offset_bottom = 83.0
+
+[connection signal="button_down" from="BackButton" to="." method="OnBackButtonDown"]

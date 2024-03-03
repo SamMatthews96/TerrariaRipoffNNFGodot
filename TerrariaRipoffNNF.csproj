@@ -7,9 +7,6 @@
     <PackageReference Include="NUnit" Version="3.13.3" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="OLD\todo.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Remove="GameManagers\**" />
   </ItemGroup>
   <ItemGroup>

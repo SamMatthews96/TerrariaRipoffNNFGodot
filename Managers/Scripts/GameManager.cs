@@ -40,14 +40,14 @@ public partial class GameManager : Node {
         EmitSignal(SignalName.StartedServer);
     }
 
-    private void OnEnteredWorldClient() {
+    private void OnEnteredWorldClient(string ip) {
         Multiplayer.PeerConnected += id => EmitSignal(SignalName.PeerConnected, id);
         Multiplayer.PeerDisconnected += id => EmitSignal(SignalName.PeerDisconnected, id);
         Multiplayer.ConnectedToServer += () => EmitSignal(SignalName.ConnectedToServer);
         Multiplayer.ConnectionFailed += () => EmitSignal(SignalName.ConnectionFailed);
         
         peer = new ENetMultiplayerPeer();
-        Error error = peer.CreateClient(address, port);
+        Error error = peer.CreateClient(ip, port);
         if (error != Error.Ok) {
             Print("error cannot join! :" + error);
             return;
