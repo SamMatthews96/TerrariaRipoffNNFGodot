@@ -8,4 +8,9 @@ public partial class WorldBasicInfo : Resource {
     public int WorldWidth { get; protected set; }
     public int WorldHeight { get; protected set; }
     
+    public WorldBasicInfo(string name, int worldWidth, int worldHeight) {
+        Name = name;
+        WorldWidth = worldWidth;
+        WorldHeight = worldHeight;
+    }
 }
