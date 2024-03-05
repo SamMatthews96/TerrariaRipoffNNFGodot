@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://bddgrodfbw38t"]
+[gd_scene load_steps=6 format=3 uid="uid://bddgrodfbw38t"]
 
 [ext_resource type="PackedScene" uid="uid://bkqfwylm0rcx3" path="res://Managers/Scenes/GameManager.tscn" id="2_g0o83"]
 [ext_resource type="PackedScene" uid="uid://c5g412jf40xk" path="res://Scenes/MainMenuScene.tscn" id="3_kcx0o"]
+[ext_resource type="PackedScene" uid="uid://cvlouh6yxdxrf" path="res://Scenes/LoadIcon.tscn" id="5_grx8p"]
 [ext_resource type="PackedScene" uid="uid://di1fam0sfyckw" path="res://Managers/Scenes/FileManager.tscn" id="7_4oual"]
 [ext_resource type="Script" path="res://testObjects/Logger.cs" id="8_7q2s4"]
 
@@ -10,15 +11,18 @@
 [node name="FileManager" parent="." instance=ExtResource("7_4oual")]
 
 [node name="MainMenuScene" parent="." instance=ExtResource("3_kcx0o")]
-offset_left = -5.0
-offset_top = -12.0
-offset_right = -5.0
-offset_bottom = -12.0
+offset_left = -10.0
+offset_top = -24.0
+offset_right = -10.0
+offset_bottom = -24.0
 
 [node name="Logger" type="Node" parent="."]
 script = ExtResource("8_7q2s4")
 
 [node name="GameManager" parent="." instance=ExtResource("2_g0o83")]
+
+[node name="LoadIcon" parent="." instance=ExtResource("5_grx8p")]
+position = Vector2(886, 292)
 
 [connection signal="CreatedWorld" from="MainMenuScene" to="FileManager" method="OnWorldCreated"]
 [connection signal="EnteredWorldClient" from="MainMenuScene" to="GameManager" method="OnEnteredWorldClient"]

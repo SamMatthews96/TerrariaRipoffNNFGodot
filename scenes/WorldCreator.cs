@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Godot;
 using TerrariaRipoffNNF.Resources.Scripts;
@@ -14,13 +13,13 @@ public partial class WorldCreator : Node {
         Task<World> createWorldTask = Task.Run(CreateWorld);
         createWorldTask.GetAwaiter().OnCompleted(() => {
             watch.Stop();
-            GD.Print(watch.ElapsedMilliseconds);
+            GD.Print("world created in " + watch.ElapsedMilliseconds + " ms");
             EmitSignal(SignalName.WorldCreated, createWorldTask.Result);
         });
     }
 
     private async Task<World> CreateWorld() {
-        int worldWidth = 5000;
+        int worldWidth = 1000;
         int worldHeight = 1000;
         int mid = 500;
         BlockType blockType = ResourceLoader.Load<BlockType>("res://Resources/BlockType/Stone.tres");

@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://cvlouh6yxdxrf"]
+
+[ext_resource type="Script" path="res://Scenes/LoadIcon.cs" id="1_7kvyb"]
+[ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://testObjects/icon.svg" id="1_irxae"]
+
+[node name="LoadIcon" type="Node2D" node_paths=PackedStringArray("label", "sprite")]
+script = ExtResource("1_7kvyb")
+label = NodePath("Label")
+sprite = NodePath("Sprite2D")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_irxae")
+
+[node name="Label" type="Label" parent="."]
+offset_left = -16.0
+offset_top = 74.0
+offset_right = 24.0
+offset_bottom = 97.0
+text = "FPS"
