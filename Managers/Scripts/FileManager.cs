@@ -11,7 +11,10 @@ public partial class FileManager : Node {
     // C:\Users\Sam-M\AppData\Roaming\Godot\app_userdata\TerrariaRipoffNNF\SavedData
 
     public override void _Ready() {
-        LoadAllWorldBasicData();
+        var ans = LoadAllWorldBasicData();
+        foreach (WorldBasicInfo worldBasicInfo in ans) {
+            GD.Print(worldBasicInfo);
+        }
     }
 
     private void OnWorldCreated(World world) {
@@ -69,6 +72,8 @@ public partial class FileManager : Node {
                 $"{path}/{worldDirectory}/worldBasicData.txt",FileAccess.ModeFlags.Read);
             string content = fileAccess.GetAsText();
             fileAccess.Dispose();
+            Dictionary myDic = Json.ParseString(content).AsGodotDictionary();
+            worldBasicInfos[i] = WorldBasicInfo.FromDict(myDic);
         }
         
         return worldBasicInfos;

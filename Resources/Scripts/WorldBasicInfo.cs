@@ -1,4 +1,5 @@
 ﻿
+using System;
 using Godot;
 using Godot.Collections;
 using ISerializable = TerrariaRipoffNNF.scripts.ISerializable;
@@ -22,5 +23,19 @@ public partial class WorldBasicInfo : Resource, ISerializable {
         serializedData.Add("WorldWidth", WorldWidth);
         serializedData.Add("WorldHeight", WorldHeight);
         return serializedData;
+    }
+
+    public static WorldBasicInfo FromDict(Dictionary dictionary) {
+        try {
+            return new WorldBasicInfo(
+                dictionary["Name"].ToString(),
+                dictionary["WorldWidth"].ToString().ToInt(),
+                dictionary["WorldHeight"].ToString().ToInt());
+        }
+        catch (Exception e) {
+            GD.Print("invalid WorldBasicInfo dict");
+            GD.Print(e);
+            throw new NotImplementedException();
+        }
     }
 }
