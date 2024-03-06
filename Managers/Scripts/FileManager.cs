@@ -11,7 +11,7 @@ public partial class FileManager : Node {
     // C:\Users\Sam-M\AppData\Roaming\Godot\app_userdata\TerrariaRipoffNNF\SavedData
 
     public override void _Ready() {
-        
+        LoadAllWorldBasicData();
     }
 
     private void OnWorldCreated(World world) {
@@ -35,7 +35,8 @@ public partial class FileManager : Node {
         string worldBasicString = worldBasicInfo.Serialize().ToString();
         fileBasicData.StoreString(worldBasicString);
         fileBasicData.Dispose();
-        
+        GD.Print($"{path}/worldBasicData.txt");
+
         FileAccess file = FileAccess.Open($"{path}/world.txt", FileAccess.ModeFlags.Write);
         string worldString = world.Serialize().ToString();
         file.StoreString(worldString);
@@ -55,7 +56,22 @@ public partial class FileManager : Node {
     }
 
     private WorldBasicInfo[] LoadAllWorldBasicData() {
-        throw new NotImplementedException();
+        string path = $"{ROOT_FOLDER}/worlds";
+        DirAccess dirAccess = DirAccess.Open(path);
+
+        string[] directories = dirAccess.GetDirectories();
+        WorldBasicInfo[] worldBasicInfos = new WorldBasicInfo[directories.Length];
+        
+        for (int i = 0; i < directories.Length; i++) {
+            string worldDirectory = directories[i];
+            
+            FileAccess fileAccess = FileAccess.Open(
+                $"{path}/{worldDirectory}/worldBasicData.txt",FileAccess.ModeFlags.Read);
+            string content = fileAccess.GetAsText();
+            fileAccess.Dispose();
+        }
+        
+        return worldBasicInfos;
     }
     
 }
