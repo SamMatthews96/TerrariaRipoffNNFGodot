@@ -75,4 +75,14 @@ public partial class FileManager : Node {
             dirAccess.ChangeDir(currentFile);
         }
     }
+    
+    /*
+     * Enter world button clicked ->
+     *      Host or single player
+     *      WorldBasicInfo
+     * Get World from world basic
+     * Start game and host or single player
+     */
+    
 }
+
