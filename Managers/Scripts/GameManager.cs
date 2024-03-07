@@ -1,4 +1,5 @@
 using Godot;
+using TerrariaRipoffNNF.Resources.Scripts;
 using static Godot.GD;
 
 namespace TerrariaRipoffNNF.Managers.Scripts;
@@ -9,8 +10,10 @@ public partial class GameManager : Node {
     private ENetMultiplayerPeer peer;
     public const int HOST_ID = 1;
 
+    
+    
     [Signal]
-    public delegate void StartedServerEventHandler();
+    public delegate void StartedGameEventHandler();
 
     [Signal]
     public delegate void PeerConnectedEventHandler(long playerId);
@@ -24,10 +27,12 @@ public partial class GameManager : Node {
     [Signal]
     public delegate void ConnectionFailedEventHandler();
 
-    private void OnEnteredWorldHost() {
+    
+    
+    private void OnEnterWorldAsHostButtonDown(WorldBasicInfo worldBasicInfo) {
         Multiplayer.PeerConnected += id => EmitSignal(SignalName.PeerConnected, id);
         Multiplayer.PeerDisconnected += id => EmitSignal(SignalName.PeerDisconnected, id);
-        
+
         peer = new ENetMultiplayerPeer();
         var error = peer.CreateServer(port);
         if (error != Error.Ok) {
@@ -37,15 +42,15 @@ public partial class GameManager : Node {
 
         peer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
         Multiplayer.MultiplayerPeer = peer;
-        EmitSignal(SignalName.StartedServer);
+        EmitSignal(SignalName.StartedGame);
     }
 
-    private void OnEnteredWorldClient(string ip) {
+    private void OnEnterWorldAsClientButtonDown(string ip) {
         Multiplayer.PeerConnected += id => EmitSignal(SignalName.PeerConnected, id);
         Multiplayer.PeerDisconnected += id => EmitSignal(SignalName.PeerDisconnected, id);
         Multiplayer.ConnectedToServer += () => EmitSignal(SignalName.ConnectedToServer);
         Multiplayer.ConnectionFailed += () => EmitSignal(SignalName.ConnectionFailed);
-        
+
         peer = new ENetMultiplayerPeer();
         Error error = peer.CreateClient(ip, port);
         if (error != Error.Ok) {
@@ -57,7 +62,7 @@ public partial class GameManager : Node {
         Multiplayer.MultiplayerPeer = peer;
     }
 
-    private void OnEnteredWorldSinglePlayer() {
-        Print("not implemented");
+    private void OnEnterWorldAsSingleButtonDown(WorldBasicInfo worldBasicInfo) {
+        EmitSignal(SignalName.StartedGame);
     }
 }

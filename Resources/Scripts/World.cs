@@ -5,7 +5,7 @@ using TerrariaRipoffNNF.scripts;
 namespace TerrariaRipoffNNF.Resources.Scripts;
 
 public partial class World : WorldBasicInfo, ISerializable {
-    public SavedBlock[,] SavedBlocks { get; private set; }
+    public SavedBlock[,] SavedBlocks { get; }
 
     public World(SavedBlock[,] savedBlocks, string name, int worldWidth, int worldHeight)
         : base(name, worldWidth, worldHeight) {

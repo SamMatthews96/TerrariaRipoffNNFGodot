@@ -3,7 +3,7 @@ using Godot;
 namespace TerrariaRipoffNNF.testObjects; 
 
 public partial class Logger : Node {
-	private void OnStartedServer() {
+	private void OnStartedGame() {
 		int playerId = Multiplayer.MultiplayerPeer.GetUniqueId();
 		GD.Print("hosted game: " + playerId);
 	}

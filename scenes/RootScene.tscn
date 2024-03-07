@@ -23,6 +23,11 @@ script = ExtResource("8_7q2s4")
 [node name="GameManager" parent="." instance=ExtResource("2_g0o83")]
 
 [connection signal="CreateWorldButtonDown" from="MainMenuScene" to="WorldCreator" method="OnCreateWorldButtonDown"]
+[connection signal="EnterWorldAsClientButtonDown" from="MainMenuScene" to="GameManager" method="OnEnterWorldAsClientButtonDown"]
+[connection signal="EnterWorldAsHostButtonDown" from="MainMenuScene" to="GameManager" method="OnEnterWorldAsHostButtonDown"]
+[connection signal="EnterWorldAsSingleButtonDown" from="MainMenuScene" to="GameManager" method="OnEnterWorldAsSingleButtonDown"]
 [connection signal="WorldBasicDataLoaded" from="FileManager" to="MainMenuScene" method="OnWorldBasicDataLoaded"]
 [connection signal="WorldCreated" from="WorldCreator" to="MainMenuScene" method="OnWorldCreatorWorldCreated"]
 [connection signal="WorldCreated" from="WorldCreator" to="FileManager" method="OnWorldCreatorWorldCreated"]
+[connection signal="ConnectedToServer" from="GameManager" to="MainMenuScene" method="OnGameManagerConnectedToServer"]
+[connection signal="StartedGame" from="GameManager" to="MainMenuScene" method="OnStartedGame"]

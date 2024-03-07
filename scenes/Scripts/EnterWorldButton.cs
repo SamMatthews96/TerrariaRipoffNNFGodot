@@ -14,7 +14,7 @@ public partial class EnterWorldButton : Button {
 		Text = worldBasicInfo.Name;
 	}
 
-	private void OnEnterWorldButtonClicked() {
+	private void OnEnterWorldButtonDown() {
 		EmitSignal(SignalName.EnterWorldButtonDown, worldBasicInfo);
 	}
 }

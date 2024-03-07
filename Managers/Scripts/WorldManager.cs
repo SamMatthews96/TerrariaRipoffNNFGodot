@@ -20,7 +20,7 @@ public partial class WorldManager : Node {
     [Signal]
     public delegate void WorldCreatedEventHandler(int spawnX, int spawnY);
 
-    private void OnStartedServer() {
+    private void OnStartedGame() {
         // PH
         // load world data from disk
         spawnX = 5;

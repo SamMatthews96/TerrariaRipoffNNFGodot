@@ -13,4 +13,4 @@ grow_vertical = 2
 text = "WORLD_NAME_PH"
 script = ExtResource("1_qdweq")
 
-[connection signal="button_down" from="." to="." method="OnEnterWorldButtonClicked"]
+[connection signal="button_down" from="." to="." method="OnEnterWorldButtonDown"]

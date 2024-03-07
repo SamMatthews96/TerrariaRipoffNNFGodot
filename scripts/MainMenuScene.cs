@@ -16,6 +16,7 @@ public partial class MainMenuScene : Control {
     [Export] private VBoxContainer worldListContainer;
     [Export] private PackedScene packedEnterWorldButton;
     [Export] private LineEdit worldNameEdit;
+    [Export] private LineEdit ipEdit;
     private readonly List<Control> menus = new();
     private GameType gameType;
 
@@ -29,18 +30,19 @@ public partial class MainMenuScene : Control {
     public delegate void CreateWorldButtonDownEventHandler(string worldName);
 
     [Signal]
-    public delegate void EnterWorldAsHostButtonDownEventHandler();
-
-    [Signal]
-    public delegate void EnterWorldAsClientButtonDownEventHandler(WorldBasicInfo worldBasicInfo);
+    public delegate void EnterWorldAsHostButtonDownEventHandler(WorldBasicInfo worldBasicInfo);
 
     [Signal]
     public delegate void EnterWorldAsSingleButtonDownEventHandler(WorldBasicInfo worldBasicInfo);
+
+    [Signal]
+    public delegate void EnterWorldAsClientButtonDownEventHandler();
 
     private void ChangeToMenu(Control menu) {
         foreach (Control menuToDisable in menus) {
             menuToDisable.Hide();
         }
+
         menu.Show();
     }
 
@@ -89,7 +91,6 @@ public partial class MainMenuScene : Control {
     }
 
     private void OnWorldMenuEnterWorldButtonDown(WorldBasicInfo worldBasicInfo) {
-        GD.Print(worldBasicInfo);
         switch (gameType) {
             case GameType.SinglePlayer:
                 EmitSignal(SignalName.EnterWorldAsSingleButtonDown, worldBasicInfo);
@@ -125,7 +126,7 @@ public partial class MainMenuScene : Control {
     #region JoinMenu EventHandlers
 
     private void OnJoinMenuEnterWorldButtonDown() {
-        EmitSignal(SignalName.EnterWorldAsClientButtonDown);
+        EmitSignal(SignalName.EnterWorldAsClientButtonDown, ipEdit.Text);
     }
 
     private void OnJoinMenuBackButtonDown() {
@@ -151,5 +152,13 @@ public partial class MainMenuScene : Control {
         enterWorldButton.Initialize(worldBasicInfo);
         enterWorldButton.EnterWorldButtonDown += OnWorldMenuEnterWorldButtonDown;
         worldListContainer.AddChild(enterWorldButton);
+    }
+
+    private void OnStartedGame() {
+        QueueFree();
+    }
+
+    private void OnGameManagerConnectedToServer() {
+        QueueFree();
     }
 }
