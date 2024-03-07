@@ -8,8 +8,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="GameManagers\**" />
+    <Compile Remove="UI\Scripts\**" />
+    <Compile Remove="UI\**" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Remove="GameManagers\**" />
+    <EmbeddedResource Remove="UI\Scripts\**" />
+    <EmbeddedResource Remove="UI\**" />
   </ItemGroup>
 </Project>

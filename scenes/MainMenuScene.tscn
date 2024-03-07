@@ -1,67 +1,181 @@
-[gd_scene load_steps=7 format=3 uid="uid://c5g412jf40xk"]
+[gd_scene load_steps=4 format=3 uid="uid://tbvohnqfn3cl"]
 
-[ext_resource type="Script" path="res://Scenes/Scripts/MainMenuScene.cs" id="1_fxv78"]
-[ext_resource type="PackedScene" uid="uid://bf2qjveyvxrtt" path="res://UI/Scenes/JoinMenu.tscn" id="2_0h1p6"]
-[ext_resource type="PackedScene" uid="uid://c0x5v4nep5b2s" path="res://UI/Scenes/MainMenu.tscn" id="5_gmwlc"]
-[ext_resource type="Script" path="res://Scenes/WorldCreator.cs" id="6_wwdcr"]
-[ext_resource type="PackedScene" uid="uid://4c67gixp10at" path="res://UI/Scenes/MultiplayerMenu.tscn" id="6_x1dwu"]
-[ext_resource type="PackedScene" uid="uid://dxbgkmaljcq2i" path="res://UI/Scenes/WorldMenu.tscn" id="7_5bbhf"]
+[ext_resource type="Script" path="res://Scripts/MainMenuScene.cs" id="1_tso7g"]
+[ext_resource type="PackedScene" uid="uid://cvlouh6yxdxrf" path="res://Scenes/LoadIcon.tscn" id="2_gt2gt"]
+[ext_resource type="PackedScene" uid="uid://buekj451osmbs" path="res://Scenes/EnterWorldButton.tscn" id="2_vjtmq"]
 
-[node name="MainMenuScene" type="Control" node_paths=PackedStringArray("mainMenu", "multiplayerMenu", "worldMenu", "joinMenu")]
+[node name="MainMenuScene" type="Control" node_paths=PackedStringArray("mainMenu", "multiplayerMenu", "worldMenu", "joinMenu", "worldListContainer", "worldNameEdit")]
 layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -2.0
+offset_bottom = -2.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_tso7g")
+mainMenu = NodePath("MainMenu")
+multiplayerMenu = NodePath("MultiplayerMenu")
+worldMenu = NodePath("WorldMenu")
+joinMenu = NodePath("JoinMenu")
+worldListContainer = NodePath("WorldMenu/WorldListContainer")
+packedEnterWorldButton = ExtResource("2_vjtmq")
+worldNameEdit = NodePath("WorldMenu/WorldNameEdit")
+
+[node name="MainMenu" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchor_right = 1.0
+anchor_bottom = 0.248
+offset_left = 2.0
+offset_top = 4.0
+offset_right = -1.0
+offset_bottom = -30.84
+grow_horizontal = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainMenu"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -241.5
+offset_top = -50.5
+offset_right = 243.5
+offset_bottom = 50.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SinglePlayerButton" type="Button" parent="MainMenu/VBoxContainer"]
+layout_mode = 2
+text = "Single Player"
+
+[node name="MultiplayerButton" type="Button" parent="MainMenu/VBoxContainer"]
+layout_mode = 2
+text = "Multiplayer"
+
+[node name="ExitButton" type="Button" parent="MainMenu/VBoxContainer"]
+layout_mode = 2
+text = "Exit"
+
+[node name="WorldMenu" type="Control" parent="."]
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_fxv78")
-mainMenu = NodePath("MainMenu")
-multiplayerMenu = NodePath("MultiplayerMenu")
-worldMenu = NodePath("WorldMenu")
-joinMenu = NodePath("JoinMenu")
 
-[node name="MainMenu" parent="." instance=ExtResource("5_gmwlc")]
-visible = false
+[node name="CreateWorldButton" type="Button" parent="WorldMenu"]
 layout_mode = 1
-offset_left = 701.0
-offset_top = 30.0
-offset_right = -1219.0
-offset_bottom = -1050.0
+offset_left = 634.0
+offset_top = 924.0
+offset_right = 949.0
+offset_bottom = 969.0
+text = "Create World"
 
-[node name="MultiplayerMenu" parent="." instance=ExtResource("6_x1dwu")]
-visible = false
-offset_left = 701.0
-offset_top = 30.0
-offset_right = 701.0
-offset_bottom = 30.0
+[node name="BackButton" type="Button" parent="WorldMenu"]
+layout_mode = 0
+offset_left = 980.0
+offset_top = 923.0
+offset_right = 1295.0
+offset_bottom = 968.0
+text = "Back"
 
-[node name="WorldMenu" parent="." instance=ExtResource("7_5bbhf")]
+[node name="WorldListContainer" type="VBoxContainer" parent="WorldMenu"]
+layout_mode = 0
+offset_left = 772.0
+offset_top = 177.0
+offset_right = 1153.0
+offset_bottom = 220.0
+
+[node name="WorldNameEdit" type="LineEdit" parent="WorldMenu"]
+layout_mode = 0
+offset_left = 826.0
+offset_top = 860.0
+offset_right = 1114.0
+offset_bottom = 891.0
+
+[node name="MultiplayerMenu" type="Control" parent="."]
 layout_mode = 1
-offset_left = 434.0
-offset_top = 112.0
-offset_right = -1486.0
-offset_bottom = -968.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="JoinMenu" parent="." instance=ExtResource("2_0h1p6")]
-visible = false
+[node name="VBoxContainer" type="VBoxContainer" parent="MultiplayerMenu"]
 layout_mode = 1
-offset_left = 441.0
-offset_top = 86.0
-offset_right = -1479.0
-offset_bottom = -994.0
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 0.281
+offset_left = 721.0
+offset_top = 73.0
+offset_right = -716.0
+offset_bottom = -129.48
 
-[node name="WorldCreator" type="Node" parent="."]
-script = ExtResource("6_wwdcr")
+[node name="HostButton" type="Button" parent="MultiplayerMenu/VBoxContainer"]
+layout_mode = 2
+text = "Host"
 
-[connection signal="MultiPlayerButtonDown" from="MainMenu" to="." method="OnMultiPlayerButtonDown"]
-[connection signal="QuitButtonDown" from="MainMenu" to="." method="OnExitButtonDown"]
-[connection signal="SinglePlayerButtonDown" from="MainMenu" to="." method="OnSinglePlayerButtonDown"]
-[connection signal="BackButtonDown" from="MultiplayerMenu" to="." method="OnMultiPlayerMenuBackButtonDown"]
-[connection signal="HostButtonDown" from="MultiplayerMenu" to="." method="OnHostButtonDown"]
-[connection signal="JoinButtonDown" from="MultiplayerMenu" to="." method="OnJoinButtonDown"]
-[connection signal="BackButtonDown" from="WorldMenu" to="." method="OnWorldMenuBackButtonDown"]
-[connection signal="CreateWorldButtonDown" from="WorldMenu" to="WorldCreator" method="OnCreateWorldButtonDown"]
-[connection signal="EnterWorldButtonDown" from="WorldMenu" to="." method="OnEnterWorldButtonDown"]
-[connection signal="BackButtonDown" from="JoinMenu" to="." method="OnJoinMenuBackButtonDown"]
-[connection signal="EnterWorldButtonDown" from="JoinMenu" to="." method="OnJoinMenuEnterWorldButtonDown"]
-[connection signal="WorldCreated" from="WorldCreator" to="." method="OnWorldCreated"]
+[node name="JoinButton" type="Button" parent="MultiplayerMenu/VBoxContainer"]
+layout_mode = 2
+text = "Join"
+
+[node name="BackButton" type="Button" parent="MultiplayerMenu/VBoxContainer"]
+layout_mode = 2
+text = "Back"
+
+[node name="JoinMenu" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="EnterWorldButton" type="Button" parent="JoinMenu"]
+layout_mode = 2
+offset_left = 824.0
+offset_top = 244.0
+offset_right = 1083.0
+offset_bottom = 275.0
+text = "Enter World"
+
+[node name="BackButton" type="Button" parent="JoinMenu"]
+layout_mode = 2
+offset_left = 825.0
+offset_top = 282.0
+offset_right = 1085.0
+offset_bottom = 315.0
+text = "Back"
+
+[node name="Label" type="Label" parent="JoinMenu"]
+layout_mode = 0
+offset_left = 810.0
+offset_top = 200.0
+offset_right = 850.0
+offset_bottom = 223.0
+text = "IP"
+
+[node name="LineEdit" type="LineEdit" parent="JoinMenu"]
+layout_mode = 0
+offset_left = 861.0
+offset_top = 197.0
+offset_right = 1037.0
+offset_bottom = 229.0
+
+[node name="LoadIcon" parent="." instance=ExtResource("2_gt2gt")]
+position = Vector2(960, 549)
+
+[connection signal="button_down" from="MainMenu/VBoxContainer/SinglePlayerButton" to="." method="OnMainMenuSinglePlayerButtonDown"]
+[connection signal="button_down" from="MainMenu/VBoxContainer/MultiplayerButton" to="." method="OnMainMenuMultiplayerButtonDown"]
+[connection signal="button_down" from="MainMenu/VBoxContainer/ExitButton" to="." method="OnMainMenuExitButtonDown"]
+[connection signal="button_down" from="WorldMenu/CreateWorldButton" to="." method="OnWorldMenuCreateWorldButtonDown"]
+[connection signal="button_down" from="WorldMenu/BackButton" to="." method="OnWorldMenuBackButtonDown"]
+[connection signal="button_down" from="MultiplayerMenu/VBoxContainer/HostButton" to="." method="OnMultiplayerMenuHostButtonDown"]
+[connection signal="button_down" from="MultiplayerMenu/VBoxContainer/JoinButton" to="." method="OnMultiplayerMenuJoinButtonDown"]
+[connection signal="button_down" from="MultiplayerMenu/VBoxContainer/BackButton" to="." method="OnMultiplayerMenuBackButtonDown"]
+[connection signal="button_down" from="JoinMenu/EnterWorldButton" to="." method="OnJoinMenuEnterWorldButtonDown"]
+[connection signal="button_down" from="JoinMenu/BackButton" to="." method="OnJoinMenuBackButtonDown"]

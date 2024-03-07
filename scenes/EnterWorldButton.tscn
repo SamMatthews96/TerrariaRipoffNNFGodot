@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3 uid="uid://buekj451osmbs"]
+
+[ext_resource type="Script" path="res://Scenes/Scripts/EnterWorldButton.cs" id="1_qdweq"]
+
+[node name="EnterWorldButton" type="Button"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -1645.0
+offset_bottom = -1027.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "WORLD_NAME_PH"
+script = ExtResource("1_qdweq")
+
+[connection signal="button_down" from="." to="." method="OnEnterWorldButtonClicked"]

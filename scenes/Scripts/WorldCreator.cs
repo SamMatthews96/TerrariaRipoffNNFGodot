@@ -2,15 +2,15 @@ using System.Threading.Tasks;
 using Godot;
 using TerrariaRipoffNNF.Resources.Scripts;
 
-namespace TerrariaRipoffNNF.Scenes;
+namespace TerrariaRipoffNNF.Scenes.Scripts;
 
 public partial class WorldCreator : Node {
     [Signal]
     public delegate void WorldCreatedEventHandler(World world);
 
-    private void OnCreateWorldButtonDown() {
+    private void OnCreateWorldButtonDown(string worldName) {
         var watch = System.Diagnostics.Stopwatch.StartNew();
-        Task<World> createWorldTask = Task.Run(CreateWorld);
+        Task<World> createWorldTask = Task.Run(() => CreateWorld(worldName));
         createWorldTask.GetAwaiter().OnCompleted(() => {
             watch.Stop();
             GD.Print("world created in " + watch.ElapsedMilliseconds + " ms");
@@ -18,7 +18,7 @@ public partial class WorldCreator : Node {
         });
     }
 
-    private async Task<World> CreateWorld() {
+    private async Task<World> CreateWorld(string worldName) {
         int worldWidth = 1000;
         int worldHeight = 1000;
         int mid = 500;
@@ -41,7 +41,6 @@ public partial class WorldCreator : Node {
 
         await Task.WhenAll(tasks);
 
-        World newWorld = new World(savedBlocks, "Imma world", worldWidth, worldHeight);
-        return newWorld;
+        return new World(savedBlocks, worldName, worldWidth, worldHeight);
     }
 }

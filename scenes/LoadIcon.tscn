@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://cvlouh6yxdxrf"]
 
-[ext_resource type="Script" path="res://Scenes/LoadIcon.cs" id="1_7kvyb"]
+[ext_resource type="Script" path="res://Scenes/Scripts/LoadIcon.cs" id="1_7kvyb"]
 [ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://testObjects/icon.svg" id="1_irxae"]
 
 [node name="LoadIcon" type="Node2D" node_paths=PackedStringArray("label", "sprite")]
