@@ -16,6 +16,6 @@ script = ExtResource("4_yhrgm")
 [node name="PlayerManager" parent="." instance=ExtResource("1_j8hhe")]
 
 [connection signal="ConnectedToServer" from="." to="WorldManager" method="OnConnectedToServer"]
-[connection signal="StartedGame" from="." to="WorldManager" method="OnStartedGame"]
+[connection signal="StartedGame" from="." to="WorldManager" method="OnLoadGameInitialized"]
 [connection signal="WorldCreated" from="WorldManager" to="PlayerManager" method="OnWorldCreated"]
 [connection signal="CreatedLocalPlayerOnServer" from="PlayerManager" to="WorldManager" method="OnCreatedLocalPlayerOnServer"]

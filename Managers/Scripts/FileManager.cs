@@ -7,64 +7,61 @@ using Array = Godot.Collections.Array;
 
 namespace TerrariaRipoffNNF.Managers.Scripts;
 
-public partial class FileManager : Node {
+public static class FileManager {
+    private const string WORLD_DIR = "user://SavedData/worlds";
     // C:\Users\Sam-M\AppData\Roaming\Godot\app_userdata\TerrariaRipoffNNF\SavedData
 
-    [Signal]
-    public delegate void WorldBasicDataLoadedEventHandler(Dictionary dict);
-
-    public override void _Ready() {
-        Array worldBasicDataArray = LoadAllWorldBasicData();
-        EmitSignal(SignalName.WorldBasicDataLoaded, worldBasicDataArray);
-    }
-
-    private void OnWorldCreatorWorldCreated(World world) {
-        var watch = System.Diagnostics.Stopwatch.StartNew();
-        Task createWorldTask = Task.Run(() => { SaveWorld(world); });
-        createWorldTask.GetAwaiter().OnCompleted(() => {
-            watch.Stop();
-            GD.Print("world saved in " + watch.ElapsedMilliseconds + " ms");
-        });
-    }
-
-    private void SaveWorld(World world) {
-        EnsureDirectoryExists($"SavedData/worlds/{world.Name}");
+    public static void SaveWorld(World world) {
+        EnsureDirectoryExists($"{WORLD_DIR}/{world.Name}");
         FileAccess fileBasicData = FileAccess.Open(
-            $"user://SavedData/worlds/{world.Name}/worldBasicData.txt", FileAccess.ModeFlags.Write);
+            $"{WORLD_DIR}/{world.Name}/worldBasicData.txt", FileAccess.ModeFlags.Write);
         WorldBasicInfo worldBasicInfo = world.GetBasicInfo();
         string worldBasicString = worldBasicInfo.Serialize().ToString();
         fileBasicData.StoreString(worldBasicString);
         fileBasicData.Dispose();
 
         FileAccess file = FileAccess.Open(
-            $"user://SavedData/worlds/{world.Name}/world.txt", FileAccess.ModeFlags.Write);
+            $"{WORLD_DIR}/{world.Name}/world.txt", FileAccess.ModeFlags.Write);
         string worldString = world.Serialize().ToString();
         file.StoreString(worldString);
         file.Dispose();
     }
 
-    private Array LoadAllWorldBasicData() {
-        EnsureDirectoryExists("SavedData/worlds");
-        DirAccess dirAccess = DirAccess.Open("user://SavedData/worlds");
+    public static WorldBasicInfo[] LoadAllWorldBasicData() {
+        EnsureDirectoryExists(WORLD_DIR);
+        DirAccess dirAccess = DirAccess.Open(WORLD_DIR);
 
         string[] directories = dirAccess.GetDirectories();
-        Array worldBasicInfos = new();
+        WorldBasicInfo[] worldBasicInfos = new WorldBasicInfo[directories.Length];
 
         for (int i = 0; i < directories.Length; i++) {
             string worldName = directories[i];
             FileAccess fileAccess = FileAccess.Open(
-                $"user://SavedData/worlds/{worldName}/worldBasicData.txt", FileAccess.ModeFlags.Read);
+                $"{WORLD_DIR}/{worldName}/worldBasicData.txt", FileAccess.ModeFlags.Read);
             string content = fileAccess.GetAsText();
             fileAccess.Dispose();
-            Dictionary myDic = Json.ParseString(content).AsGodotDictionary();
-            worldBasicInfos.Add(myDic);
+            Dictionary worldBasicInfoDict = Json.ParseString(content).AsGodotDictionary();
+
+            worldBasicInfos[i] = WorldBasicInfo.FromDict(worldBasicInfoDict);
         }
 
         return worldBasicInfos;
     }
 
-    private void EnsureDirectoryExists(string path) {
-        string[] directoryArray = path.Split("/");
+    public static World LoadWorld(WorldBasicInfo worldBasicInfo) {
+        string worldName = worldBasicInfo.Name;
+
+        FileAccess fileAccess = FileAccess.Open(
+            $"{WORLD_DIR}/{worldName}/worldBasicData.txt", FileAccess.ModeFlags.Read);
+        string content = fileAccess.GetAsText();
+        fileAccess.Dispose();
+        Dictionary worldDict = Json.ParseString(content).AsGodotDictionary();
+        return World.FromDict(worldDict);
+    }
+
+    private static void EnsureDirectoryExists(string path) {
+        string relativePath = path.Replace("user://", "");
+        string[] directoryArray = relativePath.Split("/");
         DirAccess dirAccess = DirAccess.Open("user://");
 
         foreach (var currentFile in directoryArray) {
@@ -75,14 +72,4 @@ public partial class FileManager : Node {
             dirAccess.ChangeDir(currentFile);
         }
     }
-    
-    /*
-     * Enter world button clicked ->
-     *      Host or single player
-     *      WorldBasicInfo
-     * Get World from world basic
-     * Start game and host or single player
-     */
-    
 }
-

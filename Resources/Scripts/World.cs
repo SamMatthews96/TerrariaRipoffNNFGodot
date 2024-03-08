@@ -1,6 +1,8 @@
-﻿using Godot;
+﻿using System;
+using Godot;
 using Godot.Collections;
 using TerrariaRipoffNNF.scripts;
+using Array = Godot.Collections.Array;
 
 namespace TerrariaRipoffNNF.Resources.Scripts;
 
@@ -15,7 +17,7 @@ public partial class World : WorldBasicInfo, ISerializable {
     public WorldBasicInfo GetBasicInfo() {
         return new WorldBasicInfo(Name, WorldWidth, WorldHeight);
     }
-    
+
     public new Dictionary Serialize() {
         Dictionary serializedData = base.Serialize();
         Array savedBlocksSerialized = new();
@@ -23,8 +25,33 @@ public partial class World : WorldBasicInfo, ISerializable {
             if (block is null) continue;
             savedBlocksSerialized.Add(block.Serialize());
         }
-        serializedData.Add("SavedBlocks",savedBlocksSerialized);
+
+        serializedData.Add("SavedBlocks", savedBlocksSerialized);
         return serializedData;
     }
-    
+
+    public new static World FromDict(Dictionary dictionary) {
+        try {
+            int worldWidth = dictionary["WorldWidth"].ToString().ToInt();
+            int worldHeight = dictionary["WorldHeight"].ToString().ToInt();
+            string worldName = dictionary["Name"].ToString();
+
+            Array savedBlocksArray = dictionary["SavedBlocks"].AsGodotArray();
+            SavedBlock[,] savedBlocks = new SavedBlock[worldWidth, worldHeight];
+            foreach (Dictionary savedBlockDict in savedBlocksArray) {
+                SavedBlock savedBlock = SavedBlock.FromDict(savedBlockDict);
+                savedBlocks[savedBlock.XPosition, savedBlock.YPosition] = savedBlock;
+            }
+            return new World(
+                savedBlocks,
+                worldName,
+                worldWidth,
+                worldHeight);
+        }
+        catch (Exception e) {
+            GD.Print("invalid WorldBasicInfo dict");
+            GD.Print(e);
+            throw new NotImplementedException();
+        }
+    }
 }

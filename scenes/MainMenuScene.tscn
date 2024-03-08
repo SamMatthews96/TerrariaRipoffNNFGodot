@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://tbvohnqfn3cl"]
 
-[ext_resource type="Script" path="res://Scripts/MainMenuScene.cs" id="1_tso7g"]
+[ext_resource type="Script" path="res://Scenes/Scripts/MainMenuScene.cs" id="1_tso7g"]
 [ext_resource type="PackedScene" uid="uid://cvlouh6yxdxrf" path="res://Scenes/LoadIcon.tscn" id="2_gt2gt"]
 [ext_resource type="PackedScene" uid="uid://buekj451osmbs" path="res://Scenes/EnterWorldButton.tscn" id="2_vjtmq"]
 

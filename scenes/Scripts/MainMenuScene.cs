@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Godot;
 using Godot.Collections;
-using Array = Godot.Collections.Array;
+using TerrariaRipoffNNF.Managers.Scripts;
 using TerrariaRipoffNNF.Resources.Scripts;
-using TerrariaRipoffNNF.Scenes.Scripts;
+using Array = Godot.Collections.Array;
 
-namespace TerrariaRipoffNNF.Scripts;
+namespace TerrariaRipoffNNF.Scenes.Scripts;
 
 public partial class MainMenuScene : Control {
     [Export] private Control mainMenu;
@@ -27,9 +28,6 @@ public partial class MainMenuScene : Control {
     }
 
     [Signal]
-    public delegate void CreateWorldButtonDownEventHandler(string worldName);
-
-    [Signal]
     public delegate void EnterWorldAsHostButtonDownEventHandler(WorldBasicInfo worldBasicInfo);
 
     [Signal]
@@ -38,26 +36,33 @@ public partial class MainMenuScene : Control {
     [Signal]
     public delegate void EnterWorldAsClientButtonDownEventHandler();
 
-    private void ChangeToMenu(Control menu) {
-        foreach (Control menuToDisable in menus) {
-            menuToDisable.Hide();
-        }
-
-        menu.Show();
-    }
-
     public override void _Ready() {
         menus.Add(mainMenu);
         menus.Add(multiplayerMenu);
         menus.Add(worldMenu);
         menus.Add(joinMenu);
         ChangeToMenu(mainMenu);
+
+        Task<WorldBasicInfo[]> task = Task.Run(FileManager.LoadAllWorldBasicData);
+        task.GetAwaiter().OnCompleted(() => {
+            WorldBasicInfo[] worldBasicInfoArray = task.Result;
+            foreach (WorldBasicInfo worldBasicInfo in worldBasicInfoArray) {
+                AddEnterWorldButton(worldBasicInfo);
+            }
+        });
+    }
+
+    private void ChangeToMenu(Control menu) {
+        foreach (Control menuToDisable in menus) {
+            menuToDisable.Hide();
+        }
+        menu.Show();
     }
 
     #region MenuMenu EventHandlers
 
     private void OnMainMenuSinglePlayerButtonDown() {
-        gameType = GameType.SinglePlayer;
+        gameType = MainMenuScene.GameType.SinglePlayer;
         ChangeToMenu(worldMenu);
     }
 
@@ -73,8 +78,13 @@ public partial class MainMenuScene : Control {
 
     #region WorldMenu EventHandlers
 
-    private void OnWorldMenuCreateWorldButtonDown() {
-        EmitSignal(SignalName.CreateWorldButtonDown, worldNameEdit.Text);
+    private async void OnWorldMenuCreateWorldButtonDown() {
+        WorldBasicInfo worldBasicInfo = new(worldNameEdit.Text, 100, 100);
+        GD.Print("eventhandler");
+        
+        World world = await Task.Run(() => WorldCreator.CreateWorld(worldBasicInfo));
+        await Task.Run(() => FileManager.SaveWorld(world));
+        GD.Print("hello");
     }
 
     private void OnWorldMenuBackButtonDown() {
@@ -108,12 +118,12 @@ public partial class MainMenuScene : Control {
     #region MultiplayerMenu EventHandlers
 
     private void OnMultiplayerMenuHostButtonDown() {
-        gameType = GameType.Host;
+        gameType = MainMenuScene.GameType.Host;
         ChangeToMenu(worldMenu);
     }
 
     private void OnMultiplayerMenuJoinButtonDown() {
-        gameType = GameType.Client;
+        gameType = MainMenuScene.GameType.Client;
         ChangeToMenu(joinMenu);
     }
 
@@ -134,18 +144,6 @@ public partial class MainMenuScene : Control {
     }
 
     #endregion
-
-    private void OnWorldBasicDataLoaded(Array worldBasicDataArray) {
-        foreach (Dictionary worldBasicDataDict in worldBasicDataArray) {
-            WorldBasicInfo worldBasicInfo = WorldBasicInfo.FromDict(worldBasicDataDict);
-            AddEnterWorldButton(worldBasicInfo);
-        }
-    }
-
-    private void OnWorldCreatorWorldCreated(World world) {
-        WorldBasicInfo worldBasicInfo = world.GetBasicInfo();
-        AddEnterWorldButton(worldBasicInfo);
-    }
 
     private void AddEnterWorldButton(WorldBasicInfo worldBasicInfo) {
         EnterWorldButton enterWorldButton = packedEnterWorldButton.Instantiate<EnterWorldButton>();

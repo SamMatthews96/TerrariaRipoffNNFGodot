@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Godot;
 using TerrariaRipoffNNF.Resources.Scripts;
 using static Godot.GD;
@@ -10,8 +11,7 @@ public partial class GameManager : Node {
     private ENetMultiplayerPeer peer;
     public const int HOST_ID = 1;
 
-    
-    
+
     [Signal]
     public delegate void StartedGameEventHandler();
 
@@ -26,15 +26,26 @@ public partial class GameManager : Node {
 
     [Signal]
     public delegate void ConnectionFailedEventHandler();
+    
+    [Signal]
+    public delegate void LoadGameInitializedEventHandler(WorldBasicInfo worldBasicInfo);
+    
+    private void OnEnterWorldAsSingleButtonDown(WorldBasicInfo worldBasicInfo) {
+        Task.Run(() => CreateWorldAsSingle(worldBasicInfo));
+    }
 
-    
-    
-    private void OnEnterWorldAsHostButtonDown(WorldBasicInfo worldBasicInfo) {
+    private void CreateWorldAsSingle(WorldBasicInfo worldBasicInfo) {
+        EmitSignal(SignalName.LoadGameInitialized, worldBasicInfo);
+    }
+
+    private void CreateWorldAsHost(WorldBasicInfo worldBasicInfo) {
+        EmitSignal(SignalName.LoadGameInitialized, worldBasicInfo);
+
         Multiplayer.PeerConnected += id => EmitSignal(SignalName.PeerConnected, id);
         Multiplayer.PeerDisconnected += id => EmitSignal(SignalName.PeerDisconnected, id);
 
         peer = new ENetMultiplayerPeer();
-        var error = peer.CreateServer(port);
+        Error error = peer.CreateServer(port);
         if (error != Error.Ok) {
             Print("error cannot host! :" + error);
             return;
@@ -42,7 +53,10 @@ public partial class GameManager : Node {
 
         peer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
         Multiplayer.MultiplayerPeer = peer;
-        EmitSignal(SignalName.StartedGame);
+    }
+
+    private void OnEnterWorldAsHostButtonDown(WorldBasicInfo worldBasicInfo) {
+        Task.Run(() => CreateWorldAsHost(worldBasicInfo));
     }
 
     private void OnEnterWorldAsClientButtonDown(string ip) {
@@ -60,9 +74,5 @@ public partial class GameManager : Node {
 
         peer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
         Multiplayer.MultiplayerPeer = peer;
-    }
-
-    private void OnEnterWorldAsSingleButtonDown(WorldBasicInfo worldBasicInfo) {
-        EmitSignal(SignalName.StartedGame);
     }
 }

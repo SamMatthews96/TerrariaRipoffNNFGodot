@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://di1fam0sfyckw"]
-
-[ext_resource type="Script" path="res://Managers/Scripts/FileManager.cs" id="1_ng2tl"]
-
-[node name="FileManager" type="Node"]
-script = ExtResource("1_ng2tl")
