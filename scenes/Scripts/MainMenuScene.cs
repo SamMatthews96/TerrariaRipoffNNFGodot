@@ -21,20 +21,20 @@ public partial class MainMenuScene : Control {
     private readonly List<Control> menus = new();
     private GameType gameType;
 
-    public enum GameType {
+    private enum GameType {
         SinglePlayer,
         Host,
         Client
     }
 
     [Signal]
-    public delegate void EnterWorldAsHostButtonDownEventHandler(WorldBasicInfo worldBasicInfo);
+    public delegate void WorldLoadedEventHandler(World world);
 
     [Signal]
-    public delegate void EnterWorldAsSingleButtonDownEventHandler(WorldBasicInfo worldBasicInfo);
+    public delegate void WorldLoadedHostModeEventHandler();
 
     [Signal]
-    public delegate void EnterWorldAsClientButtonDownEventHandler();
+    public delegate void JoinGameButtonDownEventHandler(string ipText);
 
     public override void _Ready() {
         menus.Add(mainMenu);
@@ -56,6 +56,7 @@ public partial class MainMenuScene : Control {
         foreach (Control menuToDisable in menus) {
             menuToDisable.Hide();
         }
+
         menu.Show();
     }
 
@@ -80,11 +81,9 @@ public partial class MainMenuScene : Control {
 
     private async void OnWorldMenuCreateWorldButtonDown() {
         WorldBasicInfo worldBasicInfo = new(worldNameEdit.Text, 100, 100);
-        GD.Print("eventhandler");
-        
         World world = await Task.Run(() => WorldCreator.CreateWorld(worldBasicInfo));
+        AddEnterWorldButton(worldBasicInfo);
         await Task.Run(() => FileManager.SaveWorld(world));
-        GD.Print("hello");
     }
 
     private void OnWorldMenuBackButtonDown() {
@@ -100,17 +99,14 @@ public partial class MainMenuScene : Control {
         }
     }
 
-    private void OnWorldMenuEnterWorldButtonDown(WorldBasicInfo worldBasicInfo) {
-        switch (gameType) {
-            case GameType.SinglePlayer:
-                EmitSignal(SignalName.EnterWorldAsSingleButtonDown, worldBasicInfo);
-                break;
-            case GameType.Host:
-                EmitSignal(SignalName.EnterWorldAsHostButtonDown, worldBasicInfo);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
+    private async void OnWorldMenuEnterWorldButtonDown(WorldBasicInfo worldBasicInfo) {
+        World world = await Task.Run(() => FileManager.LoadWorld(worldBasicInfo));
+        if (gameType == GameType.Host) {
+            EmitSignal(SignalName.WorldLoadedHostMode);
         }
+
+        EmitSignal(SignalName.WorldLoaded, world);
+        QueueFree();
     }
 
     #endregion
@@ -136,7 +132,7 @@ public partial class MainMenuScene : Control {
     #region JoinMenu EventHandlers
 
     private void OnJoinMenuEnterWorldButtonDown() {
-        EmitSignal(SignalName.EnterWorldAsClientButtonDown, ipEdit.Text);
+        EmitSignal(SignalName.JoinGameButtonDown, ipEdit.Text);
     }
 
     private void OnJoinMenuBackButtonDown() {
@@ -156,7 +152,7 @@ public partial class MainMenuScene : Control {
         QueueFree();
     }
 
-    private void OnGameManagerConnectedToServer() {
+    private void OnConnectedToServer() {
         QueueFree();
     }
 }

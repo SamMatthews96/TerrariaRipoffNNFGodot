@@ -1,7 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://tbvohnqfn3cl"]
+[gd_scene load_steps=3 format=3 uid="uid://tbvohnqfn3cl"]
 
 [ext_resource type="Script" path="res://Scenes/Scripts/MainMenuScene.cs" id="1_tso7g"]
-[ext_resource type="PackedScene" uid="uid://cvlouh6yxdxrf" path="res://Scenes/LoadIcon.tscn" id="2_gt2gt"]
 [ext_resource type="PackedScene" uid="uid://buekj451osmbs" path="res://Scenes/EnterWorldButton.tscn" id="2_vjtmq"]
 
 [node name="MainMenuScene" type="Control" node_paths=PackedStringArray("mainMenu", "multiplayerMenu", "worldMenu", "joinMenu", "worldListContainer", "worldNameEdit", "ipEdit")]
@@ -166,9 +165,6 @@ offset_left = 861.0
 offset_top = 197.0
 offset_right = 1037.0
 offset_bottom = 229.0
-
-[node name="LoadIcon" parent="." instance=ExtResource("2_gt2gt")]
-position = Vector2(960, 549)
 
 [connection signal="button_down" from="MainMenu/VBoxContainer/SinglePlayerButton" to="." method="OnMainMenuSinglePlayerButtonDown"]
 [connection signal="button_down" from="MainMenu/VBoxContainer/MultiplayerButton" to="." method="OnMainMenuMultiplayerButtonDown"]

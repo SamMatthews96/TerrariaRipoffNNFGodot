@@ -5,15 +5,11 @@ using static Godot.GD;
 
 namespace TerrariaRipoffNNF.Managers.Scripts;
 
-public partial class GameManager : Node {
+public partial class MultiplayerManager : Node {
     [Export] private int port = 8910;
     [Export] private string address = "127.0.0.1";
     private ENetMultiplayerPeer peer;
     public const int HOST_ID = 1;
-
-
-    [Signal]
-    public delegate void StartedGameEventHandler();
 
     [Signal]
     public delegate void PeerConnectedEventHandler(long playerId);
@@ -27,20 +23,7 @@ public partial class GameManager : Node {
     [Signal]
     public delegate void ConnectionFailedEventHandler();
     
-    [Signal]
-    public delegate void LoadGameInitializedEventHandler(WorldBasicInfo worldBasicInfo);
-    
-    private void OnEnterWorldAsSingleButtonDown(WorldBasicInfo worldBasicInfo) {
-        Task.Run(() => CreateWorldAsSingle(worldBasicInfo));
-    }
-
-    private void CreateWorldAsSingle(WorldBasicInfo worldBasicInfo) {
-        EmitSignal(SignalName.LoadGameInitialized, worldBasicInfo);
-    }
-
-    private void CreateWorldAsHost(WorldBasicInfo worldBasicInfo) {
-        EmitSignal(SignalName.LoadGameInitialized, worldBasicInfo);
-
+    private void OnWorldLoadedHostMode() {
         Multiplayer.PeerConnected += id => EmitSignal(SignalName.PeerConnected, id);
         Multiplayer.PeerDisconnected += id => EmitSignal(SignalName.PeerDisconnected, id);
 
@@ -55,11 +38,7 @@ public partial class GameManager : Node {
         Multiplayer.MultiplayerPeer = peer;
     }
 
-    private void OnEnterWorldAsHostButtonDown(WorldBasicInfo worldBasicInfo) {
-        Task.Run(() => CreateWorldAsHost(worldBasicInfo));
-    }
-
-    private void OnEnterWorldAsClientButtonDown(string ip) {
+    private void OnJoinGameButtonDown(string ip) {
         Multiplayer.PeerConnected += id => EmitSignal(SignalName.PeerConnected, id);
         Multiplayer.PeerDisconnected += id => EmitSignal(SignalName.PeerDisconnected, id);
         Multiplayer.ConnectedToServer += () => EmitSignal(SignalName.ConnectedToServer);

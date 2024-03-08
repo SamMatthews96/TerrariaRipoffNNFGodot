@@ -16,9 +16,8 @@ public partial class PlayerManager : Node {
     }
 
     private void OnWorldCreated(int spawnX, int spawnY) {
-        GD.Print(spawnX,spawnY);
         int peerId = Multiplayer.GetUniqueId();
-        RpcId(GameManager.HOST_ID, nameof(CreatePlayerOnServer),
+        RpcId(MultiplayerManager.HOST_ID, nameof(CreatePlayerOnServer),
             peerId, spawnX, spawnY);
     }
 

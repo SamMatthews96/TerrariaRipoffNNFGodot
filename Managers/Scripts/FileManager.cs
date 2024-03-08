@@ -52,7 +52,7 @@ public static class FileManager {
         string worldName = worldBasicInfo.Name;
 
         FileAccess fileAccess = FileAccess.Open(
-            $"{WORLD_DIR}/{worldName}/worldBasicData.txt", FileAccess.ModeFlags.Read);
+            $"{WORLD_DIR}/{worldName}/world.txt", FileAccess.ModeFlags.Read);
         string content = fileAccess.GetAsText();
         fileAccess.Dispose();
         Dictionary worldDict = Json.ParseString(content).AsGodotDictionary();

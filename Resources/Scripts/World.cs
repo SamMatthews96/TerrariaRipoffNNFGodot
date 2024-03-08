@@ -49,7 +49,7 @@ public partial class World : WorldBasicInfo, ISerializable {
                 worldHeight);
         }
         catch (Exception e) {
-            GD.Print("invalid WorldBasicInfo dict");
+            GD.Print("invalid World dict");
             GD.Print(e);
             throw new NotImplementedException();
         }

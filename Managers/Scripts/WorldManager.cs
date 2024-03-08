@@ -20,27 +20,17 @@ public partial class WorldManager : Node {
     [Signal]
     public delegate void WorldCreatedEventHandler(int spawnX, int spawnY);
 
-    private void OnLoadGameInitialized() {
-        // PH
-        // load world data from disk
+    private void OnWorldLoaded(World world) {
+        GD.Print("onWorldLoaded");
         spawnX = 5;
         spawnY = 5;
-        worldWidth = 50;
-        worldHeight = 50;
+        worldWidth = world.WorldWidth;
+        worldHeight = world.WorldHeight;
+
+        savedBlocks = world.SavedBlocks;
         
-        BlockType blockType = ResourceLoader.Load<BlockType>("res://Resources/BlockType/Stone.tres");
-        savedBlocks = new SavedBlock[worldWidth, worldHeight];
-        for (int x = 0; x < worldWidth; x++) {
-            savedBlocks[x, 15] = new SavedBlock(blockType, x, 15);
-        }
-
-        for (int y = 10; y < 14; y++) {
-            savedBlocks[10,y] = new SavedBlock(blockType, 10, y);
-            savedBlocks[20,y] = new SavedBlock(blockType, 20, y);
-        }
-        // END PH
-
         GetAndCreateBlocksOnSpawn(1, spawnX, spawnY);
+        GD.Print("here");
     }
 
     private void OnConnectedToServer() {
@@ -54,13 +44,12 @@ public partial class WorldManager : Node {
     
     private void OnCreatedLocalPlayerOnServer(Vector2 _) {
         Player.LocalPlayer.LocalPlayerMoved += OnLocalPlayerMoved;
-        int peerId = Multiplayer.GetUniqueId();
     }
 
     private void OnLocalPlayerMoved(
         int newXCoordinate, int newYCoordinate, int oldXCoordinate, int oldYCoordinate) {
         int peerId = Multiplayer.GetUniqueId();
-        RpcId(GameManager.HOST_ID, nameof(GetAndCreateBlocksOnMoved),
+        RpcId(MultiplayerManager.HOST_ID, nameof(GetAndCreateBlocksOnMoved),
             peerId, newXCoordinate, newYCoordinate, oldXCoordinate, oldYCoordinate);
         DeleteActiveBlocksInRegion(newXCoordinate, newYCoordinate, oldXCoordinate, oldYCoordinate);
     }
@@ -78,7 +67,7 @@ public partial class WorldManager : Node {
                 }
             }
         }
-
+        GD.Print(savedBlocksSerialized.Count);
         RpcId(peerId, nameof(PeerCreateWorld), worldWidth, worldHeight, savedBlocksSerialized);
     }
     
