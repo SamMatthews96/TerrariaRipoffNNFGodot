@@ -9,6 +9,7 @@ public partial class Player : CharacterBody2D {
     [Export] private MultiplayerSynchronizer positionSynchronizer;
     [Export] private float gravityCoefficient = 1600;
     [Export] private float jumpStrength = 800;
+    [Export] private Camera2D camera;
 
     private int horizontalInput;
     private bool isFalling;
@@ -29,6 +30,7 @@ public partial class Player : CharacterBody2D {
         if (peerId != Multiplayer.GetUniqueId()) return;
 
         LocalPlayer = this;
+        camera.Enabled = true;
         InputManager.Instance.HorizontalInputChanged += newInput => horizontalInput = newInput;
         InputManager.Instance.JumpPressed += OnJumpPressed;
         PlayerManager.Instance.CreatedLocalPlayerOnServer += serverPosition => { Position = serverPosition; };

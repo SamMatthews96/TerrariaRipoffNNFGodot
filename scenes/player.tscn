@@ -11,10 +11,11 @@ properties/0/replication_mode = 1
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_raw6a"]
 size = Vector2(44, 93)
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("positionSynchronizer")]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("positionSynchronizer", "camera")]
 collision_mask = 2
 script = ExtResource("1_8yy3a")
 positionSynchronizer = NodePath("PositionSync")
+camera = NodePath("Camera2D")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(0, -46)
@@ -27,3 +28,6 @@ replication_config = SubResource("SceneReplicationConfig_3bb8o")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, -46.5)
 shape = SubResource("RectangleShape2D_raw6a")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+enabled = false
