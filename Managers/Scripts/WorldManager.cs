@@ -21,7 +21,6 @@ public partial class WorldManager : Node {
     public delegate void WorldCreatedEventHandler(int spawnX, int spawnY);
 
     private void OnWorldLoaded(World world) {
-        GD.Print("onWorldLoaded");
         spawnX = 5;
         spawnY = 5;
         worldWidth = world.WorldWidth;
@@ -30,7 +29,6 @@ public partial class WorldManager : Node {
         savedBlocks = world.SavedBlocks;
         
         GetAndCreateBlocksOnSpawn(1, spawnX, spawnY);
-        GD.Print("here");
     }
 
     private void OnConnectedToServer() {
@@ -67,7 +65,6 @@ public partial class WorldManager : Node {
                 }
             }
         }
-        GD.Print(savedBlocksSerialized.Count);
         RpcId(peerId, nameof(PeerCreateWorld), worldWidth, worldHeight, savedBlocksSerialized);
     }
     
