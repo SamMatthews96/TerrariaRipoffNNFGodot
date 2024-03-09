@@ -27,19 +27,19 @@ public partial class WorldManager : Node {
         worldHeight = world.WorldHeight;
 
         savedBlocks = world.SavedBlocks;
-        
+
         GetAndCreateBlocksOnSpawn(1, spawnX, spawnY);
     }
 
     private void OnConnectedToServer() {
         spawnX = 10;
         spawnY = 5;
-        
+
         int peerId = Multiplayer.GetUniqueId();
         RpcId(1, nameof(GetAndCreateBlocksOnSpawn),
             peerId, spawnX, spawnY);
     }
-    
+
     private void OnCreatedLocalPlayerOnServer(Vector2 _) {
         Player.LocalPlayer.LocalPlayerMoved += OnLocalPlayerMoved;
     }
@@ -65,28 +65,29 @@ public partial class WorldManager : Node {
                 }
             }
         }
+
         RpcId(peerId, nameof(PeerCreateWorld), worldWidth, worldHeight, savedBlocksSerialized);
     }
-    
+
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void GetAndCreateBlocksOnMoved(
         int peerId, int xCoord, int yCoord, int oldXCoord, int oldYCoord) {
         (int xStart, int xEnd, int yStart, int yEnd) = GetRegionBoundary(xCoord, yCoord);
-    
+
         Array savedBlocksSerialized = new();
         for (int x = xStart; x < xEnd; x++) {
             for (int y = yStart; y < yEnd; y++) {
                 if (Math.Abs(oldXCoord - x) < BLOCK_RENDER_DISTANCE &&
                     Math.Abs(oldYCoord - y) < BLOCK_RENDER_DISTANCE)
                     continue;
-                
+
                 var block = savedBlocks[x, y];
                 if (block is not null) {
                     savedBlocksSerialized.Add(block.Serialize());
                 }
             }
         }
-    
+
         RpcId(peerId, nameof(PeerCreateActiveBlocks), savedBlocksSerialized);
     }
 
@@ -106,21 +107,18 @@ public partial class WorldManager : Node {
                 int xPosition = blockSerialized["XPosition"].ToInt();
                 int yPosition = blockSerialized["YPosition"].ToInt();
                 BlockType blockType = ResourceLoader.Load<BlockType>(blockSerialized["ResourcePath"]);
-                CreateActiveBlock(blockType, xPosition, yPosition);
+
+                if (activeBlocks[xPosition, yPosition] is not null) return;
+                Vector2 position = new Vector2(xPosition * BLOCK_SIZE, yPosition * BLOCK_SIZE);
+                ActiveBlock newBlock = ActiveBlock.Instantiate(blockType, position);
+                activeBlocks[xPosition, yPosition] = newBlock;
+                AddChild(newBlock);
             }
         }
         catch (Exception e) {
             GD.Print("invalid data");
             GD.Print(e);
         }
-    }
-
-    private void CreateActiveBlock(BlockType blockType, int xPosition, int yPosition) {
-        if (activeBlocks[xPosition, yPosition] is not null) return;
-        Vector2 position = new Vector2(xPosition * BLOCK_SIZE, yPosition * BLOCK_SIZE);
-        ActiveBlock newBlock = ActiveBlock.Instantiate(blockType, position);
-        activeBlocks[xPosition, yPosition] = newBlock;
-        AddChild(newBlock);
     }
 
     private void DeleteActiveBlocksInRegion(

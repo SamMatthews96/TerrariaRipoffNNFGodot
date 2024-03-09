@@ -1,9 +1,6 @@
-using System;
-using System.Threading.Tasks;
 using Godot;
 using Godot.Collections;
 using TerrariaRipoffNNF.Resources.Scripts;
-using Array = Godot.Collections.Array;
 
 namespace TerrariaRipoffNNF.Managers.Scripts;
 

@@ -63,7 +63,7 @@ public partial class MainMenuScene : Control {
     #region MenuMenu EventHandlers
 
     private void OnMainMenuSinglePlayerButtonDown() {
-        gameType = MainMenuScene.GameType.SinglePlayer;
+        gameType = GameType.SinglePlayer;
         ChangeToMenu(worldMenu);
     }
 
@@ -114,12 +114,12 @@ public partial class MainMenuScene : Control {
     #region MultiplayerMenu EventHandlers
 
     private void OnMultiplayerMenuHostButtonDown() {
-        gameType = MainMenuScene.GameType.Host;
+        gameType = GameType.Host;
         ChangeToMenu(worldMenu);
     }
 
     private void OnMultiplayerMenuJoinButtonDown() {
-        gameType = MainMenuScene.GameType.Client;
+        gameType = GameType.Client;
         ChangeToMenu(joinMenu);
     }
 
