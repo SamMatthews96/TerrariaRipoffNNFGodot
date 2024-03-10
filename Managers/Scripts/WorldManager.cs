@@ -8,7 +8,7 @@ namespace TerrariaRipoffNNF.Managers.Scripts;
 
 public partial class WorldManager : Node {
     public const int BLOCK_SIZE = 32;
-    private const int BLOCK_RENDER_DISTANCE = 10;
+    private const int BLOCK_RENDER_DISTANCE = 20;
 
     private int worldWidth;
     private int worldHeight;
@@ -27,6 +27,10 @@ public partial class WorldManager : Node {
         worldHeight = world.WorldHeight;
 
         savedBlocks = world.SavedBlocks;
+        foreach (SavedBlock savedBlock in savedBlocks) {
+            if (savedBlock is null) continue;
+            savedBlock.Destroyed += OnSavedBlockDestroyed;
+        }
 
         GetAndCreateBlocksOnSpawn(1, spawnX, spawnY);
     }
@@ -75,8 +79,8 @@ public partial class WorldManager : Node {
         (int xStart, int xEnd, int yStart, int yEnd) = GetRegionBoundary(xCoord, yCoord);
 
         Array savedBlocksSerialized = new();
-        for (int x = xStart; x < xEnd; x++) {
-            for (int y = yStart; y < yEnd; y++) {
+        for (int x = xStart; x <= xEnd; x++) {
+            for (int y = yStart; y <= yEnd; y++) {
                 if (Math.Abs(oldXCoord - x) < BLOCK_RENDER_DISTANCE &&
                     Math.Abs(oldYCoord - y) < BLOCK_RENDER_DISTANCE)
                     continue;
@@ -108,9 +112,9 @@ public partial class WorldManager : Node {
                 int yPosition = blockSerialized["YPosition"].ToInt();
                 BlockType blockType = ResourceLoader.Load<BlockType>(blockSerialized["ResourcePath"]);
 
-                if (activeBlocks[xPosition, yPosition] is not null) return;
-                Vector2 position = new Vector2(xPosition * BLOCK_SIZE, yPosition * BLOCK_SIZE);
-                ActiveBlock newBlock = ActiveBlock.Instantiate(blockType, position);
+                if (activeBlocks[xPosition, yPosition] is not null) continue;
+                ActiveBlock newBlock = ActiveBlock.Instantiate(blockType, xPosition, yPosition);
+                newBlock.TakenDamage += OnActiveBlockTakenDamage;
                 activeBlocks[xPosition, yPosition] = newBlock;
                 AddChild(newBlock);
             }
@@ -126,8 +130,8 @@ public partial class WorldManager : Node {
         (int oldLeft, int oldRight, int oldTop, int oldBottom) =
             GetRegionBoundary(oldXCoordinate, oldYCoordinate);
 
-        for (int x = oldLeft; x < oldRight; x++) {
-            for (int y = oldTop; y < oldBottom; y++) {
+        for (int x = oldLeft; x <= oldRight; x++) {
+            for (int y = oldTop; y <= oldBottom; y++) {
                 if (Math.Abs(newXCoordinate - x) < BLOCK_RENDER_DISTANCE &&
                     Math.Abs(newYCoordinate - y) < BLOCK_RENDER_DISTANCE)
                     continue;
@@ -144,5 +148,29 @@ public partial class WorldManager : Node {
         int yStart = Math.Max(0, yCoord - BLOCK_RENDER_DISTANCE);
         int yEnd = Math.Min(worldHeight - 1, yCoord + BLOCK_RENDER_DISTANCE);
         return (xStart, xEnd, yStart, yEnd);
+    }
+
+    private void OnActiveBlockTakenDamage(int xPosition, int yPosition, float damageAmount) {
+        RpcId(MultiplayerManager.HOST_ID, nameof(DamageSavedBlock),
+            xPosition, yPosition, damageAmount);
+    }
+
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+    private void DamageSavedBlock(int xPosition, int yPosition, float damageAmount) {
+        SavedBlock savedBlock = savedBlocks[xPosition, yPosition];
+        savedBlock?.TakeDamage(damageAmount);
+    }
+
+    private void OnSavedBlockDestroyed(int xPosition, int yPosition) {
+        savedBlocks[xPosition, yPosition] = null;
+        Rpc(nameof(DeleteActiveBlock), xPosition, yPosition);
+    }
+
+    [Rpc(CallLocal = true)]
+    private void DeleteActiveBlock(int xPosition, int yPosition) {
+        if (activeBlocks[xPosition, yPosition] is null) return;
+        activeBlocks[xPosition, yPosition].QueueFree();
+        activeBlocks[xPosition, yPosition] = null;
     }
 }

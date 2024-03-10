@@ -9,6 +9,7 @@ size = Vector2(32, 32)
 [node name="ActiveBlock" type="StaticBody2D" node_paths=PackedStringArray("sprite")]
 collision_layer = 2
 collision_mask = 0
+input_pickable = true
 script = ExtResource("1_e1mos")
 sprite = NodePath("Sprite2D")
 
@@ -18,3 +19,5 @@ texture = ExtResource("2_nw135")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_cnqwx")
+
+[connection signal="input_event" from="." to="." method="OnInputEvent"]

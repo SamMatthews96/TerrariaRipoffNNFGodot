@@ -1,20 +1,35 @@
 ﻿using Godot;
 using Godot.Collections;
+using TerrariaRipoffNNF.Scenes.Scripts;
 using TerrariaRipoffNNF.scripts;
 
-namespace TerrariaRipoffNNF.Resources.Scripts; 
+namespace TerrariaRipoffNNF.Resources.Scripts;
 
 public partial class SavedBlock : Resource, ISerializable {
-    public int XPosition;
-    public int YPosition;
-    public BlockType BlockType;
+    private float currentHealth;
+
+    [Signal]
+    public delegate void DestroyedEventHandler(int xPosition, int yPosition);
+
+    public int XPosition { get; }
+    public int YPosition { get; }
+    public BlockType BlockType { get; }
+
 
     public SavedBlock(BlockType blockType, int xPosition, int yPosition) {
         BlockType = blockType;
         XPosition = xPosition;
         YPosition = yPosition;
+        currentHealth = blockType.MaxHealth;
     }
-    
+
+    public void TakeDamage(float damageAmount) {
+        currentHealth -= damageAmount;
+        if (currentHealth <= 0) {
+            EmitSignal(SignalName.Destroyed, XPosition, YPosition);
+        }
+    }
+
     public Dictionary Serialize() {
         Dictionary serializedData = new();
         serializedData.Add("XPosition", XPosition);

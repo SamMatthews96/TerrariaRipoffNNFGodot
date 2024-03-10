@@ -9,3 +9,4 @@ Weight = 5.0
 TensileStrength = 20.0
 MaxHealth = 100.0
 Texture = ExtResource("1_57q38")
+Space = 2.0
