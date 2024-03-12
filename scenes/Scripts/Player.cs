@@ -1,6 +1,8 @@
 using System;
+using System.Globalization;
 using Godot;
 using TerrariaRipoffNNF.Managers.Scripts;
+using TerrariaRipoffNNF.Resources.Scripts;
 
 namespace TerrariaRipoffNNF.Scenes.Scripts;
 
@@ -20,6 +22,9 @@ public partial class Player : CharacterBody2D {
     public delegate void LocalPlayerMovedEventHandler(
         int xCoords, int yCoords, int prevXCoords, int prevYCoords);
 
+    [Signal]
+    public delegate void LocalPlayerClickedEventHandler(int x, int y, BlockType blockType);
+
     public static Player LocalPlayer { get; private set; }
     private int XCoords => (int)Math.Round(Position.X / WorldManager.BLOCK_SIZE);
     private int YCoords => (int)Math.Round(Position.Y / WorldManager.BLOCK_SIZE);
@@ -33,6 +38,7 @@ public partial class Player : CharacterBody2D {
         camera.Enabled = true;
         InputManager.Instance.HorizontalInputChanged += newInput => horizontalInput = newInput;
         InputManager.Instance.JumpPressed += OnJumpPressed;
+        InputManager.Instance.MouseClicked += LogCellUnderMouse;
         PlayerManager.Instance.CreatedLocalPlayerOnServer += serverPosition => { Position = serverPosition; };
     }
 
@@ -40,7 +46,7 @@ public partial class Player : CharacterBody2D {
         if (this != LocalPlayer) return;
 
         (int previousXCoords, int previousYCoords) = (XCoords, YCoords);
-        
+
         isFalling = !TestMove(Transform, new Vector2(0, 0.1f));
 
         xVelocity = speed * horizontalInput;
@@ -49,6 +55,7 @@ public partial class Player : CharacterBody2D {
         } else {
             yVelocity = Math.Min(0, yVelocity);
         }
+
         Velocity = new Vector2(xVelocity, yVelocity);
         MoveAndSlide();
 
@@ -58,7 +65,13 @@ public partial class Player : CharacterBody2D {
         }
     }
 
-    
+    private void LogCellUnderMouse(Vector2 vector) {
+        BlockType blockType = ResourceLoader.Load<BlockType>("res://Resources/BlockType/Stone.tres");
+        Vector2 mousePos = GetGlobalMousePosition();
+        int xPosition = (int)Math.Round(mousePos.X / WorldManager.BLOCK_SIZE);
+        int yPosition = (int)Math.Round(mousePos.Y / WorldManager.BLOCK_SIZE);
+        EmitSignal(SignalName.LocalPlayerClicked, xPosition, yPosition, blockType);
+    }
 
     private void OnJumpPressed() {
         if (isFalling) return;

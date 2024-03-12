@@ -1,5 +1,6 @@
 using System;
 using Godot;
+using Godot.Collections;
 using TerrariaRipoffNNF.Resources.Scripts;
 using TerrariaRipoffNNF.Scenes.Scripts;
 using Array = Godot.Collections.Array;
@@ -46,6 +47,7 @@ public partial class WorldManager : Node {
 
     private void OnCreatedLocalPlayerOnServer(Vector2 _) {
         Player.LocalPlayer.LocalPlayerMoved += OnLocalPlayerMoved;
+        Player.LocalPlayer.LocalPlayerClicked += OnPlayerAttemptBuildBlock;
     }
 
     private void OnLocalPlayerMoved(
@@ -107,7 +109,7 @@ public partial class WorldManager : Node {
     [Rpc(CallLocal = true)]
     private void PeerCreateActiveBlocks(Array savedBlocksSerialized) {
         try {
-            foreach (Godot.Collections.Dictionary<string, string> blockSerialized in savedBlocksSerialized) {
+            foreach (Dictionary<string, string> blockSerialized in savedBlocksSerialized) {
                 int xPosition = blockSerialized["XPosition"].ToInt();
                 int yPosition = blockSerialized["YPosition"].ToInt();
                 BlockType blockType = ResourceLoader.Load<BlockType>(blockSerialized["ResourcePath"]);
@@ -172,5 +174,32 @@ public partial class WorldManager : Node {
         if (activeBlocks[xPosition, yPosition] is null) return;
         activeBlocks[xPosition, yPosition].QueueFree();
         activeBlocks[xPosition, yPosition] = null;
+    }
+
+    private void OnPlayerAttemptBuildBlock(int xPosition, int yPosition, BlockType blockType) {
+        RpcId(MultiplayerManager.HOST_ID, nameof(ServerAttemptBuildBlock),
+            xPosition, yPosition, blockType);
+    }
+
+    
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+    private void ServerAttemptBuildBlock(int xPosition, int yPosition, BlockType blockType) {
+        if (savedBlocks[xPosition, yPosition] is not null) return;
+        SavedBlock savedBlock = new SavedBlock(blockType, xPosition, yPosition);
+        savedBlocks[xPosition, yPosition] = savedBlock;
+        Dictionary serializedSavedBlock = savedBlock.Serialize();
+        Rpc(nameof(CreateNewSavedBlockAsActive), serializedSavedBlock);
+    }
+
+    [Rpc(CallLocal = true)]
+    private void CreateNewSavedBlockAsActive(Dictionary<string,string> blockSerialized) {
+        int xPosition = blockSerialized["XPosition"].ToInt();
+        int yPosition = blockSerialized["YPosition"].ToInt();
+        BlockType blockType = ResourceLoader.Load<BlockType>(blockSerialized["ResourcePath"]);
+        
+        ActiveBlock newBlock = ActiveBlock.Instantiate(blockType, xPosition, yPosition);
+        newBlock.TakenDamage += OnActiveBlockTakenDamage;
+        activeBlocks[xPosition, yPosition] = newBlock;
+        AddChild(newBlock);
     }
 }

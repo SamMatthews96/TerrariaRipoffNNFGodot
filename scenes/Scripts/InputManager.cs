@@ -1,3 +1,4 @@
+using System;
 using Godot;
 
 namespace TerrariaRipoffNNF.Scenes.Scripts;
@@ -6,12 +7,16 @@ public partial class InputManager : Node {
     private const string RUN_LEFT = "runLeft";
     private const string RUN_RIGHT = "runRight";
     private const string JUMP = "jump";
+    private const string LEFT_MOUSE = "leftMouse";
 
     [Signal]
     public delegate void HorizontalInputChangedEventHandler(int horizontalInput);
 
     [Signal]
     public delegate void JumpPressedEventHandler();
+
+    [Signal]
+    public delegate void MouseClickedEventHandler(Vector2 mouseScreenPosition);
 
     public static InputManager Instance { get; private set; }
 
@@ -41,5 +46,11 @@ public partial class InputManager : Node {
         if (Input.IsActionJustPressed(JUMP)) {
             EmitSignal(SignalName.JumpPressed);
         }
+
+        if (Input.IsActionJustReleased(LEFT_MOUSE)) {
+            Vector2 mousePosition = GetViewport().GetMousePosition();
+            EmitSignal(SignalName.MouseClicked, mousePosition);
+        }
     }
+
 }
