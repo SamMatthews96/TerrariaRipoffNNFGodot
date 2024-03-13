@@ -23,7 +23,7 @@ public partial class Player : CharacterBody2D {
         int xCoords, int yCoords, int prevXCoords, int prevYCoords);
 
     [Signal]
-    public delegate void LocalPlayerClickedEventHandler(int x, int y, BlockType blockType);
+    public delegate void LocalPlayerClickedEventHandler(int x, int y, string blockResourcePath);
 
     public static Player LocalPlayer { get; private set; }
     private int XCoords => (int)Math.Round(Position.X / WorldManager.BLOCK_SIZE);
@@ -66,11 +66,10 @@ public partial class Player : CharacterBody2D {
     }
 
     private void LogCellUnderMouse(Vector2 vector) {
-        BlockType blockType = ResourceLoader.Load<BlockType>("res://Resources/BlockType/Stone.tres");
         Vector2 mousePos = GetGlobalMousePosition();
         int xPosition = (int)Math.Round(mousePos.X / WorldManager.BLOCK_SIZE);
         int yPosition = (int)Math.Round(mousePos.Y / WorldManager.BLOCK_SIZE);
-        EmitSignal(SignalName.LocalPlayerClicked, xPosition, yPosition, blockType);
+        EmitSignal(SignalName.LocalPlayerClicked, xPosition, yPosition, "res://Resources/BlockType/Stone.tres");
     }
 
     private void OnJumpPressed() {

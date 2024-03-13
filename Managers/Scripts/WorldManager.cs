@@ -176,14 +176,16 @@ public partial class WorldManager : Node {
         activeBlocks[xPosition, yPosition] = null;
     }
 
-    private void OnPlayerAttemptBuildBlock(int xPosition, int yPosition, BlockType blockType) {
+    private void OnPlayerAttemptBuildBlock(int xPosition, int yPosition, string blockResourcePath) {
         RpcId(MultiplayerManager.HOST_ID, nameof(ServerAttemptBuildBlock),
-            xPosition, yPosition, blockType);
+            xPosition, yPosition, blockResourcePath);
     }
 
     
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    private void ServerAttemptBuildBlock(int xPosition, int yPosition, BlockType blockType) {
+    private void ServerAttemptBuildBlock(int xPosition, int yPosition, string blockResourcePath) {
+        BlockType blockType = BlockType.FromString(blockResourcePath);
+        if (!AreCoordsInBounds(xPosition,yPosition)) return;
         if (savedBlocks[xPosition, yPosition] is not null) return;
         SavedBlock savedBlock = new SavedBlock(blockType, xPosition, yPosition);
         savedBlocks[xPosition, yPosition] = savedBlock;
@@ -201,5 +203,13 @@ public partial class WorldManager : Node {
         newBlock.TakenDamage += OnActiveBlockTakenDamage;
         activeBlocks[xPosition, yPosition] = newBlock;
         AddChild(newBlock);
+    }
+
+    private bool AreCoordsInBounds(int xPosition, int yPosition) {
+        if (xPosition < 0) return false;
+        if (yPosition < 0) return false;
+        if (xPosition >= worldWidth) return false;
+        if (yPosition >= worldHeight) return false;
+        return true;
     }
 }
