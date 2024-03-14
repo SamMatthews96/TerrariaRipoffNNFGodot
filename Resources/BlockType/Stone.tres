@@ -11,3 +11,4 @@ MaxHealth = 100.0
 Texture = ExtResource("1_57q38")
 InventorySpace = 0.0
 IsStackable = true
+IconTexture = ExtResource("1_57q38")

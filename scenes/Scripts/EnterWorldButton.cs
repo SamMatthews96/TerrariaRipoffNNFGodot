@@ -4,17 +4,17 @@ using TerrariaRipoffNNF.Resources.Scripts;
 namespace TerrariaRipoffNNF.Scenes.Scripts; 
 
 public partial class EnterWorldButton : Button {
-	private WorldBasicInfo worldBasicInfo;
+	private WorldBasicInfo _worldBasicInfo;
 
 	[Signal]
 	public delegate void EnterWorldButtonDownEventHandler(WorldBasicInfo worldBasicInfo);
 	
 	public void Initialize(WorldBasicInfo worldBasicInfo) {
-		this.worldBasicInfo = worldBasicInfo; 
+		_worldBasicInfo = worldBasicInfo; 
 		Text = worldBasicInfo.Name;
 	}
 
 	private void OnEnterWorldButtonDown() {
-		EmitSignal(SignalName.EnterWorldButtonDown, worldBasicInfo);
+		EmitSignal(SignalName.EnterWorldButtonDown, _worldBasicInfo);
 	}
 }

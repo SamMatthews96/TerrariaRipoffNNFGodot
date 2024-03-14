@@ -21,6 +21,9 @@ public partial class WorldManager : Node {
     [Signal]
     public delegate void WorldCreatedEventHandler(int spawnX, int spawnY);
 
+    [Signal]
+    public delegate void DeletedActiveBlockEventHandler(BlockType blockType, int xPosition, int yPosition);
+
     private void OnWorldLoaded(World world) {
         spawnX = 5;
         spawnY = 5;
@@ -172,8 +175,11 @@ public partial class WorldManager : Node {
     [Rpc(CallLocal = true)]
     private void DeleteActiveBlock(int xPosition, int yPosition) {
         if (activeBlocks[xPosition, yPosition] is null) return;
+        BlockType blockType = activeBlocks[xPosition, yPosition].BlockType;
         activeBlocks[xPosition, yPosition].QueueFree();
         activeBlocks[xPosition, yPosition] = null;
+        
+        EmitSignal(SignalName.DeletedActiveBlock, blockType, xPosition, yPosition);
     }
 
     private void OnPlayerAttemptBuildBlock(int xPosition, int yPosition, string blockResourcePath) {
@@ -181,11 +187,11 @@ public partial class WorldManager : Node {
             xPosition, yPosition, blockResourcePath);
     }
 
-    
+
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void ServerAttemptBuildBlock(int xPosition, int yPosition, string blockResourcePath) {
         BlockType blockType = BlockType.FromString(blockResourcePath);
-        if (!AreCoordsInBounds(xPosition,yPosition)) return;
+        if (!AreCoordsInBounds(xPosition, yPosition)) return;
         if (savedBlocks[xPosition, yPosition] is not null) return;
         SavedBlock savedBlock = new SavedBlock(blockType, xPosition, yPosition);
         savedBlocks[xPosition, yPosition] = savedBlock;
@@ -194,11 +200,11 @@ public partial class WorldManager : Node {
     }
 
     [Rpc(CallLocal = true)]
-    private void CreateNewSavedBlockAsActive(Dictionary<string,string> blockSerialized) {
+    private void CreateNewSavedBlockAsActive(Dictionary<string, string> blockSerialized) {
         int xPosition = blockSerialized["XPosition"].ToInt();
         int yPosition = blockSerialized["YPosition"].ToInt();
         BlockType blockType = ResourceLoader.Load<BlockType>(blockSerialized["ResourcePath"]);
-        
+
         ActiveBlock newBlock = ActiveBlock.Instantiate(blockType, xPosition, yPosition);
         newBlock.TakenDamage += OnActiveBlockTakenDamage;
         activeBlocks[xPosition, yPosition] = newBlock;

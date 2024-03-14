@@ -8,13 +8,13 @@ namespace TerrariaRipoffNNF.Scenes.Scripts;
 
 public partial class ActiveBlock : StaticBody2D {
     [Export] private static PackedScene packedActiveBlock =
-        ResourceLoader.Load<PackedScene>("res://Scenes/ActiveBlock.tscn");
+        ResourceLoader.Load<PackedScene>("res://GameObjects/Scenes/ActiveBlock.tscn");
 
     private int xPosition;
     private int yPosition;
 
     [Export] private Sprite2D sprite;
-    private BlockType blockType;
+    public BlockType BlockType { get; private set; }
 
     [Signal]
     public delegate void TakenDamageEventHandler(int xPosition, int yPosition, float damageAmount);
@@ -26,7 +26,7 @@ public partial class ActiveBlock : StaticBody2D {
         newBlock.Position = new Vector2(
             xPosition * WorldManager.BLOCK_SIZE,
             yPosition * WorldManager.BLOCK_SIZE);
-        newBlock.blockType = blockType;
+        newBlock.BlockType = blockType;
         newBlock.sprite.Texture = blockType.Texture;
         return newBlock;
     }
