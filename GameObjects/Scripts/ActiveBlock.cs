@@ -30,4 +30,10 @@ public partial class ActiveBlock : StaticBody2D {
         newBlock.sprite.Texture = blockType.Texture;
         return newBlock;
     }
+
+    private void OnInputEvent(Node _, InputEvent e, int __) {
+        if (e is InputEventMouseButton mouseEvent) {
+            EmitSignal(SignalName.TakenDamage, xPosition, yPosition, 100);
+        }
+    }
 }

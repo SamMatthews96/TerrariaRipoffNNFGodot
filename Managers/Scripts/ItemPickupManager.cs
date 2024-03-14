@@ -1,6 +1,7 @@
 using Godot;
 using TerrariaRipoffNNF.Resources.Scripts;
 using TerrariaRipoffNNF.Scenes.Scripts;
+using ItemPickup = TerrariaRipoffNNF.GameObjects.Scripts.ItemPickup;
 
 namespace TerrariaRipoffNNF.Managers.Scripts;
 
@@ -14,7 +15,9 @@ public partial class ItemPickupManager : Node {
     public override void _Process(double delta) { }
 
     private void OnWorldManagerDeletedActiveBlock(BlockType blockType, int xPosition, int yPosition) {
+        GD.Print("onWMdel");
         ItemPickup itemPickup = _itemPickupPackedScene.Instantiate<ItemPickup>();
         itemPickup.Initialize(blockType, xPosition, yPosition);
+        AddChild(itemPickup, true);
     }
 }

@@ -178,7 +178,7 @@ public partial class WorldManager : Node {
         BlockType blockType = activeBlocks[xPosition, yPosition].BlockType;
         activeBlocks[xPosition, yPosition].QueueFree();
         activeBlocks[xPosition, yPosition] = null;
-        
+        GD.Print("deletedactivebock");
         EmitSignal(SignalName.DeletedActiveBlock, blockType, xPosition, yPosition);
     }
 

@@ -69,7 +69,7 @@ public partial class Player : CharacterBody2D {
         Vector2 mousePos = GetGlobalMousePosition();
         int xPosition = (int)Math.Round(mousePos.X / WorldManager.BLOCK_SIZE);
         int yPosition = (int)Math.Round(mousePos.Y / WorldManager.BLOCK_SIZE);
-        EmitSignal(SignalName.LocalPlayerClicked, xPosition, yPosition, "res://Resources/BlockType/Stone.tres");
+        // EmitSignal(SignalName.LocalPlayerClicked, xPosition, yPosition, "res://Resources/BlockType/Stone.tres");
     }
 
     private void OnJumpPressed() {

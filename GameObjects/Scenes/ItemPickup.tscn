@@ -3,9 +3,10 @@
 [ext_resource type="Script" path="res://GameObjects/Scripts/ItemPickup.cs" id="1_2bs6e"]
 [ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://testObjects/icon.svg" id="2_663fa"]
 
-[node name="ItemPickup" type="Node2D"]
+[node name="ItemPickup" type="Node2D" node_paths=PackedStringArray("sprite")]
 script = ExtResource("1_2bs6e")
+sprite = NodePath("Sprite2D")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-scale = Vector2(0.265625, 0.265625)
+scale = Vector2(0.125, 0.125)
 texture = ExtResource("2_663fa")

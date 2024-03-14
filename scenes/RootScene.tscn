@@ -41,12 +41,13 @@ script = ExtResource("8_oxogm")
 _itemPickupPackedScene = ExtResource("9_ygw4s")
 
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="ItemPickupManager"]
+_spawnable_scenes = PackedStringArray("res://GameObjects/Scenes/ItemPickup.tscn")
 spawn_path = NodePath("..")
 
 [connection signal="JoinGameButtonDown" from="MainMenuScene" to="MultiplayerManager" method="OnJoinGameButtonDown"]
 [connection signal="WorldLoaded" from="MainMenuScene" to="WorldManager" method="OnWorldLoaded"]
 [connection signal="WorldLoadedHostMode" from="MainMenuScene" to="MultiplayerManager" method="OnWorldLoadedHostMode"]
-[connection signal="DeletedActiveBlock" from="WorldManager" to="ItemPickupManager" method="OnWorldManagerDeleteActiveBlock"]
+[connection signal="DeletedActiveBlock" from="WorldManager" to="ItemPickupManager" method="OnWorldManagerDeletedActiveBlock"]
 [connection signal="WorldCreated" from="WorldManager" to="PlayerManager" method="OnWorldCreated"]
 [connection signal="ConnectedToServer" from="MultiplayerManager" to="MainMenuScene" method="OnConnectedToServer"]
 [connection signal="ConnectedToServer" from="MultiplayerManager" to="WorldManager" method="OnConnectedToServer"]

@@ -2,7 +2,7 @@ using Godot;
 using TerrariaRipoffNNF.Managers.Scripts;
 using TerrariaRipoffNNF.Resources.Scripts;
 
-namespace TerrariaRipoffNNF.Scenes.Scripts; 
+namespace TerrariaRipoffNNF.GameObjects.Scripts; 
 
 public partial class ItemPickup : Node2D {
 	private InventoryItemType _inventoryItemType;
