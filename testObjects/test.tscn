@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dxghcplgul1v5"]
+
+[ext_resource type="Script" path="res://testObjects/Test.cs" id="1_wofs8"]
+
+[node name="Node" type="Node"]
+script = ExtResource("1_wofs8")

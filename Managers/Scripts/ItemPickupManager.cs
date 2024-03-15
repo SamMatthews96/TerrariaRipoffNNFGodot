@@ -14,10 +14,9 @@ public partial class ItemPickupManager : Node {
     // Called every frame. 'delta' is the elapsed time since the previous frame.
     public override void _Process(double delta) { }
 
-    private void OnWorldManagerDeletedActiveBlock(BlockType blockType, int xPosition, int yPosition) {
-        GD.Print("onWMdel");
+    private void OnWorldManagerServerDeletedActiveBlock(BlockType blockType, int xPosition, int yPosition) {
         ItemPickup itemPickup = _itemPickupPackedScene.Instantiate<ItemPickup>();
         itemPickup.Initialize(blockType, xPosition, yPosition);
-        AddChild(itemPickup, true);
+        AddChild(itemPickup,true);
     }
 }

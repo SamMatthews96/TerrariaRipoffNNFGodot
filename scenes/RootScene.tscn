@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://bddgrodfbw38t"]
+[gd_scene load_steps=11 format=3 uid="uid://bddgrodfbw38t"]
 
 [ext_resource type="PackedScene" uid="uid://cfc060xa2l6o1" path="res://Managers/Scenes/WorldManager.tscn" id="3_fkxvb"]
 [ext_resource type="PackedScene" uid="uid://tbvohnqfn3cl" path="res://Scenes/MainMenuScene.tscn" id="3_kcx0o"]
@@ -9,6 +9,7 @@
 [ext_resource type="Script" path="res://testObjects/Logger.cs" id="8_7q2s4"]
 [ext_resource type="Script" path="res://Managers/Scripts/ItemPickupManager.cs" id="8_oxogm"]
 [ext_resource type="PackedScene" uid="uid://ct6veox8ggfx6" path="res://GameObjects/Scenes/ItemPickup.tscn" id="9_ygw4s"]
+[ext_resource type="Script" path="res://testObjects/FpsCounter.cs" id="10_qxrqy"]
 
 [node name="RootScene" type="Node"]
 
@@ -44,10 +45,16 @@ _itemPickupPackedScene = ExtResource("9_ygw4s")
 _spawnable_scenes = PackedStringArray("res://GameObjects/Scenes/ItemPickup.tscn")
 spawn_path = NodePath("..")
 
+[node name="FPS" type="Label" parent="."]
+offset_right = 104.0
+offset_bottom = 54.0
+text = "FPS"
+script = ExtResource("10_qxrqy")
+
 [connection signal="JoinGameButtonDown" from="MainMenuScene" to="MultiplayerManager" method="OnJoinGameButtonDown"]
 [connection signal="WorldLoaded" from="MainMenuScene" to="WorldManager" method="OnWorldLoaded"]
 [connection signal="WorldLoadedHostMode" from="MainMenuScene" to="MultiplayerManager" method="OnWorldLoadedHostMode"]
-[connection signal="DeletedActiveBlock" from="WorldManager" to="ItemPickupManager" method="OnWorldManagerDeletedActiveBlock"]
+[connection signal="ServerDeletedActiveBlock" from="WorldManager" to="ItemPickupManager" method="OnWorldManagerServerDeletedActiveBlock"]
 [connection signal="WorldCreated" from="WorldManager" to="PlayerManager" method="OnWorldCreated"]
 [connection signal="ConnectedToServer" from="MultiplayerManager" to="MainMenuScene" method="OnConnectedToServer"]
 [connection signal="ConnectedToServer" from="MultiplayerManager" to="WorldManager" method="OnConnectedToServer"]

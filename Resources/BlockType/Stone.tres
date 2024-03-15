@@ -1,14 +1,14 @@
-[gd_resource type="Resource" script_class="BlockType" load_steps=3 format=3 uid="uid://c75w5w4os8k5o"]
+[gd_resource type="Resource" script_class="BlockType" load_steps=3 format=3 uid="uid://cuov1mn5p4wfu"]
 
-[ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://testObjects/icon.svg" id="1_57q38"]
 [ext_resource type="Script" path="res://Resources/Scripts/BlockType.cs" id="1_puber"]
+[ext_resource type="Texture2D" uid="uid://des01kpji7vcu" path="res://testObjects/Stone.png" id="1_t2tds"]
 
 [resource]
 script = ExtResource("1_puber")
 Weight = 5.0
 TensileStrength = 20.0
 MaxHealth = 100.0
-Texture = ExtResource("1_57q38")
+Texture = ExtResource("1_t2tds")
 InventorySpace = 0.0
 IsStackable = true
-IconTexture = ExtResource("1_57q38")
+IconTexture = ExtResource("1_t2tds")

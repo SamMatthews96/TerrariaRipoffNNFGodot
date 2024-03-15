@@ -22,7 +22,7 @@ public partial class WorldManager : Node {
     public delegate void WorldCreatedEventHandler(int spawnX, int spawnY);
 
     [Signal]
-    public delegate void DeletedActiveBlockEventHandler(BlockType blockType, int xPosition, int yPosition);
+    public delegate void ServerDeletedActiveBlockEventHandler(BlockType blockType, int xPosition, int yPosition);
 
     private void OnWorldLoaded(World world) {
         spawnX = 5;
@@ -168,18 +168,17 @@ public partial class WorldManager : Node {
     }
 
     private void OnSavedBlockDestroyed(int xPosition, int yPosition) {
+        BlockType blockType = savedBlocks[xPosition, yPosition].BlockType;
         savedBlocks[xPosition, yPosition] = null;
         Rpc(nameof(DeleteActiveBlock), xPosition, yPosition);
+        EmitSignal(SignalName.ServerDeletedActiveBlock, blockType, xPosition, yPosition);
     }
 
     [Rpc(CallLocal = true)]
     private void DeleteActiveBlock(int xPosition, int yPosition) {
         if (activeBlocks[xPosition, yPosition] is null) return;
-        BlockType blockType = activeBlocks[xPosition, yPosition].BlockType;
         activeBlocks[xPosition, yPosition].QueueFree();
         activeBlocks[xPosition, yPosition] = null;
-        GD.Print("deletedactivebock");
-        EmitSignal(SignalName.DeletedActiveBlock, blockType, xPosition, yPosition);
     }
 
     private void OnPlayerAttemptBuildBlock(int xPosition, int yPosition, string blockResourcePath) {
@@ -190,7 +189,7 @@ public partial class WorldManager : Node {
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void ServerAttemptBuildBlock(int xPosition, int yPosition, string blockResourcePath) {
-        BlockType blockType = BlockType.FromString(blockResourcePath);
+        BlockType blockType = BlockType.Deserialize(blockResourcePath);
         if (!AreCoordsInBounds(xPosition, yPosition)) return;
         if (savedBlocks[xPosition, yPosition] is not null) return;
         SavedBlock savedBlock = new SavedBlock(blockType, xPosition, yPosition);

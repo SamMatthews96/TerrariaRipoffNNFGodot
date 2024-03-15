@@ -1,6 +1,5 @@
 ﻿using Godot;
 using Godot.Collections;
-using TerrariaRipoffNNF.Scenes.Scripts;
 using TerrariaRipoffNNF.scripts;
 
 namespace TerrariaRipoffNNF.Resources.Scripts;
