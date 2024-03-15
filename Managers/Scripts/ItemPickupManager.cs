@@ -16,7 +16,7 @@ public partial class ItemPickupManager : Node {
 
     private void OnWorldManagerServerDeletedActiveBlock(BlockType blockType, int xPosition, int yPosition) {
         ItemPickup itemPickup = _itemPickupPackedScene.Instantiate<ItemPickup>();
-        itemPickup.Initialize(blockType, xPosition, yPosition);
+        itemPickup.Initialize(blockType.ResourcePath, xPosition, yPosition);
         AddChild(itemPickup,true);
     }
 }
