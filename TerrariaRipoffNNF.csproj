@@ -10,15 +10,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="GameManagers\**" />
-    <Compile Remove="UI\Scripts\**" />
-    <Compile Remove="UI\**" />
     <Compile Remove="OLD\tests\**" />
     <Compile Remove="Scripts\**" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Remove="GameManagers\**" />
-    <EmbeddedResource Remove="UI\Scripts\**" />
-    <EmbeddedResource Remove="UI\**" />
     <EmbeddedResource Remove="OLD\tests\**" />
     <EmbeddedResource Remove="Scripts\**" />
   </ItemGroup>

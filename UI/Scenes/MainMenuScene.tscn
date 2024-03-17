@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://tbvohnqfn3cl"]
 
-[ext_resource type="Script" path="res://Scenes/Scripts/MainMenuScene.cs" id="1_tso7g"]
-[ext_resource type="PackedScene" uid="uid://buekj451osmbs" path="res://Scenes/EnterWorldButton.tscn" id="2_vjtmq"]
+[ext_resource type="Script" path="res://UI/Scripts/MainMenuScene.cs" id="1_tso7g"]
+[ext_resource type="PackedScene" uid="uid://buekj451osmbs" path="res://UI/Scenes/EnterWorldButton.tscn" id="2_vjtmq"]
 
 [node name="MainMenuScene" type="Control" node_paths=PackedStringArray("mainMenu", "multiplayerMenu", "worldMenu", "joinMenu", "worldListContainer", "worldNameEdit", "ipEdit")]
 layout_mode = 3

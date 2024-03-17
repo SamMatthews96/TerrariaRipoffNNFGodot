@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://buekj451osmbs"]
 
-[ext_resource type="Script" path="res://Scenes/Scripts/EnterWorldButton.cs" id="1_qdweq"]
+[ext_resource type="Script" path="res://UI/Scripts/EnterWorldButton.cs" id="1_qdweq"]
 
 [node name="EnterWorldButton" type="Button"]
 anchors_preset = 15
