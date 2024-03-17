@@ -1,9 +1,11 @@
 using System;
+using System.Diagnostics;
 using Godot;
 using Godot.Collections;
 using TerrariaRipoffNNF.Resources.Scripts;
 using TerrariaRipoffNNF.Scenes.Scripts;
 using Array = Godot.Collections.Array;
+using Player = TerrariaRipoffNNF.GameObjects.Scripts.Player;
 
 namespace TerrariaRipoffNNF.Managers.Scripts;
 
@@ -115,7 +117,7 @@ public partial class WorldManager : Node {
             foreach (Dictionary<string, string> blockSerialized in savedBlocksSerialized) {
                 int xPosition = blockSerialized["XPosition"].ToInt();
                 int yPosition = blockSerialized["YPosition"].ToInt();
-                BlockType blockType = ResourceLoader.Load<BlockType>(blockSerialized["ResourcePath"]);
+                BlockType blockType = FileManager.LoadBlockType(blockSerialized["ResourcePath"]);
 
                 if (activeBlocks[xPosition, yPosition] is not null) continue;
                 ActiveBlock newBlock = ActiveBlock.Instantiate(blockType, xPosition, yPosition);

@@ -1,5 +1,5 @@
 using Godot;
-using TerrariaRipoffNNF.Scenes.Scripts;
+using TerrariaRipoffNNF.GameObjects.Scripts;
 
 namespace TerrariaRipoffNNF.Managers.Scripts;
 
