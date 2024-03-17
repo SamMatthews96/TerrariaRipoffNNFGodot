@@ -1,7 +1,9 @@
 <Project Sdk="Godot.NET.Sdk/4.2.1">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
+    <LangVersion>11.0</LangVersion>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="NUnit" Version="3.13.3" />
@@ -10,10 +12,25 @@
     <Compile Remove="GameManagers\**" />
     <Compile Remove="UI\Scripts\**" />
     <Compile Remove="UI\**" />
+    <Compile Remove="OLD\tests\**" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Remove="GameManagers\**" />
     <EmbeddedResource Remove="UI\Scripts\**" />
     <EmbeddedResource Remove="UI\**" />
+    <EmbeddedResource Remove="OLD\tests\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <!--Required for GdUnit4-->
+    <PackageReference Include="gdUnit4.api" Version="4.2.0-rc*" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="tests\BlockHealthTest.txt" />
+    <Content Include="tests\BlockStabilityTest.txt" />
+    <Content Include="tests\BlockTest.txt" />
+    <Content Include="tests\BlockTestHelpers.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Scripts\" />
   </ItemGroup>
 </Project>

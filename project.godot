@@ -13,7 +13,7 @@ config_version=5
 config/name="TerrariaRipoffNNF"
 run/main_scene="res://Scenes/RootScene.tscn"
 config/features=PackedStringArray("4.2", "C#", "Forward Plus")
-config/icon="res://testObjects/icon.svg"
+config/icon="res://Assets/Images/icon.svg"
 
 [display]
 
@@ -29,7 +29,7 @@ project/assembly_name="TerrariaRipoffNNF"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/GDMUT/plugin.cfg")
+enabled=PackedStringArray("res://addons/gdUnit4/plugin.cfg")
 
 [input]
 

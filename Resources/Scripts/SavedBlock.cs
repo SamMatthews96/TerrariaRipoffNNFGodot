@@ -1,10 +1,9 @@
 ﻿using Godot;
 using Godot.Collections;
-using TerrariaRipoffNNF.scripts;
 
 namespace TerrariaRipoffNNF.Resources.Scripts;
 
-public partial class SavedBlock : Resource, ISerializable {
+public partial class SavedBlock : Resource {
     private float currentHealth;
 
     [Signal]

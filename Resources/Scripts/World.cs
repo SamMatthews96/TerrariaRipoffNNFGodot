@@ -1,12 +1,11 @@
 ﻿using System;
 using Godot;
 using Godot.Collections;
-using TerrariaRipoffNNF.scripts;
 using Array = Godot.Collections.Array;
 
 namespace TerrariaRipoffNNF.Resources.Scripts;
 
-public partial class World : WorldBasicInfo, ISerializable {
+public partial class World : WorldBasicInfo {
     public SavedBlock[,] SavedBlocks { get; }
 
     public World(SavedBlock[,] savedBlocks, string name, int worldWidth, int worldHeight)
