@@ -4,6 +4,7 @@ using Godot;
 using Godot.Collections;
 using TerrariaRipoffNNF.Resources.Scripts;
 using TerrariaRipoffNNF.Scenes.Scripts;
+using ActiveBlock = TerrariaRipoffNNF.GameObjects.Scripts.ActiveBlock;
 using Array = Godot.Collections.Array;
 using Player = TerrariaRipoffNNF.GameObjects.Scripts.Player;
 
@@ -50,18 +51,6 @@ public partial class WorldManager : Node {
             peerId, spawnX, spawnY);
     }
 
-    private void OnCreatedLocalPlayerOnServer(Vector2 _) {
-        Player.LocalPlayer.LocalPlayerMoved += OnLocalPlayerMoved;
-        Player.LocalPlayer.LocalPlayerClicked += OnPlayerAttemptBuildBlock;
-    }
-
-    private void OnLocalPlayerMoved(
-        int newXCoordinate, int newYCoordinate, int oldXCoordinate, int oldYCoordinate) {
-        int peerId = Multiplayer.GetUniqueId();
-        RpcId(MultiplayerManager.HOST_ID, nameof(GetAndCreateBlocksOnMoved),
-            peerId, newXCoordinate, newYCoordinate, oldXCoordinate, oldYCoordinate);
-        DeleteActiveBlocksInRegion(newXCoordinate, newYCoordinate, oldXCoordinate, oldYCoordinate);
-    }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void GetAndCreateBlocksOnSpawn(int peerId, int xCoord, int yCoord) {
@@ -92,7 +81,7 @@ public partial class WorldManager : Node {
                     Math.Abs(oldYCoord - y) < BLOCK_RENDER_DISTANCE)
                     continue;
 
-                var block = savedBlocks[x, y];
+                SavedBlock block = savedBlocks[x, y];
                 if (block is not null) {
                     savedBlocksSerialized.Add(block.Serialize());
                 }
@@ -130,6 +119,19 @@ public partial class WorldManager : Node {
             GD.Print("invalid data");
             GD.Print(e);
         }
+    }
+
+    private void OnCreatedLocalPlayerOnServer(Vector2 _) {
+        Player.LocalPlayer.LocalPlayerMoved += OnLocalPlayerMoved;
+        Player.LocalPlayer.LocalPlayerClicked += OnPlayerAttemptBuildBlock;
+    }
+
+    private void OnLocalPlayerMoved(
+        int newXCoordinate, int newYCoordinate, int oldXCoordinate, int oldYCoordinate) {
+        int peerId = Multiplayer.GetUniqueId();
+        RpcId(MultiplayerManager.HOST_ID, nameof(GetAndCreateBlocksOnMoved),
+            peerId, newXCoordinate, newYCoordinate, oldXCoordinate, oldYCoordinate);
+        DeleteActiveBlocksInRegion(newXCoordinate, newYCoordinate, oldXCoordinate, oldYCoordinate);
     }
 
     private void DeleteActiveBlocksInRegion(

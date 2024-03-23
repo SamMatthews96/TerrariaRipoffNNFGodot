@@ -1,10 +1,8 @@
-using System;
-using System.Diagnostics;
 using Godot;
 using TerrariaRipoffNNF.Managers.Scripts;
 using TerrariaRipoffNNF.Resources.Scripts;
 
-namespace TerrariaRipoffNNF.Scenes.Scripts;
+namespace TerrariaRipoffNNF.GameObjects.Scripts;
 
 public partial class ActiveBlock : StaticBody2D {
     [Export] private static PackedScene packedActiveBlock =

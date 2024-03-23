@@ -30,9 +30,7 @@ public partial class Player : CharacterBody2D {
 
     public override void _EnterTree() {
         int peerId = Name.ToString()!.ToInt();
-        GD.Print("here");
         positionSynchronizer.SetMultiplayerAuthority(peerId);
-        GD.Print("here2");
         if (peerId != Multiplayer.GetUniqueId()) return;
 
         LocalPlayer = this;

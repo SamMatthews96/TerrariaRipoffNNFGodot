@@ -142,7 +142,7 @@ public partial class MainMenuScene : Control {
     #endregion
 
     private void AddEnterWorldButton(WorldBasicInfo worldBasicInfo) {
-        EnterWorldButton enterWorldButton = packedEnterWorldButton.Instantiate<EnterWorldButton>();
+        UI.Scripts.EnterWorldButton enterWorldButton = packedEnterWorldButton.Instantiate<UI.Scripts.EnterWorldButton>();
         enterWorldButton.Initialize(worldBasicInfo);
         enterWorldButton.EnterWorldButtonDown += OnWorldMenuEnterWorldButtonDown;
         worldListContainer.AddChild(enterWorldButton);

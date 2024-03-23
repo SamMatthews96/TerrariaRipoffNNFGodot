@@ -6,9 +6,9 @@ using Godot.Collections;
 namespace TerrariaRipoffNNF.Resources.Scripts; 
 
 public partial class WorldBasicInfo : Resource {
-    public string Name { get; protected set; }
-    public int WorldWidth { get; protected set; }
-    public int WorldHeight { get; protected set; }
+    public string Name { get; private set; }
+    public int WorldWidth { get; private set; }
+    public int WorldHeight { get; private set; }
     
     public WorldBasicInfo(string name, int worldWidth, int worldHeight) {
         Name = name;
@@ -32,7 +32,7 @@ public partial class WorldBasicInfo : Resource {
                 dictionary["WorldHeight"].ToString().ToInt());
         }
         catch (Exception e) {
-            GD.Print("invalid WorldBasicInfo dict");
+            GD.Print("error reading WorldBasicInfo from dict");
             GD.Print(e);
             throw new NotImplementedException();
         }

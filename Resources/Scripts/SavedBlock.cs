@@ -13,7 +13,6 @@ public partial class SavedBlock : Resource {
     public int YPosition { get; }
     public BlockType BlockType { get; }
 
-
     public SavedBlock(BlockType blockType, int xPosition, int yPosition) {
         BlockType = blockType;
         XPosition = xPosition;
