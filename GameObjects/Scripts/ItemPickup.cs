@@ -6,9 +6,9 @@ namespace TerrariaRipoffNNF.GameObjects.Scripts;
 
 public partial class ItemPickup : Node2D {
 	[Export] private Sprite2D sprite;
+	[Export] private string _resourcePath;
 	private int _xPosition;
 	private int _yPosition;
-	[Export] private string _resourcePath;
 	private InventoryItemType _inventoryItemType;	
 	
 	public void Initialize(string resourcePath, int xPosition, int yPosition) {

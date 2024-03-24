@@ -12,20 +12,11 @@ public partial class MultiplayerManager : Node {
     public const int HOST_ID = 1;
 
     [Signal]
-    public delegate void PeerConnectedEventHandler(long playerId);
+    public delegate void ConnectedToServerEventHandler(PlayerInfo playerInfo);
 
-    [Signal]
-    public delegate void PeerDisconnectedEventHandler(long playerId);
-
-    [Signal]
-    public delegate void ConnectedToServerEventHandler();
-
-    [Signal]
-    public delegate void ConnectionFailedEventHandler();
-    
     private void OnWorldLoadedHostMode() {
-        Multiplayer.PeerConnected += id => EmitSignal(SignalName.PeerConnected, id);
-        Multiplayer.PeerDisconnected += id => EmitSignal(SignalName.PeerDisconnected, id);
+        //Multiplayer.PeerConnected += id => EmitSignal(SignalName.PeerConnected, id);
+        //Multiplayer.PeerDisconnected += id => EmitSignal(SignalName.PeerDisconnected, id);
 
         peer = new ENetMultiplayerPeer();
         Error error = peer.CreateServer(port);
@@ -38,11 +29,11 @@ public partial class MultiplayerManager : Node {
         Multiplayer.MultiplayerPeer = peer;
     }
 
-    private void OnJoinGameButtonDown(string ip) {
-        Multiplayer.PeerConnected += id => EmitSignal(SignalName.PeerConnected, id);
-        Multiplayer.PeerDisconnected += id => EmitSignal(SignalName.PeerDisconnected, id);
-        Multiplayer.ConnectedToServer += () => EmitSignal(SignalName.ConnectedToServer);
-        Multiplayer.ConnectionFailed += () => EmitSignal(SignalName.ConnectionFailed);
+    private void OnJoinGameButtonDown(string ip, PlayerInfo playerInfo) {
+        //Multiplayer.PeerConnected += id => EmitSignal(SignalName.PeerConnected, id);
+        //Multiplayer.PeerDisconnected += id => EmitSignal(SignalName.PeerDisconnected, id);
+        Multiplayer.ConnectedToServer += () => EmitSignal(SignalName.ConnectedToServer, playerInfo);
+        //Multiplayer.ConnectionFailed += () => EmitSignal(SignalName.ConnectionFailed);
 
         peer = new ENetMultiplayerPeer();
         Error error = peer.CreateClient(ip, port);

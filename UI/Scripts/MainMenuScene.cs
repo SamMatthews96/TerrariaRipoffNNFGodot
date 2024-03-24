@@ -2,12 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Godot;
-using Godot.Collections;
 using TerrariaRipoffNNF.Managers.Scripts;
 using TerrariaRipoffNNF.Resources.Scripts;
-using Array = Godot.Collections.Array;
 
-namespace TerrariaRipoffNNF.Scenes.Scripts;
+namespace TerrariaRipoffNNF.UI.Scripts;
 
 public partial class MainMenuScene : Control {
     [Export] private Control mainMenu;
@@ -28,13 +26,13 @@ public partial class MainMenuScene : Control {
     }
 
     [Signal]
-    public delegate void WorldLoadedEventHandler(World world);
+    public delegate void WorldLoadedEventHandler(World world, PlayerInfo playerInfo);
 
     [Signal]
     public delegate void WorldLoadedHostModeEventHandler();
 
     [Signal]
-    public delegate void JoinGameButtonDownEventHandler(string ipText);
+    public delegate void JoinGameButtonDownEventHandler(string ipText, PlayerInfo playerInfo);
 
     public override void _Ready() {
         menus.Add(mainMenu);
@@ -104,8 +102,9 @@ public partial class MainMenuScene : Control {
         if (gameType == GameType.Host) {
             EmitSignal(SignalName.WorldLoadedHostMode);
         }
+        PlayerInfo playerInfo = new("123-432", "Host");
 
-        EmitSignal(SignalName.WorldLoaded, world);
+        EmitSignal(SignalName.WorldLoaded, world, playerInfo);
         QueueFree();
     }
 
@@ -132,7 +131,8 @@ public partial class MainMenuScene : Control {
     #region JoinMenu EventHandlers
 
     private void OnJoinMenuEnterWorldButtonDown() {
-        EmitSignal(SignalName.JoinGameButtonDown, ipEdit.Text);
+        PlayerInfo playerInfo = new("457-543", "Client");
+        EmitSignal(SignalName.JoinGameButtonDown, ipEdit.Text, playerInfo);
     }
 
     private void OnJoinMenuBackButtonDown() {
@@ -142,7 +142,7 @@ public partial class MainMenuScene : Control {
     #endregion
 
     private void AddEnterWorldButton(WorldBasicInfo worldBasicInfo) {
-        UI.Scripts.EnterWorldButton enterWorldButton = packedEnterWorldButton.Instantiate<UI.Scripts.EnterWorldButton>();
+        EnterWorldButton enterWorldButton = packedEnterWorldButton.Instantiate<EnterWorldButton>();
         enterWorldButton.Initialize(worldBasicInfo);
         enterWorldButton.EnterWorldButtonDown += OnWorldMenuEnterWorldButtonDown;
         worldListContainer.AddChild(enterWorldButton);

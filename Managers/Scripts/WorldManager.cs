@@ -16,8 +16,6 @@ public partial class WorldManager : Node {
 
     private int worldWidth;
     private int worldHeight;
-    private int spawnX;
-    private int spawnY;
     private ActiveBlock[,] activeBlocks;
     private SavedBlock[,] savedBlocks;
 
@@ -27,9 +25,7 @@ public partial class WorldManager : Node {
     [Signal]
     public delegate void ServerDeletedActiveBlockEventHandler(BlockType blockType, int xPosition, int yPosition);
 
-    private void OnWorldLoaded(World world) {
-        spawnX = 5;
-        spawnY = 5;
+    private void OnWorldLoaded(World world, PlayerInfo playerInfo) {
         worldWidth = world.WorldWidth;
         worldHeight = world.WorldHeight;
 
@@ -39,12 +35,19 @@ public partial class WorldManager : Node {
             savedBlock.Destroyed += OnSavedBlockDestroyed;
         }
 
+        if (!world.PlayerPositions.ContainsKey(playerInfo.UniqueName)) {
+            world.PlayerPositions.Add(playerInfo.UniqueName, new World.PlayerPosition(
+                world.DefaultSpawnX,world.DefaultSpawnY));
+        }
+        int spawnX = world.PlayerPositions[playerInfo.UniqueName].XPosition;
+        int spawnY = world.PlayerPositions[playerInfo.UniqueName].YPosition;
+
         GetAndCreateBlocksOnSpawn(1, spawnX, spawnY);
     }
 
     private void OnConnectedToServer() {
-        spawnX = 10;
-        spawnY = 5;
+        int spawnX = 10;
+        int spawnY = 5;
 
         int peerId = Multiplayer.GetUniqueId();
         RpcId(1, nameof(GetAndCreateBlocksOnSpawn),
@@ -97,6 +100,8 @@ public partial class WorldManager : Node {
         worldHeight = serverWorldHeight;
         activeBlocks = new ActiveBlock[serverWorldWidth, serverWorldHeight];
         PeerCreateActiveBlocks(savedBlocksSerialized);
+        int spawnX = 5;
+        int spawnY = 5;
         EmitSignal(SignalName.WorldCreated, spawnX, spawnY);
     }
 
