@@ -10,11 +10,11 @@ public static class WorldCreator {
         BlockType stoneType = FileManager.LoadBlockType("res://Resources/BlockType/Stone.tres");
         
         BlockType earthType = FileManager.LoadBlockType("res://Resources/BlockType/Earth.tres");
-        SavedBlock[,] savedBlocks = new SavedBlock[worldBasicInfo.WorldWidth, worldBasicInfo.WorldHeight];
+        SavedBlock[,] savedBlocks = new SavedBlock[worldBasicInfo.Width, worldBasicInfo.Height];
         BlockType[] types = { stoneType, earthType };
         Random random = new();
-        for (int x = 0; x < worldBasicInfo.WorldWidth; x++) {
-            for (int y = mid; y < worldBasicInfo.WorldHeight; y++) {
+        for (int x = 0; x < worldBasicInfo.Width; x++) {
+            for (int y = mid; y < worldBasicInfo.Height; y++) {
                 BlockType type = types[random.Next(2)];
                 savedBlocks[x, y] = new SavedBlock(type, x, y);
             }
@@ -23,7 +23,7 @@ public static class WorldCreator {
         return new World(
             savedBlocks,
             worldBasicInfo.Name,
-            worldBasicInfo.WorldWidth,
-            worldBasicInfo.WorldHeight);
+            worldBasicInfo.Width,
+            worldBasicInfo.Height);
     }
 }

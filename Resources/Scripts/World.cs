@@ -8,8 +8,8 @@ namespace TerrariaRipoffNNF.Resources.Scripts;
 
 public partial class World : Resource {
     public string Name { get; private set; }
-    public int WorldWidth { get; private set; }
-    public int WorldHeight { get; private set; }
+    public int Width { get; private set; }
+    public int Height { get; private set; }
     public SavedBlock[,] SavedBlocks { get; }
     public Dictionary<string,PlayerPosition> PlayerPositions { get; } = new();
     
@@ -26,22 +26,22 @@ public partial class World : Resource {
         }
     }
 
-    public World(SavedBlock[,] savedBlocks, string name, int worldWidth, int worldHeight) {
+    public World(SavedBlock[,] savedBlocks, string name, int width, int height) {
         Name = name;
-        WorldWidth = worldWidth;
-        WorldHeight = worldHeight;
+        Width = width;
+        Height = height;
         SavedBlocks = savedBlocks;
     }
 
     public WorldBasicInfo GetBasicInfo() {
-        return new WorldBasicInfo(Name, WorldWidth, WorldHeight);
+        return new WorldBasicInfo(Name, Width, Height);
     }
 
     public GodotDictionary Serialize() {
         GodotDictionary serializedData = new();
         serializedData.Add("Name", Name);
-        serializedData.Add("WorldWidth", WorldWidth);
-        serializedData.Add("WorldHeight", WorldHeight);
+        serializedData.Add("Width", Width);
+        serializedData.Add("Height", Height);
         
         Array playerPositionsSerialized = new();
         foreach (KeyValuePair<string, PlayerPosition> playerPosition in PlayerPositions) {
@@ -64,8 +64,8 @@ public partial class World : Resource {
 
     public static World FromDict(GodotDictionary dictionary) {
         try {
-            int worldWidth = dictionary["WorldWidth"].ToString().ToInt();
-            int worldHeight = dictionary["WorldHeight"].ToString().ToInt();
+            int worldWidth = dictionary["Width"].ToString().ToInt();
+            int worldHeight = dictionary["Height"].ToString().ToInt();
             string worldName = dictionary["Name"].ToString();
 
             Array savedBlocksArray = dictionary["SavedBlocks"].AsGodotArray();

@@ -7,20 +7,20 @@ namespace TerrariaRipoffNNF.Resources.Scripts;
 
 public partial class WorldBasicInfo : Resource {
     public string Name { get; private set; }
-    public int WorldWidth { get; private set; }
-    public int WorldHeight { get; private set; }
+    public int Width { get; private set; }
+    public int Height { get; private set; }
     
-    public WorldBasicInfo(string name, int worldWidth, int worldHeight) {
+    public WorldBasicInfo(string name, int width, int height) {
         Name = name;
-        WorldWidth = worldWidth;
-        WorldHeight = worldHeight;
+        Width = width;
+        Height = height;
     }
 
     public Dictionary Serialize() {
         Dictionary serializedData = new();
         serializedData.Add("Name", Name);
-        serializedData.Add("WorldWidth", WorldWidth);
-        serializedData.Add("WorldHeight", WorldHeight);
+        serializedData.Add("Width", Width);
+        serializedData.Add("Height", Height);
         return serializedData;
     }
 
@@ -28,8 +28,8 @@ public partial class WorldBasicInfo : Resource {
         try {
             return new WorldBasicInfo(
                 dictionary["Name"].ToString(),
-                dictionary["WorldWidth"].ToString().ToInt(),
-                dictionary["WorldHeight"].ToString().ToInt());
+                dictionary["Width"].ToString().ToInt(),
+                dictionary["Height"].ToString().ToInt());
         }
         catch (Exception e) {
             GD.Print("error reading WorldBasicInfo from dict");

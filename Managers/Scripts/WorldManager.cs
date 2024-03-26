@@ -27,8 +27,8 @@ public partial class WorldManager : Node {
 
     private void OnWorldLoaded(World world, PlayerInfo playerInfo) {
         _world = world;
-        worldWidth = world.WorldWidth;
-        worldHeight = world.WorldHeight;
+        worldWidth = world.Width;
+        worldHeight = world.Height;
 
         foreach (SavedBlock savedBlock in _world.SavedBlocks) {
             if (savedBlock is null) continue;
