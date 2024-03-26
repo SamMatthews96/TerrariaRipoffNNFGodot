@@ -152,7 +152,7 @@ public partial class MainMenuScene : Control {
         QueueFree();
     }
 
-    private void OnConnectedToServer() {
+    private void OnConnectedToServer(PlayerInfo playerInfo) {
         QueueFree();
     }
 }

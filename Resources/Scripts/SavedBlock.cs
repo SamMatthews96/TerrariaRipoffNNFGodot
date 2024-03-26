@@ -1,5 +1,6 @@
 ﻿using Godot;
 using Godot.Collections;
+using TerrariaRipoffNNF.Managers.Scripts;
 
 namespace TerrariaRipoffNNF.Resources.Scripts;
 
@@ -37,7 +38,7 @@ public partial class SavedBlock : Resource {
 
     public static SavedBlock FromDict(Dictionary dictionary) {
         return new SavedBlock(
-            ResourceLoader.Load<BlockType>(dictionary["ResourcePath"].ToString()),
+            FileManager.LoadBlockType(dictionary["ResourcePath"].ToString()),
             dictionary["XPosition"].ToString().ToInt(),
             dictionary["YPosition"].ToString().ToInt()
             );

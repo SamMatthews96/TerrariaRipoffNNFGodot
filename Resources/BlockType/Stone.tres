@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="BlockType" load_steps=3 format=3 uid="uid://cuov1mn5p4wfu"]
+[gd_resource type="Resource" script_class="BlockType" load_steps=3 format=3 uid="uid://bd1pbnfaw35f"]
 
 [ext_resource type="Script" path="res://Resources/Scripts/BlockType.cs" id="1_puber"]
 [ext_resource type="Texture2D" uid="uid://des01kpji7vcu" path="res://Assets/Images/Stone.png" id="1_t2tds"]
