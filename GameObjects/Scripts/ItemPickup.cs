@@ -15,7 +15,7 @@ public partial class ItemPickup : Node2D {
 		_resourcePath = resourcePath;
 		_xPosition = xPosition;
 		_yPosition = yPosition;
-		Position = Utils.GetWorldPositionFromCellCoordinates(_xPosition, _yPosition);
+		Position = WorldManager.Instance.GetWorldPositionFromCellCoordinates(_xPosition, _yPosition);
 	}
 
 	public override void _Ready() {

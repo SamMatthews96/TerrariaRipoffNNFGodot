@@ -12,11 +12,13 @@
     <Compile Remove="GameManagers\**" />
     <Compile Remove="OLD\tests\**" />
     <Compile Remove="Scripts\**" />
+    <Compile Remove="Builders\**" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Remove="GameManagers\**" />
     <EmbeddedResource Remove="OLD\tests\**" />
     <EmbeddedResource Remove="Scripts\**" />
+    <EmbeddedResource Remove="Builders\**" />
   </ItemGroup>
   <ItemGroup>
     <!--Required for GdUnit4-->

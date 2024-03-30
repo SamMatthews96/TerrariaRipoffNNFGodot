@@ -20,7 +20,7 @@ public partial class Player : CharacterBody2D {
     [Signal]
     public delegate void LocalPlayerMovedEventHandler(
         int xCoords, int yCoords, int prevXCoords, int prevYCoords);
-
+    
     [Signal]
     public delegate void LocalPlayerClickedEventHandler(int x, int y, string blockResourcePath);
 
@@ -38,7 +38,6 @@ public partial class Player : CharacterBody2D {
         InputManager.Instance.HorizontalInputChanged += newInput => horizontalInput = newInput;
         InputManager.Instance.JumpPressed += OnJumpPressed;
         InputManager.Instance.MouseClicked += LogCellUnderMouse;
-        PlayerManager.Instance.CreatedLocalPlayerOnServer += serverPosition => { Position = serverPosition; };
     }
 
     public override void _PhysicsProcess(double delta) {

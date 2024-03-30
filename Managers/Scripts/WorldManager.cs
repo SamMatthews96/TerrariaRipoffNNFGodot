@@ -1,172 +1,114 @@
-using System;
-using System.Diagnostics;
+using System.Collections.Generic;
 using Godot;
 using Godot.Collections;
 using TerrariaRipoffNNF.Resources.Scripts;
-using TerrariaRipoffNNF.Scenes.Scripts;
-using ActiveBlock = TerrariaRipoffNNF.GameObjects.Scripts.ActiveBlock;
-using Array = Godot.Collections.Array;
-using Player = TerrariaRipoffNNF.GameObjects.Scripts.Player;
+using TerrariaRipoffNNF.Utils;
 
 namespace TerrariaRipoffNNF.Managers.Scripts;
 
 public partial class WorldManager : Node {
     public const int BLOCK_SIZE = 32;
-    private const int BLOCK_RENDER_DISTANCE = 20;
+    /*
+     * This class manages the state of the saved blocks
+     * it is responsible for creating the saved blocks
+     * and updating the saved blocks
+     *
+     * It might later be responsible for other world objects, such as NPCs, chests, etc
+     */
 
-    private int worldWidth;
-    private int worldHeight;
-    private ActiveBlock[,] activeBlocks;
+    public static WorldManager Instance { get; private set; }
+
     private World _world;
+    private PlayerInfo _playerInfo;
 
-    [Signal]
-    public delegate void WorldCreatedEventHandler(int spawnX, int spawnY);
-
+    [Export] private LocalObjectSpawnManager localObjectSpawnManager;
+    [Export] private PlayerManager playerManager;
+    
     [Signal]
     public delegate void ServerDeletedActiveBlockEventHandler(BlockType blockType, int xPosition, int yPosition);
 
-    private void OnWorldLoaded(World world, PlayerInfo playerInfo) {
-        _world = world;
-        worldWidth = world.Width;
-        worldHeight = world.Height;
+    [Signal]
+    public delegate void InitializedEventHandler();
 
-        foreach (SavedBlock savedBlock in _world.SavedBlocks) {
-            if (savedBlock is null) continue;
-            savedBlock.Destroyed += OnSavedBlockDestroyed;
+    public override void _Ready() {
+        Instance = this;
+    }
+
+    #region Getters
+
+    public GridPosition GetPlayerSpawnPosition() {
+        return _world.DefaultSpawnPosition;
+    }
+
+    public Vector2 GetWorldPositionFromCellCoordinates(int xCoordinate, int yCoordinate) {
+        return new Vector2(xCoordinate * BLOCK_SIZE, yCoordinate * BLOCK_SIZE);
+    }
+
+    public List<SavedBlock> GetSavedBlocksInRegion(int xCoordinate, int yCoordinate) {
+        (int xStart, int xEnd, int yStart, int yEnd) = _world.GetRegionBoundary(xCoordinate, yCoordinate);
+
+        List<SavedBlock> savedBlocks = new();
+        for (int x = xStart; x < xEnd; x++) {
+            for (int y = yStart; y < yEnd; y++) {
+                if (_world.SavedBlocks[x, y] is null) continue;
+                savedBlocks.Add(_world.SavedBlocks[x, y]);
+            }
         }
 
-        GetAndCreateBlocksOnSpawn(1, playerInfo.UniqueName);
+        return savedBlocks;
+    }
+
+    #endregion
+
+    #region WorldCreation
+
+    private void OnWorldLoaded(World world, PlayerInfo playerInfo) {
+        _world = world;
+        for (int x = 0; x < _world.Width; x++) {
+            for (int y = 0; y < _world.Height; y++) {
+                SavedBlock savedBlock = _world.SavedBlocks[x, y];
+                if (savedBlock is null) continue;
+                savedBlock.Destroyed += OnSavedBlockDestroyed;
+            }
+        }
+
+        localObjectSpawnManager.Initialize(world.Width, world.Height);
+        playerManager.Initialize(playerInfo);
+
+        EmitSignal(SignalName.Initialized);
     }
 
     private void OnConnectedToServer(PlayerInfo playerInfo) {
         int peerId = Multiplayer.GetUniqueId();
-        RpcId(1, nameof(GetAndCreateBlocksOnSpawn),
+        RpcId(MultiplayerManager.HOST_ID, nameof(ServerInitialiseWorldForNewPlayer),
             peerId, playerInfo.UniqueName);
     }
 
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    private void ServerInitialiseWorldForNewPlayer(int peerId, string playerUniqueName) {
+        _world.PlayerPositions.TryAdd(playerUniqueName, _world.DefaultSpawnPosition);
+        int xSpawnCoordinate = _world.PlayerPositions[playerUniqueName].X;
+        int ySpawnCoordinate = _world.PlayerPositions[playerUniqueName].Y;
 
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    private void GetAndCreateBlocksOnSpawn(int peerId, string playerUniqueName) {
-        if (!_world.PlayerPositions.ContainsKey(playerUniqueName)) {
-            _world.PlayerPositions.Add(playerUniqueName, new World.PlayerPosition(
-                _world.DefaultSpawnX, _world.DefaultSpawnY));
-        }
+        World initialWorld = _world.GetInitialWorldAroundSpawn(xSpawnCoordinate, ySpawnCoordinate);
+        Dictionary initialWorldSerialized = initialWorld.Serialize();
 
-        int xSpawnCoordinates = _world.PlayerPositions[playerUniqueName].XPosition;
-        int ySpawnCoordinates = _world.PlayerPositions[playerUniqueName].YPosition;
-
-        (int xStart, int xEnd, int yStart, int yEnd) = GetRegionBoundary(xSpawnCoordinates, ySpawnCoordinates);
-
-        Array savedBlocksSerialized = new();
-        for (int x = xStart; x < xEnd; x++) {
-            for (int y = yStart; y < yEnd; y++) {
-                var block = _world.SavedBlocks[x, y];
-                if (block is not null) {
-                    savedBlocksSerialized.Add(block.Serialize());
-                }
-            }
-        }
-
-        RpcId(peerId, nameof(PeerCreateWorld), worldWidth, worldHeight, savedBlocksSerialized);
+        RpcId(peerId, nameof(PeerCreateWorld), initialWorldSerialized);
     }
 
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    private void GetAndCreateBlocksOnMoved(
-        int peerId, int xCoord, int yCoord, int oldXCoord, int oldYCoord) {
-        (int xStart, int xEnd, int yStart, int yEnd) = GetRegionBoundary(xCoord, yCoord);
-
-        Array savedBlocksSerialized = new();
-        for (int x = xStart; x <= xEnd; x++) {
-            for (int y = yStart; y <= yEnd; y++) {
-                if (Math.Abs(oldXCoord - x) < BLOCK_RENDER_DISTANCE &&
-                    Math.Abs(oldYCoord - y) < BLOCK_RENDER_DISTANCE)
-                    continue;
-
-                SavedBlock block = _world.SavedBlocks[x, y];
-                if (block is not null) {
-                    savedBlocksSerialized.Add(block.Serialize());
-                }
-            }
-        }
-
-        RpcId(peerId, nameof(PeerCreateActiveBlocks), savedBlocksSerialized);
+    [Rpc]
+    private void PeerCreateWorld(Dictionary initialWorldSerialized) {
+        _world = World.FromDict(initialWorldSerialized);
     }
 
-    [Rpc(CallLocal = true)]
-    public void PeerCreateWorld(int serverWorldWidth, int serverWorldHeight, Array savedBlocksSerialized) {
-        worldWidth = serverWorldWidth;
-        worldHeight = serverWorldHeight;
-        activeBlocks = new ActiveBlock[serverWorldWidth, serverWorldHeight];
-        PeerCreateActiveBlocks(savedBlocksSerialized);
-        int spawnX = 5;
-        int spawnY = 5;
-        EmitSignal(SignalName.WorldCreated, spawnX, spawnY);
-    }
+    #endregion
 
-    [Rpc(CallLocal = true)]
-    private void PeerCreateActiveBlocks(Array savedBlocksSerialized) {
-        try {
-            foreach (Dictionary<string, string> blockSerialized in savedBlocksSerialized) {
-                int xPosition = blockSerialized["XPosition"].ToInt();
-                int yPosition = blockSerialized["YPosition"].ToInt();
-                BlockType blockType = FileManager.LoadBlockType(blockSerialized["ResourcePath"]);
-
-                if (activeBlocks[xPosition, yPosition] is not null) continue;
-                ActiveBlock newBlock = ActiveBlock.Instantiate(blockType, xPosition, yPosition);
-                newBlock.TakenDamage += OnActiveBlockTakenDamage;
-                activeBlocks[xPosition, yPosition] = newBlock;
-                AddChild(newBlock);
-            }
-        }
-        catch (Exception e) {
-            GD.Print("invalid data");
-            GD.Print(e);
-        }
-    }
-
-    private void OnCreatedLocalPlayerOnServer(Vector2 _) {
-        Player.LocalPlayer.LocalPlayerMoved += OnLocalPlayerMoved;
-        Player.LocalPlayer.LocalPlayerClicked += OnPlayerAttemptBuildBlock;
-    }
-
-    private void OnLocalPlayerMoved(
-        int newXCoordinate, int newYCoordinate, int oldXCoordinate, int oldYCoordinate) {
-        int peerId = Multiplayer.GetUniqueId();
-        RpcId(MultiplayerManager.HOST_ID, nameof(GetAndCreateBlocksOnMoved),
-            peerId, newXCoordinate, newYCoordinate, oldXCoordinate, oldYCoordinate);
-        DeleteActiveBlocksInRegion(newXCoordinate, newYCoordinate, oldXCoordinate, oldYCoordinate);
-    }
-
-    private void DeleteActiveBlocksInRegion(
-        int newXCoordinate, int newYCoordinate, int oldXCoordinate, int oldYCoordinate) {
-        (int oldLeft, int oldRight, int oldTop, int oldBottom) =
-            GetRegionBoundary(oldXCoordinate, oldYCoordinate);
-
-        for (int x = oldLeft; x <= oldRight; x++) {
-            for (int y = oldTop; y <= oldBottom; y++) {
-                if (Math.Abs(newXCoordinate - x) < BLOCK_RENDER_DISTANCE &&
-                    Math.Abs(newYCoordinate - y) < BLOCK_RENDER_DISTANCE)
-                    continue;
-                if (activeBlocks[x, y] is null) continue;
-                activeBlocks[x, y].QueueFree();
-                activeBlocks[x, y] = null;
-            }
-        }
-    }
-
-    private (int xStart, int xEnd, int yStart, int yEnd) GetRegionBoundary(int xCoord, int yCoord) {
-        int xStart = Math.Max(0, xCoord - BLOCK_RENDER_DISTANCE);
-        int xEnd = Math.Min(worldWidth - 1, xCoord + BLOCK_RENDER_DISTANCE);
-        int yStart = Math.Max(0, yCoord - BLOCK_RENDER_DISTANCE);
-        int yEnd = Math.Min(worldHeight - 1, yCoord + BLOCK_RENDER_DISTANCE);
-        return (xStart, xEnd, yStart, yEnd);
-    }
+    #region Block Changes
 
     private void OnActiveBlockTakenDamage(int xPosition, int yPosition, float damageAmount) {
         RpcId(MultiplayerManager.HOST_ID, nameof(DamageSavedBlock),
             xPosition, yPosition, damageAmount);
     }
-
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void DamageSavedBlock(int xPosition, int yPosition, float damageAmount) {
@@ -177,15 +119,7 @@ public partial class WorldManager : Node {
     private void OnSavedBlockDestroyed(int xPosition, int yPosition) {
         BlockType blockType = _world.SavedBlocks[xPosition, yPosition].BlockType;
         _world.SavedBlocks[xPosition, yPosition] = null;
-        Rpc(nameof(DeleteActiveBlock), xPosition, yPosition);
         EmitSignal(SignalName.ServerDeletedActiveBlock, blockType, xPosition, yPosition);
-    }
-
-    [Rpc(CallLocal = true)]
-    private void DeleteActiveBlock(int xPosition, int yPosition) {
-        if (activeBlocks[xPosition, yPosition] is null) return;
-        activeBlocks[xPosition, yPosition].QueueFree();
-        activeBlocks[xPosition, yPosition] = null;
     }
 
     private void OnPlayerAttemptBuildBlock(int xPosition, int yPosition, string blockResourcePath) {
@@ -197,31 +131,11 @@ public partial class WorldManager : Node {
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void ServerAttemptBuildBlock(int xPosition, int yPosition, string blockResourcePath) {
         BlockType blockType = BlockType.Deserialize(blockResourcePath);
-        if (!AreCoordsInBounds(xPosition, yPosition)) return;
+        if (!_world.AreCoordsInBounds(xPosition, yPosition)) return;
         if (_world.SavedBlocks[xPosition, yPosition] is not null) return;
-        SavedBlock savedBlock = new SavedBlock(blockType, xPosition, yPosition);
+        SavedBlock savedBlock = SavedBlock.Builder.New(blockType, xPosition, yPosition).Build();
         _world.SavedBlocks[xPosition, yPosition] = savedBlock;
-        Dictionary serializedSavedBlock = savedBlock.Serialize();
-        Rpc(nameof(CreateNewSavedBlockAsActive), serializedSavedBlock);
     }
 
-    [Rpc(CallLocal = true)]
-    private void CreateNewSavedBlockAsActive(Dictionary<string, string> blockSerialized) {
-        int xPosition = blockSerialized["XPosition"].ToInt();
-        int yPosition = blockSerialized["YPosition"].ToInt();
-        BlockType blockType = ResourceLoader.Load<BlockType>(blockSerialized["ResourcePath"]);
-
-        ActiveBlock newBlock = ActiveBlock.Instantiate(blockType, xPosition, yPosition);
-        newBlock.TakenDamage += OnActiveBlockTakenDamage;
-        activeBlocks[xPosition, yPosition] = newBlock;
-        AddChild(newBlock);
-    }
-
-    private bool AreCoordsInBounds(int xPosition, int yPosition) {
-        if (xPosition < 0) return false;
-        if (yPosition < 0) return false;
-        if (xPosition >= worldWidth) return false;
-        if (yPosition >= worldHeight) return false;
-        return true;
-    }
+    #endregion block changes
 }

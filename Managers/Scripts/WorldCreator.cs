@@ -16,14 +16,11 @@ public static class WorldCreator {
         for (int x = 0; x < worldBasicInfo.Width; x++) {
             for (int y = mid; y < worldBasicInfo.Height; y++) {
                 BlockType type = types[random.Next(2)];
-                savedBlocks[x, y] = new SavedBlock(type, x, y);
+                savedBlocks[x, y] = SavedBlock.Builder.New(type, x, y).Build();
             }
         }
 
-        return new World(
-            savedBlocks,
-            worldBasicInfo.Name,
-            worldBasicInfo.Width,
-            worldBasicInfo.Height);
+        return World.Builder.New(worldBasicInfo)
+            .WithSavedBlocks(savedBlocks).Build();
     }
 }

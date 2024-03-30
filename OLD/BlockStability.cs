@@ -31,7 +31,7 @@
 //
 //     private void Block_OnCreated(object sender, EventArgs e) {
 //         Block blockBeneath = block.GetBlockInDirection(Direction.Down);
-//         IsSupportBlock = block.YPosition == 0 ||
+//         IsSupportBlock = block.Y == 0 ||
 //                          (blockBeneath is not null && blockBeneath.Stability.IsSupportBlock);
 //         if (IsSupportBlock) {
 //             SetAboveBlocksIsSupport(true);
