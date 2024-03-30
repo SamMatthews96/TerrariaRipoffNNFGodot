@@ -80,6 +80,7 @@ public partial class WorldManager : Node {
 
     private void OnConnectedToServer(PlayerInfo playerInfo) {
         int peerId = Multiplayer.GetUniqueId();
+        playerManager.Initialize(playerInfo);
         RpcId(MultiplayerManager.HOST_ID, nameof(ServerInitialiseWorldForNewPlayer),
             peerId, playerInfo.UniqueName);
     }
@@ -99,6 +100,8 @@ public partial class WorldManager : Node {
     [Rpc]
     private void PeerCreateWorld(Dictionary initialWorldSerialized) {
         _world = World.FromDict(initialWorldSerialized);
+        localObjectSpawnManager.Initialize(_world.Width, _world.Height);
+        EmitSignal(SignalName.Initialized);
     }
 
     #endregion
