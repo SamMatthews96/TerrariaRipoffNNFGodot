@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Godot;
+using Godot.Collections;
 using TerrariaRipoffNNF.Managers.Scripts;
 using TerrariaRipoffNNF.Resources.Scripts;
 
@@ -26,7 +27,7 @@ public partial class MainMenuScene : Control {
     }
 
     [Signal]
-    public delegate void WorldLoadedEventHandler(World world, PlayerInfo playerInfo);
+    public delegate void WorldLoadedEventHandler(Dictionary world, PlayerInfo playerInfo);
 
     [Signal]
     public delegate void WorldLoadedHostModeEventHandler();
@@ -97,7 +98,7 @@ public partial class MainMenuScene : Control {
     }
 
     private async void OnWorldMenuEnterWorldButtonDown(WorldBasicInfo worldBasicInfo) {
-        World world = await Task.Run(() => FileManager.LoadWorld(worldBasicInfo));
+        Dictionary world = await Task.Run(() => FileManager.LoadWorld(worldBasicInfo));
         if (gameType == GameType.Host) {
             EmitSignal(SignalName.WorldLoadedHostMode);
         }

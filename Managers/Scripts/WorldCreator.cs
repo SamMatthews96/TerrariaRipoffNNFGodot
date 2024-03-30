@@ -9,7 +9,7 @@ namespace TerrariaRipoffNNF.Managers.Scripts;
 public static class WorldCreator {
     // we are going to create a world dictionary
     // because the current method is degenerate
-    
+
     public static void CreateWorld(WorldBasicInfo worldBasicInfo) {
         int mid = 7;
         BlockType stoneType = FileManager.LoadBlockType("res://Resources/BlockType/Stone.tres");
@@ -25,14 +25,18 @@ public static class WorldCreator {
                 savedBlockArray.Add(savedBlock.Serialize());
             }
         }
-    
-        
+
+        int defaultSpawnX = 5;
+        int defaultSpawnY = 5;
+
+
         Dictionary worldDictionary = new();
         worldDictionary.Add("Name", worldBasicInfo.Name);
         worldDictionary.Add("Width", worldBasicInfo.Width);
         worldDictionary.Add("Height", worldBasicInfo.Height);
         worldDictionary.Add("SavedBlocks", savedBlockArray);
         worldDictionary.Add("PlayerPositions", new Array());
+        worldDictionary.Add("DefaultSpawnPosition", new Array { defaultSpawnX, defaultSpawnY });
         FileManager.SaveWorld(worldDictionary);
     }
 }

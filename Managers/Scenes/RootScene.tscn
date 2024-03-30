@@ -15,10 +15,10 @@
 [node name="RootScene" type="Node"]
 
 [node name="MainMenuScene" parent="." instance=ExtResource("1_qp6gj")]
-offset_left = -12.0
-offset_top = 21.0
-offset_right = -12.0
-offset_bottom = 21.0
+offset_left = 1.0
+offset_top = 1.0
+offset_right = 1.0
+offset_bottom = 1.0
 
 [node name="Logger" type="Node" parent="."]
 script = ExtResource("2_ui4wj")
@@ -60,8 +60,7 @@ text = "FPS"
 script = ExtResource("10_bhp0m")
 
 [connection signal="JoinGameButtonDown" from="MainMenuScene" to="MultiplayerManager" method="OnJoinGameButtonDown"]
-[connection signal="WorldLoaded" from="MainMenuScene" to="WorldManager" method="OnWorldLoaded"]
-[connection signal="WorldLoaded" from="MainMenuScene" to="LocalObjectSpawnManager" method="OnWorldLoaded"]
+[connection signal="WorldLoaded" from="MainMenuScene" to="WorldManager" method="OnMainMenuSceneWorldLoaded"]
 [connection signal="WorldLoadedHostMode" from="MainMenuScene" to="MultiplayerManager" method="OnWorldLoadedHostMode"]
 [connection signal="Initialized" from="WorldManager" to="PlayerManager" method="OnWorldManagerInitialized"]
 [connection signal="ServerDeletedActiveBlock" from="WorldManager" to="ItemPickupManager" method="OnWorldManagerServerDeletedActiveBlock"]

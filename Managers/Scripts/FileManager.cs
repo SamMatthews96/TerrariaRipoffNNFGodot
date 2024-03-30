@@ -64,7 +64,7 @@ public static class FileManager {
         return worldBasicInfos;
     }
 
-    public static World LoadWorld(WorldBasicInfo worldBasicInfo) {
+    public static Dictionary LoadWorld(WorldBasicInfo worldBasicInfo) {
         string worldName = worldBasicInfo.Name;
 
         FileAccess fileAccess = FileAccess.Open(
@@ -72,7 +72,7 @@ public static class FileManager {
         string content = fileAccess.GetAsText();
         fileAccess.Dispose();
         Dictionary worldDict = Json.ParseString(content).AsGodotDictionary();
-        return World.FromDict(worldDict);
+        return worldDict;
     }
 
     private static void EnsureDirectoryExists(string path) {
