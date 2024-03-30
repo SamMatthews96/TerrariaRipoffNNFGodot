@@ -79,9 +79,8 @@ public partial class MainMenuScene : Control {
 
     private async void OnWorldMenuCreateWorldButtonDown() {
         WorldBasicInfo worldBasicInfo = new(worldNameEdit.Text, 100, 100);
-        World world = await Task.Run(() => WorldCreator.CreateWorld(worldBasicInfo));
+        await Task.Run(() => WorldCreator.CreateWorld(worldBasicInfo));
         AddEnterWorldButton(worldBasicInfo);
-        await Task.Run(() => FileManager.SaveWorld(world));
     }
 
     private void OnWorldMenuBackButtonDown() {
