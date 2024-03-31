@@ -18,7 +18,7 @@ public partial class PlayerManager : Node {
 
     private void OnWorldManagerInitialized() {
         int peerId = Multiplayer.GetUniqueId();
-        GridPosition spawnPosition = WorldManager.Instance.GetPlayerSpawnPosition();
+        IntVector spawnPosition = WorldManager.Instance.GetPlayerSpawnPosition();
         RpcId(MultiplayerManager.HOST_ID, nameof(CreatePlayerOnServer),
             peerId, spawnPosition.X, spawnPosition.Y);
     }

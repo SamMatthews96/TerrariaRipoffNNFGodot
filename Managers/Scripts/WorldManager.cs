@@ -24,9 +24,9 @@ public partial class WorldManager : Node {
     private int _width;
     private int _height;
     private SavedBlock[,] _savedBlocks;
-    private Dictionary<string, GridPosition> _playerPositions = new();
+    private Dictionary<string, IntVector> _playerPositions = new();
 
-    public GridPosition DefaultSpawnPosition { get; private set; }
+    public IntVector DefaultSpawnPosition { get; private set; }
 
     [Export] private LocalObjectSpawnManager localObjectSpawnManager;
     [Export] private PlayerManager playerManager;
@@ -43,34 +43,22 @@ public partial class WorldManager : Node {
 
     #region Getters
 
-    public GridPosition GetPlayerSpawnPosition() {
+    public List<SavedBlock> GetSavedBlocksInRegion(List<IntVector> region) {
+        List<SavedBlock> savedBlocks = new();
+        foreach (IntVector coords in region) {
+            SavedBlock savedBlock = _savedBlocks[coords.X, coords.Y];
+            if (savedBlock is null) continue;
+            savedBlocks.Add(savedBlock);
+        }
+        return savedBlocks;
+    }
+    
+    public IntVector GetPlayerSpawnPosition() {
         return DefaultSpawnPosition;
     }
 
     public Vector2 GetWorldPositionFromCellCoordinates(int xCoordinate, int yCoordinate) {
         return new Vector2(xCoordinate * BLOCK_SIZE, yCoordinate * BLOCK_SIZE);
-    }
-
-    public List<SavedBlock> GetSavedBlocksInRegion(int xCoordinate, int yCoordinate) {
-        (int xStart, int xEnd, int yStart, int yEnd) = GetRegionBoundary(xCoordinate, yCoordinate);
-
-        List<SavedBlock> savedBlocks = new();
-        for (int x = xStart; x < xEnd; x++) {
-            for (int y = yStart; y < yEnd; y++) {
-                if (_savedBlocks[x, y] is null) continue;
-                savedBlocks.Add(_savedBlocks[x, y]);
-            }
-        }
-
-        return savedBlocks;
-    }
-
-    private (int xStart, int xEnd, int yStart, int yEnd) GetRegionBoundary(int xCoord, int yCoord) {
-        int xStart = Math.Max(0, xCoord - LocalObjectSpawnManager.BLOCK_RENDER_DISTANCE);
-        int xEnd = Math.Min(_width - 1, xCoord + LocalObjectSpawnManager.BLOCK_RENDER_DISTANCE);
-        int yStart = Math.Max(0, yCoord - LocalObjectSpawnManager.BLOCK_RENDER_DISTANCE);
-        int yEnd = Math.Min(_height - 1, yCoord + LocalObjectSpawnManager.BLOCK_RENDER_DISTANCE);
-        return (xStart, xEnd, yStart, yEnd);
     }
 
     private bool AreCoordsInBounds(int xPosition, int yPosition) {
@@ -90,7 +78,9 @@ public partial class WorldManager : Node {
         Initialize(worldDictionary);
     }
 
+    [Rpc(CallLocal = true)]
     private void Initialize(GodotDictionary worldDict) {
+        GD.Print(Multiplayer.GetUniqueId());
         _width = worldDict["Width"].ToString().ToInt();
         _height = worldDict["Height"].ToString().ToInt();
         Array savedBlockArray = worldDict["SavedBlocks"].AsGodotArray();
@@ -100,9 +90,9 @@ public partial class WorldManager : Node {
             _savedBlocks[savedBlock.XPosition, savedBlock.YPosition] = savedBlock;
         }
 
-        _playerPositions = new Dictionary<string, GridPosition>();
+        _playerPositions = new Dictionary<string, IntVector>();
         Array defaultSpawnPosition = worldDict["DefaultSpawnPosition"].AsGodotArray();
-        DefaultSpawnPosition = new GridPosition(
+        DefaultSpawnPosition = new IntVector(
             defaultSpawnPosition[0].ToString().ToInt(),
             defaultSpawnPosition[1].ToString().ToInt());
         localObjectSpawnManager.Initialize(_width, _height);
@@ -113,19 +103,28 @@ public partial class WorldManager : Node {
         int peerId = Multiplayer.GetUniqueId();
         playerManager.Initialize(playerInfo);
         RpcId(MultiplayerManager.HOST_ID, nameof(ServerInitialiseWorldForNewPlayer),
-            peerId, playerInfo.UniqueName);
+            peerId);
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
-    private void ServerInitialiseWorldForNewPlayer(int peerId, string playerUniqueName) {
-        _playerPositions.TryAdd(playerUniqueName, DefaultSpawnPosition);
-        int xSpawnCoordinate = _playerPositions[playerUniqueName].X;
-        int ySpawnCoordinate = _playerPositions[playerUniqueName].Y;
-
+    private void ServerInitialiseWorldForNewPlayer(int peerId) {
         GodotDictionary initialWorldDictionary = new();
         initialWorldDictionary.Add("Width", _width);
         initialWorldDictionary.Add("Height", _height);
 
+        Array savedBlockArray = new();
+        for (int x = 0; x < _width; x++) {
+            for (int y = 0; y < _height; y++) {
+                SavedBlock savedBlock = _savedBlocks[x, y];
+                if (savedBlock is null) continue;
+                savedBlockArray.Add(savedBlock.Serialize());
+            }
+        }
+
+        initialWorldDictionary.Add("SavedBlocks", savedBlockArray);
+        initialWorldDictionary.Add("PlayerPositions", new Array());
+        initialWorldDictionary.Add("DefaultSpawnPosition",
+            new Array { DefaultSpawnPosition.X, DefaultSpawnPosition.Y });
 
         RpcId(peerId, nameof(Initialize), initialWorldDictionary);
     }
