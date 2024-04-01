@@ -42,7 +42,7 @@ public partial class SavedBlock : Resource {
                 .Build();
         }
         catch (Exception e) {
-            GD.Print("error reading SavedBlock from dictionary");
+            GD.PrintErr("error reading SavedBlock from dictionary");
             GD.PrintErr(e);
             throw new NotImplementedException();
         }

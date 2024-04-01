@@ -32,8 +32,8 @@ public partial class WorldBasicInfo : Resource {
                 dictionary["Height"].ToString().ToInt());
         }
         catch (Exception e) {
-            GD.Print("error reading WorldBasicInfo from dict");
-            GD.Print(e);
+            GD.PrintErr("error reading WorldBasicInfo from dict");
+            GD.PrintErr(e);
             throw new NotImplementedException();
         }
     }
