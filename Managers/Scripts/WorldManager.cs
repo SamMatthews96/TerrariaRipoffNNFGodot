@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Godot;
 using TerrariaRipoffNNF.Resources.Scripts;
@@ -32,11 +31,9 @@ public partial class WorldManager : Node {
     [Export] private PlayerManager playerManager;
 
     [Signal]
-    public delegate void ServerDeletedActiveBlockEventHandler(BlockType blockType, int xPosition, int yPosition);
-
-    [Signal]
     public delegate void InitializedEventHandler();
-
+    
+    [Signal] public delegate void SavedBlockDestroyedEventHandler(int xPosition, int yPosition);
     public override void _Ready() {
         Instance = this;
     }
@@ -61,14 +58,6 @@ public partial class WorldManager : Node {
         return new Vector2(xCoordinate * BLOCK_SIZE, yCoordinate * BLOCK_SIZE);
     }
 
-    private bool AreCoordsInBounds(int xPosition, int yPosition) {
-        if (xPosition < 0) return false;
-        if (yPosition < 0) return false;
-        if (xPosition >= _width) return false;
-        if (yPosition >= _height) return false;
-        return true;
-    }
-
     #endregion
 
     #region WorldCreation
@@ -76,11 +65,15 @@ public partial class WorldManager : Node {
     private void OnMainMenuSceneWorldLoaded(GodotDictionary worldDictionary, PlayerInfo playerInfo) {
         playerManager.Initialize(playerInfo);
         Initialize(worldDictionary);
+
+        foreach (SavedBlock savedBlock in _savedBlocks) {
+            if (savedBlock is null) continue;
+            savedBlock.HitZeroHealth += OnSavedBlockHitZeroHealth;
+        }
     }
 
     [Rpc(CallLocal = true)]
     private void Initialize(GodotDictionary worldDict) {
-        GD.Print(Multiplayer.GetUniqueId());
         _width = worldDict["Width"].ToString().ToInt();
         _height = worldDict["Height"].ToString().ToInt();
         Array savedBlockArray = worldDict["SavedBlocks"].AsGodotArray();
@@ -133,23 +126,34 @@ public partial class WorldManager : Node {
 
     #region Block Changes
 
-    // private void OnActiveBlockTakenDamage(int xPosition, int yPosition, float damageAmount) {
-    //     RpcId(MultiplayerManager.HOST_ID, nameof(DamageSavedBlock),
-    //         xPosition, yPosition, damageAmount);
-    // }
-    //
-    // [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    // private void DamageSavedBlock(int xPosition, int yPosition, float damageAmount) {
-    //     SavedBlock savedBlock = _world.SavedBlocks[xPosition, yPosition];
-    //     savedBlock?.TakeDamage(damageAmount);
-    // }
-    //
-    // private void OnSavedBlockDestroyed(int xPosition, int yPosition) {
-    //     BlockType blockType = _world.SavedBlocks[xPosition, yPosition].BlockType;
-    //     _world.SavedBlocks[xPosition, yPosition] = null;
-    //     EmitSignal(SignalName.ServerDeletedActiveBlock, blockType, xPosition, yPosition);
-    // }
-    //
+    public void PeerActiveBlockTakenDamage(int xPosition, int yPosition, float damageAmount) {
+        RpcId(MultiplayerManager.HOST_ID, nameof(ServerDamageSavedBlock),
+            xPosition, yPosition, damageAmount);
+    }
+    
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+    private void ServerDamageSavedBlock(int xPosition, int yPosition, float damageAmount) {
+        Rpc(nameof(DamageSavedBlock), xPosition, yPosition, damageAmount);
+    }
+    
+    [Rpc(CallLocal = true)]
+    private void DamageSavedBlock(int xPosition, int yPosition, float damageAmount) {
+        SavedBlock savedBlock = _savedBlocks[xPosition, yPosition];
+        savedBlock?.TakeDamage(damageAmount);
+    }
+    
+    private void OnSavedBlockHitZeroHealth(int xPosition, int yPosition) {
+        Rpc(nameof(DestroySavedBlock), xPosition, yPosition);
+    }
+    
+    [Rpc(CallLocal = true)]
+    private void DestroySavedBlock(int xPosition, int yPosition) {
+        SavedBlock savedBlock = _savedBlocks[xPosition, yPosition];
+        if (savedBlock is null) return;
+        _savedBlocks[xPosition, yPosition] = null;
+        EmitSignal(SignalName.SavedBlockDestroyed, xPosition, yPosition);
+    }
+    
     // private void OnPlayerAttemptBuildBlock(int xPosition, int yPosition, string blockResourcePath) {
     //     RpcId(MultiplayerManager.HOST_ID, nameof(ServerAttemptBuildBlock),
     //         xPosition, yPosition, blockResourcePath);

@@ -7,7 +7,7 @@ namespace TerrariaRipoffNNF.Resources.Scripts;
 
 public partial class SavedBlock : Resource {
     [Signal]
-    public delegate void DestroyedEventHandler(int xPosition, int yPosition);
+    public delegate void HitZeroHealthEventHandler(int xPosition, int yPosition);
 
     public int XPosition { get; }
     public int YPosition { get; }
@@ -18,7 +18,7 @@ public partial class SavedBlock : Resource {
     public void TakeDamage(float damageAmount) {
         CurrentHealth -= damageAmount;
         if (CurrentHealth <= 0) {
-            EmitSignal(SignalName.Destroyed, XPosition, YPosition);
+            EmitSignal(SignalName.HitZeroHealth, XPosition, YPosition);
         }
     }
 

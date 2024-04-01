@@ -6,12 +6,12 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cnqwx"]
 size = Vector2(32, 32)
 
-[node name="ActiveBlock" type="StaticBody2D" node_paths=PackedStringArray("sprite")]
+[node name="ActiveBlock" type="StaticBody2D" node_paths=PackedStringArray("_sprite")]
 collision_layer = 2
 collision_mask = 0
 input_pickable = true
 script = ExtResource("1_5kmh3")
-sprite = NodePath("Sprite2D")
+_sprite = NodePath("Sprite2D")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.25, 0.25)

@@ -8,10 +8,10 @@ public partial class ActiveBlock : StaticBody2D {
     [Export] private static PackedScene packedActiveBlock =
         ResourceLoader.Load<PackedScene>("res://GameObjects/Scenes/ActiveBlock.tscn");
 
-    private int xPosition;
-    private int yPosition;
+    private int _xPosition;
+    private int _yPosition;
 
-    [Export] private Sprite2D sprite;
+    [Export] private Sprite2D _sprite;
     public BlockType BlockType { get; private set; }
 
     [Signal]
@@ -19,19 +19,19 @@ public partial class ActiveBlock : StaticBody2D {
 
     public static ActiveBlock Instantiate(BlockType blockType, int xPosition, int yPosition) {
         ActiveBlock newBlock = packedActiveBlock.Instantiate<ActiveBlock>();
-        newBlock.xPosition = xPosition;
-        newBlock.yPosition = yPosition;
+        newBlock._xPosition = xPosition;
+        newBlock._yPosition = yPosition;
         newBlock.Position = new Vector2(
             xPosition * WorldManager.BLOCK_SIZE,
             yPosition * WorldManager.BLOCK_SIZE);
         newBlock.BlockType = blockType;
-        newBlock.sprite.Texture = blockType.Texture;
+        newBlock._sprite.Texture = blockType.Texture;
         return newBlock;
     }
 
     private void OnInputEvent(Node _, InputEvent e, int __) {
         if (e is InputEventMouseButton mouseEvent) {
-            EmitSignal(SignalName.TakenDamage, xPosition, yPosition, 100);
+            EmitSignal(SignalName.TakenDamage, _xPosition, _yPosition, 100);
         }
     }
 }
