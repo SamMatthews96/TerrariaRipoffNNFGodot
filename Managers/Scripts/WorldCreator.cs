@@ -30,7 +30,6 @@ public static class WorldCreator {
 
 
         Dictionary worldDictionary = new();
-        worldDictionary.Add("Name", worldBasicInfo.Name);
         worldDictionary.Add("Width", worldBasicInfo.Width);
         worldDictionary.Add("Height", worldBasicInfo.Height);
         worldDictionary.Add("SavedBlocks", savedBlockArray);

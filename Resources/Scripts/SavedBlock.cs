@@ -2,6 +2,7 @@
 using Godot;
 using Godot.Collections;
 using TerrariaRipoffNNF.Managers.Scripts;
+using Array = Godot.Collections.Array;
 
 namespace TerrariaRipoffNNF.Resources.Scripts;
 
@@ -30,7 +31,16 @@ public partial class SavedBlock : Resource {
         serializedData.Add("CurrentHealth", CurrentHealth);
         return serializedData;
     }
-
+    
+    public static Array SerializeArray(SavedBlock[,] savedBlocks) {
+        Array serializedArray = new();
+        foreach (SavedBlock savedBlock in savedBlocks) {
+            if (savedBlock is null) continue;
+            serializedArray.Add(savedBlock.Serialize());
+        }
+        return serializedArray;
+    }
+    
     public static SavedBlock FromDict(Dictionary dictionary) {
         try {
             BlockType blockType = FileManager.LoadBlockType(dictionary["ResourcePath"].ToString());

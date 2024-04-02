@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Godot;
 using TerrariaRipoffNNF.Resources.Scripts;
 using TerrariaRipoffNNF.Utils;
@@ -19,6 +20,7 @@ public partial class WorldManager : Node {
 
     public static WorldManager Instance { get; private set; }
 
+    private string _name;
     private PlayerInfo _playerInfo;
     private int _width;
     private int _height;
@@ -32,13 +34,29 @@ public partial class WorldManager : Node {
 
     [Signal]
     public delegate void InitializedEventHandler();
-    
-    [Signal] public delegate void SavedBlockDestroyedEventHandler(int xPosition, int yPosition);
+
+    [Signal]
+    public delegate void SavedBlockDestroyedEventHandler(int xPosition, int yPosition);
+
     public override void _Ready() {
         Instance = this;
     }
 
     #region Getters
+
+    public GodotDictionary ToDictionary() {
+        GodotDictionary worldDictionary = new();
+        worldDictionary.Add("Name", _name);
+        worldDictionary.Add("Width", _width);
+        worldDictionary.Add("Height", _height);
+
+        Array savedBlockArray = SavedBlock.SerializeArray(_savedBlocks);
+        worldDictionary.Add("SavedBlocks", savedBlockArray);
+        worldDictionary.Add("PlayerPositions", new Array());
+        worldDictionary.Add("DefaultSpawnPosition", DefaultSpawnPosition.ToSerialised());
+
+        return worldDictionary;
+    }
 
     public List<SavedBlock> GetSavedBlocksInRegion(List<IntVector> region) {
         List<SavedBlock> savedBlocks = new();
@@ -47,9 +65,10 @@ public partial class WorldManager : Node {
             if (savedBlock is null) continue;
             savedBlocks.Add(savedBlock);
         }
+
         return savedBlocks;
     }
-    
+
     public IntVector GetPlayerSpawnPosition() {
         return DefaultSpawnPosition;
     }
@@ -74,6 +93,7 @@ public partial class WorldManager : Node {
 
     [Rpc(CallLocal = true)]
     private void Initialize(GodotDictionary worldDict) {
+        _name = worldDict["Name"].ToString();
         _width = worldDict["Width"].ToString().ToInt();
         _height = worldDict["Height"].ToString().ToInt();
         Array savedBlockArray = worldDict["SavedBlocks"].AsGodotArray();
@@ -83,7 +103,7 @@ public partial class WorldManager : Node {
             _savedBlocks[savedBlock.XPosition, savedBlock.YPosition] = savedBlock;
         }
 
-        _playerPositions = new Dictionary<string, IntVector>();
+        _playerPositions = new System.Collections.Generic.Dictionary<string, IntVector>();
         Array defaultSpawnPosition = worldDict["DefaultSpawnPosition"].AsGodotArray();
         DefaultSpawnPosition = new IntVector(
             defaultSpawnPosition[0].ToString().ToInt(),
@@ -101,24 +121,7 @@ public partial class WorldManager : Node {
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
     private void ServerInitialiseWorldForNewPlayer(int peerId) {
-        GodotDictionary initialWorldDictionary = new();
-        initialWorldDictionary.Add("Width", _width);
-        initialWorldDictionary.Add("Height", _height);
-
-        Array savedBlockArray = new();
-        for (int x = 0; x < _width; x++) {
-            for (int y = 0; y < _height; y++) {
-                SavedBlock savedBlock = _savedBlocks[x, y];
-                if (savedBlock is null) continue;
-                savedBlockArray.Add(savedBlock.Serialize());
-            }
-        }
-
-        initialWorldDictionary.Add("SavedBlocks", savedBlockArray);
-        initialWorldDictionary.Add("PlayerPositions", new Array());
-        initialWorldDictionary.Add("DefaultSpawnPosition",
-            new Array { DefaultSpawnPosition.X, DefaultSpawnPosition.Y });
-
+        GodotDictionary initialWorldDictionary = ToDictionary();
         RpcId(peerId, nameof(Initialize), initialWorldDictionary);
     }
 
@@ -130,22 +133,22 @@ public partial class WorldManager : Node {
         RpcId(MultiplayerManager.HOST_ID, nameof(ServerDamageSavedBlock),
             xPosition, yPosition, damageAmount);
     }
-    
+
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void ServerDamageSavedBlock(int xPosition, int yPosition, float damageAmount) {
         Rpc(nameof(DamageSavedBlock), xPosition, yPosition, damageAmount);
     }
-    
+
     [Rpc(CallLocal = true)]
     private void DamageSavedBlock(int xPosition, int yPosition, float damageAmount) {
         SavedBlock savedBlock = _savedBlocks[xPosition, yPosition];
         savedBlock?.TakeDamage(damageAmount);
     }
-    
+
     private void OnSavedBlockHitZeroHealth(int xPosition, int yPosition) {
         Rpc(nameof(DestroySavedBlock), xPosition, yPosition);
     }
-    
+
     [Rpc(CallLocal = true)]
     private void DestroySavedBlock(int xPosition, int yPosition) {
         SavedBlock savedBlock = _savedBlocks[xPosition, yPosition];
@@ -153,7 +156,7 @@ public partial class WorldManager : Node {
         _savedBlocks[xPosition, yPosition] = null;
         EmitSignal(SignalName.SavedBlockDestroyed, xPosition, yPosition);
     }
-    
+
     // private void OnPlayerAttemptBuildBlock(int xPosition, int yPosition, string blockResourcePath) {
     //     RpcId(MultiplayerManager.HOST_ID, nameof(ServerAttemptBuildBlock),
     //         xPosition, yPosition, blockResourcePath);
@@ -170,4 +173,12 @@ public partial class WorldManager : Node {
     // }
 
     #endregion block changes
+
+    private async void OnInputManagerSaveGamePressed() {
+        GD.Print("Saving game");
+        GodotDictionary worldDictionary = ToDictionary();
+        await Task.Run(() =>
+            FileManager.SaveWorld(worldDictionary));
+        GD.Print("Game saved");
+    }
 }

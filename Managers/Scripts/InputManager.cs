@@ -8,6 +8,7 @@ public partial class InputManager : Node {
     private const string RUN_RIGHT = "runRight";
     private const string JUMP = "jump";
     private const string LEFT_MOUSE = "leftMouse";
+    private const string SAVE = "save";
 
     [Signal]
     public delegate void HorizontalInputChangedEventHandler(int horizontalInput);
@@ -17,6 +18,9 @@ public partial class InputManager : Node {
 
     [Signal]
     public delegate void MouseClickedEventHandler(Vector2 mouseScreenPosition);
+
+    [Signal]
+    public delegate void SaveGamePressedEventHandler();
 
     public static InputManager Instance { get; private set; }
 
@@ -47,10 +51,13 @@ public partial class InputManager : Node {
             EmitSignal(SignalName.JumpPressed);
         }
 
+        if (Input.IsActionJustPressed(SAVE)) {
+            EmitSignal(SignalName.SaveGamePressed);
+        }
+
         if (Input.IsActionJustReleased(LEFT_MOUSE)) {
             Vector2 mousePosition = GetViewport().GetMousePosition();
             EmitSignal(SignalName.MouseClicked, mousePosition);
         }
     }
-
 }

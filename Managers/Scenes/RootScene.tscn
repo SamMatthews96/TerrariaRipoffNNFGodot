@@ -61,5 +61,6 @@ script = ExtResource("10_bhp0m")
 [connection signal="Initialized" from="WorldManager" to="PlayerManager" method="OnWorldManagerInitialized"]
 [connection signal="SavedBlockDestroyed" from="WorldManager" to="LocalObjectSpawnManager" method="OnWorldManagerSavedBlockDestroyed"]
 [connection signal="LocalPlayerSpawned" from="PlayerManager" to="LocalObjectSpawnManager" method="OnPlayerManagerLocalPlayerSpawned"]
+[connection signal="SaveGamePressed" from="InputManager" to="WorldManager" method="OnInputManagerSaveGamePressed"]
 [connection signal="ConnectedToServer" from="MultiplayerManager" to="MainMenuScene" method="OnConnectedToServer"]
 [connection signal="ConnectedToServer" from="MultiplayerManager" to="WorldManager" method="OnConnectedToServer"]
