@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Godot;
 using TerrariaRipoffNNF.Resources.Scripts;
 using static Godot.GD;

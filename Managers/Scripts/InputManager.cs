@@ -1,4 +1,3 @@
-using System;
 using Godot;
 
 namespace TerrariaRipoffNNF.Scenes.Scripts;

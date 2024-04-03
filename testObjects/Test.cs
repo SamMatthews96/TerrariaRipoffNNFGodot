@@ -1,7 +1,5 @@
 using Godot;
 using System;
-using System.Diagnostics;
-using TerrariaRipoffNNF.Resources.Scripts;
 
 public partial class Test : Node {
     private Random random;

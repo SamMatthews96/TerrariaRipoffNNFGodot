@@ -113,7 +113,7 @@ public partial class LocalObjectSpawnManager : Node {
         return regionDelta;
     }
     
-    private void OnBlockManagerSavedBlockDestroyed(int x, int y) {
-        DeleteActiveBlock(x, y);
+    private void OnBlockManagerSavedBlockDestroyed(SavedBlock savedBlock) {
+        DeleteActiveBlock(savedBlock.XPosition, savedBlock.YPosition);
     }
 }

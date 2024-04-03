@@ -1,7 +1,6 @@
-﻿using System;
-using GdUnit4;
+﻿using GdUnit4;
 using Godot;
-using static GdUnit4.Assertions;
+
 namespace TerrariaRipoffNNF.tests; 
 
 [TestSuite]

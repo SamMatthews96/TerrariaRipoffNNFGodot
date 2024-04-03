@@ -15,7 +15,7 @@ public partial class BlockManager : Node {
     private SavedBlock[,] _savedBlocks;
 
     [Signal]
-    public delegate void SavedBlockDestroyedEventHandler(int xPosition, int yPosition);
+    public delegate void SavedBlockDestroyedEventHandler(SavedBlock savedBlock);
 
     public static BlockManager Instance { get; private set; }
     
@@ -37,7 +37,7 @@ public partial class BlockManager : Node {
             SavedBlock savedBlock = SavedBlock.FromDict(savedBlockDictionary);
             _savedBlocks[savedBlock.XPosition, savedBlock.YPosition] = savedBlock;
             if (MultiplayerManager.HOST_ID != Multiplayer.GetUniqueId()) continue;
-            savedBlock.HitZeroHealth += OnSavedBlockHitZeroHealth;
+            savedBlock.HitZeroHealth += OnServerSavedBlockHitZeroHealth;
         }
     }
 
@@ -70,7 +70,7 @@ public partial class BlockManager : Node {
         savedBlock?.TakeDamage(damageAmount);
     }
 
-    private void OnSavedBlockHitZeroHealth(int xPosition, int yPosition) {
+    private void OnServerSavedBlockHitZeroHealth(int xPosition, int yPosition) {
         Rpc(nameof(DestroySavedBlock), xPosition, yPosition);
     }
 
@@ -79,7 +79,7 @@ public partial class BlockManager : Node {
         SavedBlock savedBlock = _savedBlocks[xPosition, yPosition];
         if (savedBlock is null) return;
         _savedBlocks[xPosition, yPosition] = null;
-        EmitSignal(SignalName.SavedBlockDestroyed, xPosition, yPosition);
+        EmitSignal(SignalName.SavedBlockDestroyed, savedBlock);
     }
 
     // private void OnPlayerAttemptBuildBlock(int xPosition, int yPosition, string blockResourcePath) {
