@@ -46,7 +46,6 @@ public partial class LocalObjectSpawnManager : Node {
         List<SavedBlock> savedBlocks = WorldManager.Instance.GetSavedBlocksInRegion(newRegion);
         foreach (SavedBlock savedBlock in savedBlocks) {
             if (_activeBlocks[savedBlock.XPosition, savedBlock.YPosition] is not null) {
-                GD.PrintErr("Block already exists in this position");
                 continue;
             }
 
