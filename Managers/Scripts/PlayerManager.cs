@@ -28,7 +28,7 @@ public partial class PlayerManager : Node {
         Player newPlayer = packedPlayer.Instantiate<Player>();
         newPlayer.Name = new StringName(peerId.ToString());
         Vector2 position = new(
-            xSpawnCoords * WorldManager.BLOCK_SIZE, ySpawnCoords * WorldManager.BLOCK_SIZE);
+            xSpawnCoords * BlockManager.BLOCK_SIZE, ySpawnCoords * BlockManager.BLOCK_SIZE);
         newPlayer.Position = position;
 
         AddChild(newPlayer);

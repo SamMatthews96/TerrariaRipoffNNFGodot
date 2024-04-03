@@ -9,34 +9,22 @@ using Array = Godot.Collections.Array;
 namespace TerrariaRipoffNNF.Managers.Scripts;
 
 public partial class WorldManager : Node {
-    public const int BLOCK_SIZE = 32;
-    /*
-     * This class manages the state of the saved blocks
-     * it is responsible for creating the saved blocks
-     * and updating the saved blocks
-     *
-     * It might later be responsible for other worldDictionary objects, such as NPCs, chests, etc
-     */
-
     public static WorldManager Instance { get; private set; }
 
     private string _name;
     private PlayerInfo _playerInfo;
     private int _width;
     private int _height;
-    private SavedBlock[,] _savedBlocks;
     private Dictionary<string, IntVector> _playerPositions = new();
 
     public IntVector DefaultSpawnPosition { get; private set; }
 
-    [Export] private LocalObjectSpawnManager localObjectSpawnManager;
-    [Export] private PlayerManager playerManager;
+    [Export] private LocalObjectSpawnManager _localObjectSpawnManager;
+    [Export] private PlayerManager _playerManager;
 
     [Signal]
     public delegate void InitializedEventHandler();
 
-    [Signal]
-    public delegate void SavedBlockDestroyedEventHandler(int xPosition, int yPosition);
 
     public override void _Ready() {
         Instance = this;
@@ -44,13 +32,13 @@ public partial class WorldManager : Node {
 
     #region Getters
 
-    public GodotDictionary ToDictionary() {
+    public GodotDictionary WorldToDictionary() {
         GodotDictionary worldDictionary = new();
         worldDictionary.Add("Name", _name);
         worldDictionary.Add("Width", _width);
         worldDictionary.Add("Height", _height);
 
-        Array savedBlockArray = SavedBlock.SerializeArray(_savedBlocks);
+        Array savedBlockArray = BlockManager.Instance.SavedBlocksToArray();
         worldDictionary.Add("SavedBlocks", savedBlockArray);
         worldDictionary.Add("PlayerPositions", new Array());
         worldDictionary.Add("DefaultSpawnPosition", DefaultSpawnPosition.ToSerialised());
@@ -58,23 +46,13 @@ public partial class WorldManager : Node {
         return worldDictionary;
     }
 
-    public List<SavedBlock> GetSavedBlocksInRegion(List<IntVector> region) {
-        List<SavedBlock> savedBlocks = new();
-        foreach (IntVector coords in region) {
-            SavedBlock savedBlock = _savedBlocks[coords.X, coords.Y];
-            if (savedBlock is null) continue;
-            savedBlocks.Add(savedBlock);
-        }
-
-        return savedBlocks;
-    }
 
     public IntVector GetPlayerSpawnPosition() {
         return DefaultSpawnPosition;
     }
 
     public Vector2 GetWorldPositionFromCellCoordinates(int xCoordinate, int yCoordinate) {
-        return new Vector2(xCoordinate * BLOCK_SIZE, yCoordinate * BLOCK_SIZE);
+        return new Vector2(xCoordinate * BlockManager.BLOCK_SIZE, yCoordinate * BlockManager.BLOCK_SIZE);
     }
 
     #endregion
@@ -82,101 +60,45 @@ public partial class WorldManager : Node {
     #region WorldCreation
 
     private void OnMainMenuSceneWorldLoaded(GodotDictionary worldDictionary, PlayerInfo playerInfo) {
-        playerManager.Initialize(playerInfo);
+        _playerManager.Initialize(playerInfo);
         Initialize(worldDictionary);
 
-        foreach (SavedBlock savedBlock in _savedBlocks) {
-            if (savedBlock is null) continue;
-            savedBlock.HitZeroHealth += OnSavedBlockHitZeroHealth;
-        }
     }
 
     [Rpc(CallLocal = true)]
-    private void Initialize(GodotDictionary worldDict) {
-        _name = worldDict["Name"].ToString();
-        _width = worldDict["Width"].ToString().ToInt();
-        _height = worldDict["Height"].ToString().ToInt();
-        Array savedBlockArray = worldDict["SavedBlocks"].AsGodotArray();
-        _savedBlocks = new SavedBlock[_width, _height];
-        foreach (GodotDictionary savedBlockDictionary in savedBlockArray) {
-            SavedBlock savedBlock = SavedBlock.FromDict(savedBlockDictionary);
-            _savedBlocks[savedBlock.XPosition, savedBlock.YPosition] = savedBlock;
-        }
-
-        _playerPositions = new System.Collections.Generic.Dictionary<string, IntVector>();
-        Array defaultSpawnPosition = worldDict["DefaultSpawnPosition"].AsGodotArray();
+    private void Initialize(GodotDictionary worldDictionary) {
+        _name = (string)worldDictionary["Name"];
+        _width = (int)worldDictionary["Width"];
+        _height = (int)worldDictionary["Height"];
+        _playerPositions = new Dictionary<string, IntVector>();
+        Array defaultSpawnPosition = worldDictionary["DefaultSpawnPosition"].AsGodotArray();
         DefaultSpawnPosition = new IntVector(
-            defaultSpawnPosition[0].ToString().ToInt(),
-            defaultSpawnPosition[1].ToString().ToInt());
-        localObjectSpawnManager.Initialize(_width, _height);
+            (int)defaultSpawnPosition[0],
+            (int)defaultSpawnPosition[1]);
+        _localObjectSpawnManager.Initialize(_width, _height);
+        BlockManager.Instance.Initialize(worldDictionary);
         EmitSignal(SignalName.Initialized);
     }
 
     private void OnConnectedToServer(PlayerInfo playerInfo) {
         int peerId = Multiplayer.GetUniqueId();
-        playerManager.Initialize(playerInfo);
+        _playerManager.Initialize(playerInfo);
         RpcId(MultiplayerManager.HOST_ID, nameof(ServerInitialiseWorldForNewPlayer),
             peerId);
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
     private void ServerInitialiseWorldForNewPlayer(int peerId) {
-        GodotDictionary initialWorldDictionary = ToDictionary();
+        GodotDictionary initialWorldDictionary = WorldToDictionary();
         RpcId(peerId, nameof(Initialize), initialWorldDictionary);
     }
 
     #endregion
 
-    #region Block Changes
-
-    public void PeerActiveBlockTakenDamage(int xPosition, int yPosition, float damageAmount) {
-        RpcId(MultiplayerManager.HOST_ID, nameof(ServerDamageSavedBlock),
-            xPosition, yPosition, damageAmount);
-    }
-
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    private void ServerDamageSavedBlock(int xPosition, int yPosition, float damageAmount) {
-        Rpc(nameof(DamageSavedBlock), xPosition, yPosition, damageAmount);
-    }
-
-    [Rpc(CallLocal = true)]
-    private void DamageSavedBlock(int xPosition, int yPosition, float damageAmount) {
-        SavedBlock savedBlock = _savedBlocks[xPosition, yPosition];
-        savedBlock?.TakeDamage(damageAmount);
-    }
-
-    private void OnSavedBlockHitZeroHealth(int xPosition, int yPosition) {
-        Rpc(nameof(DestroySavedBlock), xPosition, yPosition);
-    }
-
-    [Rpc(CallLocal = true)]
-    private void DestroySavedBlock(int xPosition, int yPosition) {
-        SavedBlock savedBlock = _savedBlocks[xPosition, yPosition];
-        if (savedBlock is null) return;
-        _savedBlocks[xPosition, yPosition] = null;
-        EmitSignal(SignalName.SavedBlockDestroyed, xPosition, yPosition);
-    }
-
-    // private void OnPlayerAttemptBuildBlock(int xPosition, int yPosition, string blockResourcePath) {
-    //     RpcId(MultiplayerManager.HOST_ID, nameof(ServerAttemptBuildBlock),
-    //         xPosition, yPosition, blockResourcePath);
-    // }
-    //
-    //
-    // [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    // private void ServerAttemptBuildBlock(int xPosition, int yPosition, string blockResourcePath) {
-    //     BlockType blockType = BlockType.Deserialize(blockResourcePath);
-    //     if (!_world.AreCoordsInBounds(xPosition, yPosition)) return;
-    //     if (_world.SavedBlocks[xPosition, yPosition] is not null) return;
-    //     SavedBlock savedBlock = SavedBlock.Builder.New(blockType, xPosition, yPosition).Build();
-    //     _world.SavedBlocks[xPosition, yPosition] = savedBlock;
-    // }
-
-    #endregion block changes
 
     private async void OnInputManagerSaveGamePressed() {
         GD.Print("Saving game");
-        GodotDictionary worldDictionary = ToDictionary();
+        GodotDictionary worldDictionary = WorldToDictionary();
         await Task.Run(() =>
             FileManager.SaveWorld(worldDictionary));
         GD.Print("Game saved");

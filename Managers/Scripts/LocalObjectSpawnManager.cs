@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Godot;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using TerrariaRipoffNNF.GameObjects.Scripts;
 using TerrariaRipoffNNF.Resources.Scripts;
 using TerrariaRipoffNNF.Utils;
@@ -28,7 +27,7 @@ public partial class LocalObjectSpawnManager : Node {
 
     private void OnPlayerManagerLocalPlayerSpawned(int x, int y) {
         List<IntVector> spawnRegion = GetRegion(new IntVector(x, y));
-        List<SavedBlock> savedBlocks = WorldManager.Instance.GetSavedBlocksInRegion(spawnRegion);
+        List<SavedBlock> savedBlocks = BlockManager.Instance.GetSavedBlocksInRegion(spawnRegion);
         foreach (SavedBlock savedBlock in savedBlocks) {
             CreateActiveBlock(savedBlock);
         }
@@ -43,7 +42,7 @@ public partial class LocalObjectSpawnManager : Node {
         List<IntVector> newRegion = GetRegionDelta(
             newCoordinates, oldCoordinates);
 
-        List<SavedBlock> savedBlocks = WorldManager.Instance.GetSavedBlocksInRegion(newRegion);
+        List<SavedBlock> savedBlocks = BlockManager.Instance.GetSavedBlocksInRegion(newRegion);
         foreach (SavedBlock savedBlock in savedBlocks) {
             if (_activeBlocks[savedBlock.XPosition, savedBlock.YPosition] is not null) {
                 continue;
@@ -68,7 +67,7 @@ public partial class LocalObjectSpawnManager : Node {
     }
 
     private void OnActiveBlockTakenDamage(int xPosition, int yPosition, float damageAmount) {
-        WorldManager.Instance.PeerActiveBlockTakenDamage(xPosition, yPosition, damageAmount);
+        BlockManager.Instance.OnActiveBlockTakenDamage(xPosition, yPosition, damageAmount);
     }
 
     private void DeleteActiveBlock(int x, int y) {
@@ -114,7 +113,7 @@ public partial class LocalObjectSpawnManager : Node {
         return regionDelta;
     }
     
-    private void OnWorldManagerSavedBlockDestroyed(int x, int y) {
+    private void OnBlockManagerSavedBlockDestroyed(int x, int y) {
         DeleteActiveBlock(x, y);
     }
 }

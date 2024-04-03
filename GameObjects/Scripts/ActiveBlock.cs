@@ -22,8 +22,8 @@ public partial class ActiveBlock : StaticBody2D {
         newBlock._xPosition = xPosition;
         newBlock._yPosition = yPosition;
         newBlock.Position = new Vector2(
-            xPosition * WorldManager.BLOCK_SIZE,
-            yPosition * WorldManager.BLOCK_SIZE);
+            xPosition * BlockManager.BLOCK_SIZE,
+            yPosition * BlockManager.BLOCK_SIZE);
         newBlock.BlockType = blockType;
         newBlock._sprite.Texture = blockType.Texture;
         return newBlock;

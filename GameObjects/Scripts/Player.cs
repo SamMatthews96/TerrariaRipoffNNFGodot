@@ -25,8 +25,8 @@ public partial class Player : CharacterBody2D {
     public delegate void LocalPlayerClickedEventHandler(int x, int y, string blockResourcePath);
 
     public static Player LocalPlayer { get; private set; }
-    private int XCoords => (int)Math.Round(Position.X / WorldManager.BLOCK_SIZE);
-    private int YCoords => (int)Math.Round(Position.Y / WorldManager.BLOCK_SIZE);
+    private int XCoords => (int)Math.Round(Position.X / BlockManager.BLOCK_SIZE);
+    private int YCoords => (int)Math.Round(Position.Y / BlockManager.BLOCK_SIZE);
 
     public override void _EnterTree() {
         int peerId = Name.ToString()!.ToInt();
@@ -65,8 +65,8 @@ public partial class Player : CharacterBody2D {
 
     private void LogCellUnderMouse(Vector2 vector) {
         Vector2 mousePos = GetGlobalMousePosition();
-        int xPosition = (int)Math.Round(mousePos.X / WorldManager.BLOCK_SIZE);
-        int yPosition = (int)Math.Round(mousePos.Y / WorldManager.BLOCK_SIZE);
+        int xPosition = (int)Math.Round(mousePos.X / BlockManager.BLOCK_SIZE);
+        int yPosition = (int)Math.Round(mousePos.Y / BlockManager.BLOCK_SIZE);
         // EmitSignal(SignalName.LocalPlayerClicked, xPosition, yPosition, "res://Resources/BlockType/Stone.tres");
     }
 

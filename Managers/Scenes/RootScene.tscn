@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://bddgrodfbw38t"]
+[gd_scene load_steps=13 format=3 uid="uid://bddgrodfbw38t"]
 
 [ext_resource type="PackedScene" uid="uid://tbvohnqfn3cl" path="res://UI/Scenes/MainMenuScene.tscn" id="1_qp6gj"]
 [ext_resource type="Script" path="res://testObjects/Logger.cs" id="2_ui4wj"]
@@ -10,6 +10,7 @@
 [ext_resource type="Script" path="res://Managers/Scripts/ItemPickupManager.cs" id="8_37det"]
 [ext_resource type="PackedScene" uid="uid://ct6veox8ggfx6" path="res://GameObjects/Scenes/ItemPickup.tscn" id="9_a6fu2"]
 [ext_resource type="Script" path="res://testObjects/FpsCounter.cs" id="10_bhp0m"]
+[ext_resource type="Script" path="res://Managers/Scripts/BlockManager.cs" id="10_wu2tt"]
 [ext_resource type="Script" path="res://Managers/Scripts/LocalObjectSpawnManager.cs" id="11_jjvye"]
 
 [node name="RootScene" type="Node"]
@@ -20,34 +21,37 @@ offset_top = 1.0
 offset_right = 1.0
 offset_bottom = 1.0
 
-[node name="Logger" type="Node" parent="."]
-script = ExtResource("2_ui4wj")
-
-[node name="WorldManager" parent="." node_paths=PackedStringArray("localObjectSpawnManager", "playerManager") instance=ExtResource("3_k615e")]
-localObjectSpawnManager = NodePath("../LocalObjectSpawnManager")
-playerManager = NodePath("../PlayerManager")
-
-[node name="LocalObjectSpawnManager" type="Node" parent="."]
-script = ExtResource("11_jjvye")
-
-[node name="PlayerManager" type="Node" parent="."]
-script = ExtResource("6_fay5a")
-packedPlayer = ExtResource("7_0be6f")
-
-[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="PlayerManager"]
-_spawnable_scenes = PackedStringArray("res://GameObjects/Scenes/Player.tscn")
-spawn_path = NodePath("..")
-spawn_limit = 8
-
 [node name="InputManager" type="Node" parent="."]
 script = ExtResource("4_7ktep")
 
 [node name="MultiplayerManager" type="Node" parent="."]
 script = ExtResource("5_1nuog")
 
-[node name="ItemPickupManager" type="Node" parent="."]
+[node name="WorldManager" parent="." node_paths=PackedStringArray("_localObjectSpawnManager", "_playerManager") instance=ExtResource("3_k615e")]
+_localObjectSpawnManager = NodePath("LocalObjectSpawnManager")
+_playerManager = NodePath("PlayerManager")
+
+[node name="LocalObjectSpawnManager" type="Node" parent="WorldManager"]
+script = ExtResource("11_jjvye")
+
+[node name="PlayerManager" type="Node" parent="WorldManager"]
+script = ExtResource("6_fay5a")
+packedPlayer = ExtResource("7_0be6f")
+
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="WorldManager/PlayerManager"]
+_spawnable_scenes = PackedStringArray("res://GameObjects/Scenes/Player.tscn")
+spawn_path = NodePath("..")
+spawn_limit = 8
+
+[node name="ItemPickupManager" type="Node" parent="WorldManager"]
 script = ExtResource("8_37det")
 _itemPickupPackedScene = ExtResource("9_a6fu2")
+
+[node name="BlockManager" type="Node" parent="WorldManager"]
+script = ExtResource("10_wu2tt")
+
+[node name="Logger" type="Node" parent="."]
+script = ExtResource("2_ui4wj")
 
 [node name="FPS" type="Label" parent="."]
 offset_right = 104.0
@@ -58,9 +62,10 @@ script = ExtResource("10_bhp0m")
 [connection signal="JoinGameButtonDown" from="MainMenuScene" to="MultiplayerManager" method="OnJoinGameButtonDown"]
 [connection signal="WorldLoaded" from="MainMenuScene" to="WorldManager" method="OnMainMenuSceneWorldLoaded"]
 [connection signal="WorldLoadedHostMode" from="MainMenuScene" to="MultiplayerManager" method="OnWorldLoadedHostMode"]
-[connection signal="Initialized" from="WorldManager" to="PlayerManager" method="OnWorldManagerInitialized"]
-[connection signal="SavedBlockDestroyed" from="WorldManager" to="LocalObjectSpawnManager" method="OnWorldManagerSavedBlockDestroyed"]
-[connection signal="LocalPlayerSpawned" from="PlayerManager" to="LocalObjectSpawnManager" method="OnPlayerManagerLocalPlayerSpawned"]
 [connection signal="SaveGamePressed" from="InputManager" to="WorldManager" method="OnInputManagerSaveGamePressed"]
 [connection signal="ConnectedToServer" from="MultiplayerManager" to="MainMenuScene" method="OnConnectedToServer"]
 [connection signal="ConnectedToServer" from="MultiplayerManager" to="WorldManager" method="OnConnectedToServer"]
+[connection signal="Initialized" from="WorldManager" to="WorldManager/PlayerManager" method="OnWorldManagerInitialized"]
+[connection signal="ActiveBlockTakenDamage" from="WorldManager/LocalObjectSpawnManager" to="WorldManager/BlockManager" method="OnActiveBlockTakenDamage"]
+[connection signal="LocalPlayerSpawned" from="WorldManager/PlayerManager" to="WorldManager/LocalObjectSpawnManager" method="OnPlayerManagerLocalPlayerSpawned"]
+[connection signal="SavedBlockDestroyed" from="WorldManager/BlockManager" to="WorldManager/LocalObjectSpawnManager" method="OnBlockManagerSavedBlockDestroyed"]
