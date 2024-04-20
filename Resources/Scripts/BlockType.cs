@@ -12,5 +12,4 @@ public partial class BlockType : InventoryItemType {
     public new static BlockType Deserialize(string resourcePath) {
         return (BlockType)InventoryItemType.Deserialize(resourcePath);
     }
-    
 }

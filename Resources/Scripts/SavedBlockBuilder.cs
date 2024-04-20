@@ -1,7 +1,10 @@
-﻿namespace TerrariaRipoffNNF.Resources.Scripts;
+﻿using TerrariaRipoffNNF.Utils;
+
+namespace TerrariaRipoffNNF.Resources.Scripts;
 
 public partial class SavedBlock {
-    private SavedBlock(BlockType blockType, int xPosition, int yPosition) {
+    private SavedBlock(BlockType blockType, int xPosition, int yPosition ) {
+        GridPosition = new IntVector(xPosition, yPosition);
         BlockType = blockType;
         XPosition = xPosition;
         YPosition = yPosition;

@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://bddgrodfbw38t"]
+[gd_scene load_steps=12 format=3 uid="uid://bddgrodfbw38t"]
 
 [ext_resource type="PackedScene" uid="uid://tbvohnqfn3cl" path="res://UI/Scenes/MainMenuScene.tscn" id="1_qp6gj"]
 [ext_resource type="Script" path="res://testObjects/Logger.cs" id="2_ui4wj"]
@@ -8,7 +8,6 @@
 [ext_resource type="Script" path="res://Managers/Scripts/PlayerManager.cs" id="6_fay5a"]
 [ext_resource type="PackedScene" uid="uid://bx6lgpicpfal4" path="res://GameObjects/Scenes/Player.tscn" id="7_0be6f"]
 [ext_resource type="Script" path="res://Managers/Scripts/ItemPickupManager.cs" id="8_37det"]
-[ext_resource type="PackedScene" uid="uid://ct6veox8ggfx6" path="res://GameObjects/Scenes/ItemPickup.tscn" id="9_a6fu2"]
 [ext_resource type="Script" path="res://testObjects/FpsCounter.cs" id="10_bhp0m"]
 [ext_resource type="Script" path="res://Managers/Scripts/BlockManager.cs" id="10_wu2tt"]
 [ext_resource type="Script" path="res://Managers/Scripts/LocalObjectSpawnManager.cs" id="11_jjvye"]
@@ -27,9 +26,11 @@ script = ExtResource("4_7ktep")
 [node name="MultiplayerManager" type="Node" parent="."]
 script = ExtResource("5_1nuog")
 
-[node name="WorldManager" parent="." node_paths=PackedStringArray("_localObjectSpawnManager", "_playerManager") instance=ExtResource("3_k615e")]
+[node name="WorldManager" parent="." node_paths=PackedStringArray("_localObjectSpawnManager", "_playerManager", "_blockManager", "_itemPickupManager") instance=ExtResource("3_k615e")]
 _localObjectSpawnManager = NodePath("LocalObjectSpawnManager")
 _playerManager = NodePath("PlayerManager")
+_blockManager = NodePath("BlockManager")
+_itemPickupManager = NodePath("ItemPickupManager")
 
 [node name="LocalObjectSpawnManager" type="Node" parent="WorldManager"]
 script = ExtResource("11_jjvye")
@@ -45,7 +46,6 @@ spawn_limit = 8
 
 [node name="ItemPickupManager" type="Node" parent="WorldManager"]
 script = ExtResource("8_37det")
-_itemPickupPackedScene = ExtResource("9_a6fu2")
 
 [node name="BlockManager" type="Node" parent="WorldManager"]
 script = ExtResource("10_wu2tt")

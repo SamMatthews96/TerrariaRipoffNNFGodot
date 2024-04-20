@@ -58,6 +58,14 @@ public partial class LocalObjectSpawnManager : Node {
         }
     }
 
+    private void OnBlockManagerSavedBlockDestroyed(SavedBlock savedBlock) {
+        DeleteActiveBlock(savedBlock.XPosition, savedBlock.YPosition);
+    }
+    
+    private void OnItemPickupManagerSavedItemPickupCreated(SavedItemPickup savedItemPickup) {
+        // CreateItemPickup(savedItemPickup.InventoryItemType, savedItemPickup.XPosition, savedItemPickup.YPosition);
+    }
+
     private void CreateActiveBlock(SavedBlock savedBlock) {
         ActiveBlock activeBlock = ActiveBlock.Instantiate(
             savedBlock.BlockType, savedBlock.XPosition, savedBlock.YPosition);
@@ -112,8 +120,10 @@ public partial class LocalObjectSpawnManager : Node {
 
         return regionDelta;
     }
-    
-    private void OnBlockManagerSavedBlockDestroyed(SavedBlock savedBlock) {
-        DeleteActiveBlock(savedBlock.XPosition, savedBlock.YPosition);
+
+    private bool IsInRenderDistance(ISavedGameObject savedGameObject) {
+        GD.Print(savedGameObject.GridPosition);
+        return true;
     }
+    
 }

@@ -10,14 +10,15 @@ public partial class InventoryItemType : Resource {
     [Export] public bool IsStackable { get; private set; } = true;
     [Export] public Texture2D IconTexture { get; private set; }
 
-    public virtual Dictionary Serialize() {
+    public virtual Dictionary ToDictionary() {
         Dictionary serialized = new();
         serialized.Add(RESOURCE_PATH_KEY,ResourcePath);
         return serialized;
     }
-    
+
     public static InventoryItemType Deserialize(string resourcePath) {
-        return ResourceLoader.Load<InventoryItemType>(resourcePath);
+        InventoryItemType inventoryItemType = ResourceLoader.Load<InventoryItemType>(resourcePath);
+        return inventoryItemType;
     }
 
     public static InventoryItemType Deserialize(Dictionary dictionary) {

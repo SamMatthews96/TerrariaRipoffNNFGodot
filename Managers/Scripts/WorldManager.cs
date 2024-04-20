@@ -21,7 +21,9 @@ public partial class WorldManager : Node {
 
     [Export] private LocalObjectSpawnManager _localObjectSpawnManager;
     [Export] private PlayerManager _playerManager;
-
+    [Export] private BlockManager _blockManager;
+    [Export] private ItemPickupManager _itemPickupManager;
+    
     [Signal]
     public delegate void InitializedEventHandler();
 
@@ -76,7 +78,8 @@ public partial class WorldManager : Node {
             (int)defaultSpawnPosition[0],
             (int)defaultSpawnPosition[1]);
         _localObjectSpawnManager.Initialize(_width, _height);
-        BlockManager.Instance.Initialize(worldDictionary);
+        _blockManager.Initialize(worldDictionary);
+        _itemPickupManager.Initialize(worldDictionary);
         EmitSignal(SignalName.Initialized);
     }
 
@@ -97,10 +100,8 @@ public partial class WorldManager : Node {
 
 
     private async void OnInputManagerSaveGamePressed() {
-        GD.Print("Saving game");
         GodotDictionary worldDictionary = WorldToDictionary();
         await Task.Run(() =>
             FileManager.SaveWorld(worldDictionary));
-        GD.Print("Game saved");
     }
 }

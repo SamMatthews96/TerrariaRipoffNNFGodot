@@ -18,7 +18,7 @@ public partial class BlockManager : Node {
     public delegate void SavedBlockDestroyedEventHandler(SavedBlock savedBlock);
 
     public static BlockManager Instance { get; private set; }
-    
+
     public override void _Ready() {
         Instance = this;
     }
@@ -71,6 +71,7 @@ public partial class BlockManager : Node {
     }
 
     private void OnServerSavedBlockHitZeroHealth(int xPosition, int yPosition) {
+        SavedBlock savedBlock = _savedBlocks[xPosition, yPosition];
         Rpc(nameof(DestroySavedBlock), xPosition, yPosition);
     }
 

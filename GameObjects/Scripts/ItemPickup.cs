@@ -6,20 +6,18 @@ namespace TerrariaRipoffNNF.GameObjects.Scripts;
 
 public partial class ItemPickup : Node2D {
 	[Export] private Sprite2D sprite;
-	[Export] private string _resourcePath;
 	private int _xPosition;
 	private int _yPosition;
 	private InventoryItemType _inventoryItemType;	
 	
-	public void Initialize(string resourcePath, int xPosition, int yPosition) {
-		_resourcePath = resourcePath;
+	public void Initialize(InventoryItemType inventoryItemType, int xPosition, int yPosition) {
+		_inventoryItemType = inventoryItemType;
 		_xPosition = xPosition;
 		_yPosition = yPosition;
 		Position = WorldManager.Instance.GetWorldPositionFromCellCoordinates(_xPosition, _yPosition);
 	}
 
 	public override void _Ready() {
-		_inventoryItemType = InventoryItemType.Deserialize(_resourcePath);
 		sprite.Texture = _inventoryItemType.IconTexture;
 	}
 }

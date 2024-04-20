@@ -2,11 +2,12 @@
 using Godot;
 using Godot.Collections;
 using TerrariaRipoffNNF.Managers.Scripts;
+using TerrariaRipoffNNF.Utils;
 using Array = Godot.Collections.Array;
 
 namespace TerrariaRipoffNNF.Resources.Scripts;
 
-public partial class SavedBlock : Resource {
+public partial class SavedBlock : Resource, ISavedGameObject {
     [Signal]
     public delegate void HitZeroHealthEventHandler(int xPosition, int yPosition);
 
@@ -15,7 +16,8 @@ public partial class SavedBlock : Resource {
     public BlockType BlockType { get; }
     public float CurrentHealth { get; private set; }
 
-
+    public IntVector GridPosition { get; }
+    
     public void TakeDamage(float damageAmount) {
         CurrentHealth -= damageAmount;
         if (CurrentHealth <= 0) {
@@ -31,16 +33,17 @@ public partial class SavedBlock : Resource {
         serializedData.Add("CurrentHealth", CurrentHealth);
         return serializedData;
     }
-    
+
     public static Array SerializeArray(SavedBlock[,] savedBlocks) {
         Array serializedArray = new();
         foreach (SavedBlock savedBlock in savedBlocks) {
             if (savedBlock is null) continue;
             serializedArray.Add(savedBlock.Serialize());
         }
+
         return serializedArray;
     }
-    
+
     public static SavedBlock FromDict(Dictionary dictionary) {
         try {
             BlockType blockType = FileManager.LoadBlockType(dictionary["ResourcePath"].ToString());
@@ -57,4 +60,5 @@ public partial class SavedBlock : Resource {
             throw new NotImplementedException();
         }
     }
+
 }
