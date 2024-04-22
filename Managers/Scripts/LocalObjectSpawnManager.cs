@@ -63,12 +63,14 @@ public partial class LocalObjectSpawnManager : Node {
     }
     
     private void OnItemPickupManagerSavedItemPickupCreated(SavedItemPickup savedItemPickup) {
-        // CreateItemPickup(savedItemPickup.InventoryItemType, savedItemPickup.XPosition, savedItemPickup.YPosition);
+        if (!IsInRenderDistance(savedItemPickup)) return;
+        ActiveItemPickup activeItemPickup = ActiveItemPickup.Initialize(savedItemPickup);
+        AddChild(activeItemPickup);
+
     }
 
     private void CreateActiveBlock(SavedBlock savedBlock) {
-        ActiveBlock activeBlock = ActiveBlock.Instantiate(
-            savedBlock.BlockType, savedBlock.XPosition, savedBlock.YPosition);
+        ActiveBlock activeBlock = ActiveBlock.Instantiate(savedBlock);
         _activeBlocks[savedBlock.XPosition, savedBlock.YPosition] = activeBlock;
         activeBlock.TakenDamage += OnActiveBlockTakenDamage;
         AddChild(activeBlock);
@@ -122,8 +124,8 @@ public partial class LocalObjectSpawnManager : Node {
     }
 
     private bool IsInRenderDistance(ISavedGameObject savedGameObject) {
-        GD.Print(savedGameObject.GridPosition);
-        return true;
+        IntVector delta = Player.LocalPlayer.GridPosition - savedGameObject.GridPosition;
+        return delta.X < BLOCK_RENDER_DISTANCE && delta.Y < BLOCK_RENDER_DISTANCE;
     }
     
 }

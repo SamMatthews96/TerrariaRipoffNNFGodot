@@ -68,4 +68,5 @@ script = ExtResource("10_bhp0m")
 [connection signal="Initialized" from="WorldManager" to="WorldManager/PlayerManager" method="OnWorldManagerInitialized"]
 [connection signal="ActiveBlockTakenDamage" from="WorldManager/LocalObjectSpawnManager" to="WorldManager/BlockManager" method="OnActiveBlockTakenDamage"]
 [connection signal="LocalPlayerSpawned" from="WorldManager/PlayerManager" to="WorldManager/LocalObjectSpawnManager" method="OnPlayerManagerLocalPlayerSpawned"]
+[connection signal="SavedItemPickupCreated" from="WorldManager/ItemPickupManager" to="WorldManager/LocalObjectSpawnManager" method="OnItemPickupManagerSavedItemPickupCreated"]
 [connection signal="SavedBlockDestroyed" from="WorldManager/BlockManager" to="WorldManager/LocalObjectSpawnManager" method="OnBlockManagerSavedBlockDestroyed"]

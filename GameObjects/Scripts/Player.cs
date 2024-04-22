@@ -2,6 +2,7 @@ using System;
 using Godot;
 using TerrariaRipoffNNF.Managers.Scripts;
 using TerrariaRipoffNNF.Scenes.Scripts;
+using TerrariaRipoffNNF.Utils;
 
 namespace TerrariaRipoffNNF.GameObjects.Scripts;
 
@@ -27,6 +28,7 @@ public partial class Player : CharacterBody2D {
     public static Player LocalPlayer { get; private set; }
     private int XCoords => (int)Math.Round(Position.X / BlockManager.BLOCK_SIZE);
     private int YCoords => (int)Math.Round(Position.Y / BlockManager.BLOCK_SIZE);
+    public IntVector GridPosition => new(XCoords, YCoords);
 
     public override void _EnterTree() {
         int peerId = Name.ToString()!.ToInt();
