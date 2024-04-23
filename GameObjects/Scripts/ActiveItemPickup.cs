@@ -5,7 +5,7 @@ using TerrariaRipoffNNF.Resources.Scripts;
 namespace TerrariaRipoffNNF.GameObjects.Scripts;
 
 public partial class ActiveItemPickup : Node2D {
-    private static PackedScene packedActiveItemPickup =
+    private static readonly PackedScene PackedScene =
         (ResourceLoader.Load<PackedScene>("res://GameObjects/Scenes/ActiveItemPickup.tscn"));
 
     [Export] private Sprite2D _sprite;
@@ -15,7 +15,7 @@ public partial class ActiveItemPickup : Node2D {
 
 
     public static ActiveItemPickup Initialize(SavedItemPickup savedItemPickup) {
-        ActiveItemPickup newItemPickup = packedActiveItemPickup.Instantiate<ActiveItemPickup>();
+        ActiveItemPickup newItemPickup = PackedScene.Instantiate<ActiveItemPickup>();
 
         newItemPickup._inventoryItemType = savedItemPickup.InventoryItemType;
         newItemPickup._xPosition = savedItemPickup.GridPosition.X;

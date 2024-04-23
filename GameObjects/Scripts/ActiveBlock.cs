@@ -5,7 +5,7 @@ using TerrariaRipoffNNF.Resources.Scripts;
 namespace TerrariaRipoffNNF.GameObjects.Scripts;
 
 public partial class ActiveBlock : StaticBody2D {
-    private static PackedScene packedActiveBlock =
+    private static readonly PackedScene PackedScene =
         ResourceLoader.Load<PackedScene>("res://GameObjects/Scenes/ActiveBlock.tscn");
 
     private int _xPosition;
@@ -18,7 +18,7 @@ public partial class ActiveBlock : StaticBody2D {
     public delegate void TakenDamageEventHandler(int xPosition, int yPosition, float damageAmount);
 
     public static ActiveBlock Instantiate(SavedBlock savedBlock) {
-        ActiveBlock newBlock = packedActiveBlock.Instantiate<ActiveBlock>();
+        ActiveBlock newBlock = PackedScene.Instantiate<ActiveBlock>();
         newBlock._xPosition = savedBlock.XPosition;
         newBlock._yPosition = savedBlock.YPosition;
         newBlock.Position = new Vector2(
