@@ -31,10 +31,19 @@ public partial class Player : CharacterBody2D {
     public IntVector GridPosition => new(XCoords, YCoords);
 
     public override void _EnterTree() {
+        
         int peerId = Name.ToString()!.ToInt();
+        GD.Print(Position);
+        GD.Print(Multiplayer.GetUniqueId(), "-", peerId);
+        GD.Print(Position);
         positionSynchronizer.SetMultiplayerAuthority(peerId);
         if (peerId != Multiplayer.GetUniqueId()) return;
-
+        IntVector spawnPosition = WorldManager.Instance.GetPlayerSpawnPosition();        
+        
+        Position = new Vector2(
+            spawnPosition.X * BlockManager.BLOCK_SIZE, spawnPosition.Y * BlockManager.BLOCK_SIZE);
+        GD.Print(Position);
+        
         LocalPlayer = this;
         camera.Enabled = true;
         InputManager.Instance.HorizontalInputChanged += newInput => horizontalInput = newInput;

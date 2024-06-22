@@ -39,8 +39,7 @@ public partial class LocalObjectSpawnManager : Node {
         int newXCoordinate, int newYCoordinate, int oldXCoordinate, int oldYCoordinate) {
         IntVector oldCoordinates = new(oldXCoordinate, oldYCoordinate);
         IntVector newCoordinates = new(newXCoordinate, newYCoordinate);
-        List<IntVector> newRegion = GetRegionDelta(
-            newCoordinates, oldCoordinates);
+        List<IntVector> newRegion = GetRegionDelta(newCoordinates, oldCoordinates);
 
         List<SavedBlock> savedBlocks = BlockManager.Instance.GetSavedBlocksInRegion(newRegion);
         foreach (SavedBlock savedBlock in savedBlocks) {

@@ -18,21 +18,22 @@ public partial class PlayerManager : Node {
 
     private void OnWorldManagerInitialized() {
         int peerId = Multiplayer.GetUniqueId();
-        IntVector spawnPosition = WorldManager.Instance.GetPlayerSpawnPosition();
-        RpcId(MultiplayerManager.HOST_ID, nameof(CreatePlayerOnServer),
-            peerId, spawnPosition.X, spawnPosition.Y);
+        RpcId(MultiplayerManager.HOST_ID, nameof(CreatePlayerOnServer), peerId);
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    private void CreatePlayerOnServer(int peerId, int xSpawnCoords, int ySpawnCoords) {
+    private void CreatePlayerOnServer(int peerId) {
+        GD.Print("before instantiate player");
+        GD.Print(Multiplayer.GetUniqueId());
         Player newPlayer = packedPlayer.Instantiate<Player>();
+        GD.Print("instantiated player");
         newPlayer.Name = new StringName(peerId.ToString());
-        Vector2 position = new(
-            xSpawnCoords * BlockManager.BLOCK_SIZE, ySpawnCoords * BlockManager.BLOCK_SIZE);
-        newPlayer.Position = position;
 
+        IntVector spawnPosition = WorldManager.Instance.GetPlayerSpawnPosition();      
+        newPlayer.Position = new Vector2(spawnPosition.X * BlockManager.BLOCK_SIZE, 
+            spawnPosition.Y * BlockManager.BLOCK_SIZE);
         AddChild(newPlayer);
-        RpcId(peerId, nameof(EmitLocalPlayerSpawned), xSpawnCoords, ySpawnCoords);
+        RpcId(peerId, nameof(EmitLocalPlayerSpawned), spawnPosition.X, spawnPosition.Y);
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]

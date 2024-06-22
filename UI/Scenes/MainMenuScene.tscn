@@ -20,7 +20,7 @@ joinMenu = NodePath("JoinMenu")
 worldListContainer = NodePath("WorldMenu/WorldListContainer")
 packedEnterWorldButton = ExtResource("2_vjtmq")
 worldNameEdit = NodePath("WorldMenu/WorldNameEdit")
-ipEdit = NodePath("JoinMenu/LineEdit")
+ipEdit = NodePath("")
 
 [node name="MainMenu" type="Control" parent="."]
 visible = false
@@ -150,21 +150,6 @@ offset_top = 282.0
 offset_right = 1085.0
 offset_bottom = 315.0
 text = "Back"
-
-[node name="Label" type="Label" parent="JoinMenu"]
-layout_mode = 0
-offset_left = 810.0
-offset_top = 200.0
-offset_right = 850.0
-offset_bottom = 223.0
-text = "IP"
-
-[node name="LineEdit" type="LineEdit" parent="JoinMenu"]
-layout_mode = 0
-offset_left = 861.0
-offset_top = 197.0
-offset_right = 1037.0
-offset_bottom = 229.0
 
 [connection signal="button_down" from="MainMenu/VBoxContainer/SinglePlayerButton" to="." method="OnMainMenuSinglePlayerButtonDown"]
 [connection signal="button_down" from="MainMenu/VBoxContainer/MultiplayerButton" to="." method="OnMainMenuMultiplayerButtonDown"]

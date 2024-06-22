@@ -132,7 +132,8 @@ public partial class MainMenuScene : Control {
 
     private void OnJoinMenuEnterWorldButtonDown() {
         PlayerInfo playerInfo = new("457-543", "Client");
-        EmitSignal(SignalName.JoinGameButtonDown, ipEdit.Text, playerInfo);
+        // temporary ip address
+        EmitSignal(SignalName.JoinGameButtonDown, "127.0.0.1", playerInfo);
     }
 
     private void OnJoinMenuBackButtonDown() {
