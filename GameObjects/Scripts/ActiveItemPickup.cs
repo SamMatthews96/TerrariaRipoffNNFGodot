@@ -26,7 +26,5 @@ public partial class ActiveItemPickup : Node2D {
         
         return newItemPickup;
     }
-
-    public override void _Ready() {
-    }
+    
 }

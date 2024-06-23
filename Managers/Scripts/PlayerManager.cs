@@ -12,8 +12,15 @@ public partial class PlayerManager : Node {
     [Signal]
     public delegate void LocalPlayerSpawnedEventHandler(int x, int y);
 
+    public static PlayerManager Instance { get; private set; }
+    
+    public override void _EnterTree() {
+        Instance = this;
+    }
+    
     public void Initialize(PlayerInfo playerInfo) {
         _playerInfo = playerInfo;
+        WorldManager.Instance.Initialized += OnWorldManagerInitialized;
     }
 
     private void OnWorldManagerInitialized() {

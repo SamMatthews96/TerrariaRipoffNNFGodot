@@ -1,5 +1,6 @@
 using Godot;
 using TerrariaRipoffNNF.Resources.Scripts;
+using TerrariaRipoffNNF.UI.Scripts;
 using static Godot.GD;
 
 namespace TerrariaRipoffNNF.Managers.Scripts;
@@ -13,6 +14,17 @@ public partial class MultiplayerManager : Node {
     [Signal]
     public delegate void ConnectedToServerEventHandler(PlayerInfo playerInfo);
 
+    public static MultiplayerManager Instance { get; private set; }
+   
+    public override void _EnterTree() {
+        Instance = this;
+    }
+    
+    public override void _Ready() {
+        MainMenuScene.Instance.WorldLoadedHostMode += OnWorldLoadedHostMode;
+        MainMenuScene.Instance.JoinGameButtonDown += OnJoinGameButtonDown;
+    }
+    
     private void OnWorldLoadedHostMode() {
         //Multiplayer.PeerConnected += id => EmitSignal(SignalName.PeerConnected, id);
         //Multiplayer.PeerDisconnected += id => EmitSignal(SignalName.PeerDisconnected, id);

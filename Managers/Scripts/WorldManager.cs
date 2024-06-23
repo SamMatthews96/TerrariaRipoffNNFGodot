@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Godot;
 using TerrariaRipoffNNF.Resources.Scripts;
+using TerrariaRipoffNNF.Scenes.Scripts;
+using TerrariaRipoffNNF.UI.Scripts;
 using TerrariaRipoffNNF.Utils;
 using GodotDictionary = Godot.Collections.Dictionary;
 using Array = Godot.Collections.Array;
@@ -27,9 +29,14 @@ public partial class WorldManager : Node {
     [Signal]
     public delegate void InitializedEventHandler();
 
-
-    public override void _Ready() {
+    public override void _EnterTree() {
         Instance = this;
+    }
+    
+    public override void _Ready() {
+        MultiplayerManager.Instance.ConnectedToServer += OnConnectedToServer;
+        InputManager.Instance.SaveGamePressed += OnInputManagerSaveGamePressed;
+        MainMenuScene.Instance.WorldLoaded += OnMainMenuSceneWorldLoaded;
     }
 
     #region Getters

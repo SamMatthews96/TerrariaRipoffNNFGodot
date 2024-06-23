@@ -34,8 +34,16 @@ public partial class MainMenuScene : Control {
 
     [Signal]
     public delegate void JoinGameButtonDownEventHandler(string ipText, PlayerInfo playerInfo);
+    
+    public static MainMenuScene Instance { get; private set; }
+
+    public override void _EnterTree() {
+        Instance = this;
+    }
 
     public override void _Ready() {
+        MultiplayerManager.Instance.ConnectedToServer += OnConnectedToServer;
+        
         menus.Add(mainMenu);
         menus.Add(multiplayerMenu);
         menus.Add(worldMenu);

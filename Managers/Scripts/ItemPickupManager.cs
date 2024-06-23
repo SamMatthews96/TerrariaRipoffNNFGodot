@@ -17,13 +17,17 @@ public partial class ItemPickupManager : Node {
     [Signal]
     public delegate void SavedItemPickupDeletedEventHandler(SavedItemPickup savedItemPickup);
 
+    public static ItemPickupManager Instance { get; private set; }
+    
+    public override void _EnterTree() {
+        Instance = this;
+    }
+
     public void Initialize(GodotDictionary worldDictionary) {
         _width = (int)worldDictionary["Width"];
         _height = (int)worldDictionary["Height"];
         _itemPickups = new List<SavedItemPickup>[_width, _height];
-        if (MultiplayerManager.HOST_ID == Multiplayer.GetUniqueId()) {
-            BlockManager.Instance.SavedBlockDestroyed += OnBlockManagerSavedBlockDestroyedOnServer;
-        }
+        BlockManager.Instance.SavedBlockDestroyedOnServer += OnBlockManagerSavedBlockDestroyedOnServer;
     }
 
     private void OnBlockManagerSavedBlockDestroyedOnServer(SavedBlock savedBlock) {

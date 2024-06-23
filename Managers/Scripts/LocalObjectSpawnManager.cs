@@ -14,15 +14,24 @@ public partial class LocalObjectSpawnManager : Node {
     private int _width;
     private int _height;
     private ActiveBlock[,] _activeBlocks;
+    
+    public static LocalObjectSpawnManager Instance { get; private set; }
 
     [Signal]
     public delegate void ActiveBlockTakenDamageEventHandler(
         int xPosition, int yPosition, float damageAmount);
 
+    public override void _EnterTree() {
+        Instance = this;
+    }
+    
     public void Initialize(int worldWidth, int worldHeight) {
         _width = worldWidth;
         _height = worldHeight;
         _activeBlocks = new ActiveBlock[worldWidth, worldHeight];
+        BlockManager.Instance.SavedBlockDestroyed += OnBlockManagerSavedBlockDestroyed;
+        ItemPickupManager.Instance.SavedItemPickupCreated += OnItemPickupManagerSavedItemPickupCreated;
+        PlayerManager.Instance.LocalPlayerSpawned += OnPlayerManagerLocalPlayerSpawned;
     }
 
     private void OnPlayerManagerLocalPlayerSpawned(int x, int y) {

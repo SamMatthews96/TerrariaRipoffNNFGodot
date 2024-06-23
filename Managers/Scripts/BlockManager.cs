@@ -16,10 +16,12 @@ public partial class BlockManager : Node {
 
     [Signal]
     public delegate void SavedBlockDestroyedEventHandler(SavedBlock savedBlock);
+    
+    [Signal] public delegate void SavedBlockDestroyedOnServerEventHandler(SavedBlock savedBlock);
 
     public static BlockManager Instance { get; private set; }
 
-    public override void _Ready() {
+    public override void _EnterTree() {
         Instance = this;
     }
 
@@ -28,6 +30,8 @@ public partial class BlockManager : Node {
     }
 
     public void Initialize(GodotDictionary worldDictionary) {
+        LocalObjectSpawnManager.Instance.ActiveBlockTakenDamage += OnActiveBlockTakenDamage;
+        
         _width = (int)worldDictionary["Width"];
         _height = (int)worldDictionary["Height"];
 
@@ -72,6 +76,7 @@ public partial class BlockManager : Node {
 
     private void OnServerSavedBlockHitZeroHealth(int xPosition, int yPosition) {
         SavedBlock savedBlock = _savedBlocks[xPosition, yPosition];
+        EmitSignal(SignalName.SavedBlockDestroyedOnServer, savedBlock);
         Rpc(nameof(DestroySavedBlock), xPosition, yPosition);
     }
 
