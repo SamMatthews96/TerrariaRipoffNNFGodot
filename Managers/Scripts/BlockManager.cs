@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Godot;
 using Godot.Collections;
+using TerrariaRipoffNNF.GameObjects.Scripts;
 using GodotDictionary = Godot.Collections.Dictionary;
 using TerrariaRipoffNNF.Resources.Scripts;
 using TerrariaRipoffNNF.Utils;
@@ -16,8 +17,13 @@ public partial class BlockManager : Node {
 
     [Signal]
     public delegate void SavedBlockDestroyedEventHandler(SavedBlock savedBlock);
-    
-    [Signal] public delegate void SavedBlockDestroyedOnServerEventHandler(SavedBlock savedBlock);
+
+    [Signal]
+    public delegate void SavedBlockDestroyedOnServerEventHandler(SavedBlock savedBlock);
+
+    public delegate void SavedBlockWatchersBecomeNonZeroEventHandler(SavedBlock savedBlock, Node watcher);
+
+    public delegate void SavedBlockWatchersBecomeZeroEventHandler(SavedBlock savedBlock, Node watcher);
 
     public static BlockManager Instance { get; private set; }
 
@@ -31,16 +37,20 @@ public partial class BlockManager : Node {
 
     public void Initialize(GodotDictionary worldDictionary) {
         LocalObjectSpawnManager.Instance.ActiveBlockTakenDamage += OnActiveBlockTakenDamage;
-        
+
         _width = (int)worldDictionary["Width"];
         _height = (int)worldDictionary["Height"];
 
         Array savedBlockArray = worldDictionary["SavedBlocks"].AsGodotArray();
         _savedBlocks = new SavedBlock[_width, _height];
         foreach (GodotDictionary savedBlockDictionary in savedBlockArray) {
+            
             SavedBlock savedBlock = SavedBlock.FromDict(savedBlockDictionary);
             _savedBlocks[savedBlock.XPosition, savedBlock.YPosition] = savedBlock;
             if (MultiplayerManager.HOST_ID != Multiplayer.GetUniqueId()) continue;
+
+            savedBlock.WatchersBecomeNonZero += OnSavedBlockWatchersBecomeNonZero;
+            savedBlock.WatchersBecomeZero += OnSavedBlockWatchersBecomeZero;
             savedBlock.HitZeroHealth += OnServerSavedBlockHitZeroHealth;
         }
     }
@@ -58,9 +68,17 @@ public partial class BlockManager : Node {
 
     #region Block Changes
 
-    public void OnActiveBlockTakenDamage(int xPosition, int yPosition, float damageAmount) {
+    private void OnActiveBlockTakenDamage(ActiveBlock activeBlock, float damageAmount) {
         RpcId(MultiplayerManager.HOST_ID, nameof(ServerDamageSavedBlock),
-            xPosition, yPosition, damageAmount);
+            activeBlock.SavedBlock.XPosition, activeBlock.SavedBlock.YPosition, damageAmount);
+    }
+
+    private void OnSavedBlockWatchersBecomeNonZero(SavedBlock savedBlock) {
+        LocalObjectSpawnManager.Instance.CreateActiveBlock(savedBlock);
+    }
+
+    private void OnSavedBlockWatchersBecomeZero(SavedBlock savedBlock) {
+        DestroySavedBlock(savedBlock.XPosition, savedBlock.YPosition);
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]

@@ -71,7 +71,6 @@ public partial class WorldManager : Node {
     private void OnMainMenuSceneWorldLoaded(GodotDictionary worldDictionary, PlayerInfo playerInfo) {
         _playerManager.Initialize(playerInfo);
         Initialize(worldDictionary);
-
     }
 
     [Rpc(CallLocal = true)]

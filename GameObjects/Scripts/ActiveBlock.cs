@@ -8,19 +8,17 @@ public partial class ActiveBlock : StaticBody2D {
     private static readonly PackedScene PackedScene =
         ResourceLoader.Load<PackedScene>("res://GameObjects/Scenes/ActiveBlock.tscn");
 
-    private int _xPosition;
-    private int _yPosition;
+    public SavedBlock SavedBlock { get; private set; }
 
-    [Export] private Sprite2D _sprite;
     private BlockType BlockType { get; set; }
+    [Export] private Sprite2D _sprite;
 
     [Signal]
-    public delegate void TakenDamageEventHandler(int xPosition, int yPosition, float damageAmount);
+    public delegate void TakenDamageEventHandler(ActiveBlock activeBlock, float damageAmount);
 
     public static ActiveBlock Instantiate(SavedBlock savedBlock) {
         ActiveBlock newBlock = PackedScene.Instantiate<ActiveBlock>();
-        newBlock._xPosition = savedBlock.XPosition;
-        newBlock._yPosition = savedBlock.YPosition;
+        newBlock.SavedBlock = savedBlock;
         newBlock.Position = new Vector2(
             savedBlock.XPosition * BlockManager.BLOCK_SIZE,
             savedBlock.YPosition * BlockManager.BLOCK_SIZE);
@@ -31,7 +29,7 @@ public partial class ActiveBlock : StaticBody2D {
 
     private void OnInputEvent(Node _, InputEvent e, int __) {
         if (e is InputEventMouseButton mouseEvent) {
-            EmitSignal(SignalName.TakenDamage, _xPosition, _yPosition, 100);
+            EmitSignal(SignalName.TakenDamage, this, 100);
         }
     }
 }

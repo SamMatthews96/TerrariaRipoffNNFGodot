@@ -9,6 +9,7 @@ public partial class InventoryItemType : Resource {
     [Export] public float InventorySpace { get; private set; }
     [Export] public bool IsStackable { get; private set; } = true;
     [Export] public Texture2D IconTexture { get; private set; }
+    [Export] public float FallWeight { get; private set; }
 
     public virtual Dictionary ToDictionary() {
         Dictionary serialized = new();
