@@ -1,29 +1,28 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Godot;
-using Godot.Collections;
 using TerrariaRipoffNNF.GameObjects.Scripts;
 using GodotDictionary = Godot.Collections.Dictionary;
 using TerrariaRipoffNNF.Resources.Scripts;
 using TerrariaRipoffNNF.Utils;
+using Array = Godot.Collections.Array;
 
 namespace TerrariaRipoffNNF.Managers.Scripts;
 
 public partial class BlockManager : Node {
-    public const int BLOCK_SIZE = 32;
+    public const int BlockSize = 32;
+    private const int BlockRenderDistance = 20;
 
     private int _width;
     private int _height;
     private SavedBlock[,] _savedBlocks;
+    // private ActiveBlock[,] _activeBlocks;
 
     [Signal]
     public delegate void SavedBlockDestroyedEventHandler(SavedBlock savedBlock);
 
     [Signal]
     public delegate void SavedBlockDestroyedOnServerEventHandler(SavedBlock savedBlock);
-
-    public delegate void SavedBlockWatchersBecomeNonZeroEventHandler(SavedBlock savedBlock, Node watcher);
-
-    public delegate void SavedBlockWatchersBecomeZeroEventHandler(SavedBlock savedBlock, Node watcher);
 
     public static BlockManager Instance { get; private set; }
 
@@ -36,26 +35,27 @@ public partial class BlockManager : Node {
     }
 
     public void Initialize(GodotDictionary worldDictionary) {
-        LocalObjectSpawnManager.Instance.ActiveBlockTakenDamage += OnActiveBlockTakenDamage;
-
         _width = (int)worldDictionary["Width"];
         _height = (int)worldDictionary["Height"];
 
         Array savedBlockArray = worldDictionary["SavedBlocks"].AsGodotArray();
         _savedBlocks = new SavedBlock[_width, _height];
+        // _activeBlocks = new ActiveBlock[_width, _height];
+
+        PlayerManager.Instance.LocalPlayerSpawned += OnPlayerManagerLocalPlayerSpawned;
+
         foreach (GodotDictionary savedBlockDictionary in savedBlockArray) {
-            
             SavedBlock savedBlock = SavedBlock.FromDict(savedBlockDictionary);
             _savedBlocks[savedBlock.XPosition, savedBlock.YPosition] = savedBlock;
             if (MultiplayerManager.HOST_ID != Multiplayer.GetUniqueId()) continue;
 
-            savedBlock.WatchersBecomeNonZero += OnSavedBlockWatchersBecomeNonZero;
-            savedBlock.WatchersBecomeZero += OnSavedBlockWatchersBecomeZero;
+            // savedBlock.WatchersBecomeNonZero += OnSavedBlockWatchersBecomeNonZero;
+            // savedBlock.WatchersBecomeZero += OnSavedBlockWatchersBecomeZero;
             savedBlock.HitZeroHealth += OnServerSavedBlockHitZeroHealth;
         }
     }
 
-    public List<SavedBlock> GetSavedBlocksInRegion(List<IntVector> region) {
+    private List<SavedBlock> GetSavedBlocksInRegion(List<IntVector> region) {
         List<SavedBlock> savedBlocks = new();
         foreach (IntVector coords in region) {
             SavedBlock savedBlock = _savedBlocks[coords.X, coords.Y];
@@ -73,13 +73,13 @@ public partial class BlockManager : Node {
             activeBlock.SavedBlock.XPosition, activeBlock.SavedBlock.YPosition, damageAmount);
     }
 
-    private void OnSavedBlockWatchersBecomeNonZero(SavedBlock savedBlock) {
-        LocalObjectSpawnManager.Instance.CreateActiveBlock(savedBlock);
-    }
-
-    private void OnSavedBlockWatchersBecomeZero(SavedBlock savedBlock) {
-        DestroySavedBlock(savedBlock.XPosition, savedBlock.YPosition);
-    }
+    // private void OnSavedBlockWatchersBecomeNonZero(SavedBlock savedBlock) {
+    //     CreateActiveBlock(savedBlock);
+    // }
+    //
+    // private void OnSavedBlockWatchersBecomeZero(SavedBlock savedBlock) {
+    //     DestroySavedBlock(savedBlock.XPosition, savedBlock.YPosition);
+    // }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void ServerDamageSavedBlock(int xPosition, int yPosition, float damageAmount) {
@@ -111,7 +111,6 @@ public partial class BlockManager : Node {
     //         xPosition, yPosition, blockResourcePath);
     // }
     //
-    //
     // [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     // private void ServerAttemptBuildBlock(int xPosition, int yPosition, string blockResourcePath) {
     //     BlockType blockType = BlockType.Deserialize(blockResourcePath);
@@ -122,4 +121,97 @@ public partial class BlockManager : Node {
     // }
 
     #endregion block changes
+
+    #region active blocks
+
+    private void CreateActiveBlock(SavedBlock savedBlock) {
+        ActiveBlock activeBlock = ActiveBlock.Instantiate(savedBlock);
+        savedBlock.AddActiveBlock(activeBlock);
+        activeBlock.TakenDamage += OnActiveBlockTakenDamage;
+
+        AddChild(activeBlock);
+    }
+
+    private void DeleteActiveBlock(SavedBlock savedBlock) {
+        savedBlock.ActiveBlock.QueueFree();
+        savedBlock.RemoveActiveBlock();
+    }
+
+    private void OnLocalPlayerMoved(Player player) {
+        IntVector oldCoordinates = new(player.PreviousXCoords, player.PreviousYCoords);
+        IntVector newCoordinates = new(player.XCoords, player.YCoords);
+        List<IntVector> newRegion = GetRegionDelta(
+            newCoordinates, oldCoordinates, BlockRenderDistance);
+
+        List<SavedBlock> savedBlocksToWatch = GetSavedBlocksInRegion(newRegion);
+        foreach (SavedBlock savedBlock in savedBlocksToWatch) {
+            AddWatcher(savedBlock, player);
+        }
+
+        List<IntVector> oldRegion = GetRegionDelta(
+            oldCoordinates, newCoordinates, BlockRenderDistance);
+        List<SavedBlock> savedBlocksToUnwatch = GetSavedBlocksInRegion(oldRegion);
+        foreach (SavedBlock savedBlock in savedBlocksToUnwatch) {
+            DeleteWatcher(savedBlock, player);
+        }
+    }
+
+    private void AddWatcher(SavedBlock savedBlock, Node watcher) {
+        savedBlock.AddWatcher(watcher);
+        if (!savedBlock.ShouldCreateActiveBlock) return;
+        CreateActiveBlock(savedBlock);
+    }
+    
+    private void DeleteWatcher(SavedBlock savedBlock, Node watcher) {
+        savedBlock.RemoveWatcher(watcher);
+        if (!savedBlock.ShouldDeleteActiveBlock) return;
+        DeleteActiveBlock(savedBlock);
+    }
+
+    private void OnPlayerManagerLocalPlayerSpawned(int x, int y) {
+        Player.LocalPlayer.LocalPlayerMoved += OnLocalPlayerMoved;
+        List<IntVector> spawnRegion = GetRegion(new IntVector(x, y), BlockRenderDistance);
+        List<SavedBlock> savedBlocks = GetSavedBlocksInRegion(spawnRegion);
+        foreach (SavedBlock savedBlock in savedBlocks) {
+            AddWatcher(savedBlock, Player.LocalPlayer);
+        }
+    }
+
+    private List<IntVector> GetRegion(IntVector center, int distanceToEdge) {
+        List<IntVector> regionDelta = new();
+
+        int xStart = Math.Max(0, center.X - distanceToEdge);
+        int xEnd = Math.Min(_width - 1, center.X + distanceToEdge);
+        int yStart = Math.Max(0, center.Y - distanceToEdge);
+        int yEnd = Math.Min(_height - 1, center.Y + distanceToEdge);
+
+        for (int x = xStart; x < xEnd; x++) {
+            for (int y = yStart; y < yEnd; y++) {
+                regionDelta.Add(new IntVector(x, y));
+            }
+        }
+
+        return regionDelta;
+    }
+
+    private List<IntVector> GetRegionDelta(IntVector includeCenter, IntVector excludeCenter, int distanceToEdge) {
+        List<IntVector> regionDelta = new();
+
+        int xStart = Math.Max(0, includeCenter.X - distanceToEdge);
+        int xEnd = Math.Min(_width - 1, includeCenter.X + distanceToEdge);
+        int yStart = Math.Max(0, includeCenter.Y - distanceToEdge);
+        int yEnd = Math.Min(_height - 1, includeCenter.Y + distanceToEdge);
+
+        for (int x = xStart; x < xEnd; x++) {
+            for (int y = yStart; y < yEnd; y++) {
+                if (Math.Abs(x - excludeCenter.X) < BlockRenderDistance &&
+                    Math.Abs(y - excludeCenter.Y) < BlockRenderDistance) continue;
+                regionDelta.Add(new IntVector(x, y));
+            }
+        }
+
+        return regionDelta;
+    }
+
+    #endregion
 }

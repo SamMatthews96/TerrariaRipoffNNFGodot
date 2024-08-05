@@ -31,8 +31,8 @@ public partial class ItemPickupManager : Node {
     }
 
     private void OnBlockManagerSavedBlockDestroyedOnServer(SavedBlock savedBlock) {
-        Vector2 position = new(savedBlock.XPosition * BlockManager.BLOCK_SIZE, 
-            savedBlock.YPosition * BlockManager.BLOCK_SIZE);
+        Vector2 position = new(savedBlock.XPosition * BlockManager.BlockSize, 
+            savedBlock.YPosition * BlockManager.BlockSize);
         CreateItemPickup(savedBlock.BlockType, position);
     }
 

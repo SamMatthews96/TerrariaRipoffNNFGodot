@@ -21,7 +21,6 @@ public partial class WorldManager : Node {
 
     public IntVector DefaultSpawnPosition { get; private set; }
 
-    [Export] private LocalObjectSpawnManager _localObjectSpawnManager;
     [Export] private PlayerManager _playerManager;
     [Export] private BlockManager _blockManager;
     [Export] private ItemPickupManager _itemPickupManager;
@@ -41,7 +40,7 @@ public partial class WorldManager : Node {
 
     #region Getters
 
-    public GodotDictionary WorldToDictionary() {
+    private GodotDictionary WorldToDictionary() {
         GodotDictionary worldDictionary = new();
         worldDictionary.Add("Name", _name);
         worldDictionary.Add("Width", _width);
@@ -61,7 +60,7 @@ public partial class WorldManager : Node {
     }
 
     public Vector2 GetWorldPositionFromCellCoordinates(int xCoordinate, int yCoordinate) {
-        return new Vector2(xCoordinate * BlockManager.BLOCK_SIZE, yCoordinate * BlockManager.BLOCK_SIZE);
+        return new Vector2(xCoordinate * BlockManager.BlockSize, yCoordinate * BlockManager.BlockSize);
     }
 
     #endregion
@@ -83,7 +82,6 @@ public partial class WorldManager : Node {
         DefaultSpawnPosition = new IntVector(
             (int)defaultSpawnPosition[0],
             (int)defaultSpawnPosition[1]);
-        _localObjectSpawnManager.Initialize(_width, _height);
         _blockManager.Initialize(worldDictionary);
         _itemPickupManager.Initialize(worldDictionary);
         EmitSignal(SignalName.Initialized);

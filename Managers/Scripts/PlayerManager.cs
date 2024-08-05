@@ -34,8 +34,8 @@ public partial class PlayerManager : Node{
         newPlayer.Name = new StringName(peerId.ToString());
 
         IntVector spawnPosition = WorldManager.Instance.GetPlayerSpawnPosition();
-        newPlayer.Position = new Vector2(spawnPosition.X * BlockManager.BLOCK_SIZE,
-            spawnPosition.Y * BlockManager.BLOCK_SIZE);
+        newPlayer.Position = new Vector2(spawnPosition.X * BlockManager.BlockSize,
+            spawnPosition.Y * BlockManager.BlockSize);
         
         AddChild(newPlayer);
         RpcId(peerId, nameof(EmitLocalPlayerSpawned), spawnPosition.X, spawnPosition.Y);

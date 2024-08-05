@@ -10,8 +10,8 @@ public partial class SavedItemPickup : Resource, ISavedGameObject {
     public int Count { get; private set; }
     
     public IntVector GridPosition => new(
-        (int)Math.Round(Position.X / BlockManager.BLOCK_SIZE),
-        (int)Math.Round(Position.Y / BlockManager.BLOCK_SIZE));
+        (int)Math.Round(Position.X / BlockManager.BlockSize),
+        (int)Math.Round(Position.Y / BlockManager.BlockSize));
     
     public InventoryItemType InventoryItemType { get; private set; }
     

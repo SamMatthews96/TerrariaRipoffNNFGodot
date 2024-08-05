@@ -11,24 +11,27 @@ namespace TerrariaRipoffNNF.Resources.Scripts;
 
 public partial class SavedBlock : Resource, ISavedGameObject {
     private readonly List<Node> _nodesWatchingThisBlock = new();
-    private bool _isActive;
 
     [Signal]
     public delegate void HitZeroHealthEventHandler(int xPosition, int yPosition);
-
-    [Signal]
-    public delegate void WatchersBecomeNonZeroEventHandler(SavedBlock savedBlock);
-
-    [Signal]
-    public delegate void WatchersBecomeZeroEventHandler(SavedBlock savedBlock);
 
     public int XPosition { get; }
     public int YPosition { get; }
     public BlockType BlockType { get; }
     public float CurrentHealth { get; private set; }
-
+    public ActiveBlock ActiveBlock { get; private set; }
     public IntVector GridPosition { get; }
 
+    public bool ShouldCreateActiveBlock => _nodesWatchingThisBlock.Count >= 0 && ActiveBlock is null;
+    public bool ShouldDeleteActiveBlock => ActiveBlock is not null && _nodesWatchingThisBlock.Count == 0;
+
+    public void AddActiveBlock(ActiveBlock activeBlock) {
+        ActiveBlock = activeBlock;
+    }
+
+    public void RemoveActiveBlock() {
+        ActiveBlock = null;
+    }
 
     public void TakeDamage(float damageAmount) {
         CurrentHealth -= damageAmount;
@@ -40,17 +43,11 @@ public partial class SavedBlock : Resource, ISavedGameObject {
     public void AddWatcher(Node watcher) {
         if (_nodesWatchingThisBlock.Contains(watcher)) return;
         _nodesWatchingThisBlock.Add(watcher);
-        if (_isActive) return;
-        _isActive = true;
-        EmitSignal(SignalName.WatchersBecomeNonZero, this);
     }
 
     public void RemoveWatcher(Node watcher) {
-        GD.Print("removing watcher");
         if (!_nodesWatchingThisBlock.Contains(watcher)) return;
         _nodesWatchingThisBlock.Remove(watcher);
-        if (_nodesWatchingThisBlock.Count != 0 || !_isActive) return;
-        EmitSignal(SignalName.WatchersBecomeZero, this);
     }
 
     public Dictionary Serialize() {

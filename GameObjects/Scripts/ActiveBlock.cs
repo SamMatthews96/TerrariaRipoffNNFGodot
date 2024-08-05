@@ -20,8 +20,8 @@ public partial class ActiveBlock : StaticBody2D {
         ActiveBlock newBlock = PackedScene.Instantiate<ActiveBlock>();
         newBlock.SavedBlock = savedBlock;
         newBlock.Position = new Vector2(
-            savedBlock.XPosition * BlockManager.BLOCK_SIZE,
-            savedBlock.YPosition * BlockManager.BLOCK_SIZE);
+            savedBlock.XPosition * BlockManager.BlockSize,
+            savedBlock.YPosition * BlockManager.BlockSize);
         newBlock.BlockType = savedBlock.BlockType;
         newBlock._sprite.Texture = savedBlock.BlockType.Texture;
         return newBlock;
