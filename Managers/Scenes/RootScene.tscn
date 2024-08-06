@@ -15,9 +15,9 @@
 
 [node name="MainMenuScene" parent="." instance=ExtResource("1_qp6gj")]
 offset_left = 1.0
-offset_top = 1.0
+offset_top = -18.0
 offset_right = 1.0
-offset_bottom = 1.0
+offset_bottom = -18.0
 
 [node name="InputManager" type="Node" parent="."]
 script = ExtResource("4_7ktep")
