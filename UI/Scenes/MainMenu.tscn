@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://tbvohnqfn3cl"]
 
-[ext_resource type="Script" path="res://UI/Scripts/MainMenuScene.cs" id="1_tso7g"]
+[ext_resource type="Script" path="res://UI/Scripts/MainMenu.cs" id="1_tso7g"]
 [ext_resource type="PackedScene" uid="uid://buekj451osmbs" path="res://UI/Scenes/EnterWorldButton.tscn" id="2_vjtmq"]
 
 [node name="MainMenuScene" type="Control" node_paths=PackedStringArray("mainMenu", "multiplayerMenu", "worldMenu", "joinMenu", "worldListContainer", "worldNameEdit")]
@@ -59,6 +59,7 @@ layout_mode = 2
 text = "Exit"
 
 [node name="WorldMenu" type="Control" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -97,6 +98,7 @@ offset_right = 1114.0
 offset_bottom = 891.0
 
 [node name="MultiplayerMenu" type="Control" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -127,6 +129,7 @@ layout_mode = 2
 text = "Back"
 
 [node name="JoinMenu" type="Control" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

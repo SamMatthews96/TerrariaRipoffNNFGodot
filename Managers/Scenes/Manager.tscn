@@ -1,0 +1,26 @@
+[gd_scene load_steps=6 format=3 uid="uid://bddgrodfbw38t"]
+
+[ext_resource type="Script" path="res://Managers/Scripts/Manager.cs" id="1_0p8gu"]
+[ext_resource type="PackedScene" uid="uid://cvfy8a4lwu7a2" path="res://Managers/Scenes/HostManager.tscn" id="2_2ssug"]
+[ext_resource type="PackedScene" uid="uid://tbvohnqfn3cl" path="res://UI/Scenes/MainMenu.tscn" id="2_4ca2u"]
+[ext_resource type="Script" path="res://Managers/Scripts/InputManager.cs" id="3_jamle"]
+[ext_resource type="Script" path="res://testObjects/FpsCounter.cs" id="4_xvsds"]
+
+[node name="Manager" type="Node"]
+script = ExtResource("1_0p8gu")
+HostManagerScene = ExtResource("2_2ssug")
+
+[node name="MainMenu" parent="." instance=ExtResource("2_4ca2u")]
+offset_left = 1.0
+offset_top = -18.0
+offset_right = 1.0
+offset_bottom = -18.0
+
+[node name="InputManager" type="Node" parent="."]
+script = ExtResource("3_jamle")
+
+[node name="FPS" type="Label" parent="."]
+offset_right = 104.0
+offset_bottom = 54.0
+text = "FPS"
+script = ExtResource("4_xvsds")

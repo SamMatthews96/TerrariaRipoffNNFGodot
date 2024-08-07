@@ -7,18 +7,12 @@ using GodotDictionary = Godot.Collections.Dictionary;
 namespace TerrariaRipoffNNF.Managers.Scripts;
 
 public partial class ItemPickupManager : Node {
-    private List<SavedItemPickup>[,] _itemPickups;
     private int _width;
     private int _height;
-
-    [Signal]
-    public delegate void SavedItemPickupCreatedEventHandler(SavedItemPickup savedItemPickup);
-
-    [Signal]
-    public delegate void SavedItemPickupDeletedEventHandler(SavedItemPickup savedItemPickup);
+    private List<SavedItemPickup>[,] _itemPickups;
 
     public static ItemPickupManager Instance { get; private set; }
-    
+
     public override void _EnterTree() {
         Instance = this;
     }
@@ -27,18 +21,14 @@ public partial class ItemPickupManager : Node {
         _width = (int)worldDictionary["Width"];
         _height = (int)worldDictionary["Height"];
         _itemPickups = new List<SavedItemPickup>[_width, _height];
-        BlockManager.Instance.SavedBlockDestroyedOnServer += OnBlockManagerSavedBlockDestroyedOnServer;
+        BlockManager.Instance.SavedBlockDestroyedOnServer +=
+            OnBlockManagerSavedBlockDestroyedOnServer;
     }
 
     private void OnBlockManagerSavedBlockDestroyedOnServer(SavedBlock savedBlock) {
-        Vector2 position = new(savedBlock.XPosition * BlockManager.BlockSize, 
+        Vector2 position = new(savedBlock.XPosition * BlockManager.BlockSize,
             savedBlock.YPosition * BlockManager.BlockSize);
-        CreateItemPickup(savedBlock.BlockType, position);
-    }
-
-
-    private void CreateItemPickup(InventoryItemType inventoryItemType, Vector2 position) {
-        GodotDictionary itemPickupData = inventoryItemType.ToDictionary();
+        GodotDictionary itemPickupData = savedBlock.BlockType.ToDictionary();
         Rpc(nameof(CreateItemPickupOnPeer), itemPickupData, position);
     }
 
@@ -48,7 +38,7 @@ public partial class ItemPickupManager : Node {
 
         SavedItemPickup savedItemPickup = new(inventoryItemType, position);
         AddItemPickupToLocation(savedItemPickup);
-        EmitSignal(SignalName.SavedItemPickupCreated, savedItemPickup);
+        // EmitSignal(SignalName.SavedItemPickupCreated, savedItemPickup);
     }
 
     private void AddItemPickupToLocation(SavedItemPickup savedItemPickup) {

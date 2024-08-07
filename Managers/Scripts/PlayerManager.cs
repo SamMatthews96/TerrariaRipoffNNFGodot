@@ -25,7 +25,7 @@ public partial class PlayerManager : Node{
 
     private void OnWorldManagerInitialized() {
         int peerId = Multiplayer.GetUniqueId();
-        RpcId(MultiplayerManager.HOST_ID, nameof(CreatePlayerOnServer), peerId);
+        RpcId(MultiplayerManager.HostId, nameof(CreatePlayerOnServer), peerId);
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]

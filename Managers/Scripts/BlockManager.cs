@@ -43,7 +43,7 @@ public partial class BlockManager : Node {
             SavedBlock savedBlock = SavedBlock.FromDict(savedBlockDictionary);
             _savedBlocks[savedBlock.XPosition, savedBlock.YPosition] = savedBlock;
             savedBlock.ActiveBlockCreated += OnSavedBlockActiveBlockCreated;
-            if (MultiplayerManager.HOST_ID != Multiplayer.GetUniqueId()) continue;
+            if (MultiplayerManager.HostId != Multiplayer.GetUniqueId()) continue;
             savedBlock.HitZeroHealth += OnServerSavedBlockHitZeroHealth;
         }
     }
@@ -63,7 +63,7 @@ public partial class BlockManager : Node {
     }
     
     private void OnActiveBlockTakenDamage(ActiveBlock activeBlock, float damageAmount) {
-        RpcId(MultiplayerManager.HOST_ID, nameof(ServerDamageSavedBlock),
+        RpcId(MultiplayerManager.HostId, nameof(ServerDamageSavedBlock),
             activeBlock.SavedBlock.XPosition, activeBlock.SavedBlock.YPosition, damageAmount);
     }
 
@@ -79,6 +79,7 @@ public partial class BlockManager : Node {
     }
 
     private void OnServerSavedBlockHitZeroHealth(SavedBlock savedBlock) {
+        EmitSignal(SignalName.SavedBlockDestroyedOnServer, savedBlock);
         Rpc(nameof(DestroySavedBlock), savedBlock.XPosition, savedBlock.YPosition);
     }
 

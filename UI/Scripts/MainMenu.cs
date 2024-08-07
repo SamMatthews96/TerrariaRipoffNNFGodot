@@ -8,7 +8,7 @@ using TerrariaRipoffNNF.Resources.Scripts;
 
 namespace TerrariaRipoffNNF.UI.Scripts;
 
-public partial class MainMenuScene : Control {
+public partial class MainMenu : Control {
     [Export] private Control mainMenu;
     [Export] private Control multiplayerMenu;
     [Export] private Control worldMenu;
@@ -27,23 +27,24 @@ public partial class MainMenuScene : Control {
     }
 
     [Signal]
-    public delegate void WorldLoadedEventHandler(Dictionary world, PlayerInfo playerInfo);
+    public delegate void SinglePlayerClickedEnterWorldEventHandler(
+        Dictionary world, PlayerInfo playerInfo);
 
     [Signal]
-    public delegate void WorldLoadedHostModeEventHandler();
+    public delegate void HostClickedEnterWorldEventHandler(
+        Dictionary world, PlayerInfo playerInfo);
 
     [Signal]
-    public delegate void JoinGameButtonDownEventHandler(string ipText, PlayerInfo playerInfo);
-    
-    public static MainMenuScene Instance { get; private set; }
+    public delegate void ClientEnteredWorldEventHandler(
+        string ipText, PlayerInfo playerInfo);
+
+    public static MainMenu Instance { get; private set; }
 
     public override void _EnterTree() {
         Instance = this;
     }
 
     public override void _Ready() {
-        MultiplayerManager.Instance.ConnectedToServer += OnConnectedToServer;
-        
         menus.Add(mainMenu);
         menus.Add(multiplayerMenu);
         menus.Add(worldMenu);
@@ -107,13 +108,13 @@ public partial class MainMenuScene : Control {
 
     private async void OnWorldMenuEnterWorldButtonDown(WorldBasicInfo worldBasicInfo) {
         Dictionary world = await Task.Run(() => FileManager.LoadWorld(worldBasicInfo));
-        if (gameType == GameType.Host) {
-            EmitSignal(SignalName.WorldLoadedHostMode);
-        }
         PlayerInfo playerInfo = new("123-432", "Host");
 
-        EmitSignal(SignalName.WorldLoaded, world, playerInfo);
-        QueueFree();
+        EmitSignal(
+            gameType == GameType.Host
+                ? SignalName.HostClickedEnterWorld
+                : SignalName.SinglePlayerClickedEnterWorld,
+            world, playerInfo);
     }
 
     #endregion
@@ -141,7 +142,7 @@ public partial class MainMenuScene : Control {
     private void OnJoinMenuEnterWorldButtonDown() {
         PlayerInfo playerInfo = new("457-543", "Client");
         // temporary ip address
-        EmitSignal(SignalName.JoinGameButtonDown, "127.0.0.1", playerInfo);
+        EmitSignal(SignalName.ClientEnteredWorld, "127.0.0.1", playerInfo);
     }
 
     private void OnJoinMenuBackButtonDown() {
@@ -155,13 +156,5 @@ public partial class MainMenuScene : Control {
         enterWorldButton.Initialize(worldBasicInfo);
         enterWorldButton.EnterWorldButtonDown += OnWorldMenuEnterWorldButtonDown;
         worldListContainer.AddChild(enterWorldButton);
-    }
-
-    private void OnStartedGame() {
-        QueueFree();
-    }
-
-    private void OnConnectedToServer(PlayerInfo playerInfo) {
-        QueueFree();
     }
 }

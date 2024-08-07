@@ -35,7 +35,7 @@ public partial class WorldManager : Node {
     public override void _Ready() {
         MultiplayerManager.Instance.ConnectedToServer += OnConnectedToServer;
         InputManager.Instance.SaveGamePressed += OnInputManagerSaveGamePressed;
-        MainMenuScene.Instance.WorldLoaded += OnMainMenuSceneWorldLoaded;
+        // MainMenuScene.Instance.WorldLoaded += OnMainMenuSceneWorldLoaded;
     }
 
     #region Getters
@@ -90,7 +90,7 @@ public partial class WorldManager : Node {
     private void OnConnectedToServer(PlayerInfo playerInfo) {
         int peerId = Multiplayer.GetUniqueId();
         _playerManager.Initialize(playerInfo);
-        RpcId(MultiplayerManager.HOST_ID, nameof(ServerInitialiseWorldForNewPlayer),
+        RpcId(MultiplayerManager.HostId, nameof(ServerInitialiseWorldForNewPlayer),
             peerId);
     }
 
