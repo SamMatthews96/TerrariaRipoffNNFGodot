@@ -10,8 +10,6 @@ using Array = Godot.Collections.Array;
 namespace TerrariaRipoffNNF.Resources.Scripts;
 
 public partial class SavedBlock : Resource, ISavedGameObject {
-    private readonly List<Node> _nodesWatchingThisBlock = new();
-
     [Signal]
     public delegate void HitZeroHealthEventHandler(SavedBlock savedBlock);
 
@@ -25,41 +23,10 @@ public partial class SavedBlock : Resource, ISavedGameObject {
     public ActiveBlock ActiveBlock { get; private set; }
     public IntVector GridPosition { get; }
 
-    private bool ShouldCreateActiveBlock => _nodesWatchingThisBlock.Count >= 0 && ActiveBlock is null;
-    private bool ShouldDeleteActiveBlock => ActiveBlock is not null && _nodesWatchingThisBlock.Count == 0;
-
-    private void CreateActiveBlock() {
-        ActiveBlock = ActiveBlock.Instantiate(this);
-        EmitSignal(SignalName.ActiveBlockCreated, ActiveBlock);
-    }
-
-    private void RemoveActiveBlock() {
-        ActiveBlock.QueueFree();
-        ActiveBlock = null;
-    }
-
     public void TakeDamage(float damageAmount) {
         CurrentHealth -= damageAmount;
         if (CurrentHealth <= 0) {
             EmitSignal(SignalName.HitZeroHealth, this);
-        }
-    }
-
-    public void AddWatcher(Node watcher) {
-        if (_nodesWatchingThisBlock.Contains(watcher)) return;
-        _nodesWatchingThisBlock.Add(watcher);
-
-        if (ShouldCreateActiveBlock) {
-            CreateActiveBlock();
-        }
-    }
-
-    public void RemoveWatcher(Node watcher) {
-        if (!_nodesWatchingThisBlock.Contains(watcher)) return;
-        _nodesWatchingThisBlock.Remove(watcher);
-
-        if (ShouldDeleteActiveBlock) {
-            RemoveActiveBlock();
         }
     }
 
@@ -70,16 +37,6 @@ public partial class SavedBlock : Resource, ISavedGameObject {
         serializedData.Add("ResourcePath", BlockType.ResourcePath);
         serializedData.Add("CurrentHealth", CurrentHealth);
         return serializedData;
-    }
-
-    public static Array SerializeArray(SavedBlock[,] savedBlocks) {
-        Array serializedArray = new();
-        foreach (SavedBlock savedBlock in savedBlocks) {
-            if (savedBlock is null) continue;
-            serializedArray.Add(savedBlock.Serialize());
-        }
-
-        return serializedArray;
     }
 
     public static SavedBlock FromDict(Dictionary dictionary) {

@@ -7,76 +7,60 @@ using TerrariaRipoffNNF.UI.Scripts;
 namespace TerrariaRipoffNNF.Managers.Scripts;
 
 public partial class Manager : Node {
+    public const int MultiplayerHostId = 1;
+
     [Export] private int port = 8910;
     [Export] private string address = "127.0.0.1";
-    private ENetMultiplayerPeer peer;
-    public const int MultiplayerHostId = 1;
-    [Export] public PackedScene GameManagerScene { get; private set; }
-    [Export] public PackedScene MultiplayerManagerScene { get; private set; }
-    [Export] public PackedScene HostManagerScene { get; private set; }
+    [Export] private PackedScene _gameManagerPackedScene;
+    [Export] private MainMenu _mainMenu;
     
-    public static Manager Instance { get; private set; }
+    private ENetMultiplayerPeer _peer;
 
-    [Signal]
-    public delegate void ConnectedToServerEventHandler(PlayerInfo playerInfo);
-    
+    [Signal] public delegate void ConnectedToServerEventHandler(PlayerInfo playerInfo);
+
     [Signal] public delegate void BeforePlayerSpawnedEventHandler(PlayerInfo playerInfo);
     
-    public override void _EnterTree() {
-        Instance = this;
-    }
-
     public override void _Ready() {
-        MainMenu.Instance.SinglePlayerClickedEnterWorld += OnMainMenuSinglePlayerClickedEnterWorld;
-        MainMenu.Instance.HostClickedEnterWorld += OnMainMenuHostClickedEnterWorld;
-        MainMenu.Instance.ClientEnteredWorld += OnMainMenuClientClickedEnterWorld;
-    }
-        
-    // at the end of all these functions
-    // the game world needs to be created 
-    // the player character needs to be created 
-
-    private void OnMainMenuHostClickedEnterWorld(Dictionary world, PlayerInfo playerInfo) {
-        
-        peer = new ENetMultiplayerPeer();
-        Error error = peer.CreateServer(port);
-        if (error != Error.Ok) {
-            GD.Print("error cannot host! :" + error);
-            return;
-        }
-
-        peer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
-        Multiplayer.MultiplayerPeer = peer;
-
-        Multiplayer.PeerConnected += id => {
-            RpcId(id, "");
-        };
-        
+        _mainMenu.SinglePlayerClickedEnterWorld += OnMainMenuSinglePlayerClickedEnterWorld;
+        _mainMenu.HostClickedEnterWorld += OnMainMenuHostClickedEnterWorld;
+        _mainMenu.ClientEnteredWorld += OnMainMenuClientClickedEnterWorld;
     }
 
     private void OnMainMenuSinglePlayerClickedEnterWorld(Dictionary world, PlayerInfo playerInfo) {
-        HostManager.Instantiate(world);
-        GD.Print(HostManager.Instance.Width);
+        LaunchGame(playerInfo, world);
+    }
 
-        // spawn local area around player character
-        // on before player spawned
-        // spawn player character
+    private void OnMainMenuHostClickedEnterWorld(Dictionary world, PlayerInfo playerInfo) {
+        _peer = new ENetMultiplayerPeer();
+        Error error = _peer.CreateServer(port);
+        if (error != Error.Ok) {
+            throw new Exception("error cannot host! [20240808.1336.1] :" + error);
+        }
+
+        _peer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
+        Multiplayer.MultiplayerPeer = _peer;
+
+        LaunchGame(playerInfo, world);
     }
 
     private void OnMainMenuClientClickedEnterWorld(string ip, PlayerInfo playerInfo) {
-        Multiplayer.ConnectedToServer += () => {
-            // EmitSignal(SignalName.ConnectedToServer, playerInfo);
-        };
+        Multiplayer.ConnectedToServer += () => { LaunchGame(playerInfo); };
 
-        peer = new ENetMultiplayerPeer();
-        Error error = peer.CreateClient(ip, port);
+        _peer = new ENetMultiplayerPeer();
+        Error error = _peer.CreateClient(ip, port);
         if (error != Error.Ok) {
-            GD.Print("error cannot join! :" + error);
-            return;
+            throw new Exception("error cannot join! [20240808.1337.1] :" + error);
         }
 
-        peer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
-        Multiplayer.MultiplayerPeer = peer;
+        _peer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
+        Multiplayer.MultiplayerPeer = _peer;
+    }
+
+    private void LaunchGame(PlayerInfo playerInfo, Dictionary world = null) {
+        GameManager gameManager = _gameManagerPackedScene.Instantiate<GameManager>();
+        AddChild(gameManager);
+        gameManager.Initialize(playerInfo, world);
         
+        _mainMenu.QueueFree();
     }
 }

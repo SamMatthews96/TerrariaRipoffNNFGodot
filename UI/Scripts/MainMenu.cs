@@ -38,12 +38,6 @@ public partial class MainMenu : Control {
     public delegate void ClientEnteredWorldEventHandler(
         string ipText, PlayerInfo playerInfo);
 
-    public static MainMenu Instance { get; private set; }
-
-    public override void _EnterTree() {
-        Instance = this;
-    }
-
     public override void _Ready() {
         menus.Add(mainMenu);
         menus.Add(multiplayerMenu);

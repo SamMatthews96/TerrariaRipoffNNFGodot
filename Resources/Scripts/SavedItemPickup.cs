@@ -13,8 +13,8 @@ public partial class SavedItemPickup : Resource, ISavedGameObject {
     public ActiveItemPickup ActiveItemPickup { get; private set; }
 
     public IntVector GridPosition => new(
-        (int)Math.Round(Position.X / BlockManager.BlockSize),
-        (int)Math.Round(Position.Y / BlockManager.BlockSize));
+        (int)Math.Round(Position.X / HostBlockManager.BlockSize),
+        (int)Math.Round(Position.Y / HostBlockManager.BlockSize));
 
     public InventoryItemType InventoryItemType { get; private set; }
 
