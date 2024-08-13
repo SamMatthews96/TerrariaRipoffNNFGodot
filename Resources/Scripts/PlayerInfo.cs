@@ -1,4 +1,6 @@
-﻿using Godot;
+﻿using System;
+using Godot;
+using Godot.Collections;
 
 namespace TerrariaRipoffNNF.Resources.Scripts;
 
@@ -7,8 +9,30 @@ public partial class PlayerInfo : Resource {
 
     public string UniqueName { get; private set; }
 
+    // GodotEngine requires a parameterless constructor
+    public PlayerInfo() { }
+    
     public PlayerInfo(string uuid, string name) {
         Name = name;
         UniqueName = name + "-" + uuid;
+    }
+
+    public Dictionary Serialize() {
+        return new Dictionary {
+            { "Name", Name },
+            { "UniqueName", UniqueName }
+        };
+    }
+
+    public static PlayerInfo FromDict(Dictionary dictionary) {
+        try {
+            return new PlayerInfo(
+                dictionary["Name"].ToString(),
+                dictionary["UniqueName"].ToString()
+            );
+        } catch (Exception e) {
+            GD.PrintErr("Error deserializing PlayerInfo: " + e.Message);
+            throw new NotImplementedException();
+        }
     }
 }

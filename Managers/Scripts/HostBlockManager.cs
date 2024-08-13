@@ -8,10 +8,8 @@ using TerrariaRipoffNNF.Utils;
 namespace TerrariaRipoffNNF.Managers.Scripts;
 
 public partial class HostBlockManager : Node {
-    [Export] private HostManager _hostManager;
     [Export] private PackedScene _savedBlockPackedScene;
 
-    public const int BlockSize = 32;
     public const int BlockSpawnDistance = 20;
 
     private SavedBlock[,] _savedBlocks;
@@ -30,7 +28,6 @@ public partial class HostBlockManager : Node {
             _savedBlocks[savedBlock.XPosition, savedBlock.YPosition] = savedBlock;
         }
     }
-
 
     public void SpawnLocalBlocks(IntVector spawnPosition) {
         List<IntVector> region = GameManager.Instance.Region.GetRegion(spawnPosition, BlockSpawnDistance);
@@ -56,40 +53,6 @@ public partial class HostBlockManager : Node {
 
         return savedBlocks;
     }
-
-
-    // private void OnSavedBlockActiveBlockCreated(ActiveBlock activeBlock) {
-    //     activeBlock.TakenDamage += OnActiveBlockTakenDamage;
-    //     AddChild(activeBlock);
-    // }
-
-    // private void OnActiveBlockTakenDamage(ActiveBlock activeBlock, float damageAmount) {
-    //     RpcId(MultiplayerManager.HostId, nameof(ServerDamageSavedBlock),
-    //         activeBlock.SavedBlock.XPosition, activeBlock.SavedBlock.YPosition, damageAmount);
-    // }
-
-    // [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    // private void ServerDamageSavedBlock(int xPosition, int yPosition, float damageAmount) {
-    //     Rpc(nameof(DamageSavedBlock), xPosition, yPosition, damageAmount);
-    // }
-
-    // [Rpc(CallLocal = true)]
-    // private void DamageSavedBlock(int xPosition, int yPosition, float damageAmount) {
-    //     SavedBlock savedBlock = _savedBlocks[xPosition, yPosition];
-    //     savedBlock?.TakeDamage(damageAmount);
-    // }
-
-    // private void OnServerSavedBlockHitZeroHealth(SavedBlock savedBlock) {
-    //     EmitSignal(SignalName.SavedBlockDestroyedOnServer, savedBlock);
-    //     Rpc(nameof(DestroySavedBlock), savedBlock.XPosition, savedBlock.YPosition);
-    // }
-
-    // [Rpc(CallLocal = true)]
-    // private void DestroySavedBlock(int xPosition, int yPosition) {
-    //     _savedBlocks[xPosition, yPosition].ActiveBlock.QueueFree();
-    //     _savedBlocks[xPosition, yPosition] = null;
-    // }
-
 
     // private void OnLocalPlayerMoved(Player player) {
     //     IntVector oldCoordinates = new(player.PreviousXCoords, player.PreviousYCoords);
