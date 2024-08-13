@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Godot;
-using TerrariaRipoffNNF.GameObjects.Scripts;
 using Godot.Collections;
+using TerrariaRipoffNNF.GameObjects.Scripts;
 using TerrariaRipoffNNF.Resources.Scripts;
 using TerrariaRipoffNNF.Utils;
-using Array = Godot.Collections.Array;
 
 namespace TerrariaRipoffNNF.Managers.Scripts;
 
@@ -14,39 +12,50 @@ public partial class HostBlockManager : Node {
     [Export] private PackedScene _savedBlockPackedScene;
 
     public const int BlockSize = 32;
-    private const int BlockSpawnDistance = 20;
+    public const int BlockSpawnDistance = 20;
 
+    private SavedBlock[,] _savedBlocks;
 
     [Signal] public delegate void SavedBlockDestroyedOnServerEventHandler(SavedBlock savedBlock);
 
     public void Initialize(Dictionary worldDictionary) {
+        HostManager.RequireHost();
 
-        
-        // _hostManager.PlayerJoined += OnHostManagerPlayerJoined;
+        _savedBlocks = new SavedBlock[
+            GameManager.Instance.Width, GameManager.Instance.Height];
+
+        Array savedBlockArray = worldDictionary["SavedBlocks"].AsGodotArray();
+        foreach (Dictionary savedBlockDict in savedBlockArray) {
+            SavedBlock savedBlock = SavedBlock.FromDict(savedBlockDict);
+            _savedBlocks[savedBlock.XPosition, savedBlock.YPosition] = savedBlock;
+        }
     }
 
-    // private void OnHostManagerPlayerJoined(Vector2 spawnPosition) {
-    //     IntVector spawnCell = new((int)spawnPosition.X / BlockSize, (int)spawnPosition.Y / BlockSize);
-    //     List<IntVector> region = GetRegion(spawnCell, BlockSpawnDistance);
-    //     List<SavedBlock> savedBlocks = GetSavedBlocksInRegion(region);
-    //     foreach (SavedBlock savedBlock in savedBlocks) {
-    //         ActiveBlock activeBlock = _savedBlockPackedScene.Instantiate<ActiveBlock>();
-    //         activeBlock.Initialize(savedBlock);
-    //         GameManager.Instance.BlockParent.AddChild(activeBlock, true);
-    //     }
-    // }
 
-    // private List<SavedBlock> GetSavedBlocksInRegion(List<IntVector> region) {
-    //     List<SavedBlock> savedBlocks = new();
-    //     foreach (IntVector coords in region) {
-    //         SavedBlock savedBlock = _savedBlocks[coords.X, coords.Y];
-    //         if (savedBlock is null) continue;
-    //         savedBlocks.Add(savedBlock);
-    //     }
-    //
-    //     return savedBlocks;
-    // }
+    public void SpawnLocalBlocks(IntVector spawnPosition) {
+        List<IntVector> region = GameManager.Instance.Region.GetRegion(spawnPosition, BlockSpawnDistance);
+        List<SavedBlock> savedBlocks = GetSavedBlocksInRegion(region);
+        foreach (SavedBlock savedBlock in savedBlocks) {
+            SpawnBlock(savedBlock);
+        }
+    }
 
+    private void SpawnBlock(SavedBlock savedBlock) {
+        ActiveBlock activeBlock = _savedBlockPackedScene.Instantiate<ActiveBlock>();
+        activeBlock.Initialize(savedBlock);
+        GameManager.Instance.BlockParent.AddChild(activeBlock, true);
+    }
+
+    private List<SavedBlock> GetSavedBlocksInRegion(List<IntVector> region) {
+        List<SavedBlock> savedBlocks = new();
+        foreach (IntVector coords in region) {
+            SavedBlock savedBlock = _savedBlocks[coords.X, coords.Y];
+            if (savedBlock is null) continue;
+            savedBlocks.Add(savedBlock);
+        }
+
+        return savedBlocks;
+    }
 
 
     // private void OnSavedBlockActiveBlockCreated(ActiveBlock activeBlock) {

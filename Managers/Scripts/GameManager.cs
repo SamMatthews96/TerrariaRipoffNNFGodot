@@ -7,15 +7,15 @@ using TerrariaRipoffNNF.Utils;
 namespace TerrariaRipoffNNF.Managers.Scripts;
 
 public partial class GameManager : Node {
+    public static GameManager Instance { get; private set; }
     private PlayerInfo _localPlayerInfo;
 
     [Export] public int Width { get; private set; }
     [Export] public int Height { get; private set; }
     [Export] public Region Region { get; private set; }
-
-    public static GameManager Instance { get; private set; }
     [Export] public Node BlockParent { get; private set; }
     [Export] public PackedScene HostManagerScene { get; private set; }
+
     public bool IsHost => Multiplayer.GetUniqueId() == Manager.MultiplayerHostId;
 
     [Signal] public delegate void PlayerJoinedEventHandler(string playerUniqueName);
@@ -35,19 +35,15 @@ public partial class GameManager : Node {
             HostManager hostManager = HostManagerScene.Instantiate<HostManager>();
             AddChild(hostManager);
             hostManager.Initialize(world);
-        } else {
-            RpcId(Manager.MultiplayerHostId, nameof(ServerHandleNewClient),
-                Multiplayer.GetUniqueId(), _localPlayerInfo.UniqueName);
         }
 
         _localPlayerInfo = playerInfo;
+        RpcId(Manager.MultiplayerHostId, nameof(ServerHandleNewClient),
+            _localPlayerInfo.UniqueName);
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    private void ServerHandleNewClient(int clientId, string playerUniqueName) {
-        // EmitSignal(SignalName.PlayerJoined, playerUniqueName);
-        // RpcId(clientId, nameof(SetWidthAndHeight), Width, Height);
+    private void ServerHandleNewClient(string playerUniqueName) {
+        EmitSignal(SignalName.PlayerJoined, playerUniqueName);
     }
-
-
 }

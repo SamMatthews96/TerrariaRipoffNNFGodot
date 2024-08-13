@@ -10,11 +10,9 @@ using Array = Godot.Collections.Array;
 namespace TerrariaRipoffNNF.Resources.Scripts;
 
 public partial class SavedBlock : Resource, ISavedGameObject {
-    [Signal]
-    public delegate void HitZeroHealthEventHandler(SavedBlock savedBlock);
+    [Signal] public delegate void HitZeroHealthEventHandler(SavedBlock savedBlock);
 
-    [Signal]
-    public delegate void ActiveBlockCreatedEventHandler(ActiveBlock activeBlock);
+    [Signal] public delegate void ActiveBlockCreatedEventHandler(ActiveBlock activeBlock);
 
     public int XPosition { get; }
     public int YPosition { get; }
@@ -48,8 +46,7 @@ public partial class SavedBlock : Resource, ISavedGameObject {
             return Builder.New(blockType, xPosition, yPosition)
                 .WithCurrentHealth(currentHealth)
                 .Build();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             GD.PrintErr("error reading SavedBlock from dictionary");
             GD.PrintErr(e);
             throw new NotImplementedException();
