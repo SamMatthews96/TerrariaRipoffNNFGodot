@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using Godot;
 using Godot.Collections;
 using TerrariaRipoffNNF.GameObjects.Scripts;
 using TerrariaRipoffNNF.Managers.Scripts;
 using TerrariaRipoffNNF.Utils;
-using Array = Godot.Collections.Array;
 
 namespace TerrariaRipoffNNF.Resources.Scripts;
 
@@ -17,16 +15,9 @@ public partial class SavedBlock : Resource, ISavedGameObject {
     public int XPosition { get; }
     public int YPosition { get; }
     public BlockType BlockType { get; }
-    public float CurrentHealth { get; private set; }
+    public float CurrentHealth { get; set; }
     public ActiveBlock ActiveBlock { get; private set; }
     public IntVector GridPosition { get; }
-
-    public void TakeDamage(float damageAmount) {
-        CurrentHealth -= damageAmount;
-        if (CurrentHealth <= 0) {
-            EmitSignal(SignalName.HitZeroHealth, this);
-        }
-    }
 
     public Dictionary Serialize() {
         Dictionary serializedData = new();

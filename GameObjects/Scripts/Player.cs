@@ -30,8 +30,6 @@ public partial class Player : CharacterBody2D {
 
     private int PeerId => Name.ToString().ToInt();
     private bool IsLocalPlayer => Multiplayer.GetUniqueId() == PeerId;
-    // public IntVector GridPosition => new(XCoords, YCoords);
-    // public static Player LocalPlayer { get; private set; }
 
     [Signal] public delegate void LocalPlayerMovedEventHandler(Player player);
 

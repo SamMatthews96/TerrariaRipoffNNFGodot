@@ -26,15 +26,12 @@ public partial class GameManager : Node {
 
     [Signal] public delegate void PlayerJoinedEventHandler(PlayerInfo playerInfo, int peerId);
 
-    public override void _EnterTree() {
+    public void Initialize(PlayerInfo playerInfo, Dictionary world) {
         if (Instance is not null) {
             throw new Exception("[20240808.1730.1] GameManager already instantiated");
         }
 
         Instance = this;
-    }
-
-    public void Initialize(PlayerInfo playerInfo, Dictionary world) {
         if (IsHost) {
             Width = (int)world["Width"];
             Height = (int)world["Height"];

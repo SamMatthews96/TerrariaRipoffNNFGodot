@@ -1,21 +1,33 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Godot;
 using Godot.Collections;
 using TerrariaRipoffNNF.GameObjects.Scripts;
 using TerrariaRipoffNNF.Resources.Scripts;
 using TerrariaRipoffNNF.Utils;
+using Array = Godot.Collections.Array;
 
 namespace TerrariaRipoffNNF.Managers.Scripts;
 
 public partial class HostBlockManager : Node {
+    public static HostBlockManager Instance { get; private set; }
+    
     [Export] private PackedScene _savedBlockPackedScene;
 
     public const int BlockSpawnDistance = 20;
 
     private SavedBlock[,] _savedBlocks;
 
-    [Signal] public delegate void SavedBlockDestroyedOnServerEventHandler(SavedBlock savedBlock);
+    [Signal] public delegate void BlockDestroyedEventHandler(SavedBlock savedBlock);
 
+    public override void _EnterTree() {
+        if (Instance is not null) {
+            throw new Exception("[20240814.0048.1] HostManager already instantiated");
+        }
+
+        Instance = this;
+    }
+    
     public void Initialize(Dictionary worldDictionary) {
         HostManager.RequireHost();
 
@@ -40,6 +52,7 @@ public partial class HostBlockManager : Node {
     private void SpawnBlock(SavedBlock savedBlock) {
         ActiveBlock activeBlock = _savedBlockPackedScene.Instantiate<ActiveBlock>();
         activeBlock.Initialize(savedBlock);
+        activeBlock.TakenDamage += OnActiveBlockTakenDamage;
         GameManager.Instance.BlockParent.AddChild(activeBlock, true);
     }
 
@@ -52,6 +65,16 @@ public partial class HostBlockManager : Node {
         }
 
         return savedBlocks;
+    }
+
+    private void OnActiveBlockTakenDamage(ActiveBlock activeBlock, float damageAmount) {
+        SavedBlock savedBlock = activeBlock.SavedBlock;
+        savedBlock.CurrentHealth -= damageAmount;
+        if (savedBlock.CurrentHealth > 0) return;
+        _savedBlocks[savedBlock.XPosition, savedBlock.YPosition] = null;
+        activeBlock.QueueFree();
+
+        EmitSignal(SignalName.BlockDestroyed, savedBlock);
     }
 
     // private void OnLocalPlayerMoved(Player player) {

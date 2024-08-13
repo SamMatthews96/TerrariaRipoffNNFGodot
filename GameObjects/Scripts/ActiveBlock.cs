@@ -1,4 +1,3 @@
-using System;
 using Godot;
 using Godot.Collections;
 using TerrariaRipoffNNF.Managers.Scripts;
@@ -22,7 +21,7 @@ public partial class ActiveBlock : StaticBody2D {
 
     public override void _Ready() {
         SavedBlock = SavedBlock.FromDict(_savedBlockDictionary);
-        
+
         Position = new Vector2(
             SavedBlock.XPosition * GameManager.BlockSize,
             SavedBlock.YPosition * GameManager.BlockSize);
@@ -30,10 +29,13 @@ public partial class ActiveBlock : StaticBody2D {
     }
 
     private void OnInputEvent(Node _, InputEvent e, int __) {
-        if (e is InputEventMouseButton mouseEvent) {
-            // EmitSignal(SignalName.TakenDamage, this, 100);
+        if (e is InputEventMouseButton) {
+            RpcId(Manager.MultiplayerHostId, nameof(ServerHandleTakeDamage), 100f);
         }
     }
 
- 
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+    private void ServerHandleTakeDamage(float damageAmount) {
+        EmitSignal(SignalName.TakenDamage, this, damageAmount);
+    }
 }

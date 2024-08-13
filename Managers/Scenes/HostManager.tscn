@@ -1,21 +1,25 @@
-[gd_scene load_steps=6 format=3 uid="uid://cvfy8a4lwu7a2"]
+[gd_scene load_steps=8 format=3 uid="uid://cvfy8a4lwu7a2"]
 
 [ext_resource type="Script" path="res://Managers/Scripts/HostManager.cs" id="1_n5rv5"]
 [ext_resource type="Script" path="res://Managers/Scripts/HostBlockManager.cs" id="2_ftv5b"]
 [ext_resource type="PackedScene" uid="uid://me8wg1m67cje" path="res://GameObjects/Scenes/ActiveBlock.tscn" id="3_jxp1u"]
 [ext_resource type="Script" path="res://Managers/Scripts/HostPlayerManager.cs" id="4_mq2n8"]
 [ext_resource type="PackedScene" uid="uid://bx6lgpicpfal4" path="res://GameObjects/Scenes/Player.tscn" id="5_e5j4r"]
+[ext_resource type="Script" path="res://Managers/Scripts/HostPickupManager.cs" id="6_duq6r"]
+[ext_resource type="PackedScene" uid="uid://dq4nb0kwitffr" path="res://GameObjects/Scenes/ActiveItemPickup.tscn" id="7_erego"]
 
-[node name="HostManager" type="Node" node_paths=PackedStringArray("_hostBlockManager", "_hostPlayerManager")]
+[node name="HostManager" type="Node"]
 script = ExtResource("1_n5rv5")
-_hostBlockManager = NodePath("HostBlockManager")
-_hostPlayerManager = NodePath("HostPlayerManager")
 
 [node name="HostBlockManager" type="Node" parent="."]
 script = ExtResource("2_ftv5b")
 _savedBlockPackedScene = ExtResource("3_jxp1u")
 
-[node name="HostPlayerManager" type="Node" parent="." node_paths=PackedStringArray("_hostManager")]
+[node name="HostPlayerManager" type="Node" parent="."]
 script = ExtResource("4_mq2n8")
 _hostPlayerPackedScene = ExtResource("5_e5j4r")
+
+[node name="HostPickupManager" type="Node" parent="." node_paths=PackedStringArray("_hostManager")]
+script = ExtResource("6_duq6r")
+_savedItemPickupPackedScene = ExtResource("7_erego")
 _hostManager = NodePath("..")

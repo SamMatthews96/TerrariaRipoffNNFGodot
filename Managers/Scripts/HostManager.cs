@@ -7,9 +7,8 @@ using TerrariaRipoffNNF.Utils;
 namespace TerrariaRipoffNNF.Managers.Scripts;
 
 public partial class HostManager : Node {
-    [Export] private HostBlockManager _hostBlockManager;
-    [Export] private HostPlayerManager _hostPlayerManager;
-    
+    public static HostManager Instance { get; private set; }
+
     public Vector2 DefaultSpawnPosition { get; private set; }
 
     public static void RequireHost() {
@@ -18,23 +17,27 @@ public partial class HostManager : Node {
         }
     }
 
-    public void Initialize(Dictionary worldDictionary) {
+    public override void _EnterTree() {
         RequireHost();
-        
+        if (Instance is not null) {
+            throw new Exception("[20240808.1730.1] GameManager already instantiated");
+        }
+
+        Instance = this;
+    }
+
+    public void Initialize(Dictionary worldDictionary) {
         DefaultSpawnPosition = new Vector2(
             (float)worldDictionary["DefaultSpawnPosition"].AsGodotArray()[0].AsDouble(),
             (float)worldDictionary["DefaultSpawnPosition"].AsGodotArray()[1].AsDouble());
-        
-        _hostBlockManager.Initialize(worldDictionary);
-        _hostPlayerManager.Initialize(worldDictionary);
-        
+
+        HostBlockManager.Instance.Initialize(worldDictionary);
+
         GameManager.Instance.PlayerJoined += OnGameManagerPlayerJoined;
     }
 
     private void OnGameManagerPlayerJoined(PlayerInfo playerInfo, int peerId) {
-        
-        _hostBlockManager.SpawnLocalBlocks(new IntVector(DefaultSpawnPosition));
-        _hostPlayerManager.SpawnPlayer(peerId, playerInfo);
-        
+        HostBlockManager.Instance.SpawnLocalBlocks(new IntVector(DefaultSpawnPosition));
+        HostPlayerManager.Instance.SpawnPlayer(peerId, playerInfo);
     }
 }
