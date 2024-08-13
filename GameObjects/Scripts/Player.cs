@@ -29,6 +29,7 @@ public partial class Player : CharacterBody2D {
     public int PreviousYCoords { get; private set; }
 
     private int PeerId => Name.ToString().ToInt();
+    private bool IsLocalPlayer => Multiplayer.GetUniqueId() == PeerId;
     // public IntVector GridPosition => new(XCoords, YCoords);
     // public static Player LocalPlayer { get; private set; }
 
@@ -36,6 +37,12 @@ public partial class Player : CharacterBody2D {
 
     public override void _Ready() {
         Position = _spawnPosition;
+
+        if (!IsLocalPlayer) return;
+        camera.Enabled = true;
+        InputManager.Instance.HorizontalInputChanged += newInput => horizontalInput = newInput;
+        InputManager.Instance.JumpPressed += OnJumpPressed;
+        InputManager.Instance.MouseClicked += LogCellUnderMouse;
     }
 
     public void Initialize(int peerId, PlayerInfo playerInfo, Vector2 spawnPosition) {
@@ -47,18 +54,6 @@ public partial class Player : CharacterBody2D {
 
     public override void _EnterTree() {
         positionSynchronizer.SetMultiplayerAuthority(PeerId);
-
-        // if (peerId != Multiplayer.GetUniqueId()) return;
-        // IntVector spawnPosition = WorldManager.Instance.GetPlayerSpawnPosition();
-        //
-        // Position = new Vector2(
-        //     spawnPosition.X * HostBlockManager.BlockSize, spawnPosition.Y * HostBlockManager.BlockSize);
-        //
-        // LocalPlayer = this;
-        // camera.Enabled = true;
-        // InputManager.Instance.HorizontalInputChanged += newInput => horizontalInput = newInput;
-        // InputManager.Instance.JumpPressed += OnJumpPressed;
-        // InputManager.Instance.MouseClicked += LogCellUnderMouse;
     }
 
     public override void _PhysicsProcess(double delta) {
