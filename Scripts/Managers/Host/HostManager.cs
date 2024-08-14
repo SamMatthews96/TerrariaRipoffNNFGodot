@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Godot;
 using Godot.Collections;
 using TerrariaRipoffNNF.Scripts.Utils;
@@ -38,7 +39,10 @@ public partial class HostManager : Node {
     }
 
     private void OnGameManagerPlayerJoined(PlayerInfo playerInfo, int peerId) {
-        HostBlockManager.Instance.SpawnLocalBlocks(new IntVector(DefaultSpawnPosition));
+        IntVector spawnPosition = new(DefaultSpawnPosition);
+        List<IntVector> region = GameManager.Instance.Region.GetRegion(
+            spawnPosition, HostBlockManager.BlockSpawnDistance);
+        HostBlockManager.Instance.SpawnBlocksInRegion(region);
         HostPlayerManager.Instance.SpawnPlayer(peerId, playerInfo);
     }
 }

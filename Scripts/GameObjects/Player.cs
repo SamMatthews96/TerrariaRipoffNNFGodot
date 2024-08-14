@@ -2,7 +2,9 @@ using System;
 using Godot;
 using Godot.Collections;
 using TerrariaRipoffNNF.Scripts.Managers;
+using TerrariaRipoffNNF.Scripts.Managers.Host;
 using TerrariaRipoffNNF.Scripts.Resources;
+using TerrariaRipoffNNF.Scripts.Utils;
 
 namespace TerrariaRipoffNNF.Scripts.GameObjects;
 
@@ -21,15 +23,16 @@ public partial class Player : CharacterBody2D {
     private float xVelocity;
     private float yVelocity;
 
-    public int XCoords => (int)Math.Round(Position.X / GameManager.BlockSize);
-    public int YCoords => (int)Math.Round(Position.Y / GameManager.BlockSize);
-    public int PreviousXCoords { get; private set; }
-    public int PreviousYCoords { get; private set; }
+    private IntVector Coords => new(
+        (int)Math.Round(Position.X / GameManager.BlockSize),
+        (int)Math.Round(Position.Y / GameManager.BlockSize));
+
+    private IntVector _previousCoords;
 
     private int PeerId => Name.ToString().ToInt();
     private bool IsLocalPlayer => Multiplayer.GetUniqueId() == PeerId;
 
-    [Signal] public delegate void LocalPlayerMovedEventHandler(Player player);
+    [Signal] public delegate void MovedCellEventHandler(Dictionary positionChange);
 
     public override void _Ready() {
         Position = _spawnPosition;
@@ -42,11 +45,12 @@ public partial class Player : CharacterBody2D {
     }
 
     public void Initialize(int peerId, PlayerInfo playerInfo, Vector2 spawnPosition) {
+        HostManager.RequireHost();
+
         Name = peerId.ToString();
         _playerInfoDictionary = playerInfo.Serialize();
         _spawnPosition = spawnPosition;
     }
-
 
     public override void _EnterTree() {
         positionSynchronizer.SetMultiplayerAuthority(PeerId);
@@ -54,11 +58,9 @@ public partial class Player : CharacterBody2D {
 
     public override void _PhysicsProcess(double delta) {
         if (Multiplayer.GetUniqueId() != PeerId) return;
-        PreviousXCoords = XCoords;
-        PreviousYCoords = YCoords;
 
+        _previousCoords = Coords;
         isFalling = !TestMove(Transform, new Vector2(0, 0.1f));
-
         xVelocity = speed * horizontalInput;
         if (isFalling) {
             yVelocity += (float)delta * gravityCoefficient;
@@ -69,10 +71,21 @@ public partial class Player : CharacterBody2D {
         Velocity = new Vector2(xVelocity, yVelocity);
         MoveAndSlide();
 
-        if (PreviousXCoords != XCoords || PreviousYCoords != YCoords) {
-            EmitSignal(SignalName.LocalPlayerMoved, this);
-        }
+        if (_previousCoords == Coords) return;
+        Dictionary positionChange = new() {
+            { "X", Coords.X },
+            { "Y", Coords.Y },
+            { "PreviousX", _previousCoords.X },
+            { "PreviousY", _previousCoords.Y }
+        };
+        RpcId(Manager.MultiplayerHostId, nameof(ServerMovedCell), positionChange);
     }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+    private void ServerMovedCell(Dictionary positionChange) {
+        EmitSignal(SignalName.MovedCell, positionChange);
+    }
+    
 
     private void LogCellUnderMouse(Vector2 vector) {
         Vector2 mousePos = GetGlobalMousePosition();

@@ -5,6 +5,18 @@ using Array = Godot.Collections.Array;
 namespace TerrariaRipoffNNF.Scripts.Utils;
 
 public struct IntVector {
+    public bool Equals(IntVector other) {
+        return X == other.X && Y == other.Y;
+    }
+
+    public override bool Equals(object obj) {
+        return obj is IntVector other && Equals(other);
+    }
+
+    public override int GetHashCode() {
+        return HashCode.Combine(X, Y);
+    }
+
     public int X { get; }
     public int Y { get; }
 
@@ -20,6 +32,14 @@ public struct IntVector {
 
     public static IntVector operator -(IntVector a, IntVector b) {
         return new IntVector(a.X - b.X, a.Y - b.Y);
+    }
+
+    public static bool operator ==(IntVector a, IntVector b) {
+        return a.X == b.X && a.Y == b.Y;
+    }
+
+    public static bool operator !=(IntVector a, IntVector b) {
+        return !(a == b);
     }
 
     public Array ToSerialised() {

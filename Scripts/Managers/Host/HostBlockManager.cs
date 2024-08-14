@@ -40,10 +40,11 @@ public partial class HostBlockManager : Node {
             SavedBlock savedBlock = SavedBlock.FromDict(savedBlockDict);
             _savedBlocks[savedBlock.XPosition, savedBlock.YPosition] = savedBlock;
         }
+
+        HostPlayerManager.Instance.PlayerSpawned += OnPlayerManagerPlayerSpawned;
     }
 
-    public void SpawnLocalBlocks(IntVector spawnPosition) {
-        List<IntVector> region = GameManager.Instance.Region.GetRegion(spawnPosition, BlockSpawnDistance);
+    public void SpawnBlocksInRegion(List<IntVector> region) {
         List<SavedBlock> savedBlocks = GetSavedBlocksInRegion(region);
         foreach (SavedBlock savedBlock in savedBlocks) {
             if (_activeBlocks[savedBlock.XPosition, savedBlock.YPosition] is not null) continue;
@@ -52,6 +53,10 @@ public partial class HostBlockManager : Node {
     }
 
     private void SpawnBlock(SavedBlock savedBlock) {
+        if (_activeBlocks[savedBlock.XPosition, savedBlock.YPosition] is not null) {
+            throw new Exception("[20240814.2208.1] Block already spawned");
+        }
+
         ActiveBlock activeBlock = _savedBlockPackedScene.Instantiate<ActiveBlock>();
         _activeBlocks[savedBlock.XPosition, savedBlock.YPosition] = activeBlock;
         activeBlock.Initialize(savedBlock);
@@ -80,22 +85,25 @@ public partial class HostBlockManager : Node {
         EmitSignal(SignalName.BlockDestroyed, savedBlock);
     }
 
-    // private void OnLocalPlayerMoved(Player player) {
-    //     IntVector oldCoordinates = new(player.PreviousXCoords, player.PreviousYCoords);
-    //     IntVector newCoordinates = new(player.XCoords, player.YCoords);
-    //     List<IntVector> newRegion = GetRegionDelta(
-    //         newCoordinates, oldCoordinates, BlockRenderDistance);
-    //
-    //     List<SavedBlock> savedBlocksToWatch = GetSavedBlocksInRegion(newRegion);
-    //     foreach (SavedBlock savedBlock in savedBlocksToWatch) {
-    //         savedBlock.AddWatcher(player);
-    //     }
-    //
-    //     List<IntVector> oldRegion = GetRegionDelta(
-    //         oldCoordinates, newCoordinates, BlockRenderDistance);
-    //     List<SavedBlock> savedBlocksToUnwatch = GetSavedBlocksInRegion(oldRegion);
-    //     foreach (SavedBlock savedBlock in savedBlocksToUnwatch) {
-    //         savedBlock.RemoveWatcher(player);
-    //     }
-    // }
+    private void OnPlayerManagerPlayerSpawned(Player player) {
+        GD.Print("here 123");
+        GD.Print(player);
+        player.MovedCell += OnLocalPlayerMoved;
+    }
+
+    private void OnLocalPlayerMoved(Dictionary positionChange) {
+        IntVector oldCoordinates = new(
+            (int)positionChange["PreviousX"], (int)positionChange["PreviousY"]);
+        IntVector newCoordinates = new(
+            (int)positionChange["X"], (int)positionChange["Y"]);
+        
+        List<IntVector> newRegion = GameManager.Instance.Region.GetRegionDelta(
+            newCoordinates, oldCoordinates, BlockSpawnDistance);
+        
+        SpawnBlocksInRegion(newRegion);
+
+        // List<IntVector> oldRegion = GameManager.Instance.Region.GetRegionDelta(
+        //     oldCoordinates, newCoordinates, BlockSpawnDistance);
+        // List<SavedBlock> savedBlocksToUnwatch = GetSavedBlocksInRegion(oldRegion);
+    }
 }
