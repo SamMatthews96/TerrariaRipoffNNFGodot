@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace TerrariaRipoffNNF.Resources.Scripts; 
+namespace TerrariaRipoffNNF.Scripts.Resources; 
 
 public partial class InventoryItem : Resource {
     public InventoryItemType Type { get; private set; }

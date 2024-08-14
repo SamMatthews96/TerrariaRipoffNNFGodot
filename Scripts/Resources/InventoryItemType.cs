@@ -1,8 +1,7 @@
-﻿
-using Godot;
+﻿using Godot;
 using Godot.Collections;
 
-namespace TerrariaRipoffNNF.Resources.Scripts; 
+namespace TerrariaRipoffNNF.Scripts.Resources; 
 
 public partial class InventoryItemType : Resource {
     private const string RESOURCE_PATH_KEY = "ResourcePath";

@@ -1,8 +1,7 @@
 using Godot;
-using TerrariaRipoffNNF.Managers.Scripts;
-using TerrariaRipoffNNF.Resources.Scripts;
+using TerrariaRipoffNNF.Scripts.Resources;
 
-namespace TerrariaRipoffNNF.GameObjects.Scripts;
+namespace TerrariaRipoffNNF.Scripts.GameObjects;
 
 public partial class ActiveItemPickup : RigidBody2D {
     private static readonly PackedScene PackedScene =

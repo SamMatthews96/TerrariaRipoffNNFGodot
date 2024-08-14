@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using Godot;
 using Godot.Collections;
-using TerrariaRipoffNNF.GameObjects.Scripts;
-using TerrariaRipoffNNF.Resources.Scripts;
-using TerrariaRipoffNNF.Utils;
+using TerrariaRipoffNNF.Scripts.GameObjects;
+using TerrariaRipoffNNF.Scripts.Resources;
+using TerrariaRipoffNNF.Scripts.Utils;
 using Array = Godot.Collections.Array;
 
-namespace TerrariaRipoffNNF.Managers.Scripts;
+namespace TerrariaRipoffNNF.Scripts.Managers.Host;
 
 public partial class HostBlockManager : Node {
     public static HostBlockManager Instance { get; private set; }
@@ -43,6 +43,11 @@ public partial class HostBlockManager : Node {
         List<IntVector> region = GameManager.Instance.Region.GetRegion(spawnPosition, BlockSpawnDistance);
         List<SavedBlock> savedBlocks = GetSavedBlocksInRegion(region);
         foreach (SavedBlock savedBlock in savedBlocks) {
+            // todo this creates duplicates blocks, fix it
+            /*
+             * need a record of active blocks
+             * 
+             */
             SpawnBlock(savedBlock);
         }
     }

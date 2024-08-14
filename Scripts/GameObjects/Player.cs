@@ -1,12 +1,10 @@
 using System;
 using Godot;
 using Godot.Collections;
-using TerrariaRipoffNNF.Managers.Scripts;
-using TerrariaRipoffNNF.Resources.Scripts;
-using TerrariaRipoffNNF.Scenes.Scripts;
-using TerrariaRipoffNNF.Utils;
+using TerrariaRipoffNNF.Scripts.Managers;
+using TerrariaRipoffNNF.Scripts.Resources;
 
-namespace TerrariaRipoffNNF.GameObjects.Scripts;
+namespace TerrariaRipoffNNF.Scripts.GameObjects;
 
 public partial class Player : CharacterBody2D {
     [Export] private MultiplayerSynchronizer positionSynchronizer;

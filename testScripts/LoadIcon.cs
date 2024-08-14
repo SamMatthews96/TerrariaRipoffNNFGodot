@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using Godot;
 
-namespace TerrariaRipoffNNF.Scenes; 
+namespace TerrariaRipoffNNF.testScripts; 
 
 public partial class LoadIcon : Node2D {
 	[Export] private Label label;

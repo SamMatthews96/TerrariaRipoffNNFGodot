@@ -1,10 +1,10 @@
 ﻿using System;
 using Godot;
-using TerrariaRipoffNNF.GameObjects.Scripts;
-using TerrariaRipoffNNF.Managers.Scripts;
-using TerrariaRipoffNNF.Utils;
+using TerrariaRipoffNNF.Scripts.Utils;
+using ActiveItemPickup = TerrariaRipoffNNF.Scripts.GameObjects.ActiveItemPickup;
+using GameManager = TerrariaRipoffNNF.Scripts.Managers.GameManager;
 
-namespace TerrariaRipoffNNF.Resources.Scripts;
+namespace TerrariaRipoffNNF.Scripts.Resources;
 
 public partial class SavedItemPickup : Resource, ISavedGameObject {
     private bool _isActive = true;

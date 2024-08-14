@@ -1,11 +1,11 @@
 ﻿using System;
 using Godot;
 using Godot.Collections;
-using TerrariaRipoffNNF.GameObjects.Scripts;
-using TerrariaRipoffNNF.Managers.Scripts;
-using TerrariaRipoffNNF.Utils;
+using TerrariaRipoffNNF.Scripts.Managers;
+using TerrariaRipoffNNF.Scripts.Utils;
+using ActiveBlock = TerrariaRipoffNNF.Scripts.GameObjects.ActiveBlock;
 
-namespace TerrariaRipoffNNF.Resources.Scripts;
+namespace TerrariaRipoffNNF.Scripts.Resources;
 
 public partial class SavedBlock : Resource, ISavedGameObject {
     [Signal] public delegate void HitZeroHealthEventHandler(SavedBlock savedBlock);

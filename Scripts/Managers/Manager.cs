@@ -1,10 +1,10 @@
 ﻿using System;
 using Godot;
 using Godot.Collections;
-using TerrariaRipoffNNF.Resources.Scripts;
-using TerrariaRipoffNNF.UI.Scripts;
+using MainMenu = TerrariaRipoffNNF.Scripts.UI.MainMenu;
+using PlayerInfo = TerrariaRipoffNNF.Scripts.Resources.PlayerInfo;
 
-namespace TerrariaRipoffNNF.Managers.Scripts;
+namespace TerrariaRipoffNNF.Scripts.Managers;
 
 public partial class Manager : Node {
     public const int MultiplayerHostId = 1;

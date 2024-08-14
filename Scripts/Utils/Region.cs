@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Godot;
-using TerrariaRipoffNNF.Managers.Scripts;
+using GameManager = TerrariaRipoffNNF.Scripts.Managers.GameManager;
 
-namespace TerrariaRipoffNNF.Utils;
+namespace TerrariaRipoffNNF.Scripts.Utils;
 
 public partial class Region : Node {
     [Export] private GameManager _gameManager;

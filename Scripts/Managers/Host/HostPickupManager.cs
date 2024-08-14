@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using Godot;
-using TerrariaRipoffNNF.Resources.Scripts;
+using TerrariaRipoffNNF.Scripts.Resources;
 
-namespace TerrariaRipoffNNF.Managers.Scripts;
+namespace TerrariaRipoffNNF.Scripts.Managers.Host;
 
 public partial class HostPickupManager : Node {
     public static HostPickupManager Instance { get; private set; }

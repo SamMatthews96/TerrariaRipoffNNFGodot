@@ -1,9 +1,10 @@
 using System;
 using Godot;
 using Godot.Collections;
-using TerrariaRipoffNNF.Resources.Scripts;
+using BlockType = TerrariaRipoffNNF.Scripts.Resources.BlockType;
+using WorldBasicInfo = TerrariaRipoffNNF.Scripts.Resources.WorldBasicInfo;
 
-namespace TerrariaRipoffNNF.Managers.Scripts;
+namespace TerrariaRipoffNNF.Scripts.Managers;
 
 public static class FileManager {
     private const string WORLD_DIR = "user://SavedData/worlds";

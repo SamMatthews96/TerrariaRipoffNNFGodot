@@ -1,7 +1,7 @@
 using Godot;
-using TerrariaRipoffNNF.Resources.Scripts;
+using TerrariaRipoffNNF.Scripts.Resources;
 
-namespace TerrariaRipoffNNF.UI.Scripts; 
+namespace TerrariaRipoffNNF.Scripts.UI; 
 
 public partial class EnterWorldButton : Button {
 	private WorldBasicInfo _worldBasicInfo;

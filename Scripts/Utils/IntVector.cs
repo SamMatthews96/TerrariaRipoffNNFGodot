@@ -2,7 +2,7 @@
 using Godot;
 using Array = Godot.Collections.Array;
 
-namespace TerrariaRipoffNNF.Utils;
+namespace TerrariaRipoffNNF.Scripts.Utils;
 
 public struct IntVector {
     public int X { get; }

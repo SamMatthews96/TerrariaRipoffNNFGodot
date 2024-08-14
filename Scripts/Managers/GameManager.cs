@@ -1,10 +1,10 @@
 ﻿using System;
 using Godot;
 using Godot.Collections;
-using TerrariaRipoffNNF.Resources.Scripts;
-using TerrariaRipoffNNF.Utils;
+using PlayerInfo = TerrariaRipoffNNF.Scripts.Resources.PlayerInfo;
+using Region = TerrariaRipoffNNF.Scripts.Utils.Region;
 
-namespace TerrariaRipoffNNF.Managers.Scripts;
+namespace TerrariaRipoffNNF.Scripts.Managers;
 
 public partial class GameManager : Node {
     #region Children
@@ -35,7 +35,7 @@ public partial class GameManager : Node {
         if (IsHost) {
             Width = (int)world["Width"];
             Height = (int)world["Height"];
-            HostManager hostManager = HostManagerScene.Instantiate<HostManager>();
+            Host.HostManager hostManager = HostManagerScene.Instantiate<Host.HostManager>();
             AddChild(hostManager);
             hostManager.Initialize(world);
         }

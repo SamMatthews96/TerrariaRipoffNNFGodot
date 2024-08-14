@@ -1,9 +1,10 @@
 using Godot;
 using Godot.Collections;
-using TerrariaRipoffNNF.Managers.Scripts;
-using TerrariaRipoffNNF.Resources.Scripts;
+using TerrariaRipoffNNF.Scripts.Managers;
+using TerrariaRipoffNNF.Scripts.Managers.Host;
+using TerrariaRipoffNNF.Scripts.Resources;
 
-namespace TerrariaRipoffNNF.GameObjects.Scripts;
+namespace TerrariaRipoffNNF.Scripts.GameObjects;
 
 public partial class ActiveBlock : StaticBody2D {
     public SavedBlock SavedBlock { get; private set; }
@@ -31,7 +32,7 @@ public partial class ActiveBlock : StaticBody2D {
     private void OnInputEvent(Node _, InputEvent e, int __) {
         if (e is InputEventMouseButton mouseButton) {
             GD.Print("mouse input");
-            
+            GD.Print(Name);            
             GD.Print(Multiplayer.GetUniqueId());
             // RpcId(Manager.MultiplayerHostId, nameof(ServerHandleTakeDamage), 100f);
         }

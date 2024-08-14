@@ -1,6 +1,6 @@
-﻿using TerrariaRipoffNNF.Utils;
+﻿using TerrariaRipoffNNF.Scripts.Utils;
 
-namespace TerrariaRipoffNNF.Resources.Scripts;
+namespace TerrariaRipoffNNF.Scripts.Resources;
 
 public partial class SavedBlock {
     private SavedBlock(BlockType blockType, int xPosition, int yPosition ) {

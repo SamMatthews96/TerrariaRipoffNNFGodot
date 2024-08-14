@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace TerrariaRipoffNNF.Resources.Scripts;
+namespace TerrariaRipoffNNF.Scripts.Resources;
 
 [GlobalClass]
 public partial class BlockType : InventoryItemType {

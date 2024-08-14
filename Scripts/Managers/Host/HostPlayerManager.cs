@@ -1,9 +1,9 @@
 ﻿using System;
 using Godot;
-using TerrariaRipoffNNF.GameObjects.Scripts;
-using TerrariaRipoffNNF.Resources.Scripts;
+using TerrariaRipoffNNF.Scripts.GameObjects;
+using PlayerInfo = TerrariaRipoffNNF.Scripts.Resources.PlayerInfo;
 
-namespace TerrariaRipoffNNF.Managers.Scripts;
+namespace TerrariaRipoffNNF.Scripts.Managers.Host;
 
 public partial class HostPlayerManager : Node {
     public static HostPlayerManager Instance { get; private set; }

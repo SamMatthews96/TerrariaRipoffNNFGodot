@@ -1,9 +1,9 @@
 using System;
 using Godot.Collections;
-using TerrariaRipoffNNF.Resources.Scripts;
+using TerrariaRipoffNNF.Scripts.Resources;
 using Array = Godot.Collections.Array;
 
-namespace TerrariaRipoffNNF.Managers.Scripts;
+namespace TerrariaRipoffNNF.Scripts.Managers;
 
 public static class WorldCreator {
     // we are going to create a world dictionary

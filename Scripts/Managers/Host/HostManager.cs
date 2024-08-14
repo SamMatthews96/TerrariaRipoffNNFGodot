@@ -1,10 +1,10 @@
 ﻿using System;
 using Godot;
 using Godot.Collections;
-using TerrariaRipoffNNF.Resources.Scripts;
-using TerrariaRipoffNNF.Utils;
+using TerrariaRipoffNNF.Scripts.Utils;
+using PlayerInfo = TerrariaRipoffNNF.Scripts.Resources.PlayerInfo;
 
-namespace TerrariaRipoffNNF.Managers.Scripts;
+namespace TerrariaRipoffNNF.Scripts.Managers.Host;
 
 public partial class HostManager : Node {
     public static HostManager Instance { get; private set; }

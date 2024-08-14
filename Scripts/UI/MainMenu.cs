@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Godot;
 using Godot.Collections;
-using TerrariaRipoffNNF.Managers.Scripts;
-using TerrariaRipoffNNF.Resources.Scripts;
+using TerrariaRipoffNNF.Scripts.Managers;
+using TerrariaRipoffNNF.Scripts.Resources;
 
-namespace TerrariaRipoffNNF.UI.Scripts;
+namespace TerrariaRipoffNNF.Scripts.UI;
 
 public partial class MainMenu : Control {
     [Export] private Control mainMenu;

@@ -1,6 +1,9 @@
-using Godot;
 using System;
+using Godot;
+
 // using TerrariaRipoffNNF.Resources.Scripts;
+
+namespace TerrariaRipoffNNF.testScripts;
 
 public partial class Test : Node {
     private Random random;

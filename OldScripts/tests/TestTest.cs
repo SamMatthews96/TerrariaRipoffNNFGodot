@@ -1,7 +1,7 @@
 ﻿using GdUnit4;
 using Godot;
 
-namespace TerrariaRipoffNNF.tests; 
+namespace TerrariaRipoffNNF.OldScripts.tests; 
 
 [TestSuite]
 public class GdUnitExampleTest {

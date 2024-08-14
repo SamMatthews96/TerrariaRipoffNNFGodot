@@ -1,7 +1,7 @@
 using System;
 using Godot;
 
-namespace TerrariaRipoffNNF.testObjects;
+namespace TerrariaRipoffNNF.testScripts;
 
 public partial class FpsCounter : Label {
     private double _lowestFps = double.MaxValue;
