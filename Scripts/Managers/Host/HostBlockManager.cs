@@ -11,12 +11,13 @@ namespace TerrariaRipoffNNF.Scripts.Managers.Host;
 
 public partial class HostBlockManager : Node {
     public static HostBlockManager Instance { get; private set; }
-    
+
     [Export] private PackedScene _savedBlockPackedScene;
 
     public const int BlockSpawnDistance = 20;
 
     private SavedBlock[,] _savedBlocks;
+    private ActiveBlock[,] _activeBlocks;
 
     [Signal] public delegate void BlockDestroyedEventHandler(SavedBlock savedBlock);
 
@@ -27,9 +28,11 @@ public partial class HostBlockManager : Node {
 
         Instance = this;
     }
-    
+
     public void Initialize(Dictionary worldDictionary) {
         _savedBlocks = new SavedBlock[
+            GameManager.Instance.Width, GameManager.Instance.Height];
+        _activeBlocks = new ActiveBlock[
             GameManager.Instance.Width, GameManager.Instance.Height];
 
         Array savedBlockArray = worldDictionary["SavedBlocks"].AsGodotArray();
@@ -43,17 +46,14 @@ public partial class HostBlockManager : Node {
         List<IntVector> region = GameManager.Instance.Region.GetRegion(spawnPosition, BlockSpawnDistance);
         List<SavedBlock> savedBlocks = GetSavedBlocksInRegion(region);
         foreach (SavedBlock savedBlock in savedBlocks) {
-            // todo this creates duplicates blocks, fix it
-            /*
-             * need a record of active blocks
-             * 
-             */
+            if (_activeBlocks[savedBlock.XPosition, savedBlock.YPosition] is not null) continue;
             SpawnBlock(savedBlock);
         }
     }
 
     private void SpawnBlock(SavedBlock savedBlock) {
         ActiveBlock activeBlock = _savedBlockPackedScene.Instantiate<ActiveBlock>();
+        _activeBlocks[savedBlock.XPosition, savedBlock.YPosition] = activeBlock;
         activeBlock.Initialize(savedBlock);
         activeBlock.TakenDamage += OnActiveBlockTakenDamage;
         GameManager.Instance.BlockParent.AddChild(activeBlock, true);
