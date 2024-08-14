@@ -32,6 +32,7 @@ public partial class HostManager : Node {
             (float)worldDictionary["DefaultSpawnPosition"].AsGodotArray()[1].AsDouble());
 
         HostBlockManager.Instance.Initialize(worldDictionary);
+        HostPickupManager.Instance.Initialize();
 
         GameManager.Instance.PlayerJoined += OnGameManagerPlayerJoined;
     }

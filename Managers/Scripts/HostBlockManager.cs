@@ -29,8 +29,6 @@ public partial class HostBlockManager : Node {
     }
     
     public void Initialize(Dictionary worldDictionary) {
-        HostManager.RequireHost();
-
         _savedBlocks = new SavedBlock[
             GameManager.Instance.Width, GameManager.Instance.Height];
 
