@@ -9,25 +9,14 @@
     <PackageReference Include="NUnit" Version="3.13.3" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="GameManagers\**" />
-    <Compile Remove="OLD\tests\**" />
-    <Compile Remove="Scripts\**" />
-    <Compile Remove="Builders\**" />
+    <Compile Remove="Resources\**" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Remove="GameManagers\**" />
-    <EmbeddedResource Remove="OLD\tests\**" />
     <EmbeddedResource Remove="Scripts\**" />
-    <EmbeddedResource Remove="Builders\**" />
+    <EmbeddedResource Remove="Resources\**" />
   </ItemGroup>
   <ItemGroup>
     <!--Required for GdUnit4-->
     <PackageReference Include="gdUnit4.api" Version="4.2.0-rc*" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="tests\BlockHealthTest.txt" />
-    <Content Include="tests\BlockStabilityTest.txt" />
-    <Content Include="tests\BlockTest.txt" />
-    <Content Include="tests\BlockTestHelpers.txt" />
   </ItemGroup>
 </Project>

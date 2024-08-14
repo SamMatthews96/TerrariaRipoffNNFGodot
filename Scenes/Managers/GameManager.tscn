@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://d3hhhiiydcfft"]
+[gd_scene load_steps=6 format=3 uid="uid://d3hhhiiydcfft"]
 
-[ext_resource type="Script" path="res://Managers/Scripts/GameManager.cs" id="1_5jtsy"]
-[ext_resource type="PackedScene" uid="uid://cvfy8a4lwu7a2" path="res://Managers/Scenes/HostManager.tscn" id="2_0ywm4"]
-[ext_resource type="Script" path="res://Utils/Region.cs" id="3_8fqtf"]
+[ext_resource type="Script" path="res://Scripts/Managers/GameManager.cs" id="1_5jtsy"]
+[ext_resource type="PackedScene" uid="uid://cvfy8a4lwu7a2" path="res://Scenes/Managers/HostManager.tscn" id="2_0ywm4"]
+[ext_resource type="Script" path="res://Scripts/Utils/Region.cs" id="3_8fqtf"]
+[ext_resource type="Script" path="res://Scripts/Managers/InputManager.cs" id="4_lvxpj"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_jdm7i"]
 properties/0/path = NodePath(".:Width")
@@ -29,11 +30,14 @@ replication_config = SubResource("SceneReplicationConfig_jdm7i")
 [node name="BlockParent" type="Node" parent="."]
 
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="BlockParent"]
-_spawnable_scenes = PackedStringArray("res://GameObjects/Scenes/ActiveBlock.tscn")
+_spawnable_scenes = PackedStringArray("res://Scenes/GameObjects/ActiveBlock.tscn")
 spawn_path = NodePath("..")
 
 [node name="PlayerParent" type="Node" parent="."]
 
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="PlayerParent"]
-_spawnable_scenes = PackedStringArray("res://GameObjects/Scenes/Player.tscn")
+_spawnable_scenes = PackedStringArray("res://Scenes/GameObjects/Player.tscn")
 spawn_path = NodePath("..")
+
+[node name="InputManager" type="Node" parent="."]
+script = ExtResource("4_lvxpj")

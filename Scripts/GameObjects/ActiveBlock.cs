@@ -29,8 +29,11 @@ public partial class ActiveBlock : StaticBody2D {
     }
 
     private void OnInputEvent(Node _, InputEvent e, int __) {
-        if (e is InputEventMouseButton) {
-            RpcId(Manager.MultiplayerHostId, nameof(ServerHandleTakeDamage), 100f);
+        if (e is InputEventMouseButton mouseButton) {
+            GD.Print("mouse input");
+            
+            GD.Print(Multiplayer.GetUniqueId());
+            // RpcId(Manager.MultiplayerHostId, nameof(ServerHandleTakeDamage), 100f);
         }
     }
 

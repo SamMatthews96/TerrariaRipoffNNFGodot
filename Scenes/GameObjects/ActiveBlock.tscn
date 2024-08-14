@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://me8wg1m67cje"]
 
-[ext_resource type="Script" path="res://GameObjects/Scripts/ActiveBlock.cs" id="1_5kmh3"]
+[ext_resource type="Script" path="res://Scripts/GameObjects/ActiveBlock.cs" id="1_5kmh3"]
 [ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://Assets/Images/icon.svg" id="2_kpwrr"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cnqwx"]

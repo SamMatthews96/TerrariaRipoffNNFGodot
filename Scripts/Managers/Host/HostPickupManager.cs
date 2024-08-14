@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using Godot;
 using TerrariaRipoffNNF.Resources.Scripts;
-using GodotDictionary = Godot.Collections.Dictionary;
 
 namespace TerrariaRipoffNNF.Managers.Scripts;
 
@@ -27,6 +26,7 @@ public partial class HostPickupManager : Node {
     }
 
     private void OnBlockManagerBlockDestroyed(SavedBlock savedBlock) {
+        
         GD.Print(savedBlock);
         // Vector2 position = new(savedBlock.XPosition * GameManager.BlockSize,
         //     savedBlock.YPosition * GameManager.BlockSize);
