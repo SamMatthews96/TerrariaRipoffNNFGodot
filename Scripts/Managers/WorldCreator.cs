@@ -1,4 +1,5 @@
 using System;
+using Godot;
 using Godot.Collections;
 using TerrariaRipoffNNF.Scripts.Resources;
 using Array = Godot.Collections.Array;
@@ -11,8 +12,8 @@ public static class WorldCreator {
 
     public static void CreateWorld(WorldBasicInfo worldBasicInfo) {
         int mid = 7;
-        BlockType stoneType = FileManager.LoadBlockType("res://Resources/BlockType/Stone.tres");
-        BlockType earthType = FileManager.LoadBlockType("res://Resources/BlockType/Earth.tres");
+        BlockType stoneType = ResourceLoader.Load<BlockType>("res://Resources/BlockType/Stone.tres");
+        BlockType earthType = ResourceLoader.Load<BlockType>("res://Resources/BlockType/Earth.tres");
         BlockType[] types = { stoneType, earthType };
         Random random = new();
 

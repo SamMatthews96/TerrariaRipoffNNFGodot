@@ -3,12 +3,13 @@
 namespace TerrariaRipoffNNF.Scripts.Resources;
 
 public partial class SavedBlock {
-    private SavedBlock(BlockType blockType, int xPosition, int yPosition ) {
-        GridPosition = new IntVector(xPosition, yPosition);
+    private SavedBlock(BlockType blockType, int xPosition, int yPosition) {
         BlockType = blockType;
         XPosition = xPosition;
         YPosition = yPosition;
     }
+
+    private SavedBlock() { }
 
     public class Builder {
         private SavedBlock _savedBlock;
@@ -29,6 +30,7 @@ public partial class SavedBlock {
             if (_savedBlock.CurrentHealth == 0) {
                 _savedBlock.CurrentHealth = _savedBlock.BlockType.MaxHealth;
             }
+
             return _savedBlock;
         }
     }

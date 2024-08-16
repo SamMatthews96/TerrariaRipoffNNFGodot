@@ -10,8 +10,6 @@ public static class FileManager {
     private const string WORLD_DIR = "user://SavedData/worlds";
     // C:\Users\Sam-M\AppData\Roaming\Godot\app_userdata\TerrariaRipoffNNF\SavedData
 
-    private static readonly Dictionary<string, BlockType> LoadedBlockTypes = new();
-
     public static void SaveWorld(Dictionary worldDictionary) {
         try {
             string name = worldDictionary["Name"].ToString();
@@ -90,13 +88,4 @@ public static class FileManager {
         }
     }
 
-    public static BlockType LoadBlockType(string resourcePath) {
-        if (LoadedBlockTypes.TryGetValue(resourcePath, out BlockType type)) {
-            return type;
-        }
-
-        BlockType blockType = ResourceLoader.Load<BlockType>(resourcePath);
-        LoadedBlockTypes.Add(resourcePath, blockType);
-        return blockType;
-    }
 }

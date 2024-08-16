@@ -7,7 +7,7 @@ using ActiveBlock = TerrariaRipoffNNF.Scripts.GameObjects.ActiveBlock;
 
 namespace TerrariaRipoffNNF.Scripts.Resources;
 
-public partial class SavedBlock : Resource, ISavedGameObject {
+public partial class SavedBlock : Resource {
     [Signal] public delegate void HitZeroHealthEventHandler(SavedBlock savedBlock);
 
     [Signal] public delegate void ActiveBlockCreatedEventHandler(ActiveBlock activeBlock);
@@ -16,8 +16,6 @@ public partial class SavedBlock : Resource, ISavedGameObject {
     public int YPosition { get; }
     public BlockType BlockType { get; }
     public float CurrentHealth { get; set; }
-    public ActiveBlock ActiveBlock { get; private set; }
-    public IntVector GridPosition { get; }
 
     public Dictionary Serialize() {
         Dictionary serializedData = new();
@@ -30,7 +28,7 @@ public partial class SavedBlock : Resource, ISavedGameObject {
 
     public static SavedBlock FromDict(Dictionary dictionary) {
         try {
-            BlockType blockType = FileManager.LoadBlockType(dictionary["ResourcePath"].ToString());
+            BlockType blockType = ResourceLoader.Load<BlockType>(dictionary["ResourcePath"].ToString());
             int xPosition = dictionary["X"].ToString().ToInt();
             int yPosition = dictionary["Y"].ToString().ToInt();
             float currentHealth = dictionary["CurrentHealth"].ToString().ToFloat();

@@ -1,15 +1,19 @@
 using System.Collections.Generic;
 using Godot;
+using Godot.Collections;
+using TerrariaRipoffNNF.Scripts.GameObjects;
 using TerrariaRipoffNNF.Scripts.Resources;
+using TerrariaRipoffNNF.Scripts.Utils;
 
 namespace TerrariaRipoffNNF.Scripts.Managers.Host;
 
 public partial class HostPickupManager : Node {
     public static HostPickupManager Instance { get; private set; }
 
-    [Export] private PackedScene _savedItemPickupPackedScene;
+    [Export] private PackedScene _pickupPackedScene;
 
-    private List<SavedItemPickup>[,] _itemPickups;
+    private List<SavedPickup>[,] _savedPickups;
+    private List<ActivePickup>[,] _activePickups;
 
     public override void _EnterTree() {
         if (Instance is not null) {
@@ -20,18 +24,33 @@ public partial class HostPickupManager : Node {
     }
 
     public void Initialize() {
-        _itemPickups = new List<SavedItemPickup>[
+        _savedPickups = new List<SavedPickup>[
+            GameManager.Instance.Width, GameManager.Instance.Height];
+        _activePickups = new List<ActivePickup>[
             GameManager.Instance.Width, GameManager.Instance.Height];
         HostBlockManager.Instance.BlockDestroyed += OnBlockManagerBlockDestroyed;
     }
 
     private void OnBlockManagerBlockDestroyed(SavedBlock savedBlock) {
-        
-        GD.Print(savedBlock);
-        // Vector2 position = new(savedBlock.XPosition * GameManager.BlockSize,
-        //     savedBlock.YPosition * GameManager.BlockSize);
-        // GodotDictionary itemPickupData = savedBlock.BlockType.ToDictionary();
-        // Rpc(nameof(CreateItemPickupOnPeer), itemPickupData, position);
+        Vector2 position = new(savedBlock.XPosition * GameManager.BlockSize,
+            savedBlock.YPosition * GameManager.BlockSize);
+
+        AddPickup(savedBlock.BlockType, position);
+    }
+
+    private void AddPickup(ItemType itemType, Vector2 position) {
+        IntVector coords = new(position / GameManager.BlockSize);
+
+        SavedPickup savedPickup = new(itemType, position);
+        _savedPickups[coords.X, coords.Y] ??= new List<SavedPickup>();
+        _savedPickups[coords.X, coords.Y].Add(savedPickup);
+
+        ActivePickup activePickup = _pickupPackedScene.Instantiate<ActivePickup>();
+        activePickup.Initialize(savedPickup);
+        _activePickups[coords.X, coords.Y] ??= new List<ActivePickup>();
+        _activePickups[coords.X, coords.Y].Add(activePickup);
+
+        GameManager.Instance.BlockParent.AddChild(activePickup, true);
     }
 
     // [Rpc(CallLocal = true)]

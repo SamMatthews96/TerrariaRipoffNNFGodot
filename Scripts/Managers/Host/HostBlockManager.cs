@@ -12,7 +12,7 @@ namespace TerrariaRipoffNNF.Scripts.Managers.Host;
 public partial class HostBlockManager : Node {
     public static HostBlockManager Instance { get; private set; }
 
-    [Export] private PackedScene _savedBlockPackedScene;
+    [Export] private PackedScene _blockPackedScene;
 
     public const int BlockSpawnDistance = 20;
 
@@ -57,11 +57,21 @@ public partial class HostBlockManager : Node {
             throw new Exception("[20240814.2208.1] Block already spawned");
         }
 
-        ActiveBlock activeBlock = _savedBlockPackedScene.Instantiate<ActiveBlock>();
+        ActiveBlock activeBlock = _blockPackedScene.Instantiate<ActiveBlock>();
         _activeBlocks[savedBlock.XPosition, savedBlock.YPosition] = activeBlock;
         activeBlock.Initialize(savedBlock);
         activeBlock.TakenDamage += OnActiveBlockTakenDamage;
         GameManager.Instance.BlockParent.AddChild(activeBlock, true);
+    }
+
+    private void OnActiveBlockTakenDamage(ActiveBlock activeBlock, float damageAmount) {
+        SavedBlock savedBlock = activeBlock.SavedBlock;
+        savedBlock.CurrentHealth -= damageAmount;
+        if (savedBlock.CurrentHealth > 0) return;
+        _savedBlocks[savedBlock.XPosition, savedBlock.YPosition] = null;
+        activeBlock.QueueFree();
+
+        EmitSignal(SignalName.BlockDestroyed, savedBlock);
     }
 
     private List<SavedBlock> GetSavedBlocksInRegion(List<IntVector> region) {
@@ -75,19 +85,7 @@ public partial class HostBlockManager : Node {
         return savedBlocks;
     }
 
-    private void OnActiveBlockTakenDamage(ActiveBlock activeBlock, float damageAmount) {
-        SavedBlock savedBlock = activeBlock.SavedBlock;
-        savedBlock.CurrentHealth -= damageAmount;
-        if (savedBlock.CurrentHealth > 0) return;
-        _savedBlocks[savedBlock.XPosition, savedBlock.YPosition] = null;
-        activeBlock.QueueFree();
-
-        EmitSignal(SignalName.BlockDestroyed, savedBlock);
-    }
-
     private void OnPlayerManagerPlayerSpawned(Player player) {
-        GD.Print("here 123");
-        GD.Print(player);
         player.MovedCell += OnLocalPlayerMoved;
     }
 
@@ -101,9 +99,5 @@ public partial class HostBlockManager : Node {
             newCoordinates, oldCoordinates, BlockSpawnDistance);
         
         SpawnBlocksInRegion(newRegion);
-
-        // List<IntVector> oldRegion = GameManager.Instance.Region.GetRegionDelta(
-        //     oldCoordinates, newCoordinates, BlockSpawnDistance);
-        // List<SavedBlock> savedBlocksToUnwatch = GetSavedBlocksInRegion(oldRegion);
     }
 }

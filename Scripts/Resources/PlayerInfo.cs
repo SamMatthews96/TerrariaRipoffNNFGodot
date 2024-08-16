@@ -9,7 +9,6 @@ public partial class PlayerInfo : Resource {
 
     public string UniqueName { get; private set; }
 
-    // GodotEngine requires a parameterless constructor
     public PlayerInfo() { }
     
     public PlayerInfo(string uuid, string name) {

@@ -28,7 +28,5 @@ public partial class HostPlayerManager : Node {
         GameManager.Instance.PlayerParent.AddChild(player, true);
         
         EmitSignal(SignalName.PlayerSpawned, player);
-        GD.Print("playerSpawned");
-        
     }
 }
