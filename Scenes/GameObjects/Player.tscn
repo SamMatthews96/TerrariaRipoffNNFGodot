@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://bx6lgpicpfal4"]
+[gd_scene load_steps=7 format=3 uid="uid://bx6lgpicpfal4"]
 
 [ext_resource type="Script" path="res://Scripts/GameObjects/Player.cs" id="1_8yy3a"]
 [ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://Assets/Images/icon.svg" id="2_5yc1a"]
+[ext_resource type="Script" path="res://Scripts/GameObjects/Inventory.cs" id="3_vdjfg"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_8kinl"]
 properties/0/path = NodePath(".:_playerInfoDictionary")
@@ -19,11 +20,13 @@ properties/0/replication_mode = 1
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_raw6a"]
 size = Vector2(44, 93)
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("positionSynchronizer", "camera")]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("positionSynchronizer", "camera", "_pickupArea", "_inventory")]
 collision_mask = 2
 script = ExtResource("1_8yy3a")
 positionSynchronizer = NodePath("PositionSync")
 camera = NodePath("Camera2D")
+_pickupArea = NodePath("PickupArea")
+_inventory = NodePath("Inventory")
 
 [node name="PlayerInfoSync" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_8kinl")
@@ -37,8 +40,19 @@ scale = Vector2(0.335, 0.72)
 texture = ExtResource("2_5yc1a")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
 position = Vector2(0, -46.5)
 shape = SubResource("RectangleShape2D_raw6a")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 enabled = false
+
+[node name="PickupArea" type="Area2D" parent="."]
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PickupArea"]
+position = Vector2(0, -46.5)
+shape = SubResource("RectangleShape2D_raw6a")
+
+[node name="Inventory" type="Node" parent="."]
+script = ExtResource("3_vdjfg")

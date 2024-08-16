@@ -1,15 +1,12 @@
 ﻿using System;
 using Godot;
 using Godot.Collections;
-using TerrariaRipoffNNF.Scripts.Managers;
-using TerrariaRipoffNNF.Scripts.Utils;
 using ActiveBlock = TerrariaRipoffNNF.Scripts.GameObjects.ActiveBlock;
 
 namespace TerrariaRipoffNNF.Scripts.Resources;
 
 public partial class SavedBlock : Resource {
     [Signal] public delegate void HitZeroHealthEventHandler(SavedBlock savedBlock);
-
     [Signal] public delegate void ActiveBlockCreatedEventHandler(ActiveBlock activeBlock);
 
     public int XPosition { get; }

@@ -7,9 +7,6 @@ using Array = Godot.Collections.Array;
 namespace TerrariaRipoffNNF.Scripts.Managers;
 
 public static class WorldCreator {
-    // we are going to create a world dictionary
-    // because the current method is degenerate
-
     public static void CreateWorld(WorldBasicInfo worldBasicInfo) {
         int mid = 7;
         BlockType stoneType = ResourceLoader.Load<BlockType>("res://Resources/BlockType/Stone.tres");

@@ -12,6 +12,8 @@ public partial class Player : CharacterBody2D {
     [Export] private MultiplayerSynchronizer positionSynchronizer;
     [Export] private Camera2D camera;
     [Export] private Dictionary _playerInfoDictionary;
+    [Export] private Area2D _pickupArea;
+    [Export] private Inventory _inventory;
 
     [Export] private float speed = 300f;
     [Export] private float gravityCoefficient = 1600;
@@ -34,6 +36,8 @@ public partial class Player : CharacterBody2D {
 
     [Signal] public delegate void MovedCellEventHandler(Dictionary positionChange);
 
+    [Signal] public delegate void PickedUpItemEventHandler(ActivePickup activePickup);
+
     public override void _Ready() {
         Position = _spawnPosition;
 
@@ -41,7 +45,8 @@ public partial class Player : CharacterBody2D {
         camera.Enabled = true;
         InputManager.Instance.HorizontalInputChanged += newInput => horizontalInput = newInput;
         InputManager.Instance.JumpPressed += OnJumpPressed;
-        InputManager.Instance.MouseClicked += LogCellUnderMouse;
+
+        _pickupArea.BodyEntered += OnServerCollidedWithPickup;
     }
 
     public void Initialize(int peerId, PlayerInfo playerInfo, Vector2 spawnPosition) {
@@ -85,18 +90,21 @@ public partial class Player : CharacterBody2D {
     private void ServerMovedCell(Dictionary positionChange) {
         EmitSignal(SignalName.MovedCell, positionChange);
     }
-    
-
-    private void LogCellUnderMouse(Vector2 vector) {
-        Vector2 mousePos = GetGlobalMousePosition();
-        int xPosition = (int)Math.Round(mousePos.X / GameManager.BlockSize);
-        int yPosition = (int)Math.Round(mousePos.Y / GameManager.BlockSize);
-        // EmitSignal(SignalName.LocalPlayerClicked, xPosition, yPosition, "res://Resources/BlockType/Stone.tres");
-    }
 
     private void OnJumpPressed() {
         if (isFalling) return;
         isFalling = true;
         yVelocity = -jumpStrength;
+    }
+
+    private void OnServerCollidedWithPickup(Node node) {
+        if (node is not ActivePickup activePickup) {
+            throw new Exception("[20240816.0934.1] Pickup area collision with non-pickup");
+        }
+        
+        bool success = _inventory.TryAddItems(activePickup.SavedPickup.InventoryItems);
+        if (success) {
+            EmitSignal(SignalName.PickedUpItem, activePickup);
+        }
     }
 }

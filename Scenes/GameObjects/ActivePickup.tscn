@@ -4,7 +4,6 @@
 [ext_resource type="Texture2D" uid="uid://cfc1e8nv4cp1q" path="res://Assets/Images/Earth.png" id="2_v4c4q"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hbjta"]
-size = Vector2(24, 24)
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_ftp5f"]
 properties/0/path = NodePath(".:position")
@@ -20,7 +19,7 @@ collision_mask = 2
 can_sleep = false
 script = ExtResource("1_1lot0")
 _sprite = NodePath("Sprite2D")
-_pickupArea = NodePath("PickupArea")
+_pickupArea = NodePath("")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.16, 0.16)
@@ -31,9 +30,3 @@ shape = SubResource("RectangleShape2D_hbjta")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_ftp5f")
-
-[node name="PickupArea" type="Area2D" parent="."]
-collision_layer = 4
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PickupArea"]
-shape = SubResource("RectangleShape2D_hbjta")

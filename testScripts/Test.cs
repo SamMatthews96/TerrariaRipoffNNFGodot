@@ -1,9 +1,6 @@
-using System;
 using Godot;
-using Godot.Collections;
 using TerrariaRipoffNNF.Scripts.Resources;
 
-// using TerrariaRipoffNNF.Resources.Scripts;
 
 namespace TerrariaRipoffNNF.testScripts;
 

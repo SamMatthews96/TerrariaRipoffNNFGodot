@@ -1,7 +1,6 @@
 using System;
 using Godot;
 using Godot.Collections;
-using BlockType = TerrariaRipoffNNF.Scripts.Resources.BlockType;
 using WorldBasicInfo = TerrariaRipoffNNF.Scripts.Resources.WorldBasicInfo;
 
 namespace TerrariaRipoffNNF.Scripts.Managers;

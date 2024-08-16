@@ -23,11 +23,4 @@ public partial class ItemType : Resource {
         
         return ResourceLoader.Load<ItemType>(resourcePath.ToString());
     }
-
-    /*
-     * Some types that inherit from InventoryItemType will have additional properties.
-     * Other types will be preset and have no additional properties.
-     * Those with no additional properties are only dependant on the resource Path to instantiate
-     * Custom items with additional properties will need to be instantiated from a dictionary
-     */
 }

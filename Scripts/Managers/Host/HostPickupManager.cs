@@ -29,16 +29,25 @@ public partial class HostPickupManager : Node {
         _activePickups = new List<ActivePickup>[
             GameManager.Instance.Width, GameManager.Instance.Height];
         HostBlockManager.Instance.BlockDestroyed += OnBlockManagerBlockDestroyed;
+        HostPlayerManager.Instance.PlayerSpawned += OnPlayerManagerPlayerSpawned;
+    }
+
+    private void OnPlayerManagerPlayerSpawned(Player player) {
+        player.PickedUpItem += OnPlayerPickedUpItem;
+    }
+
+    private void OnPlayerPickedUpItem(ActivePickup activePickup) {
+        DeletePickup(activePickup);
     }
 
     private void OnBlockManagerBlockDestroyed(SavedBlock savedBlock) {
         Vector2 position = new(savedBlock.XPosition * GameManager.BlockSize,
             savedBlock.YPosition * GameManager.BlockSize);
 
-        AddPickup(savedBlock.BlockType, position);
+        CreatePickup(savedBlock.BlockType, position);
     }
 
-    private void AddPickup(ItemType itemType, Vector2 position) {
+    private void CreatePickup(ItemType itemType, Vector2 position) {
         IntVector coords = new(position / GameManager.BlockSize);
 
         SavedPickup savedPickup = new(itemType, position);
@@ -49,32 +58,32 @@ public partial class HostPickupManager : Node {
         activePickup.Initialize(savedPickup);
         _activePickups[coords.X, coords.Y] ??= new List<ActivePickup>();
         _activePickups[coords.X, coords.Y].Add(activePickup);
+        activePickup.MovedCell += OnPickupMovedCell;
 
         GameManager.Instance.BlockParent.AddChild(activePickup, true);
     }
 
-    // [Rpc(CallLocal = true)]
-    // private void CreateItemPickupOnPeer(GodotDictionary itemPickupData, Vector2 position) {
-    //     InventoryItemType inventoryItemType = InventoryItemType.Deserialize(itemPickupData);
-    //
-    //     SavedItemPickup savedItemPickup = new(inventoryItemType, position);
-    //     AddItemPickupToLocation(savedItemPickup);
-    //     // EmitSignal(SignalName.SavedItemPickupCreated, savedItemPickup);
-    // }
+    private void OnPickupMovedCell(ActivePickup activePickup, Dictionary positionChange) {
+        IntVector previousCoords = new(
+            (int)positionChange["PreviousX"], (int)positionChange["PreviousY"]);
+        IntVector coords = new(
+            (int)positionChange["X"], (int)positionChange["Y"]);
 
-    // private void AddItemPickupToLocation(SavedItemPickup savedItemPickup) {
-    //     int xPosition = savedItemPickup.GridPosition.X;
-    //     int yPosition = savedItemPickup.GridPosition.Y;
-    //     _itemPickups[xPosition, yPosition] ??= new List<SavedItemPickup>();
-    //     _itemPickups[xPosition, yPosition].Add(savedItemPickup);
-    // }
-    //
-    // private void RemoveItemPickupFromLocation(SavedItemPickup savedItemPickup) {
-    //     int xPosition = savedItemPickup.GridPosition.X;
-    //     int yPosition = savedItemPickup.GridPosition.Y;
-    //     _itemPickups[xPosition, yPosition].Remove(savedItemPickup);
-    //     if (_itemPickups[xPosition, yPosition].Count == 0) {
-    //         _itemPickups[xPosition, yPosition] = null;
-    //     }
-    // }
+        _savedPickups[previousCoords.X, previousCoords.Y].Remove(activePickup.SavedPickup);
+        _activePickups[previousCoords.X, previousCoords.Y].Remove(activePickup);
+        
+        List<SavedPickup> savedPickupsNewPosition =
+            _savedPickups[coords.X, coords.Y] ??= new List<SavedPickup>();
+        List<ActivePickup> activePickupsNewPosition =
+            _activePickups[coords.X, coords.Y] ??= new List<ActivePickup>();
+        savedPickupsNewPosition.Add(activePickup.SavedPickup);
+        activePickupsNewPosition.Add(activePickup);
+    }
+
+    private void DeletePickup(ActivePickup activePickup) {
+        IntVector coords = new(activePickup.Position / GameManager.BlockSize);
+        _activePickups[coords.X, coords.Y].Remove(activePickup);
+        _savedPickups[coords.X, coords.Y].Remove(activePickup.SavedPickup);
+        activePickup.QueueFree();
+    }
 }
