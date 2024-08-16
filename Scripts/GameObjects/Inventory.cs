@@ -5,7 +5,7 @@ using TerrariaRipoffNNF.Scripts.Resources;
 namespace TerrariaRipoffNNF.Scripts.GameObjects;
 
 public partial class Inventory : Node {
-    public float MaximumSpace { get; private set; }
+    public float MaximumSpace { get; private set; } = 50;
     public float UsedSpace { get; private set; }
 
     private List<InventoryItems> _inventoryItemsList;
@@ -16,6 +16,7 @@ public partial class Inventory : Node {
 
     public bool TryAddItems(InventoryItems newInventoryItems) {
         if (newInventoryItems.TotalSpace > MaximumSpace - UsedSpace) return false;
+        UsedSpace += newInventoryItems.TotalSpace;
 
         InventoryItems currentInventoryItems =
             _inventoryItemsList.Find(inventoryItems =>

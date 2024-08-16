@@ -41,12 +41,14 @@ public partial class Player : CharacterBody2D {
     public override void _Ready() {
         Position = _spawnPosition;
 
+        if (GameManager.Instance.IsHost) {
+            _pickupArea.BodyEntered += OnServerCollidedWithPickup;
+        }
+
         if (!IsLocalPlayer) return;
         camera.Enabled = true;
         InputManager.Instance.HorizontalInputChanged += newInput => horizontalInput = newInput;
         InputManager.Instance.JumpPressed += OnJumpPressed;
-
-        _pickupArea.BodyEntered += OnServerCollidedWithPickup;
     }
 
     public void Initialize(int peerId, PlayerInfo playerInfo, Vector2 spawnPosition) {
@@ -101,7 +103,7 @@ public partial class Player : CharacterBody2D {
         if (node is not ActivePickup activePickup) {
             throw new Exception("[20240816.0934.1] Pickup area collision with non-pickup");
         }
-        
+
         bool success = _inventory.TryAddItems(activePickup.SavedPickup.InventoryItems);
         if (success) {
             EmitSignal(SignalName.PickedUpItem, activePickup);

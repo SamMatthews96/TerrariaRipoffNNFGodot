@@ -1,15 +1,19 @@
 ﻿using Godot;
 using Godot.Collections;
+using TerrariaRipoffNNF.Scripts.Managers;
+using TerrariaRipoffNNF.Scripts.Utils;
 
 namespace TerrariaRipoffNNF.Scripts.Resources;
 
 public partial class SavedPickup : Resource {
     public Vector2 Position { get; private set; }
     public InventoryItems InventoryItems { get; private set; }
+    public IntVector Indices { get; set; }
 
     public SavedPickup(ItemType itemType, Vector2 position, int count = 1) {
         InventoryItems = new InventoryItems(itemType, count);
         Position = position;
+        Indices = new IntVector(position / GameManager.BlockSize);
     }
 
     public Dictionary Serialize() {

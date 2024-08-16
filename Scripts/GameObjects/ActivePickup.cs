@@ -37,7 +37,7 @@ public partial class ActivePickup : RigidBody2D {
         _previousCoords = Coords;
     }
 
-    public override void _Process(double delta) {
+    public override void _PhysicsProcess(double delta) {
         if (!GameManager.Instance.IsHost) return;
 
         if (_previousCoords != Coords) {
