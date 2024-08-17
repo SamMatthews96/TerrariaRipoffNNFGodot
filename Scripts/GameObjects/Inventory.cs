@@ -9,6 +9,8 @@ public partial class Inventory : Node {
     public float UsedSpace { get; private set; }
 
     private List<InventoryItems> _inventoryItemsList;
+    
+    public List<InventoryItems> InventoryItemsList => _inventoryItemsList;
 
     public override void _Ready() {
         _inventoryItemsList = new List<InventoryItems>();

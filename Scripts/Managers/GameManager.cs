@@ -50,5 +50,8 @@ public partial class GameManager : Node {
         PlayerInfo playerInfo = PlayerInfo.FromDict(playerDictionary);
         EmitSignal(SignalName.PlayerJoined, playerInfo, peerId);
     }
+    
+    
+    
 
 }

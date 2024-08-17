@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3 uid="uid://javhx4rej0q4"]
+
+[ext_resource type="Script" path="res://Scripts/Managers/UiManager.cs" id="1_u4pfo"]
+[ext_resource type="Script" path="res://Scripts/UI/InventoryUi.cs" id="2_7evv2"]
+
+[node name="UIManager" type="CanvasLayer" node_paths=PackedStringArray("_inventoryUi")]
+script = ExtResource("1_u4pfo")
+_inventoryUi = NodePath("Inventory")
+
+[node name="Inventory" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("2_7evv2")
+
+[node name="Panel" type="Panel" parent="Inventory"]
+offset_left = 26.0
+offset_top = 32.0
+offset_right = 723.0
+offset_bottom = 633.0

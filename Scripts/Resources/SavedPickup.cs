@@ -7,7 +7,7 @@ namespace TerrariaRipoffNNF.Scripts.Resources;
 
 public partial class SavedPickup : Resource {
     public Vector2 Position { get; private set; }
-    public InventoryItems InventoryItems { get; private set; }
+    public InventoryItems InventoryItems { get; }
     public IntVector Indices { get; set; }
 
     public SavedPickup(ItemType itemType, Vector2 position, int count = 1) {

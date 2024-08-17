@@ -73,7 +73,7 @@ public partial class HostPickupManager : Node {
         _savedPickups[previousCoords.X, previousCoords.Y].Remove(activePickup.SavedPickup);
         _activePickups[previousCoords.X, previousCoords.Y].Remove(activePickup);
         activePickup.SavedPickup.Indices = coords;
-        
+
         List<SavedPickup> savedPickupsNewPosition =
             _savedPickups[coords.X, coords.Y] ??= new List<SavedPickup>();
         List<ActivePickup> activePickupsNewPosition =
@@ -83,8 +83,7 @@ public partial class HostPickupManager : Node {
     }
 
     private void DeletePickup(ActivePickup activePickup) {
-
-        IntVector coords = activePickup.SavedPickup.Indices; 
+        IntVector coords = activePickup.SavedPickup.Indices;
         _activePickups[coords.X, coords.Y].Remove(activePickup);
         _savedPickups[coords.X, coords.Y].Remove(activePickup.SavedPickup);
         activePickup.QueueFree();

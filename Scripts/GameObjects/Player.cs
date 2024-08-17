@@ -4,6 +4,7 @@ using Godot.Collections;
 using TerrariaRipoffNNF.Scripts.Managers;
 using TerrariaRipoffNNF.Scripts.Managers.Host;
 using TerrariaRipoffNNF.Scripts.Resources;
+using TerrariaRipoffNNF.Scripts.UI;
 using TerrariaRipoffNNF.Scripts.Utils;
 
 namespace TerrariaRipoffNNF.Scripts.GameObjects;
@@ -13,7 +14,8 @@ public partial class Player : CharacterBody2D {
     [Export] private Camera2D camera;
     [Export] private Dictionary _playerInfoDictionary;
     [Export] private Area2D _pickupArea;
-    [Export] private Inventory _inventory;
+    [Export] private PackedScene _packedUi;
+    [Export] public Inventory Inventory { get; private set; }
 
     [Export] private float speed = 300f;
     [Export] private float gravityCoefficient = 1600;
@@ -25,11 +27,11 @@ public partial class Player : CharacterBody2D {
     private float xVelocity;
     private float yVelocity;
 
+    private IntVector _previousCoords;
+
     private IntVector Coords => new(
         (int)Math.Round(Position.X / GameManager.BlockSize),
         (int)Math.Round(Position.Y / GameManager.BlockSize));
-
-    private IntVector _previousCoords;
 
     private int PeerId => Name.ToString().ToInt();
     private bool IsLocalPlayer => Multiplayer.GetUniqueId() == PeerId;
@@ -49,6 +51,10 @@ public partial class Player : CharacterBody2D {
         camera.Enabled = true;
         InputManager.Instance.HorizontalInputChanged += newInput => horizontalInput = newInput;
         InputManager.Instance.JumpPressed += OnJumpPressed;
+        
+        UiManager gameUi = _packedUi.Instantiate<UiManager>();
+        gameUi.Initialize(this);
+        GameManager.Instance.AddChild(gameUi);
     }
 
     public void Initialize(int peerId, PlayerInfo playerInfo, Vector2 spawnPosition) {
@@ -104,7 +110,7 @@ public partial class Player : CharacterBody2D {
             throw new Exception("[20240816.0934.1] Pickup area collision with non-pickup");
         }
 
-        bool success = _inventory.TryAddItems(activePickup.SavedPickup.InventoryItems);
+        bool success = Inventory.TryAddItems(activePickup.SavedPickup.InventoryItems);
         if (success) {
             EmitSignal(SignalName.PickedUpItem, activePickup);
         }
