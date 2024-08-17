@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Godot;
+using Godot.Collections;
 using TerrariaRipoffNNF.Scripts.Resources;
 
 namespace TerrariaRipoffNNF.Scripts.GameObjects;
@@ -19,6 +20,14 @@ public partial class Inventory : Node {
 
     public bool TryAddItems(InventoryItems newInventoryItems) {
         if (newInventoryItems.TotalSpace > MaximumSpace - UsedSpace) return false;
+        Rpc(nameof(ClientAddItems), newInventoryItems.Serialize());
+        return true;
+    }
+
+    [Rpc(CallLocal = true)]
+    private void ClientAddItems(Dictionary newInventoryItemsDictionary) {
+        InventoryItems newInventoryItems =
+            InventoryItems.Deserialize(newInventoryItemsDictionary);
         UsedSpace += newInventoryItems.TotalSpace;
 
         InventoryItems currentInventoryItems =
@@ -32,6 +41,7 @@ public partial class Inventory : Node {
         }
 
         EmitSignal(SignalName.InventoryChanged);
-        return true;
+
+        // TryAddItems(newInventoryItems);
     }
 }

@@ -4,7 +4,6 @@ using Godot.Collections;
 using TerrariaRipoffNNF.Scripts.Managers;
 using TerrariaRipoffNNF.Scripts.Managers.Host;
 using TerrariaRipoffNNF.Scripts.Resources;
-using TerrariaRipoffNNF.Scripts.UI;
 using TerrariaRipoffNNF.Scripts.Utils;
 
 namespace TerrariaRipoffNNF.Scripts.GameObjects;

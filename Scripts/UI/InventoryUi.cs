@@ -12,7 +12,6 @@ public partial class InventoryUi : Control {
 
     private Inventory _inventory;
     private List<InventoryItemUi> _inventoryItemUiList = new(); 
-    // private 
 
     public void Initialize(Player player) {
         _inventory = player.Inventory;
@@ -28,9 +27,10 @@ public partial class InventoryUi : Control {
     }
 
     private void OnInventoryChanged() {
+        GD.Print("changed");
+        
         _capacityLabel.Text = $"{_inventory.UsedSpace}/{_inventory.MaximumSpace}";
         
-        // todo the most inefficient code ever
         _inventoryItemUiList.ForEach(e => e.QueueFree());
         _inventoryItemUiList.Clear();
         _inventory.InventoryItemsList.ForEach(e => {
