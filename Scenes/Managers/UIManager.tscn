@@ -4,9 +4,9 @@
 [ext_resource type="Script" path="res://Scripts/UI/InventoryUi.cs" id="2_7evv2"]
 [ext_resource type="PackedScene" uid="uid://cgk6fsvhwhj5n" path="res://Scenes/UI/InventoryItemUi.tscn" id="3_dyqpx"]
 
-[node name="UIManager" type="CanvasLayer" node_paths=PackedStringArray("_inventoryUi")]
+[node name="UIManager" type="CanvasLayer" node_paths=PackedStringArray("InventoryUi")]
 script = ExtResource("1_u4pfo")
-_inventoryUi = NodePath("Inventory")
+InventoryUi = NodePath("Inventory")
 
 [node name="Inventory" type="PanelContainer" parent="." node_paths=PackedStringArray("_capacityLabel", "_inventoryItemUiContainer")]
 offset_right = 210.0

@@ -1,7 +1,6 @@
-[gd_scene load_steps=8 format=3 uid="uid://bx6lgpicpfal4"]
+[gd_scene load_steps=7 format=3 uid="uid://bx6lgpicpfal4"]
 
 [ext_resource type="Script" path="res://Scripts/GameObjects/Player.cs" id="1_8yy3a"]
-[ext_resource type="PackedScene" uid="uid://javhx4rej0q4" path="res://Scenes/Managers/UIManager.tscn" id="2_02c1j"]
 [ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://Assets/Images/icon.svg" id="2_5yc1a"]
 [ext_resource type="Script" path="res://Scripts/GameObjects/Inventory.cs" id="3_vdjfg"]
 
@@ -21,14 +20,13 @@ properties/0/replication_mode = 1
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_raw6a"]
 size = Vector2(44, 93)
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("positionSynchronizer", "camera", "_pickupArea", "Inventory")]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("_positionSynchronizer", "_camera", "_pickupArea", "_inventory")]
 collision_mask = 2
 script = ExtResource("1_8yy3a")
-positionSynchronizer = NodePath("PositionSync")
-camera = NodePath("Camera2D")
+_positionSynchronizer = NodePath("PositionSync")
+_camera = NodePath("Camera2D")
 _pickupArea = NodePath("PickupArea")
-_packedUi = ExtResource("2_02c1j")
-Inventory = NodePath("Inventory")
+_inventory = NodePath("Inventory")
 
 [node name="PlayerInfoSync" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_8kinl")

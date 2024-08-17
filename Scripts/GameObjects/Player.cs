@@ -9,22 +9,22 @@ using TerrariaRipoffNNF.Scripts.Utils;
 namespace TerrariaRipoffNNF.Scripts.GameObjects;
 
 public partial class Player : CharacterBody2D {
-    [Export] private MultiplayerSynchronizer positionSynchronizer;
-    [Export] private Camera2D camera;
+    [Export] private MultiplayerSynchronizer _positionSynchronizer;
+    [Export] private Camera2D _camera;
     [Export] private Dictionary _playerInfoDictionary;
     [Export] private Area2D _pickupArea;
-    [Export] private PackedScene _packedUi;
-    [Export] public Inventory Inventory { get; private set; }
+    // [Export] private PackedScene _packedUi;
+    [Export] private Inventory _inventory;
 
-    [Export] private float speed = 300f;
-    [Export] private float gravityCoefficient = 1600;
-    [Export] private float jumpStrength = 800;
+    [Export] private float _speed = 300f;
+    [Export] private float _gravityCoefficient = 1600;
+    [Export] private float _jumpStrength = 800;
     [Export] private Vector2 _spawnPosition;
 
-    private int horizontalInput;
-    private bool isFalling;
-    private float xVelocity;
-    private float yVelocity;
+    private int _horizontalInput;
+    private bool _isFalling;
+    private float _xVelocity;
+    private float _yVelocity;
 
     private IntVector _previousCoords;
 
@@ -39,23 +39,8 @@ public partial class Player : CharacterBody2D {
 
     [Signal] public delegate void PickedUpItemEventHandler(ActivePickup activePickup);
 
-    public override void _Ready() {
-        Position = _spawnPosition;
-
-        if (GameManager.Instance.IsHost) {
-            _pickupArea.BodyEntered += OnServerCollidedWithPickup;
-        }
-
-        if (!IsLocalPlayer) return;
-        camera.Enabled = true;
-        InputManager.Instance.HorizontalInputChanged += newInput => horizontalInput = newInput;
-        InputManager.Instance.JumpPressed += OnJumpPressed;
-        
-        UiManager gameUi = _packedUi.Instantiate<UiManager>();
-        gameUi.Initialize(this);
-        GameManager.Instance.AddChild(gameUi);
-    }
-
+    #region Creation
+    
     public void Initialize(int peerId, PlayerInfo playerInfo, Vector2 spawnPosition) {
         HostManager.RequireHost();
 
@@ -65,22 +50,39 @@ public partial class Player : CharacterBody2D {
     }
 
     public override void _EnterTree() {
-        positionSynchronizer.SetMultiplayerAuthority(PeerId);
+        _positionSynchronizer.SetMultiplayerAuthority(PeerId);
     }
+
+    public override void _Ready() {
+        Position = _spawnPosition;
+
+        if (GameManager.Instance.IsHost) {
+            _pickupArea.BodyEntered += OnServerCollidedWithPickup;
+        }
+
+        if (!IsLocalPlayer) return;
+        _camera.Enabled = true;
+        InputManager.Instance.HorizontalInputChanged += newInput => _horizontalInput = newInput;
+        InputManager.Instance.JumpPressed += OnJumpPressed;
+
+        UiManager.Instance.InventoryUi.Initialize(_inventory);
+    }
+    
+    #endregion
 
     public override void _PhysicsProcess(double delta) {
         if (Multiplayer.GetUniqueId() != PeerId) return;
 
         _previousCoords = Coords;
-        isFalling = !TestMove(Transform, new Vector2(0, 0.1f));
-        xVelocity = speed * horizontalInput;
-        if (isFalling) {
-            yVelocity += (float)delta * gravityCoefficient;
+        _isFalling = !TestMove(Transform, new Vector2(0, 0.1f));
+        _xVelocity = _speed * _horizontalInput;
+        if (_isFalling) {
+            _yVelocity += (float)delta * _gravityCoefficient;
         } else {
-            yVelocity = Math.Min(0, yVelocity);
+            _yVelocity = Math.Min(0, _yVelocity);
         }
 
-        Velocity = new Vector2(xVelocity, yVelocity);
+        Velocity = new Vector2(_xVelocity, _yVelocity);
         MoveAndSlide();
 
         if (_previousCoords == Coords) return;
@@ -99,9 +101,9 @@ public partial class Player : CharacterBody2D {
     }
 
     private void OnJumpPressed() {
-        if (isFalling) return;
-        isFalling = true;
-        yVelocity = -jumpStrength;
+        if (_isFalling) return;
+        _isFalling = true;
+        _yVelocity = -_jumpStrength;
     }
 
     private void OnServerCollidedWithPickup(Node node) {
@@ -109,7 +111,7 @@ public partial class Player : CharacterBody2D {
             throw new Exception("[20240816.0934.1] Pickup area collision with non-pickup");
         }
 
-        bool success = Inventory.TryAddItems(activePickup.SavedPickup.InventoryItems);
+        bool success = _inventory.TryAddItems(activePickup.SavedPickup.InventoryItems);
         if (success) {
             EmitSignal(SignalName.PickedUpItem, activePickup);
         }

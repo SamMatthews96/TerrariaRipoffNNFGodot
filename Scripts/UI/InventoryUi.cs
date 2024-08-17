@@ -11,10 +11,10 @@ public partial class InventoryUi : Control {
     [Export] private PackedScene _inventoryItemUiScene;
 
     private Inventory _inventory;
-    private List<InventoryItemUi> _inventoryItemUiList = new(); 
+    private readonly List<InventoryItemUi> _inventoryItemUiList = new(); 
 
-    public void Initialize(Player player) {
-        _inventory = player.Inventory;
+    public void Initialize(Inventory inventory) {
+        _inventory = inventory;
         _inventory.InventoryChanged += OnInventoryChanged;
     }
 
@@ -23,12 +23,11 @@ public partial class InventoryUi : Control {
     }
 
     public override void _Ready() {
+        Visible = false;
         InputManager.Instance.ToggleInventoryPressed += OnInputManagerToggleInventoryPressed;
     }
 
     private void OnInventoryChanged() {
-        GD.Print("changed");
-        
         _capacityLabel.Text = $"{_inventory.UsedSpace}/{_inventory.MaximumSpace}";
         
         _inventoryItemUiList.ForEach(e => e.QueueFree());

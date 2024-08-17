@@ -1,12 +1,19 @@
-﻿using Godot;
-using TerrariaRipoffNNF.Scripts.GameObjects;
+﻿using System;
+using Godot;
 using TerrariaRipoffNNF.Scripts.UI;
 
 namespace TerrariaRipoffNNF.Scripts.Managers;
 
 public partial class UiManager : CanvasLayer {
-    [Export] private InventoryUi _inventoryUi;
-    public void Initialize(Player player) {
-        _inventoryUi.Initialize(player);
+    public static UiManager Instance { get; private set; }
+
+    [Export] public InventoryUi InventoryUi { get; private set; }
+    
+    public override void _EnterTree() {
+        if (Instance is not null) {
+            throw new Exception("[20240817.244.1] UiManager already instantiated");
+        }
+
+        Instance = this;
     }
 }
