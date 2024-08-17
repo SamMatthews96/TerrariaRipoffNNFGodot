@@ -6,7 +6,7 @@ using WorldBasicInfo = TerrariaRipoffNNF.Scripts.Resources.WorldBasicInfo;
 namespace TerrariaRipoffNNF.Scripts.Managers;
 
 public static class FileManager {
-    private const string WORLD_DIR = "user://SavedData/worlds";
+    private const string WorldDir = "user://SavedData/worlds";
     // C:\Users\Sam-M\AppData\Roaming\Godot\app_userdata\TerrariaRipoffNNF\SavedData
 
     public static void SaveWorld(Dictionary worldDictionary) {
@@ -16,9 +16,9 @@ public static class FileManager {
             int height = worldDictionary["Height"].ToString().ToInt();
             string worldString = worldDictionary.ToString();
 
-            EnsureDirectoryExists($"{WORLD_DIR}/{name}");
+            EnsureDirectoryExists($"{WorldDir}/{name}");
             FileAccess fileBasicData = FileAccess.Open(
-                $"{WORLD_DIR}/{name}/worldBasicData.txt", FileAccess.ModeFlags.Write);
+                $"{WorldDir}/{name}/worldBasicData.txt", FileAccess.ModeFlags.Write);
 
             Dictionary worldBasicInfoDictionary = new();
             worldBasicInfoDictionary.Add("Name", name);
@@ -30,7 +30,7 @@ public static class FileManager {
             fileBasicData.Dispose();
 
             FileAccess file = FileAccess.Open(
-                $"{WORLD_DIR}/{name}/world.txt", FileAccess.ModeFlags.Write);
+                $"{WorldDir}/{name}/world.txt", FileAccess.ModeFlags.Write);
             file.StoreString(worldString);
             file.Dispose();
         }
@@ -42,8 +42,8 @@ public static class FileManager {
     }
 
     public static WorldBasicInfo[] LoadAllWorldBasicData() {
-        EnsureDirectoryExists(WORLD_DIR);
-        DirAccess dirAccess = DirAccess.Open(WORLD_DIR);
+        EnsureDirectoryExists(WorldDir);
+        DirAccess dirAccess = DirAccess.Open(WorldDir);
 
         string[] directories = dirAccess.GetDirectories();
         WorldBasicInfo[] worldBasicInfos = new WorldBasicInfo[directories.Length];
@@ -51,7 +51,7 @@ public static class FileManager {
         for (int i = 0; i < directories.Length; i++) {
             string worldName = directories[i];
             FileAccess fileAccess = FileAccess.Open(
-                $"{WORLD_DIR}/{worldName}/worldBasicData.txt", FileAccess.ModeFlags.Read);
+                $"{WorldDir}/{worldName}/worldBasicData.txt", FileAccess.ModeFlags.Read);
             string content = fileAccess.GetAsText();
             fileAccess.Dispose();
             Dictionary worldBasicInfoDict = Json.ParseString(content).AsGodotDictionary();
@@ -66,7 +66,7 @@ public static class FileManager {
         string worldName = worldBasicInfo.Name;
 
         FileAccess fileAccess = FileAccess.Open(
-            $"{WORLD_DIR}/{worldName}/world.txt", FileAccess.ModeFlags.Read);
+            $"{WorldDir}/{worldName}/world.txt", FileAccess.ModeFlags.Read);
         string content = fileAccess.GetAsText();
         fileAccess.Dispose();
         Dictionary worldDict = Json.ParseString(content).AsGodotDictionary();

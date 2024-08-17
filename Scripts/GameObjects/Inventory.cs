@@ -9,8 +9,9 @@ public partial class Inventory : Node {
     public float UsedSpace { get; private set; }
 
     private List<InventoryItems> _inventoryItemsList;
-    
     public List<InventoryItems> InventoryItemsList => _inventoryItemsList;
+
+    [Signal] public delegate void InventoryChangedEventHandler();
 
     public override void _Ready() {
         _inventoryItemsList = new List<InventoryItems>();
@@ -30,6 +31,7 @@ public partial class Inventory : Node {
             currentInventoryItems.AddItems(newInventoryItems.Count);
         }
 
+        EmitSignal(SignalName.InventoryChanged);
         return true;
     }
 }
