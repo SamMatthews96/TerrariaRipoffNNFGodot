@@ -21,8 +21,7 @@ public partial class ActionController : Node {
         }
         _actions.Add(new NullAction(_player));
         
-        _currentAction = _actions[0];
-        _currentAction.Equip();
+        EquipAction(0);
         
         InputManager.Instance.LeftMouseUp += OnInputManagerLeftMouseUp;
         InputManager.Instance.LeftMouseDown += OnInputManagerLeftMouseDown;
@@ -35,7 +34,24 @@ public partial class ActionController : Node {
     private void AddAction(IAction action) {
         _actions.Add(action);
         EmitSignal(SignalName.ActionAdded);
-        
+        /*
+         * update the actions in the UI
+         * associated with each action should be
+         *  - an image
+         * since it emits a signal it needs to be a variant type: resource
+         *
+         * this class tells the UI
+         *      the action count
+         *      the action image
+         *
+         * the UI class will set the selected action
+         * 
+         */
+    }
+    
+    private void EquipAction(int index) {
+        _currentAction = _actions[index];
+        _currentAction.Equip();
     }
 
     private void OnInputManagerLeftMouseUp(Vector2 mouseScreenPosition) {

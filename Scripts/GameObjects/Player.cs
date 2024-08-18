@@ -38,6 +38,7 @@ public partial class Player : CharacterBody2D {
 
     [Signal] public delegate void PickedUpItemEventHandler(ActivePickup activePickup);
 
+
     #region Creation
     
     public void Initialize(int peerId, PlayerInfo playerInfo, Vector2 spawnPosition) {
@@ -46,6 +47,8 @@ public partial class Player : CharacterBody2D {
         Name = peerId.ToString();
         _playerInfoDictionary = playerInfo.Serialize();
         _spawnPosition = spawnPosition;
+        
+        
     }
 
     public override void _EnterTree() {

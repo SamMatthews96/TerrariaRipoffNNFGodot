@@ -12,6 +12,8 @@ public partial class InputManager : Node {
     private const string Save = "save";
     private const string ToggleInventory = "toggleInventory";
 
+    [Export] private Node2D _node2D;
+
     public static InputManager Instance { get; private set; }
 
     [Signal] public delegate void LeftMouseDownEventHandler(Vector2 mouseScreenPosition);
@@ -61,7 +63,8 @@ public partial class InputManager : Node {
             EmitSignal(SignalName.SaveGamePressed);
         }
 
-        Vector2 mousePosition = GetViewport().GetMousePosition();
+        // Vector2 mousePosition = GetViewport().GetMousePosition();
+        Vector2 mousePosition = _node2D.GetGlobalMousePosition();
 
         if (Input.IsActionJustPressed(LeftMouse)) {
             EmitSignal(SignalName.LeftMouseDown, mousePosition);

@@ -40,7 +40,10 @@ spawn_path = NodePath("..")
 _spawnable_scenes = PackedStringArray("res://Scenes/GameObjects/Player.tscn")
 spawn_path = NodePath("..")
 
-[node name="InputManager" type="Node" parent="."]
+[node name="InputManager" type="Node" parent="." node_paths=PackedStringArray("_node2D")]
 script = ExtResource("4_lvxpj")
+_node2D = NodePath("Node2D")
+
+[node name="Node2D" type="Node2D" parent="InputManager"]
 
 [node name="UIManager" parent="." instance=ExtResource("5_ekxr7")]
