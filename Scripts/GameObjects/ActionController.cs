@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Godot;
 using TerrariaRipoffNNF.Scripts.Actions;
 using TerrariaRipoffNNF.Scripts.Managers;
@@ -11,7 +12,7 @@ public partial class ActionController : Node {
     [Export] private Player _player;
     public List<IAction> Actions => _actions;
     
-    [Signal] public delegate void ActionAddedEventHandler();
+    public event Action ActionAdded;
     
 
     public override void _Ready() {
@@ -33,7 +34,7 @@ public partial class ActionController : Node {
     
     private void AddAction(IAction action) {
         _actions.Add(action);
-        EmitSignal(SignalName.ActionAdded);
+        ActionAdded?.Invoke();
         /*
          * update the actions in the UI
          * associated with each action should be

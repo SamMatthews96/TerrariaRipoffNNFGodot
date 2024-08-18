@@ -19,7 +19,7 @@ public partial class HostBlockManager : Node {
     private SavedBlock[,] _savedBlocks;
     private ActiveBlock[,] _activeBlocks;
 
-    [Signal] public delegate void BlockDestroyedEventHandler(SavedBlock savedBlock);
+    public event Action<SavedBlock> BlockDestroyed;
 
     public override void _EnterTree() {
         if (Instance is not null) {
@@ -71,7 +71,7 @@ public partial class HostBlockManager : Node {
         _savedBlocks[savedBlock.XPosition, savedBlock.YPosition] = null;
         activeBlock.QueueFree();
 
-        EmitSignal(SignalName.BlockDestroyed, savedBlock);
+        BlockDestroyed?.Invoke(savedBlock);
     }
 
     private List<SavedBlock> GetSavedBlocksInRegion(List<IntVector> region) {

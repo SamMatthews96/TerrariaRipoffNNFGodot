@@ -7,10 +7,12 @@ namespace TerrariaRipoffNNF.Scripts.Managers.Host;
 
 public partial class HostPlayerManager : Node {
     public static HostPlayerManager Instance { get; private set; }
-    
+
     [Export] private PackedScene _hostPlayerPackedScene;
-    
-    [Signal] public delegate void PlayerSpawnedEventHandler(Player player);
+
+    public event Action<Player> PlayerSpawned;
+
+    public event Func<int> TestEvent; 
 
     public override void _EnterTree() {
         if (Instance is not null) {
@@ -26,7 +28,8 @@ public partial class HostPlayerManager : Node {
         player.Initialize(peerId, playerInfo, spawnPosition);
 
         GameManager.Instance.PlayerParent.AddChild(player, true);
-        
-        EmitSignal(SignalName.PlayerSpawned, player);
+
+        PlayerSpawned?.Invoke(player);
+        TestEvent?.Invoke();
     }
 }

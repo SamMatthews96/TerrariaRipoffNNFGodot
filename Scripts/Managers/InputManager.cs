@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Godot;
 
@@ -16,21 +17,15 @@ public partial class InputManager : Node {
 
     public static InputManager Instance { get; private set; }
 
-    [Signal] public delegate void LeftMouseDownEventHandler(Vector2 mouseScreenPosition);
 
-    [Signal] public delegate void LeftMouseUpEventHandler(Vector2 mouseScreenPosition);
-
-    [Signal] public delegate void RightMouseDownEventHandler(Vector2 mouseScreenPosition);
-
-    [Signal] public delegate void RightMouseUpEventHandler(Vector2 mouseScreenPosition);
-
-    [Signal] public delegate void HorizontalInputChangedEventHandler(int horizontalInput);
-
-    [Signal] public delegate void JumpPressedEventHandler();
-
-    [Signal] public delegate void SaveGamePressedEventHandler();
-
-    [Signal] public delegate void ToggleInventoryPressedEventHandler();
+    public event Action<Vector2> LeftMouseDown;
+    public event Action<Vector2> LeftMouseUp;
+    public event Action<Vector2> RightMouseDown;
+    public event Action<Vector2> RightMouseUp;
+    public event Action<int> HorizontalInputChanged;
+    public event Action JumpPressed;
+    public event Action SaveGamePressed;
+    public event Action ToggleInventoryPressed;
 
     public override void _EnterTree() {
         Instance = this;
@@ -47,43 +42,43 @@ public partial class InputManager : Node {
             bool isRunRightPressed = Input.IsActionPressed(RunRight);
 
             if (isRunLeftPressed && !isRunRightPressed) {
-                EmitSignal(SignalName.HorizontalInputChanged, -1);
+                HorizontalInputChanged?.Invoke(-1);
             } else if (!isRunLeftPressed && isRunRightPressed) {
-                EmitSignal(SignalName.HorizontalInputChanged, 1);
+                HorizontalInputChanged?.Invoke(1);
             } else {
-                EmitSignal(SignalName.HorizontalInputChanged, 0);
+                HorizontalInputChanged?.Invoke(0);
             }
         }
 
         if (Input.IsActionJustPressed(Jump)) {
-            EmitSignal(SignalName.JumpPressed);
+            JumpPressed?.Invoke();
         }
 
         if (Input.IsActionJustPressed(Save)) {
-            EmitSignal(SignalName.SaveGamePressed);
+            SaveGamePressed?.Invoke();
         }
 
         // Vector2 mousePosition = GetViewport().GetMousePosition();
         Vector2 mousePosition = _node2D.GetGlobalMousePosition();
 
         if (Input.IsActionJustPressed(LeftMouse)) {
-            EmitSignal(SignalName.LeftMouseDown, mousePosition);
+            LeftMouseDown?.Invoke(mousePosition);
         }
 
         if (Input.IsActionJustReleased(LeftMouse)) {
-            EmitSignal(SignalName.LeftMouseUp, mousePosition);
+            LeftMouseDown?.Invoke(mousePosition);
         }
 
         if (Input.IsActionJustPressed(RightMouse)) {
-            EmitSignal(SignalName.RightMouseDown, mousePosition);
+            RightMouseDown?.Invoke(mousePosition);
         }
 
         if (Input.IsActionJustReleased(RightMouse)) {
-            EmitSignal(SignalName.RightMouseUp, mousePosition);
+            RightMouseUp?.Invoke(mousePosition);
         }
 
         if (Input.IsActionJustPressed(ToggleInventory)) {
-            EmitSignal(SignalName.ToggleInventoryPressed);
+            ToggleInventoryPressed?.Invoke();
         }
     }
 }

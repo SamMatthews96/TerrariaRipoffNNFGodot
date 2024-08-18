@@ -16,10 +16,6 @@ public partial class Manager : Node {
     
     private ENetMultiplayerPeer _peer;
 
-    [Signal] public delegate void ConnectedToServerEventHandler(PlayerInfo playerInfo);
-
-    [Signal] public delegate void BeforePlayerSpawnedEventHandler(PlayerInfo playerInfo);
-    
     public override void _Ready() {
         _mainMenu.SinglePlayerClickedEnterWorld += OnMainMenuSinglePlayerClickedEnterWorld;
         _mainMenu.HostClickedEnterWorld += OnMainMenuHostClickedEnterWorld;

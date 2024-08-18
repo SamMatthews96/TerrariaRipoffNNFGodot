@@ -20,9 +20,7 @@ public partial class ActivePickup : RigidBody2D {
         (int)Math.Round(Position.X / GameManager.BlockSize),
         (int)Math.Round(Position.Y / GameManager.BlockSize));
 
-    [Signal]
-    public delegate void MovedCellEventHandler(
-        ActivePickup activePickup, Dictionary positionChange);
+    public event Action<ActivePickup, Dictionary> MovedCell;
 
     public void Initialize(SavedPickup savedPickup) {
         HostManager.RequireHost();
@@ -47,7 +45,8 @@ public partial class ActivePickup : RigidBody2D {
                 { "PreviousX", _previousCoords.X },
                 { "PreviousY", _previousCoords.Y }
             };
-            EmitSignal(SignalName.MovedCell, this, positionChange);
+            
+            MovedCell?.Invoke(this, positionChange);
         }
 
         _previousCoords = Coords;

@@ -25,7 +25,7 @@ public partial class GameManager : Node {
 
     public bool IsHost => Multiplayer.GetUniqueId() == Manager.MultiplayerHostId;
 
-    [Signal] public delegate void PlayerJoinedEventHandler(PlayerInfo playerInfo, int peerId);
+    public event Action<PlayerInfo, int> PlayerJoined;
 
     public void Initialize(PlayerInfo playerInfo, Dictionary world) {
         if (Instance is not null) {
@@ -48,10 +48,6 @@ public partial class GameManager : Node {
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void ServerHandleNewClient(Dictionary playerDictionary, int peerId) {
         PlayerInfo playerInfo = PlayerInfo.FromDict(playerDictionary);
-        EmitSignal(SignalName.PlayerJoined, playerInfo, peerId);
+        PlayerJoined?.Invoke(playerInfo, peerId);
     }
-    
-    
-    
-
 }

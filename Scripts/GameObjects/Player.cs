@@ -34,21 +34,17 @@ public partial class Player : CharacterBody2D {
     private int PeerId => Name.ToString().ToInt();
     public bool IsLocalPlayer => Multiplayer.GetUniqueId() == PeerId;
 
-    [Signal] public delegate void MovedCellEventHandler(Dictionary positionChange);
-
-    [Signal] public delegate void PickedUpItemEventHandler(ActivePickup activePickup);
-
+    public event Action<Dictionary> MovedCell;
+    public event Action<ActivePickup> PickedUpItem;
 
     #region Creation
-    
+
     public void Initialize(int peerId, PlayerInfo playerInfo, Vector2 spawnPosition) {
         HostManager.RequireHost();
 
         Name = peerId.ToString();
         _playerInfoDictionary = playerInfo.Serialize();
         _spawnPosition = spawnPosition;
-        
-        
     }
 
     public override void _EnterTree() {
@@ -66,9 +62,8 @@ public partial class Player : CharacterBody2D {
         _camera.Enabled = true;
         InputManager.Instance.HorizontalInputChanged += newInput => _horizontalInput = newInput;
         InputManager.Instance.JumpPressed += OnJumpPressed;
-
     }
-    
+
     #endregion
 
     public override void _PhysicsProcess(double delta) {
@@ -98,7 +93,7 @@ public partial class Player : CharacterBody2D {
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void ServerMovedCell(Dictionary positionChange) {
-        EmitSignal(SignalName.MovedCell, positionChange);
+        MovedCell?.Invoke(positionChange);
     }
 
     private void OnJumpPressed() {
@@ -114,7 +109,7 @@ public partial class Player : CharacterBody2D {
 
         bool success = _inventory.TryAddItems(activePickup.SavedPickup.InventoryItems);
         if (success) {
-            EmitSignal(SignalName.PickedUpItem, activePickup);
+            PickedUpItem?.Invoke(activePickup);
         }
     }
 }

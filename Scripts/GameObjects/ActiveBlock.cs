@@ -1,3 +1,4 @@
+using System;
 using Godot;
 using Godot.Collections;
 using TerrariaRipoffNNF.Scripts.Managers;
@@ -12,8 +13,9 @@ public partial class ActiveBlock : StaticBody2D {
 
     [Export] private Sprite2D _sprite;
 
-    [Signal] public delegate void TakenDamageEventHandler(ActiveBlock activeBlock, float damageAmount);
-
+    
+    public event Action<ActiveBlock, float> TakenDamage;
+    
     public void Initialize(SavedBlock savedBlock) {
         HostManager.RequireHost();
 
@@ -29,14 +31,14 @@ public partial class ActiveBlock : StaticBody2D {
         _sprite.Texture = SavedBlock.BlockType.Texture;
     }
 
-    // private void OnInputEvent(Node _, InputEvent e, int __) {
-    //     if (e is InputEventMouseButton mouseButton) {
-    //         RpcId(Manager.MultiplayerHostId, nameof(ServerHandleTakeDamage), 100f);
-    //     }
-    // }
+    private void OnInputEvent(Node _, InputEvent e, int __) {
+        if (e is InputEventMouseButton mouseButton) {
+            RpcId(Manager.MultiplayerHostId, nameof(ServerHandleTakeDamage), 100f);
+        }
+    }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void ServerHandleTakeDamage(float damageAmount) {
-        EmitSignal(SignalName.TakenDamage, this, damageAmount);
+        TakenDamage?.Invoke(this, damageAmount);
     }
 }

@@ -6,8 +6,6 @@ using ActiveBlock = TerrariaRipoffNNF.Scripts.GameObjects.ActiveBlock;
 namespace TerrariaRipoffNNF.Scripts.Resources;
 
 public partial class SavedBlock : Resource {
-    [Signal] public delegate void HitZeroHealthEventHandler(SavedBlock savedBlock);
-    [Signal] public delegate void ActiveBlockCreatedEventHandler(ActiveBlock activeBlock);
 
     public int XPosition { get; }
     public int YPosition { get; }

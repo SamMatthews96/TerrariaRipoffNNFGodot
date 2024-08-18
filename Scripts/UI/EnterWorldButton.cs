@@ -1,20 +1,20 @@
+using System;
 using Godot;
 using TerrariaRipoffNNF.Scripts.Resources;
 
-namespace TerrariaRipoffNNF.Scripts.UI; 
+namespace TerrariaRipoffNNF.Scripts.UI;
 
 public partial class EnterWorldButton : Button {
-	private WorldBasicInfo _worldBasicInfo;
+    private WorldBasicInfo _worldBasicInfo;
 
-	[Signal]
-	public delegate void EnterWorldButtonDownEventHandler(WorldBasicInfo worldBasicInfo);
-	
-	public void Initialize(WorldBasicInfo worldBasicInfo) {
-		_worldBasicInfo = worldBasicInfo; 
-		Text = worldBasicInfo.Name;
-	}
+    public event Action<WorldBasicInfo> EnterWorldButtonDown;
 
-	private void OnEnterWorldButtonDown() {
-		EmitSignal(SignalName.EnterWorldButtonDown, _worldBasicInfo);
-	}
+    public void Initialize(WorldBasicInfo worldBasicInfo) {
+        _worldBasicInfo = worldBasicInfo;
+        Text = worldBasicInfo.Name;
+    }
+
+    private void OnEnterWorldButtonDown() {
+        EnterWorldButtonDown?.Invoke(_worldBasicInfo);
+    }
 }

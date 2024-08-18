@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Godot;
 using Godot.Collections;
 using TerrariaRipoffNNF.Scripts.Managers;
@@ -13,8 +14,7 @@ public partial class Inventory : Node {
     private List<InventoryItems> _inventoryItemsList;
     public List<InventoryItems> InventoryItemsList => _inventoryItemsList;
 
-    [Signal] public delegate void InventoryChangedEventHandler();
-
+    public event Action InventoryChanged;
     public override void _Ready() {
         _inventoryItemsList = new List<InventoryItems>();
         
@@ -43,6 +43,7 @@ public partial class Inventory : Node {
             currentInventoryItems.AddItems(newInventoryItems.Count);
         }
 
-        EmitSignal(SignalName.InventoryChanged);
+        InventoryChanged?.Invoke();
     }
+    
 }
