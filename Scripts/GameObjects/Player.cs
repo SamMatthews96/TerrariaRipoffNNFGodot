@@ -64,7 +64,6 @@ public partial class Player : CharacterBody2D {
         InputManager.Instance.HorizontalInputChanged += newInput => _horizontalInput = newInput;
         InputManager.Instance.JumpPressed += OnJumpPressed;
 
-        UiManager.Instance.InventoryUi.Initialize(_inventory);
     }
     
     #endregion

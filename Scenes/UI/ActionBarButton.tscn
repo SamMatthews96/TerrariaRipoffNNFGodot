@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3 uid="uid://bonil0th12qcf"]
+
+[ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://Assets/Images/icon.svg" id="1_xnydp"]
+[ext_resource type="Script" path="res://Scripts/UI/ActionBarButton.cs" id="2_6isyu"]
+
+[node name="ActionBarButton" type="TextureButton"]
+texture_normal = ExtResource("1_xnydp")
+script = ExtResource("2_6isyu")

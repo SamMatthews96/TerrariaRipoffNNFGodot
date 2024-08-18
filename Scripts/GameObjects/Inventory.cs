@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Godot;
 using Godot.Collections;
+using TerrariaRipoffNNF.Scripts.Managers;
 using TerrariaRipoffNNF.Scripts.Resources;
 
 namespace TerrariaRipoffNNF.Scripts.GameObjects;
@@ -16,6 +17,8 @@ public partial class Inventory : Node {
 
     public override void _Ready() {
         _inventoryItemsList = new List<InventoryItems>();
+        
+        UiManager.Instance.InventoryUi.Initialize(this);
     }
 
     public bool TryAddItems(InventoryItems newInventoryItems) {
@@ -41,7 +44,5 @@ public partial class Inventory : Node {
         }
 
         EmitSignal(SignalName.InventoryChanged);
-
-        // TryAddItems(newInventoryItems);
     }
 }
