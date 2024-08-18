@@ -13,7 +13,6 @@ public partial class Player : CharacterBody2D {
     [Export] private Camera2D _camera;
     [Export] private Dictionary _playerInfoDictionary;
     [Export] private Area2D _pickupArea;
-    // [Export] private PackedScene _packedUi;
     [Export] private Inventory _inventory;
 
     [Export] private float _speed = 300f;
@@ -33,7 +32,7 @@ public partial class Player : CharacterBody2D {
         (int)Math.Round(Position.Y / GameManager.BlockSize));
 
     private int PeerId => Name.ToString().ToInt();
-    private bool IsLocalPlayer => Multiplayer.GetUniqueId() == PeerId;
+    public bool IsLocalPlayer => Multiplayer.GetUniqueId() == PeerId;
 
     [Signal] public delegate void MovedCellEventHandler(Dictionary positionChange);
 

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Godot;
 
 namespace TerrariaRipoffNNF.Scripts.Managers;
@@ -7,20 +8,27 @@ public partial class InputManager : Node {
     private const string RunRight = "runRight";
     private const string Jump = "jump";
     private const string LeftMouse = "leftMouse";
+    private const string RightMouse = "rightMouse";
     private const string Save = "save";
     private const string ToggleInventory = "toggleInventory";
+
+    public static InputManager Instance { get; private set; }
+
+    [Signal] public delegate void LeftMouseDownEventHandler(Vector2 mouseScreenPosition);
+
+    [Signal] public delegate void LeftMouseUpEventHandler(Vector2 mouseScreenPosition);
+
+    [Signal] public delegate void RightMouseDownEventHandler(Vector2 mouseScreenPosition);
+
+    [Signal] public delegate void RightMouseUpEventHandler(Vector2 mouseScreenPosition);
 
     [Signal] public delegate void HorizontalInputChangedEventHandler(int horizontalInput);
 
     [Signal] public delegate void JumpPressedEventHandler();
 
-    [Signal] public delegate void MouseClickedEventHandler(Vector2 mouseScreenPosition);
-
     [Signal] public delegate void SaveGamePressedEventHandler();
 
     [Signal] public delegate void ToggleInventoryPressedEventHandler();
-
-    public static InputManager Instance { get; private set; }
 
     public override void _EnterTree() {
         Instance = this;
@@ -53,9 +61,22 @@ public partial class InputManager : Node {
             EmitSignal(SignalName.SaveGamePressed);
         }
 
+        Vector2 mousePosition = GetViewport().GetMousePosition();
+
+        if (Input.IsActionJustPressed(LeftMouse)) {
+            EmitSignal(SignalName.LeftMouseDown, mousePosition);
+        }
+
         if (Input.IsActionJustReleased(LeftMouse)) {
-            Vector2 mousePosition = GetViewport().GetMousePosition();
-            EmitSignal(SignalName.MouseClicked, mousePosition);
+            EmitSignal(SignalName.LeftMouseUp, mousePosition);
+        }
+
+        if (Input.IsActionJustPressed(RightMouse)) {
+            EmitSignal(SignalName.RightMouseDown, mousePosition);
+        }
+
+        if (Input.IsActionJustReleased(RightMouse)) {
+            EmitSignal(SignalName.RightMouseUp, mousePosition);
         }
 
         if (Input.IsActionJustPressed(ToggleInventory)) {

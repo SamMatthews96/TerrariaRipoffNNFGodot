@@ -29,11 +29,11 @@ public partial class ActiveBlock : StaticBody2D {
         _sprite.Texture = SavedBlock.BlockType.Texture;
     }
 
-    private void OnInputEvent(Node _, InputEvent e, int __) {
-        if (e is InputEventMouseButton mouseButton) {
-            RpcId(Manager.MultiplayerHostId, nameof(ServerHandleTakeDamage), 100f);
-        }
-    }
+    // private void OnInputEvent(Node _, InputEvent e, int __) {
+    //     if (e is InputEventMouseButton mouseButton) {
+    //         RpcId(Manager.MultiplayerHostId, nameof(ServerHandleTakeDamage), 100f);
+    //     }
+    // }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void ServerHandleTakeDamage(float damageAmount) {
