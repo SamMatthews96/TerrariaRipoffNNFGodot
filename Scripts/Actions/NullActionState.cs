@@ -1,12 +1,13 @@
 ﻿using Godot;
 using TerrariaRipoffNNF.Scripts.GameObjects;
+using TerrariaRipoffNNF.Scripts.Managers;
 
 namespace TerrariaRipoffNNF.Scripts.Actions;
 
-public class NullAction : IAction {
+public class NullActionState : IActionState {
     private Player _player;
 
-    public NullAction(Player player) {
+    public NullActionState(Player player) {
         _player = player;
     }
 
@@ -16,10 +17,6 @@ public class NullAction : IAction {
 
     public void PrimaryAction(Vector2 mouseScreenPosition) {
         GD.Print("Null Action Start");
-        GD.Print(_player.GlobalPosition);
-        GD.Print(mouseScreenPosition);
-        GD.Print("the diff is ");
-        GD.Print(mouseScreenPosition - _player.GlobalPosition);
     }
 
     public void EndPrimaryAction(Vector2 mouseScreenPosition) {

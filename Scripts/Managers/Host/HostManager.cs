@@ -7,6 +7,8 @@ using PlayerInfo = TerrariaRipoffNNF.Scripts.Resources.PlayerInfo;
 
 namespace TerrariaRipoffNNF.Scripts.Managers.Host;
 
+
+
 public partial class HostManager : Node {
     public static HostManager Instance { get; private set; }
 

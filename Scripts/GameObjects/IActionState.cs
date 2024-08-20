@@ -2,7 +2,7 @@
 
 namespace TerrariaRipoffNNF.Scripts.GameObjects;
 
-public interface IAction {
+public interface IActionState {
     public void Equip() { }
     
 

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Godot;
 
 namespace TerrariaRipoffNNF.Scripts.Managers;
@@ -32,6 +31,41 @@ public partial class InputManager : Node {
     }
 
     public override void _Process(double delta) {
+        // Vector2 mousePosition = GetViewport().GetMousePosition();
+    }
+
+    public override void _UnhandledInput(InputEvent e) {
+        switch (e) {
+            case InputEventMouseButton:
+                HandleMouseEvents();
+                break;
+            case InputEventKey:
+                HandleKeyEvents();
+                break;
+        }
+    }
+
+    private void HandleMouseEvents() {
+        Vector2 mousePosition = _node2D.GetGlobalMousePosition();
+
+        if (Input.IsActionJustPressed(LeftMouse)) {
+            LeftMouseDown?.Invoke(mousePosition);
+        }
+
+        if (Input.IsActionJustReleased(LeftMouse)) {
+            LeftMouseUp?.Invoke(mousePosition);
+        }
+
+        if (Input.IsActionJustPressed(RightMouse)) {
+            RightMouseDown?.Invoke(mousePosition);
+        }
+
+        if (Input.IsActionJustReleased(RightMouse)) {
+            RightMouseUp?.Invoke(mousePosition);
+        }
+    }
+
+    private void HandleKeyEvents() {
         if (
             Input.IsActionJustPressed(RunLeft) ||
             Input.IsActionJustPressed(RunRight) ||
@@ -56,25 +90,6 @@ public partial class InputManager : Node {
 
         if (Input.IsActionJustPressed(Save)) {
             SaveGamePressed?.Invoke();
-        }
-
-        // Vector2 mousePosition = GetViewport().GetMousePosition();
-        Vector2 mousePosition = _node2D.GetGlobalMousePosition();
-
-        if (Input.IsActionJustPressed(LeftMouse)) {
-            LeftMouseDown?.Invoke(mousePosition);
-        }
-
-        if (Input.IsActionJustReleased(LeftMouse)) {
-            LeftMouseDown?.Invoke(mousePosition);
-        }
-
-        if (Input.IsActionJustPressed(RightMouse)) {
-            RightMouseDown?.Invoke(mousePosition);
-        }
-
-        if (Input.IsActionJustReleased(RightMouse)) {
-            RightMouseUp?.Invoke(mousePosition);
         }
 
         if (Input.IsActionJustPressed(ToggleInventory)) {

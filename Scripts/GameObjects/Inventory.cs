@@ -15,9 +15,10 @@ public partial class Inventory : Node {
     public List<InventoryItems> InventoryItemsList => _inventoryItemsList;
 
     public event Action InventoryChanged;
+
     public override void _Ready() {
         _inventoryItemsList = new List<InventoryItems>();
-        
+
         UiManager.Instance.InventoryUi.Initialize(this);
     }
 
@@ -45,5 +46,4 @@ public partial class Inventory : Node {
 
         InventoryChanged?.Invoke();
     }
-    
 }

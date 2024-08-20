@@ -12,8 +12,6 @@ public partial class HostPlayerManager : Node {
 
     public event Action<Player> PlayerSpawned;
 
-    public event Func<int> TestEvent; 
-
     public override void _EnterTree() {
         if (Instance is not null) {
             throw new Exception("[20240814.0045.1] HostManager already instantiated");
@@ -30,6 +28,5 @@ public partial class HostPlayerManager : Node {
         GameManager.Instance.PlayerParent.AddChild(player, true);
 
         PlayerSpawned?.Invoke(player);
-        TestEvent?.Invoke();
     }
 }

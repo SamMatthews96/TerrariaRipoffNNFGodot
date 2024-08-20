@@ -10,12 +10,11 @@ namespace TerrariaRipoffNNF.Scripts.GameObjects;
 public partial class ActiveBlock : StaticBody2D {
     public SavedBlock SavedBlock { get; private set; }
     [Export] private Dictionary _savedBlockDictionary;
-
     [Export] private Sprite2D _sprite;
 
-    
+
     public event Action<ActiveBlock, float> TakenDamage;
-    
+
     public void Initialize(SavedBlock savedBlock) {
         HostManager.RequireHost();
 

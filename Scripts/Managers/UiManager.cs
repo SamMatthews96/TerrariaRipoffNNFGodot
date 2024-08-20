@@ -12,7 +12,7 @@ public partial class UiManager : CanvasLayer {
     
     public override void _EnterTree() {
         if (Instance is not null) {
-            throw new Exception("[20240817.244.1] UiManager already instantiated");
+            throw new Exception("[20240817.0244.1] UiManager already instantiated");
         }
 
         Instance = this;

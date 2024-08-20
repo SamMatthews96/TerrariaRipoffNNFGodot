@@ -1,24 +1,35 @@
-﻿using Godot;
+﻿using System;
+using System.Collections.Generic;
+using Godot;
+using TerrariaRipoffNNF.Scripts.Actions;
 using TerrariaRipoffNNF.Scripts.GameObjects;
 
 namespace TerrariaRipoffNNF.Scripts.UI;
 
 public partial class ActionBar : PanelContainer {
-    private ActionController _actionController;
     [Export] private PackedScene _actionBarButtonScene;
     [Export] private HBoxContainer _buttonContainer;
 
-    public void Initialize(ActionController actionController) {
-        _actionController = actionController;
-        _actionController.Actions.ForEach(action => {
-            ActionBarButton button = _actionBarButtonScene.Instantiate<ActionBarButton>();
-            button.ButtonDown += () => OnActionButtonPressed(action);
-            button.Initialize(action);
-            _buttonContainer.AddChild(button);
-        });
-    }
+    private List<ActionBarButton> _actionBarButtons = new();
 
-    private void OnActionButtonPressed(IAction action) {
-        GD.Print(nameof(action));
+
+    public event Action<int> ButtonClicked;
+
+    public void Initialize(List<Texture2D> actionIcons) {
+        foreach (Texture2D actionIcon in actionIcons) {
+            ActionBarButton actionBarButton = _actionBarButtonScene.Instantiate<ActionBarButton>();
+            _buttonContainer.AddChild(actionBarButton);
+            actionBarButton.Initialize(actionIcon);
+            int index = _actionBarButtons.Count;
+            actionBarButton.Pressed += () => OnButtonClicked(index);
+            _actionBarButtons.Add(actionBarButton);
+        }
+
+
+
     }
+    private void OnButtonClicked(int index) {
+        ButtonClicked?.Invoke(index);
+    }
+    
 }
