@@ -20,6 +20,7 @@ public partial class Inventory : Node {
         _inventoryItemsList = new List<InventoryItems>();
 
         UiManager.Instance.InventoryUi.Initialize(this);
+        UiManager.Instance.BuildUi.Initialize(this);
     }
 
     public bool TryAddItems(InventoryItems newInventoryItems) {

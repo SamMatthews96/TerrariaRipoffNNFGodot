@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://5s1dp1pvh1xy"
-path="res://.godot/imported/meleeButton.png-587daa056c8d3f8472351065188d9070.ctex"
+path="res://.godot/imported/weaponButton.png-ed1cd86ea156ed5276fc6fc3cbc0cd88.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Images/meleeButton.png"
-dest_files=["res://.godot/imported/meleeButton.png-587daa056c8d3f8472351065188d9070.ctex"]
+source_file="res://Assets/Images/weaponButton.png"
+dest_files=["res://.godot/imported/weaponButton.png-ed1cd86ea156ed5276fc6fc3cbc0cd88.ctex"]
 
 [params]
 

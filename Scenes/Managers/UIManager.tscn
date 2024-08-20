@@ -1,15 +1,17 @@
-[gd_scene load_steps=6 format=3 uid="uid://javhx4rej0q4"]
+[gd_scene load_steps=7 format=3 uid="uid://javhx4rej0q4"]
 
 [ext_resource type="Script" path="res://Scripts/Managers/UiManager.cs" id="1_u4pfo"]
 [ext_resource type="Script" path="res://Scripts/UI/InventoryUi.cs" id="2_7evv2"]
 [ext_resource type="PackedScene" uid="uid://cgk6fsvhwhj5n" path="res://Scenes/UI/InventoryItemUi.tscn" id="3_dyqpx"]
 [ext_resource type="Script" path="res://Scripts/UI/ActionBar.cs" id="4_sxypo"]
 [ext_resource type="PackedScene" uid="uid://bonil0th12qcf" path="res://Scenes/UI/ActionBarButton.tscn" id="5_hic71"]
+[ext_resource type="Script" path="res://Scripts/UI/BuildUi.cs" id="6_2roxu"]
 
-[node name="UIManager" type="CanvasLayer" node_paths=PackedStringArray("InventoryUi", "ActionBar")]
+[node name="UIManager" type="CanvasLayer" node_paths=PackedStringArray("InventoryUi", "ActionBar", "BuildUi")]
 script = ExtResource("1_u4pfo")
 InventoryUi = NodePath("Inventory")
 ActionBar = NodePath("ActionBar")
+BuildUi = NodePath("BuildUI")
 
 [node name="Inventory" type="PanelContainer" parent="." node_paths=PackedStringArray("_capacityLabel", "_inventoryItemUiContainer")]
 offset_right = 210.0
@@ -41,6 +43,7 @@ layout_mode = 2
 columns = 10
 
 [node name="ActionBar" type="PanelContainer" parent="." node_paths=PackedStringArray("_buttonContainer")]
+custom_minimum_size = Vector2(384, 128)
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
@@ -64,4 +67,28 @@ theme_override_constants/margin_right = 3
 theme_override_constants/margin_bottom = 3
 
 [node name="ButtonContainer" type="HBoxContainer" parent="ActionBar/MarginContainer"]
+layout_mode = 2
+
+[node name="BuildUI" type="VBoxContainer" parent="." node_paths=PackedStringArray("_buildDrawModeUi", "_blockTypesUi")]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -796.0
+offset_top = -427.0
+offset_right = -404.0
+offset_bottom = -248.0
+grow_horizontal = 2
+grow_vertical = 0
+script = ExtResource("6_2roxu")
+_buildDrawModeUi = NodePath("BuildDrawModeUI")
+_blockTypesUi = NodePath("BlockTypesContainer")
+_uiButton = ExtResource("5_hic71")
+
+[node name="BuildDrawModeUI" type="HBoxContainer" parent="BuildUI"]
+custom_minimum_size = Vector2(0, 128)
+layout_mode = 2
+
+[node name="BlockTypesContainer" type="HBoxContainer" parent="BuildUI"]
 layout_mode = 2

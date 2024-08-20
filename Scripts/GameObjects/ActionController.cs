@@ -12,8 +12,8 @@ public partial class ActionController : Node {
     private readonly List<(IActionState iActionState, Texture2D texture2D)> _actionIconPairsList = new();
     private IActionState currentActionState;
     [Export] private Player _player;
-    [Export] private Texture2D _meleeActionIcon;
-    [Export] private Texture2D _mineActionIcon;
+    [Export] private Texture2D _weaponActionIcon;
+    [Export] private Texture2D _gatherActionIcon;
     [Export] private Texture2D _buildActionIcon;
 
 
@@ -23,14 +23,13 @@ public partial class ActionController : Node {
             return;
         }
 
-        _actionIconPairsList.Add((new NullActionState(_player), _meleeActionIcon));
-        _actionIconPairsList.Add((new NullActionState(_player), _mineActionIcon));
-        _actionIconPairsList.Add((new NullActionState(_player), _buildActionIcon));
+        _actionIconPairsList.Add((new WeaponActionState(_player), _weaponActionIcon));
+        _actionIconPairsList.Add((new GatherActionState(_player), _gatherActionIcon));
+        _actionIconPairsList.Add((new BuildActionState(_player), _buildActionIcon));
 
         List<Texture2D> actionIcons =
             _actionIconPairsList.Select(pair => pair.texture2D).ToList();
         UiManager.Instance.ActionBar.Initialize(actionIcons);
-        EquipAction(0);
 
         InputManager.Instance.LeftMouseUp += OnInputManagerLeftMouseUp;
         InputManager.Instance.LeftMouseDown += OnInputManagerLeftMouseDown;
@@ -38,6 +37,8 @@ public partial class ActionController : Node {
         InputManager.Instance.RightMouseDown += OnInputManagerRightMouseDown;
 
         UiManager.Instance.ActionBar.ButtonClicked += OnActionBarButtonClicked;
+
+        EquipAction(0);
     }
 
     private void OnActionBarButtonClicked(int index) {
@@ -45,6 +46,7 @@ public partial class ActionController : Node {
     }
 
     private void EquipAction(int index) {
+        GD.Print("equipped " + index);
         currentActionState = _actionIconPairsList[index].iActionState;
         currentActionState.Equip();
     }

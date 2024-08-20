@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace TerrariaRipoffNNF.Scripts.GameObjects;
+namespace TerrariaRipoffNNF.Scripts.Actions;
 
 public interface IActionState {
     public void Equip() { }
@@ -10,7 +10,7 @@ public interface IActionState {
         
     }
     
-    public void PrimaryAction(Vector2 mouseScreenPosition);
+    public void PrimaryAction(Vector2 mouseWorldPosition);
     
     public void EndPrimaryAction(Vector2 mouseScreenPosition);
 }

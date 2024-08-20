@@ -4,8 +4,8 @@
 [ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://Assets/Images/icon.svg" id="2_5yc1a"]
 [ext_resource type="Script" path="res://Scripts/GameObjects/Inventory.cs" id="3_vdjfg"]
 [ext_resource type="Script" path="res://Scripts/GameObjects/ActionController.cs" id="4_pogak"]
-[ext_resource type="Texture2D" uid="uid://5s1dp1pvh1xy" path="res://Assets/Images/meleeButton.png" id="5_tkx4a"]
-[ext_resource type="Texture2D" uid="uid://d2ux360fa5nu1" path="res://Assets/Images/mineButton.png" id="6_1b1ob"]
+[ext_resource type="Texture2D" uid="uid://5s1dp1pvh1xy" path="res://Assets/Images/weaponButton.png" id="5_i37y3"]
+[ext_resource type="Texture2D" uid="uid://d2ux360fa5nu1" path="res://Assets/Images/gatherButton.png" id="6_psi8g"]
 [ext_resource type="Texture2D" uid="uid://c43ihljnqox3q" path="res://Assets/Images/buildButton.png" id="7_gy1hr"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_8kinl"]
@@ -64,6 +64,6 @@ script = ExtResource("3_vdjfg")
 [node name="ActionController" type="Node" parent="." node_paths=PackedStringArray("_player")]
 script = ExtResource("4_pogak")
 _player = NodePath("..")
-_meleeActionIcon = ExtResource("5_tkx4a")
-_mineActionIcon = ExtResource("6_1b1ob")
+_weaponActionIcon = ExtResource("5_i37y3")
+_gatherActionIcon = ExtResource("6_psi8g")
 _buildActionIcon = ExtResource("7_gy1hr")

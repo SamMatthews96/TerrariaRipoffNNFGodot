@@ -12,7 +12,6 @@ public partial class ActiveBlock : StaticBody2D {
     [Export] private Dictionary _savedBlockDictionary;
     [Export] private Sprite2D _sprite;
 
-
     public event Action<ActiveBlock, float> TakenDamage;
 
     public void Initialize(SavedBlock savedBlock) {
@@ -28,12 +27,6 @@ public partial class ActiveBlock : StaticBody2D {
             SavedBlock.XPosition * GameManager.BlockSize,
             SavedBlock.YPosition * GameManager.BlockSize);
         _sprite.Texture = SavedBlock.BlockType.Texture;
-    }
-
-    private void OnInputEvent(Node _, InputEvent e, int __) {
-        if (e is InputEventMouseButton mouseButton) {
-            RpcId(Manager.MultiplayerHostId, nameof(ServerHandleTakeDamage), 100f);
-        }
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]

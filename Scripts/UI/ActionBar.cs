@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Godot;
-using TerrariaRipoffNNF.Scripts.Actions;
-using TerrariaRipoffNNF.Scripts.GameObjects;
 
 namespace TerrariaRipoffNNF.Scripts.UI;
 
@@ -24,12 +22,9 @@ public partial class ActionBar : PanelContainer {
             actionBarButton.Pressed += () => OnButtonClicked(index);
             _actionBarButtons.Add(actionBarButton);
         }
-
-
-
     }
+
     private void OnButtonClicked(int index) {
         ButtonClicked?.Invoke(index);
     }
-    
 }

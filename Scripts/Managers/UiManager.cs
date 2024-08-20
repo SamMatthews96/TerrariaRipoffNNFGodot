@@ -9,6 +9,7 @@ public partial class UiManager : CanvasLayer {
 
     [Export] public InventoryUi InventoryUi { get; private set; }
     [Export] public ActionBar ActionBar { get; private set; }
+    [Export] public BuildUi BuildUi { get; private set; }
     
     public override void _EnterTree() {
         if (Instance is not null) {
