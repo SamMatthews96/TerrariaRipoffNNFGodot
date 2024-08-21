@@ -1,12 +1,10 @@
-[gd_scene load_steps=11 format=3 uid="uid://bx6lgpicpfal4"]
+[gd_scene load_steps=9 format=3 uid="uid://bx6lgpicpfal4"]
 
 [ext_resource type="Script" path="res://Scripts/GameObjects/Player.cs" id="1_8yy3a"]
 [ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://Assets/Images/icon.svg" id="2_5yc1a"]
 [ext_resource type="Script" path="res://Scripts/GameObjects/Inventory.cs" id="3_vdjfg"]
 [ext_resource type="Script" path="res://Scripts/GameObjects/ActionController.cs" id="4_pogak"]
-[ext_resource type="Texture2D" uid="uid://5s1dp1pvh1xy" path="res://Assets/Images/weaponButton.png" id="5_i37y3"]
-[ext_resource type="Texture2D" uid="uid://d2ux360fa5nu1" path="res://Assets/Images/gatherButton.png" id="6_psi8g"]
-[ext_resource type="Texture2D" uid="uid://c43ihljnqox3q" path="res://Assets/Images/buildButton.png" id="7_gy1hr"]
+[ext_resource type="Script" path="res://Scripts/GameObjects/ActionState.cs" id="5_vfnq6"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_8kinl"]
 properties/0/path = NodePath(".:_playerInfoDictionary")
@@ -24,13 +22,16 @@ properties/0/replication_mode = 1
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_raw6a"]
 size = Vector2(44, 93)
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("_positionSynchronizer", "_camera", "_pickupArea", "_inventory")]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("_positionSynchronizer", "_camera", "_pickupArea", "_inventory", "_gatherActionState", "_buildActionState", "_weaponActionState")]
 collision_mask = 2
 script = ExtResource("1_8yy3a")
 _positionSynchronizer = NodePath("PositionSync")
 _camera = NodePath("Camera2D")
 _pickupArea = NodePath("PickupArea")
 _inventory = NodePath("Inventory")
+_gatherActionState = NodePath("ActionController/GatherActionState")
+_buildActionState = NodePath("ActionController/BuildActionState")
+_weaponActionState = NodePath("ActionController/WeaponActionState")
 
 [node name="PlayerInfoSync" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_8kinl")
@@ -61,9 +62,16 @@ shape = SubResource("RectangleShape2D_raw6a")
 [node name="Inventory" type="Node" parent="."]
 script = ExtResource("3_vdjfg")
 
-[node name="ActionController" type="Node" parent="." node_paths=PackedStringArray("_player")]
+[node name="ActionController" type="Node" parent="." node_paths=PackedStringArray("_actions", "_player")]
 script = ExtResource("4_pogak")
+_actions = [NodePath("GatherActionState"), NodePath("BuildActionState"), NodePath("WeaponActionState")]
 _player = NodePath("..")
-_weaponActionIcon = ExtResource("5_i37y3")
-_gatherActionIcon = ExtResource("6_psi8g")
-_buildActionIcon = ExtResource("7_gy1hr")
+
+[node name="GatherActionState" type="Node" parent="ActionController"]
+script = ExtResource("5_vfnq6")
+
+[node name="BuildActionState" type="Node" parent="ActionController"]
+script = ExtResource("5_vfnq6")
+
+[node name="WeaponActionState" type="Node" parent="ActionController"]
+script = ExtResource("5_vfnq6")

@@ -20,6 +20,10 @@ public partial class Player : CharacterBody2D {
     [Export] private float _jumpStrength = 800;
     [Export] private Vector2 _spawnPosition;
 
+    [Export] private ActionState _gatherActionState;
+    [Export] private ActionState _buildActionState;
+    [Export] private ActionState _weaponActionState;
+
     private int _horizontalInput;
     private bool _isFalling;
     private float _xVelocity;
@@ -27,15 +31,14 @@ public partial class Player : CharacterBody2D {
 
     private IntVector _previousCoords;
 
-    private IntVector Coords => new(
-        (int)Math.Round(Position.X / GameManager.BlockSize),
-        (int)Math.Round(Position.Y / GameManager.BlockSize));
+    private IntVector Coords => new(Position / GameManager.BlockSize);
 
     private int PeerId => Name.ToString().ToInt();
     public bool IsLocalPlayer => Multiplayer.GetUniqueId() == PeerId;
 
     public event Action<Dictionary> MovedCell;
     public event Action<ActivePickup> PickedUpItem;
+    public event Action<IntVector, float> GatherAttempted;
 
     #region Creation
 
@@ -60,8 +63,13 @@ public partial class Player : CharacterBody2D {
 
         if (!IsLocalPlayer) return;
         _camera.Enabled = true;
-        InputManager.Instance.HorizontalInputChanged += newInput => _horizontalInput = newInput;
+        InputManager.Instance.HorizontalInputChanged +=
+            newInput => _horizontalInput = newInput;
         InputManager.Instance.JumpPressed += OnJumpPressed;
+
+        _weaponActionState.PrimaryActionStarted += mouseWorldPosition => { };
+
+        _gatherActionState.PrimaryActionStarted += OnGatherStartAction;
     }
 
     #endregion
@@ -111,5 +119,17 @@ public partial class Player : CharacterBody2D {
         if (success) {
             PickedUpItem?.Invoke(activePickup);
         }
+    }
+
+
+    private void OnGatherStartAction(Vector2 mouseWorldPosition) {
+        RpcId(Manager.MultiplayerHostId, nameof(HostGatherStartAction),
+            mouseWorldPosition);
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+    private void HostGatherStartAction(Vector2 mouseWorldPosition) {
+        IntVector coords = new(mouseWorldPosition / GameManager.BlockSize);
+        GatherAttempted?.Invoke(coords, 100f);
     }
 }

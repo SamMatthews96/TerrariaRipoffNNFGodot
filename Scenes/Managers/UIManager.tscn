@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://javhx4rej0q4"]
+[gd_scene load_steps=10 format=3 uid="uid://javhx4rej0q4"]
 
 [ext_resource type="Script" path="res://Scripts/Managers/UiManager.cs" id="1_u4pfo"]
 [ext_resource type="Script" path="res://Scripts/UI/InventoryUi.cs" id="2_7evv2"]
@@ -6,6 +6,9 @@
 [ext_resource type="Script" path="res://Scripts/UI/ActionBar.cs" id="4_sxypo"]
 [ext_resource type="PackedScene" uid="uid://bonil0th12qcf" path="res://Scenes/UI/ActionBarButton.tscn" id="5_hic71"]
 [ext_resource type="Script" path="res://Scripts/UI/BuildUi.cs" id="6_2roxu"]
+[ext_resource type="Texture2D" uid="uid://d2ux360fa5nu1" path="res://Assets/Images/gatherButton.png" id="6_wj3mu"]
+[ext_resource type="Texture2D" uid="uid://c43ihljnqox3q" path="res://Assets/Images/buildButton.png" id="7_ajne1"]
+[ext_resource type="Texture2D" uid="uid://5s1dp1pvh1xy" path="res://Assets/Images/weaponButton.png" id="8_uqe2i"]
 
 [node name="UIManager" type="CanvasLayer" node_paths=PackedStringArray("InventoryUi", "ActionBar", "BuildUi")]
 script = ExtResource("1_u4pfo")
@@ -42,7 +45,7 @@ custom_minimum_size = Vector2(200, 10)
 layout_mode = 2
 columns = 10
 
-[node name="ActionBar" type="PanelContainer" parent="." node_paths=PackedStringArray("_buttonContainer")]
+[node name="ActionBar" type="PanelContainer" parent="." node_paths=PackedStringArray("_buttonContainer", "_gatherButton", "_buildButton", "_weaponButton")]
 custom_minimum_size = Vector2(384, 128)
 anchors_preset = 7
 anchor_left = 0.5
@@ -58,6 +61,9 @@ grow_vertical = 0
 script = ExtResource("4_sxypo")
 _actionBarButtonScene = ExtResource("5_hic71")
 _buttonContainer = NodePath("MarginContainer/ButtonContainer")
+_gatherButton = NodePath("MarginContainer/ButtonContainer/GatherButton")
+_buildButton = NodePath("MarginContainer/ButtonContainer/BuildButton")
+_weaponButton = NodePath("MarginContainer/ButtonContainer/WeaponButton")
 
 [node name="MarginContainer" type="MarginContainer" parent="ActionBar"]
 layout_mode = 2
@@ -68,6 +74,18 @@ theme_override_constants/margin_bottom = 3
 
 [node name="ButtonContainer" type="HBoxContainer" parent="ActionBar/MarginContainer"]
 layout_mode = 2
+
+[node name="GatherButton" type="TextureButton" parent="ActionBar/MarginContainer/ButtonContainer"]
+layout_mode = 2
+texture_normal = ExtResource("6_wj3mu")
+
+[node name="BuildButton" type="TextureButton" parent="ActionBar/MarginContainer/ButtonContainer"]
+layout_mode = 2
+texture_normal = ExtResource("7_ajne1")
+
+[node name="WeaponButton" type="TextureButton" parent="ActionBar/MarginContainer/ButtonContainer"]
+layout_mode = 2
+texture_normal = ExtResource("8_uqe2i")
 
 [node name="BuildUI" type="VBoxContainer" parent="." node_paths=PackedStringArray("_buildDrawModeUi", "_blockTypesUi")]
 anchors_preset = 7

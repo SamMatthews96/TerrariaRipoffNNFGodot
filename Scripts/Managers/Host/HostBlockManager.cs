@@ -60,16 +60,16 @@ public partial class HostBlockManager : Node {
         ActiveBlock activeBlock = _blockPackedScene.Instantiate<ActiveBlock>();
         _activeBlocks[savedBlock.XPosition, savedBlock.YPosition] = activeBlock;
         activeBlock.Initialize(savedBlock);
-        activeBlock.TakenDamage += OnActiveBlockTakenDamage;
         GameManager.Instance.BlockParent.AddChild(activeBlock, true);
     }
 
-    private void OnActiveBlockTakenDamage(ActiveBlock activeBlock, float damageAmount) {
+    private void DamageActiveBlock(ActiveBlock activeBlock, float damageAmount) {
         SavedBlock savedBlock = activeBlock.SavedBlock;
         savedBlock.CurrentHealth -= damageAmount;
         if (savedBlock.CurrentHealth > 0) return;
         _savedBlocks[savedBlock.XPosition, savedBlock.YPosition] = null;
         activeBlock.QueueFree();
+        _activeBlocks[savedBlock.XPosition, savedBlock.YPosition] = null;
 
         BlockDestroyed?.Invoke(savedBlock);
     }
@@ -87,6 +87,7 @@ public partial class HostBlockManager : Node {
 
     private void OnPlayerManagerPlayerSpawned(Player player) {
         player.MovedCell += OnLocalPlayerMoved;
+        player.GatherAttempted += OnPlayerGatherAction;
     }
 
     private void OnLocalPlayerMoved(Dictionary positionChange) {
@@ -99,5 +100,11 @@ public partial class HostBlockManager : Node {
             newCoordinates, oldCoordinates, BlockSpawnDistance);
         
         SpawnBlocksInRegion(newRegion);
+    }
+
+    private void OnPlayerGatherAction(IntVector coords, float damage) {
+        ActiveBlock activeBlock = _activeBlocks[coords.X, coords.Y];
+        if (activeBlock is null) return;
+        DamageActiveBlock(activeBlock, damage);
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using Godot;
 using Godot.Collections;
-using ActiveBlock = TerrariaRipoffNNF.Scripts.GameObjects.ActiveBlock;
 
 namespace TerrariaRipoffNNF.Scripts.Resources;
 

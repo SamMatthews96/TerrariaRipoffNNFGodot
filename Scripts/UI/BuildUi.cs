@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using Godot;
-using Microsoft.VisualBasic;
-using TerrariaRipoffNNF.Scripts.Actions;
 using TerrariaRipoffNNF.Scripts.GameObjects;
 using TerrariaRipoffNNF.Scripts.Resources;
 
@@ -23,8 +21,8 @@ public partial class BuildUi : Container {
 
     public override void _Ready() {
         Hide();
-        BuildActionState.OnBuildActionEquipped += OnBuildActionEquipped;
-        BuildActionState.OnBuildActionUnequipped += OnBuildActionUnequipped;
+        // BuildActionState.OnBuildActionEquipped += OnBuildActionEquipped;
+        // BuildActionState.OnBuildActionUnequipped += OnBuildActionUnequipped;
     }
 
     private void OnInventoryChanged() {
