@@ -36,9 +36,14 @@ public partial class Player : CharacterBody2D {
     private int PeerId => Name.ToString().ToInt();
     public bool IsLocalPlayer => Multiplayer.GetUniqueId() == PeerId;
 
+    public static Player LocalPlayer { get; private set; }
+
     public event Action<Dictionary> MovedCell;
     public event Action<ActivePickup> PickedUpItem;
     public event Action<IntVector, float> GatherAttempted;
+
+    public event Action BuildStateEntered;
+    public event Action BuildStateLeft;
 
     #region Creation
 
@@ -52,24 +57,33 @@ public partial class Player : CharacterBody2D {
 
     public override void _EnterTree() {
         _positionSynchronizer.SetMultiplayerAuthority(PeerId);
+        if (IsLocalPlayer) {
+            GD.Print(1);
+            LocalPlayer = this;
+        }
     }
 
     public override void _Ready() {
         Position = _spawnPosition;
+
 
         if (GameManager.Instance.IsHost) {
             _pickupArea.BodyEntered += OnServerCollidedWithPickup;
         }
 
         if (!IsLocalPlayer) return;
+
+        UiManager.Instance.InventoryUi.Initialize(_inventory);
+        UiManager.Instance.BuildUi.Initialize(_inventory);
         _camera.Enabled = true;
         InputManager.Instance.HorizontalInputChanged +=
             newInput => _horizontalInput = newInput;
         InputManager.Instance.JumpPressed += OnJumpPressed;
 
-        _weaponActionState.PrimaryActionStarted += mouseWorldPosition => { };
-
         _gatherActionState.PrimaryActionStarted += OnGatherStartAction;
+
+        _buildActionState.EnteredState += OnBuildStateEntered;
+        _buildActionState.LeftState += OnBuildStateLeft;
     }
 
     #endregion
@@ -131,5 +145,13 @@ public partial class Player : CharacterBody2D {
     private void HostGatherStartAction(Vector2 mouseWorldPosition) {
         IntVector coords = new(mouseWorldPosition / GameManager.BlockSize);
         GatherAttempted?.Invoke(coords, 100f);
+    }
+
+    private void OnBuildStateEntered() {
+        BuildStateEntered?.Invoke();
+    }
+
+    private void OnBuildStateLeft() {
+        BuildStateLeft?.Invoke();
     }
 }

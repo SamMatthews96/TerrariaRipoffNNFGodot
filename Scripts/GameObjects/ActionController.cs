@@ -31,9 +31,9 @@ public partial class ActionController : Node {
     }
 
     private void EquipAction(int index) {
-        currentActionState?.Unequip();
+        currentActionState?.LeaveState();
         currentActionState = _actions[index];
-        currentActionState.Equip();
+        currentActionState.EnterState();
     }
 
     private void OnInputManagerLeftMouseUp(Vector2 mouseScreenPosition) {

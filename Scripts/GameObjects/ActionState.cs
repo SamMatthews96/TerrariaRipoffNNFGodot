@@ -4,17 +4,17 @@ using Godot;
 namespace TerrariaRipoffNNF.Scripts.GameObjects;
 
 public partial class ActionState : Node {
-    public event Action Equipped;
-    public event Action Unequipped;
+    public event Action EnteredState;
+    public event Action LeftState;
     public event Action<Vector2> PrimaryActionStarted;
     public event Action<Vector2> PrimaryActionEnded;
 
-    public void Equip() {
-        Equipped?.Invoke();
+    public void EnterState() {
+        EnteredState?.Invoke();
     }
 
-    public void Unequip() {
-        Unequipped?.Invoke();
+    public void LeaveState() {
+        LeftState?.Invoke();
     }
 
     public void PrimaryAction(Vector2 mouseWorldPosition) {

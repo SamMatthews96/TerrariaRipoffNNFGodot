@@ -17,18 +17,19 @@ public partial class BuildUi : Container {
     public void Initialize(Inventory inventory) {
         _inventory = inventory;
         _inventory.InventoryChanged += OnInventoryChanged;
+
+        Player.LocalPlayer.BuildStateEntered += OnBuildStateEntered;
+        Player.LocalPlayer.BuildStateLeft += OnBuildStateLeft;
     }
 
     public override void _Ready() {
         Hide();
-        // BuildActionState.OnBuildActionEquipped += OnBuildActionEquipped;
-        // BuildActionState.OnBuildActionUnequipped += OnBuildActionUnequipped;
     }
 
     private void OnInventoryChanged() {
         _blockTypeButtons.ForEach(button => button.QueueFree());
         _blockTypeButtons.Clear();
-        
+
         List<InventoryItems> blockTypes = _inventory.InventoryItemsList.FindAll(inventoryItems =>
             inventoryItems.ItemType is BlockType);
         blockTypes.ForEach(blockType => {
@@ -39,11 +40,11 @@ public partial class BuildUi : Container {
         });
     }
 
-    private void OnBuildActionEquipped() {
+    private void OnBuildStateEntered() {
         Show();
     }
 
-    private void OnBuildActionUnequipped() {
+    private void OnBuildStateLeft() {
         Hide();
     }
 }
