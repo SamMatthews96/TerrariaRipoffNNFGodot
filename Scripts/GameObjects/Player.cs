@@ -75,6 +75,7 @@ public partial class Player : CharacterBody2D {
 
         UiManager.Instance.InventoryUi.Initialize(_inventory);
         UiManager.Instance.BuildUi.Initialize(_inventory);
+
         _camera.Enabled = true;
         InputManager.Instance.HorizontalInputChanged +=
             newInput => _horizontalInput = newInput;
@@ -154,4 +155,8 @@ public partial class Player : CharacterBody2D {
     private void OnBuildStateLeft() {
         BuildStateLeft?.Invoke();
     }
+    
+
+        
+    
 }

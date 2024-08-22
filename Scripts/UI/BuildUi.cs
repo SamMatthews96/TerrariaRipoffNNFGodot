@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Godot;
 using TerrariaRipoffNNF.Scripts.GameObjects;
 using TerrariaRipoffNNF.Scripts.Resources;
@@ -13,6 +14,8 @@ public partial class BuildUi : Container {
     private Inventory _inventory;
     private List<ActionBarButton> _drawModeButtons = new();
     private List<ActionBarButton> _blockTypeButtons = new();
+    
+    public event Action<BlockType> BlockTypeSelected;
 
     public void Initialize(Inventory inventory) {
         _inventory = inventory;
@@ -35,6 +38,10 @@ public partial class BuildUi : Container {
         blockTypes.ForEach(blockType => {
             ActionBarButton button = _uiButton.Instantiate<ActionBarButton>();
             button.Initialize(blockType.ItemType.IconTexture);
+            button.ButtonDown += () => {
+                BlockTypeSelected?.Invoke((BlockType)blockType.ItemType);
+            };
+            
             _blockTypeButtons.Add(button);
             _blockTypesUi.AddChild(button);
         });
