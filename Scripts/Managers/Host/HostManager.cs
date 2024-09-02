@@ -46,5 +46,7 @@ public partial class HostManager : Node {
             spawnPosition, HostBlockManager.BlockSpawnDistance);
         HostBlockManager.Instance.SpawnBlocksInRegion(region);
         HostPlayerManager.Instance.SpawnPlayer(peerId, playerInfo);
+        
+        
     }
 }

@@ -16,17 +16,16 @@ public partial class HostPlayerManager : Node {
         if (Instance is not null) {
             throw new Exception("[20240814.0045.1] HostManager already instantiated");
         }
-
         Instance = this;
     }
 
     public void SpawnPlayer(int peerId, PlayerInfo playerInfo) {
-        Player player = _hostPlayerPackedScene.Instantiate<Player>();
         Vector2 spawnPosition = HostManager.Instance.DefaultSpawnPosition * GameManager.BlockSize;
-        player.Initialize(peerId, playerInfo, spawnPosition);
-
-        GameManager.Instance.PlayerParent.AddChild(player, true);
-
+        Player player = Player.New(GameManager.Instance.PlayerParent, _hostPlayerPackedScene)
+            .WithPeerId(peerId)
+            .WithSpawnPosition(spawnPosition)
+            .Build();
+        
         PlayerSpawned?.Invoke(player);
     }
 }

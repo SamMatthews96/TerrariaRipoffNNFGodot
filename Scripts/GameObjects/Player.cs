@@ -11,7 +11,6 @@ namespace TerrariaRipoffNNF.Scripts.GameObjects;
 public partial class Player : CharacterBody2D {
     [Export] private MultiplayerSynchronizer _positionSynchronizer;
     [Export] private Camera2D _camera;
-    [Export] private Dictionary _playerInfoDictionary;
     [Export] private Area2D _pickupArea;
     [Export] private Inventory _inventory;
 
@@ -47,25 +46,15 @@ public partial class Player : CharacterBody2D {
 
     #region Creation
 
-    public void Initialize(int peerId, PlayerInfo playerInfo, Vector2 spawnPosition) {
-        HostManager.RequireHost();
-
-        Name = peerId.ToString();
-        _playerInfoDictionary = playerInfo.Serialize();
-        _spawnPosition = spawnPosition;
-    }
-
     public override void _EnterTree() {
         _positionSynchronizer.SetMultiplayerAuthority(PeerId);
         if (IsLocalPlayer) {
-            GD.Print(1);
             LocalPlayer = this;
         }
     }
 
     public override void _Ready() {
         Position = _spawnPosition;
-
 
         if (GameManager.Instance.IsHost) {
             _pickupArea.BodyEntered += OnServerCollidedWithPickup;
