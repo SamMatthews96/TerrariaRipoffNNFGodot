@@ -6,9 +6,9 @@ namespace TerrariaRipoffNNF.Scripts.Resources;
 
 public partial class SavedBlock : Resource {
 
-    public int XPosition { get; }
-    public int YPosition { get; }
-    public BlockType BlockType { get; }
+    public int XPosition { get; private init; }
+    public int YPosition { get; private init; }
+    public BlockType BlockType { get; private init; }
     public float CurrentHealth { get; set; }
 
     public Dictionary Serialize() {

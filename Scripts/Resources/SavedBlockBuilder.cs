@@ -1,19 +1,17 @@
 ﻿namespace TerrariaRipoffNNF.Scripts.Resources;
 
 public partial class SavedBlock {
-    private SavedBlock(BlockType blockType, int xPosition, int yPosition) {
-        BlockType = blockType;
-        XPosition = xPosition;
-        YPosition = yPosition;
-    }
-
     private SavedBlock() { }
 
     public class Builder {
         private SavedBlock _savedBlock;
 
         public static Builder New(BlockType blockType, int xPosition, int yPosition) {
-            SavedBlock savedBlock = new(blockType, xPosition, yPosition);
+            SavedBlock savedBlock = new() {
+                BlockType = blockType,
+                XPosition = xPosition,
+                YPosition = yPosition
+            };
             return new Builder {
                 _savedBlock = savedBlock
             };
