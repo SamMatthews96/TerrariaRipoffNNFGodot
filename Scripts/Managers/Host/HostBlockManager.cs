@@ -57,10 +57,9 @@ public partial class HostBlockManager : Node {
             throw new Exception("[20240814.2208.1] Block already spawned");
         }
 
-        ActiveBlock activeBlock = _blockPackedScene.Instantiate<ActiveBlock>();
+        ActiveBlock activeBlock = ActiveBlock.New(
+            GameManager.Instance.BlockParent, _blockPackedScene, savedBlock).Build();
         _activeBlocks[savedBlock.XPosition, savedBlock.YPosition] = activeBlock;
-        activeBlock.Initialize(savedBlock);
-        GameManager.Instance.BlockParent.AddChild(activeBlock, true);
     }
 
     private void DamageActiveBlock(ActiveBlock activeBlock, float damageAmount) {
@@ -95,10 +94,10 @@ public partial class HostBlockManager : Node {
             (int)positionChange["PreviousX"], (int)positionChange["PreviousY"]);
         IntVector newCoordinates = new(
             (int)positionChange["X"], (int)positionChange["Y"]);
-        
+
         List<IntVector> newRegion = GameManager.Instance.Region.GetRegionDelta(
             newCoordinates, oldCoordinates, BlockSpawnDistance);
-        
+
         SpawnBlocksInRegion(newRegion);
     }
 

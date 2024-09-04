@@ -12,12 +12,6 @@ public partial class ActiveBlock : StaticBody2D {
     [Export] private Dictionary _savedBlockDictionary;
     [Export] private Sprite2D _sprite;
 
-    public void Initialize(SavedBlock savedBlock) {
-        HostManager.RequireHost();
-
-        _savedBlockDictionary = savedBlock.Serialize();
-    }
-
     public override void _Ready() {
         SavedBlock = SavedBlock.FromDict(_savedBlockDictionary);
 

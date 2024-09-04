@@ -8,7 +8,6 @@ public partial class Player {
         private Player _player;
         private Node _parent;
         private int _peerId = 1;
-        private Vector2 _spawnPosition = Vector2.Zero;
         
         public Builder(Node parent, PackedScene packedScene) {
             _player = packedScene.Instantiate<Player>();
@@ -21,13 +20,12 @@ public partial class Player {
         }
         
         public Builder WithSpawnPosition(Vector2 spawnPosition) {
-            _spawnPosition = spawnPosition;
+            _player._spawnPosition = spawnPosition;
             return this;
         }
 
         public Player Build() {
             _player.Name = _peerId.ToString();
-            _player._spawnPosition = _spawnPosition;
             
             _parent.AddChild(_player, true);
             return _player;
