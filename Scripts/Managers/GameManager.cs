@@ -8,14 +8,11 @@ using TerrariaRipoffNNF.Scripts.Utils;
 namespace TerrariaRipoffNNF.Scripts.Managers;
 
 public partial class GameManager : Node {
-    #region Children
-
     [Export] public Region Region { get; private set; }
     [Export] public Node BlockParent { get; private set; }
     [Export] public Node PlayerParent { get; private set; }
     [Export] public PackedScene HostManagerScene { get; private set; }
 
-    #endregion
 
     public const int BlockSize = 32;
     public static GameManager Instance { get; private set; }

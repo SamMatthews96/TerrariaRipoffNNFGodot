@@ -3,6 +3,7 @@ using Godot;
 using Godot.Collections;
 using TerrariaRipoffNNF.Scripts.Managers;
 using TerrariaRipoffNNF.Scripts.Utils;
+using TerrariaRipoffNNF.Scripts.GameObjects;
 
 namespace TerrariaRipoffNNF.Scripts.GameObjects;
 
