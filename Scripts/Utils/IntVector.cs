@@ -1,5 +1,6 @@
 ﻿using System;
 using Godot;
+using TerrariaRipoffNNF.Scripts.Managers;
 using Array = Godot.Collections.Array;
 
 namespace TerrariaRipoffNNF.Scripts.Utils;
@@ -28,6 +29,10 @@ public struct IntVector {
     public IntVector(Vector2 vector2) {
         X = (int)Math.Round(vector2.X);
         Y = (int)Math.Round(vector2.Y);
+    }
+
+    public bool IsInBounds() {
+        return X >= 0 && X < GameManager.Instance.Width && Y >= 0 && Y < GameManager.Instance.Height;
     }
 
     public static IntVector operator -(IntVector a, IntVector b) {

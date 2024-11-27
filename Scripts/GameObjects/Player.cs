@@ -133,6 +133,7 @@ public partial class Player : CharacterBody2D {
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void HostGatherStartAction(Vector2 mouseWorldPosition) {
         IntVector coords = new(mouseWorldPosition / GameManager.BlockSize);
+        if (!coords.IsInBounds()) return;
         GatherAttempted?.Invoke(coords, 100f);
     }
 
