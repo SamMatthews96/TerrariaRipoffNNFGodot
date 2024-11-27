@@ -10,7 +10,6 @@ using Array = Godot.Collections.Array;
 namespace TerrariaRipoffNNF.Scripts.Managers.Host;
 
 public partial class HostBlockManager : Node {
-    public static HostBlockManager Instance { get; private set; }
 
     [Export] private PackedScene _blockPackedScene;
 
@@ -20,14 +19,6 @@ public partial class HostBlockManager : Node {
     private ActiveBlock[,] _activeBlocks;
 
     public event Action<SavedBlock> BlockDestroyed;
-
-    public override void _EnterTree() {
-        if (Instance is not null) {
-            throw new Exception("[20240814.0048.1] HostManager already instantiated");
-        }
-
-        Instance = this;
-    }
 
     public void Initialize(Dictionary worldDictionary) {
         _savedBlocks = new SavedBlock[
@@ -41,7 +32,7 @@ public partial class HostBlockManager : Node {
             _savedBlocks[savedBlock.XPosition, savedBlock.YPosition] = savedBlock;
         }
 
-        HostPlayerManager.Instance.PlayerSpawned += OnPlayerManagerPlayerSpawned;
+        HostManager.Instance.HostPlayerManager.PlayerSpawned += OnPlayerManagerPlayerSpawned;
     }
 
     public void SpawnBlocksInRegion(List<IntVector> region) {

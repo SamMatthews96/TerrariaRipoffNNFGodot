@@ -8,16 +8,19 @@
 [ext_resource type="Script" path="res://Scripts/Managers/Host/HostPickupManager.cs" id="6_3vi5l"]
 [ext_resource type="PackedScene" uid="uid://dq4nb0kwitffr" path="res://Scenes/GameObjects/ActivePickup.tscn" id="7_sd4oc"]
 
-[node name="HostManager" type="Node"]
+[node name="HostManager" type="Node" node_paths=PackedStringArray("HostPlayerManager", "HostBlockManager", "HostPickupManager")]
 script = ExtResource("1_whke1")
-
-[node name="HostBlockManager" type="Node" parent="."]
-script = ExtResource("2_65656")
-_blockPackedScene = ExtResource("3_2um2m")
+HostPlayerManager = NodePath("HostPlayerManager")
+HostBlockManager = NodePath("HostBlockManager")
+HostPickupManager = NodePath("HostPickupManager")
 
 [node name="HostPlayerManager" type="Node" parent="."]
 script = ExtResource("4_j6ywt")
 _hostPlayerPackedScene = ExtResource("5_ogsp2")
+
+[node name="HostBlockManager" type="Node" parent="."]
+script = ExtResource("2_65656")
+_blockPackedScene = ExtResource("3_2um2m")
 
 [node name="HostPickupManager" type="Node" parent="."]
 script = ExtResource("6_3vi5l")

@@ -7,10 +7,12 @@ using PlayerInfo = TerrariaRipoffNNF.Scripts.Resources.PlayerInfo;
 
 namespace TerrariaRipoffNNF.Scripts.Managers.Host;
 
-
-
 public partial class HostManager : Node {
     public static HostManager Instance { get; private set; }
+    
+    [Export] public HostPlayerManager HostPlayerManager { get; private set; }
+    [Export] public HostBlockManager HostBlockManager { get; private set; }
+    [Export] public HostPickupManager HostPickupManager { get; private set; }
 
     public Vector2 DefaultSpawnPosition { get; private set; }
 
@@ -34,8 +36,8 @@ public partial class HostManager : Node {
             (float)worldDictionary["DefaultSpawnPosition"].AsGodotArray()[0].AsDouble(),
             (float)worldDictionary["DefaultSpawnPosition"].AsGodotArray()[1].AsDouble());
 
-        HostBlockManager.Instance.Initialize(worldDictionary);
-        HostPickupManager.Instance.Initialize();
+        HostBlockManager.Initialize(worldDictionary);
+        HostPickupManager.Initialize();
 
         GameManager.Instance.PlayerJoined += OnGameManagerPlayerJoined;
     }
@@ -44,9 +46,7 @@ public partial class HostManager : Node {
         IntVector spawnPosition = new(DefaultSpawnPosition);
         List<IntVector> region = GameManager.Instance.Region.GetRegion(
             spawnPosition, HostBlockManager.BlockSpawnDistance);
-        HostBlockManager.Instance.SpawnBlocksInRegion(region);
-        HostPlayerManager.Instance.SpawnPlayer(peerId, playerInfo);
-        
-        
+        HostBlockManager.SpawnBlocksInRegion(region);
+        HostPlayerManager.SpawnPlayer(peerId, playerInfo);
     }
 }

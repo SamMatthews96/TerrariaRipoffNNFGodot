@@ -8,28 +8,19 @@ using TerrariaRipoffNNF.Scripts.Utils;
 namespace TerrariaRipoffNNF.Scripts.Managers.Host;
 
 public partial class HostPickupManager : Node {
-    public static HostPickupManager Instance { get; private set; }
 
     [Export] private PackedScene _pickupPackedScene;
 
     private List<SavedPickup>[,] _savedPickups;
     private List<ActivePickup>[,] _activePickups;
 
-    public override void _EnterTree() {
-        if (Instance is not null) {
-            throw new System.Exception("[20240814.0054.1] HostPickupManager already instantiated");
-        }
-
-        Instance = this;
-    }
-
     public void Initialize() {
         _savedPickups = new List<SavedPickup>[
             GameManager.Instance.Width, GameManager.Instance.Height];
         _activePickups = new List<ActivePickup>[
             GameManager.Instance.Width, GameManager.Instance.Height];
-        HostBlockManager.Instance.BlockDestroyed += OnBlockManagerBlockDestroyed;
-        HostPlayerManager.Instance.PlayerSpawned += OnPlayerManagerPlayerSpawned;
+        HostManager.Instance.HostBlockManager.BlockDestroyed += OnBlockManagerBlockDestroyed;
+        HostManager.Instance.HostPlayerManager.PlayerSpawned += OnPlayerManagerPlayerSpawned;
     }
 
     private void OnPlayerManagerPlayerSpawned(Player player) {
