@@ -29,13 +29,15 @@ public partial class Player : CharacterBody2D {
 
     private IntVector _previousCoords;
 
-    private IntVector Coords => new(Position / GameManager.BlockSize);
+    private IntVector Coords => new(Position / Game.BlockSize);
 
     private int PeerId => Name.ToString().ToInt();
     public bool IsLocalPlayer => Multiplayer.GetUniqueId() == PeerId;
 
     public static Player LocalPlayer { get; private set; }
 
+
+    public static event Action<Player> LocalPlayerSpawned;
     public event Action<Dictionary> MovedCell;
     public event Action<ActivePickup> PickedUpItem;
     public event Action<IntVector, float> GatherAttempted;
@@ -55,7 +57,7 @@ public partial class Player : CharacterBody2D {
     public override void _Ready() {
         Position = _spawnPosition;
 
-        if (GameManager.Instance.IsHost) {
+        if (Manager.Instance.Game.IsHost) {
             _pickupArea.BodyEntered += OnServerCollidedWithPickup;
         }
 
@@ -132,7 +134,7 @@ public partial class Player : CharacterBody2D {
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void HostGatherStartAction(Vector2 mouseWorldPosition) {
-        IntVector coords = new(mouseWorldPosition / GameManager.BlockSize);
+        IntVector coords = new(mouseWorldPosition / Game.BlockSize);
         if (!coords.IsInBounds()) return;
         GatherAttempted?.Invoke(coords, 100f);
     }

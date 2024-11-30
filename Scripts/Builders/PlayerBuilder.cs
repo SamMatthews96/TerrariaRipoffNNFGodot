@@ -33,7 +33,7 @@ public partial class Player {
     }
 
     public static Builder New(Node parent, PackedScene packedScene) {
-        HostManager.RequireHost();
+        Host.RequireHost();
         return new Builder(parent, packedScene);
     }
 }

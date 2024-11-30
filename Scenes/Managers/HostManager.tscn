@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://cvfy8a4lwu7a2"]
 
-[ext_resource type="Script" path="res://Scripts/Managers/Host/HostManager.cs" id="1_whke1"]
+[ext_resource type="Script" path="res://Scripts/Managers/Host/Host.cs" id="1_1bf3c"]
 [ext_resource type="Script" path="res://Scripts/Managers/Host/HostBlockManager.cs" id="2_65656"]
 [ext_resource type="PackedScene" uid="uid://me8wg1m67cje" path="res://Scenes/GameObjects/ActiveBlock.tscn" id="3_2um2m"]
 [ext_resource type="Script" path="res://Scripts/Managers/Host/HostPlayerManager.cs" id="4_j6ywt"]
@@ -9,7 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://dq4nb0kwitffr" path="res://Scenes/GameObjects/ActivePickup.tscn" id="7_sd4oc"]
 
 [node name="HostManager" type="Node" node_paths=PackedStringArray("HostPlayerManager", "HostBlockManager", "HostPickupManager")]
-script = ExtResource("1_whke1")
+script = ExtResource("1_1bf3c")
 HostPlayerManager = NodePath("HostPlayerManager")
 HostBlockManager = NodePath("HostBlockManager")
 HostPickupManager = NodePath("HostPickupManager")

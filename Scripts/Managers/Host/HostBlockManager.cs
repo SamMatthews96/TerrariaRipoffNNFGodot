@@ -22,9 +22,9 @@ public partial class HostBlockManager : Node {
 
     public void Initialize(Dictionary worldDictionary) {
         _savedBlocks = new SavedBlock[
-            GameManager.Instance.Width, GameManager.Instance.Height];
+            Manager.Instance.Game.Width, Manager.Instance.Game.Height];
         _activeBlocks = new ActiveBlock[
-            GameManager.Instance.Width, GameManager.Instance.Height];
+            Manager.Instance.Game.Width, Manager.Instance.Game.Height];
 
         Array savedBlockArray = worldDictionary["SavedBlocks"].AsGodotArray();
         foreach (Dictionary savedBlockDict in savedBlockArray) {
@@ -32,7 +32,7 @@ public partial class HostBlockManager : Node {
             _savedBlocks[savedBlock.XPosition, savedBlock.YPosition] = savedBlock;
         }
 
-        HostManager.Instance.HostPlayerManager.PlayerSpawned += OnPlayerManagerPlayerSpawned;
+        Host.Instance.HostPlayerManager.PlayerSpawned += OnPlayerManagerPlayerSpawned;
     }
 
     public void SpawnBlocksInRegion(List<IntVector> region) {
@@ -49,7 +49,7 @@ public partial class HostBlockManager : Node {
         }
 
         ActiveBlock activeBlock = ActiveBlock.New(
-            GameManager.Instance.BlockParent, _blockPackedScene, savedBlock).Build();
+            Manager.Instance.Game.BlockParent, _blockPackedScene, savedBlock).Build();
         _activeBlocks[savedBlock.XPosition, savedBlock.YPosition] = activeBlock;
     }
 
@@ -86,7 +86,7 @@ public partial class HostBlockManager : Node {
         IntVector newCoordinates = new(
             (int)positionChange["X"], (int)positionChange["Y"]);
 
-        List<IntVector> newRegion = GameManager.Instance.Region.GetRegionDelta(
+        List<IntVector> newRegion = Manager.Instance.Game.Region.GetRegionDelta(
             newCoordinates, oldCoordinates, BlockSpawnDistance);
 
         SpawnBlocksInRegion(newRegion);

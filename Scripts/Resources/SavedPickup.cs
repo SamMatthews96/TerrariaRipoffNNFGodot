@@ -13,7 +13,7 @@ public partial class SavedPickup : Resource {
     public SavedPickup(ItemType itemType, Vector2 position, int count = 1) {
         InventoryItems = new InventoryItems(itemType, count);
         Position = position;
-        Indices = new IntVector(position / GameManager.BlockSize);
+        Indices = new IntVector(position / Game.BlockSize);
     }
 
     public Dictionary Serialize() {

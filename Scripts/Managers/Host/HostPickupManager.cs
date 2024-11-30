@@ -16,11 +16,11 @@ public partial class HostPickupManager : Node {
 
     public void Initialize() {
         _savedPickups = new List<SavedPickup>[
-            GameManager.Instance.Width, GameManager.Instance.Height];
+            Manager.Instance.Game.Width, Manager.Instance.Game.Height];
         _activePickups = new List<ActivePickup>[
-            GameManager.Instance.Width, GameManager.Instance.Height];
-        HostManager.Instance.HostBlockManager.BlockDestroyed += OnBlockManagerBlockDestroyed;
-        HostManager.Instance.HostPlayerManager.PlayerSpawned += OnPlayerManagerPlayerSpawned;
+            Manager.Instance.Game.Width, Manager.Instance.Game.Height];
+        Host.Instance.HostBlockManager.BlockDestroyed += OnBlockManagerBlockDestroyed;
+        Host.Instance.HostPlayerManager.PlayerSpawned += OnPlayerManagerPlayerSpawned;
     }
 
     private void OnPlayerManagerPlayerSpawned(Player player) {
@@ -32,14 +32,14 @@ public partial class HostPickupManager : Node {
     }
 
     private void OnBlockManagerBlockDestroyed(SavedBlock savedBlock) {
-        Vector2 position = new(savedBlock.XPosition * GameManager.BlockSize,
-            savedBlock.YPosition * GameManager.BlockSize);
+        Vector2 position = new(savedBlock.XPosition * Game.BlockSize,
+            savedBlock.YPosition * Game.BlockSize);
 
         CreatePickup(savedBlock.BlockType, position);
     }
 
     private void CreatePickup(ItemType itemType, Vector2 position) {
-        IntVector coords = new(position / GameManager.BlockSize);
+        IntVector coords = new(position / Game.BlockSize);
 
         SavedPickup savedPickup = new(itemType, position);
         _savedPickups[coords.X, coords.Y] ??= new List<SavedPickup>();
@@ -51,7 +51,7 @@ public partial class HostPickupManager : Node {
         _activePickups[coords.X, coords.Y].Add(activePickup);
         activePickup.MovedCell += OnPickupMovedCell;
 
-        GameManager.Instance.BlockParent.AddChild(activePickup, true);
+        Manager.Instance.Game.BlockParent.AddChild(activePickup, true);
     }
 
     private void OnPickupMovedCell(ActivePickup activePickup, Dictionary positionChange) {

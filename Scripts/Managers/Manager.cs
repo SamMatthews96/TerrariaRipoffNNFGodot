@@ -13,8 +13,20 @@ public partial class Manager : Node {
     [Export] private string address = "127.0.0.1";
     [Export] private PackedScene _gameManagerPackedScene;
     [Export] private MainMenu _mainMenu;
-    
+
     private ENetMultiplayerPeer _peer;
+
+    public Game Game { get; private set; }
+
+    public static Manager Instance { get; private set; }
+
+    public override void _EnterTree() {
+        if (Instance is not null) {
+            throw new Exception("[20241130.1855.1] Manager already instantiated");
+        }
+
+        Instance = this;
+    }
 
     public override void _Ready() {
         _mainMenu.SinglePlayerClickedEnterWorld += OnMainMenuSinglePlayerClickedEnterWorld;
@@ -53,10 +65,10 @@ public partial class Manager : Node {
     }
 
     private void LaunchGame(PlayerInfo playerInfo, Dictionary world = null) {
-        GameManager gameManager = _gameManagerPackedScene.Instantiate<GameManager>();
-        AddChild(gameManager);
-        gameManager.Initialize(playerInfo, world);
-        
+        Game = _gameManagerPackedScene.Instantiate<Game>();
+        AddChild(Game);
+        Game.Initialize(playerInfo, world);
+
         _mainMenu.QueueFree();
     }
 }

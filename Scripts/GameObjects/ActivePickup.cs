@@ -17,13 +17,13 @@ public partial class ActivePickup : RigidBody2D {
     public SavedPickup SavedPickup { get; private set; }
 
     private IntVector Coords => new(
-        (int)Math.Round(Position.X / GameManager.BlockSize),
-        (int)Math.Round(Position.Y / GameManager.BlockSize));
+        (int)Math.Round(Position.X / Game.BlockSize),
+        (int)Math.Round(Position.Y / Game.BlockSize));
 
     public event Action<ActivePickup, Dictionary> MovedCell;
 
     public void Initialize(SavedPickup savedPickup) {
-        HostManager.RequireHost();
+        Host.RequireHost();
         SavedPickup = savedPickup;
         _savedPickupDictionary = savedPickup.Serialize();
     }
@@ -36,7 +36,7 @@ public partial class ActivePickup : RigidBody2D {
     }
 
     public override void _PhysicsProcess(double delta) {
-        if (!GameManager.Instance.IsHost) return;
+        if (!Manager.Instance.Game.IsHost) return;
 
         if (_previousCoords != Coords) {
             Dictionary positionChange = new() {

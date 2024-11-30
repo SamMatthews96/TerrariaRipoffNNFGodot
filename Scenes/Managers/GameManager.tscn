@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://d3hhhiiydcfft"]
 
-[ext_resource type="Script" path="res://Scripts/Managers/GameManager.cs" id="1_5jtsy"]
+[ext_resource type="Script" path="res://Scripts/Managers/Game.cs" id="1_6kfdr"]
 [ext_resource type="PackedScene" uid="uid://cvfy8a4lwu7a2" path="res://Scenes/Managers/HostManager.tscn" id="2_0ywm4"]
 [ext_resource type="Script" path="res://Scripts/Utils/Region.cs" id="3_8fqtf"]
 [ext_resource type="Script" path="res://Scripts/Managers/InputManager.cs" id="4_lvxpj"]
@@ -15,15 +15,14 @@ properties/1/spawn = true
 properties/1/replication_mode = 2
 
 [node name="GameManager" type="Node" node_paths=PackedStringArray("Region", "BlockParent", "PlayerParent")]
-script = ExtResource("1_5jtsy")
+script = ExtResource("1_6kfdr")
 Region = NodePath("RegionHelper")
 BlockParent = NodePath("BlockParent")
 PlayerParent = NodePath("PlayerParent")
 HostManagerScene = ExtResource("2_0ywm4")
 
-[node name="RegionHelper" type="Node" parent="." node_paths=PackedStringArray("_gameManager")]
+[node name="RegionHelper" type="Node" parent="."]
 script = ExtResource("3_8fqtf")
-_gameManager = NodePath("..")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_jdm7i")

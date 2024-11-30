@@ -11,8 +11,8 @@ public partial class HostPlayerManager : Node {
     public event Action<Player> PlayerSpawned;
 
     public void SpawnPlayer(int peerId, PlayerInfo playerInfo) {
-        Vector2 spawnPosition = HostManager.Instance.DefaultSpawnPosition * GameManager.BlockSize;
-        Player player = Player.New(GameManager.Instance.PlayerParent, _hostPlayerPackedScene)
+        Vector2 spawnPosition = Host.Instance.DefaultSpawnPosition * Game.BlockSize;
+        Player player = Player.New(Manager.Instance.Game.PlayerParent, _hostPlayerPackedScene)
             .WithPeerId(peerId)
             .WithSpawnPosition(spawnPosition)
             .Build();

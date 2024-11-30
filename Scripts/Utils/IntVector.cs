@@ -32,7 +32,7 @@ public struct IntVector {
     }
 
     public bool IsInBounds() {
-        return X >= 0 && X < GameManager.Instance.Width && Y >= 0 && Y < GameManager.Instance.Height;
+        return X >= 0 && X < Manager.Instance.Game.Width && Y >= 0 && Y < Manager.Instance.Game.Height;
     }
 
     public static IntVector operator -(IntVector a, IntVector b) {

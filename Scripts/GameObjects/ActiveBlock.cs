@@ -16,8 +16,8 @@ public partial class ActiveBlock : StaticBody2D {
         SavedBlock = SavedBlock.FromDict(_savedBlockDictionary);
 
         Position = new Vector2(
-            SavedBlock.XPosition * GameManager.BlockSize,
-            SavedBlock.YPosition * GameManager.BlockSize);
+            SavedBlock.XPosition * Game.BlockSize,
+            SavedBlock.YPosition * Game.BlockSize);
         _sprite.Texture = SavedBlock.BlockType.Texture;
     }
 }
