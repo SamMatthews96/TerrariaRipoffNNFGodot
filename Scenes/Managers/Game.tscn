@@ -14,12 +14,13 @@ properties/1/path = NodePath(".:Height")
 properties/1/spawn = true
 properties/1/replication_mode = 2
 
-[node name="GameManager" type="Node" node_paths=PackedStringArray("Region", "BlockParent", "PlayerParent")]
+[node name="GameManager" type="Node" node_paths=PackedStringArray("Region", "BlockParent", "PlayerParent", "Interface")]
 script = ExtResource("1_6kfdr")
 Region = NodePath("RegionHelper")
 BlockParent = NodePath("BlockParent")
 PlayerParent = NodePath("PlayerParent")
 HostManagerScene = ExtResource("2_miuiv")
+Interface = NodePath("Interface")
 
 [node name="RegionHelper" type="Node" parent="."]
 script = ExtResource("3_8fqtf")
@@ -45,4 +46,4 @@ _node2D = NodePath("Node2D")
 
 [node name="Node2D" type="Node2D" parent="InputManager"]
 
-[node name="UIManager" parent="." instance=ExtResource("5_f3nxw")]
+[node name="Interface" parent="." instance=ExtResource("5_f3nxw")]

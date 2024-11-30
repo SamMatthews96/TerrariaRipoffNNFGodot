@@ -19,8 +19,7 @@ public partial class ActionController : Node {
         InputManager.Instance.RightMouseUp += OnInputManagerRightMouseUp;
         InputManager.Instance.RightMouseDown += OnInputManagerRightMouseDown;
         
-        GD.Print(Interface.Instance.ActionBar);
-        Interface.Instance.ActionBar.ButtonClicked += OnActionBarButtonClicked;
+        Manager.Instance.Game.Interface.ActionBar.ButtonClicked += OnActionBarButtonClicked;
 
         EquipAction(0);
     }

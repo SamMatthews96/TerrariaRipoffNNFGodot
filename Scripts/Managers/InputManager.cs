@@ -48,32 +48,32 @@ public partial class InputManager : Node {
     private void HandleMouseEvents() {
         Vector2 mousePosition = _node2D.GetGlobalMousePosition();
 
-        if (Godot.Input.IsActionJustPressed(LeftMouse)) {
+        if (Input.IsActionJustPressed(LeftMouse)) {
             LeftMouseDown?.Invoke(mousePosition);
         }
 
-        if (Godot.Input.IsActionJustReleased(LeftMouse)) {
+        if (Input.IsActionJustReleased(LeftMouse)) {
             LeftMouseUp?.Invoke(mousePosition);
         }
 
-        if (Godot.Input.IsActionJustPressed(RightMouse)) {
+        if (Input.IsActionJustPressed(RightMouse)) {
             RightMouseDown?.Invoke(mousePosition);
         }
 
-        if (Godot.Input.IsActionJustReleased(RightMouse)) {
+        if (Input.IsActionJustReleased(RightMouse)) {
             RightMouseUp?.Invoke(mousePosition);
         }
     }
 
     private void HandleKeyEvents() {
         if (
-            Godot.Input.IsActionJustPressed(RunLeft) ||
-            Godot.Input.IsActionJustPressed(RunRight) ||
-            Godot.Input.IsActionJustReleased(RunLeft) ||
-            Godot.Input.IsActionJustReleased(RunRight)
+            Input.IsActionJustPressed(RunLeft) ||
+            Input.IsActionJustPressed(RunRight) ||
+            Input.IsActionJustReleased(RunLeft) ||
+            Input.IsActionJustReleased(RunRight)
         ) {
-            bool isRunLeftPressed = Godot.Input.IsActionPressed(RunLeft);
-            bool isRunRightPressed = Godot.Input.IsActionPressed(RunRight);
+            bool isRunLeftPressed = Input.IsActionPressed(RunLeft);
+            bool isRunRightPressed = Input.IsActionPressed(RunRight);
 
             if (isRunLeftPressed && !isRunRightPressed) {
                 HorizontalInputChanged?.Invoke(-1);
@@ -84,15 +84,15 @@ public partial class InputManager : Node {
             }
         }
 
-        if (Godot.Input.IsActionJustPressed(Jump)) {
+        if (Input.IsActionJustPressed(Jump)) {
             JumpPressed?.Invoke();
         }
 
-        if (Godot.Input.IsActionJustPressed(Save)) {
+        if (Input.IsActionJustPressed(Save)) {
             SaveGamePressed?.Invoke();
         }
 
-        if (Godot.Input.IsActionJustPressed(ToggleInventory)) {
+        if (Input.IsActionJustPressed(ToggleInventory)) {
             ToggleInventoryPressed?.Invoke();
         }
     }

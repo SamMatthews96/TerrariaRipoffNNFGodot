@@ -60,8 +60,8 @@ public partial class Player : CharacterBody2D {
 
         if (!IsLocalPlayer) return;
 
-        Interface.Instance.InventoryUi.Initialize(_inventory);
-        Interface.Instance.BuildUi.Initialize(_inventory);
+        Manager.Instance.Game.Interface.InventoryUi.Initialize(_inventory);
+        Manager.Instance.Game.Interface.BuildUi.Initialize(_inventory);
 
         _camera.Enabled = true;
         InputManager.Instance.HorizontalInputChanged +=
