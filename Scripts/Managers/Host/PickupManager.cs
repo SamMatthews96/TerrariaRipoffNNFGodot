@@ -1,13 +1,9 @@
 using System.Collections.Generic;
 using Godot;
 using Godot.Collections;
-using TerrariaRipoffNNF.Scripts.GameObjects;
-using TerrariaRipoffNNF.Scripts.Resources;
-using TerrariaRipoffNNF.Scripts.Utils;
+namespace TerrariaRipoffNNF;
 
-namespace TerrariaRipoffNNF.Scripts.Managers.Host;
-
-public partial class HostPickupManager : Node {
+public partial class PickupManager : Node {
 
     [Export] private PackedScene _pickupPackedScene;
 
@@ -19,8 +15,8 @@ public partial class HostPickupManager : Node {
             Manager.Instance.Game.Width, Manager.Instance.Game.Height];
         _activePickups = new List<ActivePickup>[
             Manager.Instance.Game.Width, Manager.Instance.Game.Height];
-        Host.Instance.HostBlockManager.BlockDestroyed += OnBlockManagerBlockDestroyed;
-        Host.Instance.HostPlayerManager.PlayerSpawned += OnPlayerManagerPlayerSpawned;
+        Manager.Instance.Game.Host.BlockManager.BlockDestroyed += OnBlockManagerBlockDestroyed;
+        Manager.Instance.Game.Host.PlayerManager.PlayerSpawned += OnPlayerManagerPlayerSpawned;
     }
 
     private void OnPlayerManagerPlayerSpawned(Player player) {

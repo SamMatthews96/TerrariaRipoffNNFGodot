@@ -1,7 +1,7 @@
 ﻿using System;
 using Godot;
 
-namespace TerrariaRipoffNNF.Scripts.UI;
+namespace TerrariaRipoffNNF;
 
 public partial class ActionBar : PanelContainer {
     [Export] private PackedScene _actionBarButtonScene;

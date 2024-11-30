@@ -1,8 +1,6 @@
 ﻿using Godot;
-using TerrariaRipoffNNF.Scripts.Managers.Host;
-using TerrariaRipoffNNF.Scripts.Resources;
 
-namespace TerrariaRipoffNNF.Scripts.GameObjects;
+namespace TerrariaRipoffNNF;
 
 public partial class ActiveBlock {
     public class Builder {

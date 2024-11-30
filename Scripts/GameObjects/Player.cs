@@ -1,11 +1,8 @@
 using System;
 using Godot;
 using Godot.Collections;
-using TerrariaRipoffNNF.Scripts.Managers;
-using TerrariaRipoffNNF.Scripts.Utils;
-using TerrariaRipoffNNF.Scripts.GameObjects;
 
-namespace TerrariaRipoffNNF.Scripts.GameObjects;
+namespace TerrariaRipoffNNF;
 
 public partial class Player : CharacterBody2D {
     [Export] private MultiplayerSynchronizer _positionSynchronizer;
@@ -63,8 +60,8 @@ public partial class Player : CharacterBody2D {
 
         if (!IsLocalPlayer) return;
 
-        UiManager.Instance.InventoryUi.Initialize(_inventory);
-        UiManager.Instance.BuildUi.Initialize(_inventory);
+        Interface.Instance.InventoryUi.Initialize(_inventory);
+        Interface.Instance.BuildUi.Initialize(_inventory);
 
         _camera.Enabled = true;
         InputManager.Instance.HorizontalInputChanged +=
@@ -146,8 +143,4 @@ public partial class Player : CharacterBody2D {
     private void OnBuildStateLeft() {
         BuildStateLeft?.Invoke();
     }
-    
-
-        
-    
 }

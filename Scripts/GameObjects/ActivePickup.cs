@@ -1,12 +1,8 @@
 using System;
 using Godot;
 using Godot.Collections;
-using TerrariaRipoffNNF.Scripts.Managers;
-using TerrariaRipoffNNF.Scripts.Managers.Host;
-using TerrariaRipoffNNF.Scripts.Resources;
-using TerrariaRipoffNNF.Scripts.Utils;
 
-namespace TerrariaRipoffNNF.Scripts.GameObjects;
+namespace TerrariaRipoffNNF;
 
 public partial class ActivePickup : RigidBody2D {
     [Export] private Sprite2D _sprite;
@@ -45,7 +41,7 @@ public partial class ActivePickup : RigidBody2D {
                 { "PreviousX", _previousCoords.X },
                 { "PreviousY", _previousCoords.Y }
             };
-            
+
             MovedCell?.Invoke(this, positionChange);
         }
 

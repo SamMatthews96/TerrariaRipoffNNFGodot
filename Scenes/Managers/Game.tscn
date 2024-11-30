@@ -1,10 +1,10 @@
 [gd_scene load_steps=7 format=3 uid="uid://d3hhhiiydcfft"]
 
 [ext_resource type="Script" path="res://Scripts/Managers/Game.cs" id="1_6kfdr"]
-[ext_resource type="PackedScene" uid="uid://cvfy8a4lwu7a2" path="res://Scenes/Managers/HostManager.tscn" id="2_0ywm4"]
+[ext_resource type="PackedScene" uid="uid://cvfy8a4lwu7a2" path="res://Scenes/Managers/Host.tscn" id="2_miuiv"]
 [ext_resource type="Script" path="res://Scripts/Utils/Region.cs" id="3_8fqtf"]
 [ext_resource type="Script" path="res://Scripts/Managers/InputManager.cs" id="4_lvxpj"]
-[ext_resource type="PackedScene" uid="uid://javhx4rej0q4" path="res://Scenes/Managers/UIManager.tscn" id="5_ekxr7"]
+[ext_resource type="PackedScene" uid="uid://javhx4rej0q4" path="res://Scenes/Managers/Interface.tscn" id="5_f3nxw"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_jdm7i"]
 properties/0/path = NodePath(".:Width")
@@ -19,7 +19,7 @@ script = ExtResource("1_6kfdr")
 Region = NodePath("RegionHelper")
 BlockParent = NodePath("BlockParent")
 PlayerParent = NodePath("PlayerParent")
-HostManagerScene = ExtResource("2_0ywm4")
+HostManagerScene = ExtResource("2_miuiv")
 
 [node name="RegionHelper" type="Node" parent="."]
 script = ExtResource("3_8fqtf")
@@ -45,4 +45,4 @@ _node2D = NodePath("Node2D")
 
 [node name="Node2D" type="Node2D" parent="InputManager"]
 
-[node name="UIManager" parent="." instance=ExtResource("5_ekxr7")]
+[node name="UIManager" parent="." instance=ExtResource("5_f3nxw")]

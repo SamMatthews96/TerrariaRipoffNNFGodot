@@ -2,7 +2,7 @@
 using Godot;
 using Godot.Collections;
 
-namespace TerrariaRipoffNNF.Scripts.Resources;
+namespace TerrariaRipoffNNF;
 
 [GlobalClass]
 public partial class BlockType : ItemType {

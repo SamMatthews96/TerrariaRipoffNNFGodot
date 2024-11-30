@@ -1,7 +1,7 @@
 using System;
 using Godot;
 
-namespace TerrariaRipoffNNF.Scripts.Managers;
+namespace TerrariaRipoffNNF;
 
 public partial class InputManager : Node {
     private const string RunLeft = "runLeft";
@@ -48,32 +48,32 @@ public partial class InputManager : Node {
     private void HandleMouseEvents() {
         Vector2 mousePosition = _node2D.GetGlobalMousePosition();
 
-        if (Input.IsActionJustPressed(LeftMouse)) {
+        if (Godot.Input.IsActionJustPressed(LeftMouse)) {
             LeftMouseDown?.Invoke(mousePosition);
         }
 
-        if (Input.IsActionJustReleased(LeftMouse)) {
+        if (Godot.Input.IsActionJustReleased(LeftMouse)) {
             LeftMouseUp?.Invoke(mousePosition);
         }
 
-        if (Input.IsActionJustPressed(RightMouse)) {
+        if (Godot.Input.IsActionJustPressed(RightMouse)) {
             RightMouseDown?.Invoke(mousePosition);
         }
 
-        if (Input.IsActionJustReleased(RightMouse)) {
+        if (Godot.Input.IsActionJustReleased(RightMouse)) {
             RightMouseUp?.Invoke(mousePosition);
         }
     }
 
     private void HandleKeyEvents() {
         if (
-            Input.IsActionJustPressed(RunLeft) ||
-            Input.IsActionJustPressed(RunRight) ||
-            Input.IsActionJustReleased(RunLeft) ||
-            Input.IsActionJustReleased(RunRight)
+            Godot.Input.IsActionJustPressed(RunLeft) ||
+            Godot.Input.IsActionJustPressed(RunRight) ||
+            Godot.Input.IsActionJustReleased(RunLeft) ||
+            Godot.Input.IsActionJustReleased(RunRight)
         ) {
-            bool isRunLeftPressed = Input.IsActionPressed(RunLeft);
-            bool isRunRightPressed = Input.IsActionPressed(RunRight);
+            bool isRunLeftPressed = Godot.Input.IsActionPressed(RunLeft);
+            bool isRunRightPressed = Godot.Input.IsActionPressed(RunRight);
 
             if (isRunLeftPressed && !isRunRightPressed) {
                 HorizontalInputChanged?.Invoke(-1);
@@ -84,15 +84,15 @@ public partial class InputManager : Node {
             }
         }
 
-        if (Input.IsActionJustPressed(Jump)) {
+        if (Godot.Input.IsActionJustPressed(Jump)) {
             JumpPressed?.Invoke();
         }
 
-        if (Input.IsActionJustPressed(Save)) {
+        if (Godot.Input.IsActionJustPressed(Save)) {
             SaveGamePressed?.Invoke();
         }
 
-        if (Input.IsActionJustPressed(ToggleInventory)) {
+        if (Godot.Input.IsActionJustPressed(ToggleInventory)) {
             ToggleInventoryPressed?.Invoke();
         }
     }

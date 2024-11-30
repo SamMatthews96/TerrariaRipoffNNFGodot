@@ -1,9 +1,8 @@
 ﻿using System;
 using Godot;
-using TerrariaRipoffNNF.Scripts.Managers;
 using Array = Godot.Collections.Array;
 
-namespace TerrariaRipoffNNF.Scripts.Utils;
+namespace TerrariaRipoffNNF;
 
 public struct IntVector {
     public bool Equals(IntVector other) {

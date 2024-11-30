@@ -1,9 +1,7 @@
 ﻿using System;
 using Godot.Collections;
 using Godot;
-using TerrariaRipoffNNF.Scripts.Managers;
-
-namespace TerrariaRipoffNNF.Scripts.GameObjects;
+namespace TerrariaRipoffNNF;
 
 public partial class ActionController : Node {
     [Export] private Array<ActionState> _actions;
@@ -20,8 +18,9 @@ public partial class ActionController : Node {
         InputManager.Instance.LeftMouseDown += OnInputManagerLeftMouseDown;
         InputManager.Instance.RightMouseUp += OnInputManagerRightMouseUp;
         InputManager.Instance.RightMouseDown += OnInputManagerRightMouseDown;
-
-        UiManager.Instance.ActionBar.ButtonClicked += OnActionBarButtonClicked;
+        
+        GD.Print(Interface.Instance.ActionBar);
+        Interface.Instance.ActionBar.ButtonClicked += OnActionBarButtonClicked;
 
         EquipAction(0);
     }

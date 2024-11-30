@@ -1,11 +1,7 @@
-using System;
 using Godot;
 using Godot.Collections;
-using TerrariaRipoffNNF.Scripts.Managers;
-using TerrariaRipoffNNF.Scripts.Managers.Host;
-using TerrariaRipoffNNF.Scripts.Resources;
 
-namespace TerrariaRipoffNNF.Scripts.GameObjects;
+namespace TerrariaRipoffNNF;
 
 public partial class ActiveBlock : StaticBody2D {
     public SavedBlock SavedBlock { get; private set; }

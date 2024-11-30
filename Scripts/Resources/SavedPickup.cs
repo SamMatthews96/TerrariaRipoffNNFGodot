@@ -1,9 +1,6 @@
 ﻿using Godot;
 using Godot.Collections;
-using TerrariaRipoffNNF.Scripts.Managers;
-using TerrariaRipoffNNF.Scripts.Utils;
-
-namespace TerrariaRipoffNNF.Scripts.Resources;
+namespace TerrariaRipoffNNF;
 
 public partial class SavedPickup : Resource {
     public Vector2 Position { get; private set; }

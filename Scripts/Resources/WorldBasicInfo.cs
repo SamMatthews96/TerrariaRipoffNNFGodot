@@ -1,8 +1,7 @@
 ﻿using System;
 using Godot;
 using Godot.Collections;
-
-namespace TerrariaRipoffNNF.Scripts.Resources; 
+namespace TerrariaRipoffNNF;
 
 public partial class WorldBasicInfo : Resource {
     public string Name { get; private set; }

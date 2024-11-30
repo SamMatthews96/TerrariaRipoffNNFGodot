@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://Scripts/Managers/Manager.cs" id="1_y2fq1"]
 [ext_resource type="PackedScene" uid="uid://tbvohnqfn3cl" path="res://Scenes/UI/MainMenu.tscn" id="2_2kika"]
-[ext_resource type="PackedScene" uid="uid://d3hhhiiydcfft" path="res://Scenes/Managers/GameManager.tscn" id="2_jb22y"]
+[ext_resource type="PackedScene" uid="uid://d3hhhiiydcfft" path="res://Scenes/Managers/Game.tscn" id="2_jb22y"]
 
 [node name="Manager" type="Node" node_paths=PackedStringArray("_mainMenu")]
 script = ExtResource("1_y2fq1")

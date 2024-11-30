@@ -1,11 +1,7 @@
 ﻿using System;
 using Godot;
 using Godot.Collections;
-using TerrariaRipoffNNF.Scripts.Managers.Host;
-using TerrariaRipoffNNF.Scripts.Resources;
-using TerrariaRipoffNNF.Scripts.Utils;
-
-namespace TerrariaRipoffNNF.Scripts.Managers;
+namespace TerrariaRipoffNNF;
 
 public partial class Game : Node {
     [Export] public Region Region { get; private set; }
@@ -18,8 +14,8 @@ public partial class Game : Node {
 
     [Export] public int Width { get; private set; }
     [Export] public int Height { get; private set; }
-    
-    public Host.Host Host { get; private set; }
+
+    public Host Host { get; private set; }
 
     public bool IsHost => Multiplayer.GetUniqueId() == Manager.MultiplayerHostId;
 
@@ -29,7 +25,7 @@ public partial class Game : Node {
         if (IsHost) {
             Width = (int)world["Width"];
             Height = (int)world["Height"];
-            Host = HostManagerScene.Instantiate<Host.Host>();
+            Host = HostManagerScene.Instantiate<Host>();
             AddChild(Host);
             Host.Initialize(world);
         }

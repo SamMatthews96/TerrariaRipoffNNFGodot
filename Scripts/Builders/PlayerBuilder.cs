@@ -1,7 +1,6 @@
 ﻿using Godot;
-using TerrariaRipoffNNF.Scripts.Managers.Host;
 
-namespace TerrariaRipoffNNF.Scripts.GameObjects;
+namespace TerrariaRipoffNNF;
 
 public partial class Player {
     public class Builder {

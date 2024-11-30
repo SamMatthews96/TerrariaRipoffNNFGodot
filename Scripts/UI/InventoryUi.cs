@@ -1,9 +1,6 @@
 ﻿using System.Collections.Generic;
 using Godot;
-using TerrariaRipoffNNF.Scripts.GameObjects;
-using TerrariaRipoffNNF.Scripts.Managers;
-
-namespace TerrariaRipoffNNF.Scripts.UI;
+namespace TerrariaRipoffNNF;
 
 public partial class InventoryUi : Control {
     [Export] private Label _capacityLabel;

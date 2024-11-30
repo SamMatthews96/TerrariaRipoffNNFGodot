@@ -1,4 +1,4 @@
-﻿namespace TerrariaRipoffNNF.Scripts.Resources;
+﻿namespace TerrariaRipoffNNF;
 
 public partial class SavedBlock {
     private SavedBlock() { }

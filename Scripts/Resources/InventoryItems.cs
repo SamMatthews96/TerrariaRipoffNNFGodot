@@ -1,6 +1,6 @@
 ﻿using Godot.Collections;
 
-namespace TerrariaRipoffNNF.Scripts.Resources;
+namespace TerrariaRipoffNNF;
 
 public class InventoryItems {
     public int Count { get; private set; }

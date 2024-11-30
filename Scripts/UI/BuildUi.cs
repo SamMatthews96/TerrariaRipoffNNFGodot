@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Godot;
-using TerrariaRipoffNNF.Scripts.GameObjects;
-using TerrariaRipoffNNF.Scripts.Resources;
-
-namespace TerrariaRipoffNNF.Scripts.UI;
+namespace TerrariaRipoffNNF;
 
 public partial class BuildUi : Container {
     [Export] private Container _buildDrawModeUi;

@@ -2,7 +2,7 @@
 using Godot;
 using Godot.Collections;
 
-namespace TerrariaRipoffNNF.Scripts.Resources;
+namespace TerrariaRipoffNNF;
 
 public partial class PlayerInfo : Resource {
     public string Name { get; private set; }

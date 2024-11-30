@@ -2,7 +2,7 @@
 using Godot;
 using Godot.Collections;
 
-namespace TerrariaRipoffNNF.Scripts.Resources;
+namespace TerrariaRipoffNNF;
 
 public partial class SavedBlock : Resource {
 

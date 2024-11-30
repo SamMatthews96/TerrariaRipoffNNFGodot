@@ -2,14 +2,11 @@
 using System.Collections.Generic;
 using Godot;
 using Godot.Collections;
-using TerrariaRipoffNNF.Scripts.GameObjects;
-using TerrariaRipoffNNF.Scripts.Resources;
-using TerrariaRipoffNNF.Scripts.Utils;
 using Array = Godot.Collections.Array;
 
-namespace TerrariaRipoffNNF.Scripts.Managers.Host;
+namespace TerrariaRipoffNNF;
 
-public partial class HostBlockManager : Node {
+public partial class BlockManager : Node {
 
     [Export] private PackedScene _blockPackedScene;
 
@@ -32,7 +29,7 @@ public partial class HostBlockManager : Node {
             _savedBlocks[savedBlock.XPosition, savedBlock.YPosition] = savedBlock;
         }
 
-        Host.Instance.HostPlayerManager.PlayerSpawned += OnPlayerManagerPlayerSpawned;
+        Manager.Instance.Game.Host.PlayerManager.PlayerSpawned += OnPlayerManagerPlayerSpawned;
     }
 
     public void SpawnBlocksInRegion(List<IntVector> region) {

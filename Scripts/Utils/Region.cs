@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Godot;
-using TerrariaRipoffNNF.Scripts.Managers;
 
-namespace TerrariaRipoffNNF.Scripts.Utils;
+namespace TerrariaRipoffNNF;
 
 public partial class Region : Node {
     public List<IntVector> GetRegion(IntVector center, int distanceToEdge) {

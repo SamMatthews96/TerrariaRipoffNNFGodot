@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace TerrariaRipoffNNF.Scripts.UI;
+namespace TerrariaRipoffNNF;
 
 public partial class ActionBarButton : TextureButton {
     

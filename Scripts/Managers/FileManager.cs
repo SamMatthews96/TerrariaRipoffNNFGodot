@@ -1,9 +1,7 @@
 using System;
 using Godot;
 using Godot.Collections;
-using WorldBasicInfo = TerrariaRipoffNNF.Scripts.Resources.WorldBasicInfo;
-
-namespace TerrariaRipoffNNF.Scripts.Managers;
+namespace TerrariaRipoffNNF;
 
 public static class FileManager {
     private const string WorldDir = "user://SavedData/worlds";

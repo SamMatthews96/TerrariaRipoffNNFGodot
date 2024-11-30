@@ -1,10 +1,9 @@
 using System;
 using Godot;
 using Godot.Collections;
-using TerrariaRipoffNNF.Scripts.Resources;
 using Array = Godot.Collections.Array;
 
-namespace TerrariaRipoffNNF.Scripts.Managers;
+namespace TerrariaRipoffNNF;
 
 public static class WorldCreator {
     public static void CreateWorld(WorldBasicInfo worldBasicInfo) {

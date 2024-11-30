@@ -1,0 +1,27 @@
+[gd_scene load_steps=8 format=3 uid="uid://cvfy8a4lwu7a2"]
+
+[ext_resource type="Script" path="res://Scripts/Managers/Host/Host.cs" id="1_f4xt6"]
+[ext_resource type="Script" path="res://Scripts/Managers/Host/PlayerManager.cs" id="2_ycq2a"]
+[ext_resource type="Script" path="res://Scripts/Managers/Host/BlockManager.cs" id="3_ka4hq"]
+[ext_resource type="PackedScene" uid="uid://bx6lgpicpfal4" path="res://Scenes/GameObjects/Player.tscn" id="3_rxe0j"]
+[ext_resource type="Script" path="res://Scripts/Managers/Host/PickupManager.cs" id="4_bsxa7"]
+[ext_resource type="PackedScene" uid="uid://me8wg1m67cje" path="res://Scenes/GameObjects/ActiveBlock.tscn" id="5_6nra6"]
+[ext_resource type="PackedScene" uid="uid://dq4nb0kwitffr" path="res://Scenes/GameObjects/ActivePickup.tscn" id="7_se1pj"]
+
+[node name="Host" type="Node" node_paths=PackedStringArray("PlayerManager", "BlockManager", "PickupManager")]
+script = ExtResource("1_f4xt6")
+PlayerManager = NodePath("PlayerManager")
+BlockManager = NodePath("BlockManager")
+PickupManager = NodePath("PickupManager")
+
+[node name="PlayerManager" type="Node" parent="."]
+script = ExtResource("2_ycq2a")
+_hostPlayerPackedScene = ExtResource("3_rxe0j")
+
+[node name="BlockManager" type="Node" parent="."]
+script = ExtResource("3_ka4hq")
+_blockPackedScene = ExtResource("5_6nra6")
+
+[node name="PickupManager" type="Node" parent="."]
+script = ExtResource("4_bsxa7")
+_pickupPackedScene = ExtResource("7_se1pj")

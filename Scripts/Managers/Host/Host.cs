@@ -2,17 +2,14 @@
 using System.Collections.Generic;
 using Godot;
 using Godot.Collections;
-using TerrariaRipoffNNF.Scripts.Utils;
-using PlayerInfo = TerrariaRipoffNNF.Scripts.Resources.PlayerInfo;
 
-namespace TerrariaRipoffNNF.Scripts.Managers.Host;
+namespace TerrariaRipoffNNF;
 
 public partial class Host : Node {
-    public static Host Instance { get; private set; }
     
-    [Export] public HostPlayerManager HostPlayerManager { get; private set; }
-    [Export] public HostBlockManager HostBlockManager { get; private set; }
-    [Export] public HostPickupManager HostPickupManager { get; private set; }
+    [Export] public PlayerManager PlayerManager { get; private set; }
+    [Export] public BlockManager BlockManager { get; private set; }
+    [Export] public PickupManager PickupManager { get; private set; }
 
     public Vector2 DefaultSpawnPosition { get; private set; }
 
@@ -24,11 +21,6 @@ public partial class Host : Node {
 
     public override void _EnterTree() {
         RequireHost();
-        if (Instance is not null) {
-            throw new Exception("[20240808.1730.1] Game already instantiated");
-        }
-
-        Instance = this;
     }
 
     public void Initialize(Dictionary worldDictionary) {
@@ -36,19 +28,17 @@ public partial class Host : Node {
             (float)worldDictionary["DefaultSpawnPosition"].AsGodotArray()[0].AsDouble(),
             (float)worldDictionary["DefaultSpawnPosition"].AsGodotArray()[1].AsDouble());
 
-        HostBlockManager.Initialize(worldDictionary);
-        HostPickupManager.Initialize();
+        BlockManager.Initialize(worldDictionary);
+        PickupManager.Initialize();
 
         Manager.Instance.Game.PlayerJoined += OnGameManagerPlayerJoined;
     }
 
     private void OnGameManagerPlayerJoined(PlayerInfo playerInfo, int peerId) {
         IntVector spawnPosition = new(DefaultSpawnPosition);
-        GD.Print(Manager.Instance);
-        GD.Print(Manager.Instance.Game);
         List<IntVector> region = Manager.Instance.Game.Region.GetRegion(
-            spawnPosition, HostBlockManager.BlockSpawnDistance);
-        HostBlockManager.SpawnBlocksInRegion(region);
-        HostPlayerManager.SpawnPlayer(peerId, playerInfo);
+            spawnPosition, BlockManager.BlockSpawnDistance);
+        BlockManager.SpawnBlocksInRegion(region);
+        PlayerManager.SpawnPlayer(peerId, playerInfo);
     }
 }

@@ -1,11 +1,10 @@
 ﻿using System;
 using Godot;
-using TerrariaRipoffNNF.Scripts.UI;
 
-namespace TerrariaRipoffNNF.Scripts.Managers;
+namespace TerrariaRipoffNNF;
 
-public partial class UiManager : CanvasLayer {
-    public static UiManager Instance { get; private set; }
+public partial class Interface : CanvasLayer {
+    public static Interface Instance { get; private set; }
 
     [Export] public InventoryUi InventoryUi { get; private set; }
     [Export] public ActionBar ActionBar { get; private set; }

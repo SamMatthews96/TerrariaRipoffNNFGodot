@@ -1,6 +1,6 @@
 using Godot;
 
-namespace TerrariaRipoffNNF.testScripts;
+namespace TerrariaRipoffNNF;
 
 public partial class Test : Node {
     

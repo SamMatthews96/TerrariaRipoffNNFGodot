@@ -1,17 +1,17 @@
 [gd_scene load_steps=10 format=3 uid="uid://javhx4rej0q4"]
 
-[ext_resource type="Script" path="res://Scripts/Managers/UiManager.cs" id="1_u4pfo"]
-[ext_resource type="Script" path="res://Scripts/UI/InventoryUi.cs" id="2_7evv2"]
-[ext_resource type="PackedScene" uid="uid://cgk6fsvhwhj5n" path="res://Scenes/UI/InventoryItemUi.tscn" id="3_dyqpx"]
-[ext_resource type="Script" path="res://Scripts/UI/ActionBar.cs" id="4_sxypo"]
-[ext_resource type="PackedScene" uid="uid://bonil0th12qcf" path="res://Scenes/UI/ActionBarButton.tscn" id="5_hic71"]
-[ext_resource type="Script" path="res://Scripts/UI/BuildUi.cs" id="6_2roxu"]
-[ext_resource type="Texture2D" uid="uid://d2ux360fa5nu1" path="res://Assets/Images/gatherButton.png" id="6_wj3mu"]
-[ext_resource type="Texture2D" uid="uid://c43ihljnqox3q" path="res://Assets/Images/buildButton.png" id="7_ajne1"]
-[ext_resource type="Texture2D" uid="uid://5s1dp1pvh1xy" path="res://Assets/Images/weaponButton.png" id="8_uqe2i"]
+[ext_resource type="Script" path="res://Scripts/Managers/Interface.cs" id="1_2s5nd"]
+[ext_resource type="Script" path="res://Scripts/UI/InventoryUi.cs" id="2_huspd"]
+[ext_resource type="PackedScene" uid="uid://cgk6fsvhwhj5n" path="res://Scenes/UI/InventoryItemUi.tscn" id="3_qvdv0"]
+[ext_resource type="Script" path="res://Scripts/UI/ActionBar.cs" id="4_ww54d"]
+[ext_resource type="PackedScene" uid="uid://bonil0th12qcf" path="res://Scenes/UI/ActionBarButton.tscn" id="5_fe5vh"]
+[ext_resource type="Texture2D" uid="uid://d2ux360fa5nu1" path="res://Assets/Images/gatherButton.png" id="6_32d80"]
+[ext_resource type="Texture2D" uid="uid://c43ihljnqox3q" path="res://Assets/Images/buildButton.png" id="7_hnsx4"]
+[ext_resource type="Texture2D" uid="uid://5s1dp1pvh1xy" path="res://Assets/Images/weaponButton.png" id="8_y013w"]
+[ext_resource type="Script" path="res://Scripts/UI/BuildUi.cs" id="9_v4rw5"]
 
-[node name="UIManager" type="CanvasLayer" node_paths=PackedStringArray("InventoryUi", "ActionBar", "BuildUi")]
-script = ExtResource("1_u4pfo")
+[node name="Interface" type="CanvasLayer" node_paths=PackedStringArray("InventoryUi", "ActionBar", "BuildUi")]
+script = ExtResource("1_2s5nd")
 InventoryUi = NodePath("Inventory")
 ActionBar = NodePath("ActionBar")
 BuildUi = NodePath("BuildUI")
@@ -19,10 +19,10 @@ BuildUi = NodePath("BuildUI")
 [node name="Inventory" type="PanelContainer" parent="." node_paths=PackedStringArray("_capacityLabel", "_inventoryItemUiContainer")]
 offset_right = 210.0
 offset_bottom = 106.0
-script = ExtResource("2_7evv2")
+script = ExtResource("2_huspd")
 _capacityLabel = NodePath("VBoxContainer/CapacityLabel")
 _inventoryItemUiContainer = NodePath("VBoxContainer/ItemIconView/InventoryItemUiContainer")
-_inventoryItemUiScene = ExtResource("3_dyqpx")
+_inventoryItemUiScene = ExtResource("3_qvdv0")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Inventory"]
 layout_mode = 2
@@ -58,8 +58,8 @@ offset_right = 20.0
 offset_bottom = -34.0
 grow_horizontal = 2
 grow_vertical = 0
-script = ExtResource("4_sxypo")
-_actionBarButtonScene = ExtResource("5_hic71")
+script = ExtResource("4_ww54d")
+_actionBarButtonScene = ExtResource("5_fe5vh")
 _buttonContainer = NodePath("MarginContainer/ButtonContainer")
 _gatherButton = NodePath("MarginContainer/ButtonContainer/GatherButton")
 _buildButton = NodePath("MarginContainer/ButtonContainer/BuildButton")
@@ -77,15 +77,15 @@ layout_mode = 2
 
 [node name="GatherButton" type="TextureButton" parent="ActionBar/MarginContainer/ButtonContainer"]
 layout_mode = 2
-texture_normal = ExtResource("6_wj3mu")
+texture_normal = ExtResource("6_32d80")
 
 [node name="BuildButton" type="TextureButton" parent="ActionBar/MarginContainer/ButtonContainer"]
 layout_mode = 2
-texture_normal = ExtResource("7_ajne1")
+texture_normal = ExtResource("7_hnsx4")
 
 [node name="WeaponButton" type="TextureButton" parent="ActionBar/MarginContainer/ButtonContainer"]
 layout_mode = 2
-texture_normal = ExtResource("8_uqe2i")
+texture_normal = ExtResource("8_y013w")
 
 [node name="BuildUI" type="VBoxContainer" parent="." node_paths=PackedStringArray("_buildDrawModeUi", "_blockTypesUi")]
 anchors_preset = 7
@@ -99,10 +99,10 @@ offset_right = -404.0
 offset_bottom = -248.0
 grow_horizontal = 2
 grow_vertical = 0
-script = ExtResource("6_2roxu")
+script = ExtResource("9_v4rw5")
 _buildDrawModeUi = NodePath("BuildDrawModeUI")
 _blockTypesUi = NodePath("BlockTypesContainer")
-_uiButton = ExtResource("5_hic71")
+_uiButton = ExtResource("5_fe5vh")
 
 [node name="BuildDrawModeUI" type="HBoxContainer" parent="BuildUI"]
 custom_minimum_size = Vector2(0, 128)

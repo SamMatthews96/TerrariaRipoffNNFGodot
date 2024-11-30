@@ -1,7 +1,5 @@
 ﻿using Godot;
-using TerrariaRipoffNNF.Scripts.Resources;
-
-namespace TerrariaRipoffNNF.Scripts.UI;
+namespace TerrariaRipoffNNF;
 
 public partial class InventoryItemUi : TextureRect {
     private InventoryItems _inventoryItems;
