@@ -5,12 +5,10 @@ namespace TerrariaRipoffNNF;
 public partial class Player {
     public class Builder {
         private Player _player;
-        private Node _parent;
         private int _peerId = 1;
         
-        public Builder(Node parent, PackedScene packedScene) {
+        public Builder(PackedScene packedScene) {
             _player = packedScene.Instantiate<Player>();
-            _parent = parent;
         }
         
         public Builder WithPeerId(int peerId) {
@@ -26,13 +24,13 @@ public partial class Player {
         public Player Build() {
             _player.Name = _peerId.ToString();
             
-            _parent.AddChild(_player, true);
+            Manager.Instance.Game.PlayerParent.AddChild(_player, true);
             return _player;
         }
     }
 
-    public static Builder New(Node parent, PackedScene packedScene) {
+    public static Builder New(PackedScene packedScene) {
         Host.RequireHost();
-        return new Builder(parent, packedScene);
+        return new Builder(packedScene);
     }
 }

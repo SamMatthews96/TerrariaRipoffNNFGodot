@@ -18,9 +18,9 @@ public partial class Game : Node {
 
     public Host Host { get; private set; }
 
-    public bool IsHost => Multiplayer.GetUniqueId() == Manager.MultiplayerHostId;
+    public bool IsHost => Multiplayer.GetUniqueId() == Manager.HostId;
 
-    public event Action<PlayerInfo, int> PlayerJoined;
+    public event Action<PlayerInfo, int> PlayerConnected;
 
     public void Initialize(PlayerInfo playerInfo, Dictionary world) {
         if (IsHost) {
@@ -31,13 +31,13 @@ public partial class Game : Node {
             Host.Initialize(world);
         }
 
-        RpcId(Manager.MultiplayerHostId, nameof(ServerHandleNewClient),
+        RpcId(Manager.HostId, nameof(ServerHandleNewClient),
             playerInfo.Serialize(), Multiplayer.GetUniqueId());
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void ServerHandleNewClient(Dictionary playerDictionary, int peerId) {
         PlayerInfo playerInfo = PlayerInfo.FromDict(playerDictionary);
-        PlayerJoined?.Invoke(playerInfo, peerId);
+        PlayerConnected?.Invoke(playerInfo, peerId);
     }
 }

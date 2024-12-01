@@ -31,9 +31,6 @@ public partial class Player : CharacterBody2D {
     private int PeerId => Name.ToString().ToInt();
     public bool IsLocalPlayer => Multiplayer.GetUniqueId() == PeerId;
 
-    public static Player LocalPlayer { get; private set; }
-
-
     public static event Action<Player> LocalPlayerSpawned;
     public event Action<Dictionary> MovedCell;
     public event Action<ActivePickup> PickedUpItem;
@@ -46,9 +43,6 @@ public partial class Player : CharacterBody2D {
 
     public override void _EnterTree() {
         _positionSynchronizer.SetMultiplayerAuthority(PeerId);
-        if (IsLocalPlayer) {
-            LocalPlayer = this;
-        }
     }
 
     public override void _Ready() {
@@ -58,8 +52,12 @@ public partial class Player : CharacterBody2D {
             _pickupArea.BodyEntered += OnServerCollidedWithPickup;
         }
 
-        if (!IsLocalPlayer) return;
+        if (IsLocalPlayer) {
+            InitializeLocalPlayer();
+        }
+    }
 
+    private void InitializeLocalPlayer() {
         Manager.Instance.Game.Interface.InventoryUi.Initialize(_inventory);
         Manager.Instance.Game.Interface.BuildUi.Initialize(_inventory);
 
@@ -69,9 +67,10 @@ public partial class Player : CharacterBody2D {
         InputManager.Instance.JumpPressed += OnJumpPressed;
 
         _gatherActionState.PrimaryActionStarted += OnGatherStartAction;
-
         _buildActionState.EnteredState += OnBuildStateEntered;
         _buildActionState.LeftState += OnBuildStateLeft;
+
+        LocalPlayerSpawned?.Invoke(this);
     }
 
     #endregion
@@ -98,7 +97,7 @@ public partial class Player : CharacterBody2D {
             { "PreviousX", _previousCoords.X },
             { "PreviousY", _previousCoords.Y }
         };
-        RpcId(Manager.MultiplayerHostId, nameof(ServerMovedCell), positionChange);
+        RpcId(Manager.HostId, nameof(ServerMovedCell), positionChange);
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
@@ -123,9 +122,8 @@ public partial class Player : CharacterBody2D {
         }
     }
 
-
     private void OnGatherStartAction(Vector2 mouseWorldPosition) {
-        RpcId(Manager.MultiplayerHostId, nameof(HostGatherStartAction),
+        RpcId(Manager.HostId, nameof(HostGatherStartAction),
             mouseWorldPosition);
     }
 

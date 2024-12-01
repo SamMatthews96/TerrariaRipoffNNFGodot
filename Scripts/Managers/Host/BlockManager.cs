@@ -29,10 +29,24 @@ public partial class BlockManager : Node {
             _savedBlocks[savedBlock.XPosition, savedBlock.YPosition] = savedBlock;
         }
 
+        Manager.Instance.Game.Host.PlayerManager.BeforePlayerSpawned += OnPlayerManagerBeforePlayerSpawned;
         Manager.Instance.Game.Host.PlayerManager.PlayerSpawned += OnPlayerManagerPlayerSpawned;
     }
 
-    public void SpawnBlocksInRegion(List<IntVector> region) {
+    private void OnPlayerManagerPlayerSpawned(Player player) {
+        player.MovedCell += OnLocalPlayerMoved;
+        player.GatherAttempted += OnPlayerGatherAction;
+    }
+    
+    private void OnPlayerManagerBeforePlayerSpawned(PlayerInfo playerInfo) {
+        IntVector spawnPosition = new(Manager.Instance.Game.Host.PlayerManager.DefaultSpawnPosition);
+        List<IntVector> region = Manager.Instance.Game.Region.GetRegion(
+            spawnPosition, BlockSpawnDistance);
+        
+        SpawnBlocksInRegion(region);
+    }
+    
+    private void SpawnBlocksInRegion(List<IntVector> region) {
         List<SavedBlock> savedBlocks = GetSavedBlocksInRegion(region);
         foreach (SavedBlock savedBlock in savedBlocks) {
             if (_activeBlocks[savedBlock.XPosition, savedBlock.YPosition] is not null) continue;
@@ -70,11 +84,6 @@ public partial class BlockManager : Node {
         }
 
         return savedBlocks;
-    }
-
-    private void OnPlayerManagerPlayerSpawned(Player player) {
-        player.MovedCell += OnLocalPlayerMoved;
-        player.GatherAttempted += OnPlayerGatherAction;
     }
 
     private void OnLocalPlayerMoved(Dictionary positionChange) {

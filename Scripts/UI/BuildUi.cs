@@ -17,9 +17,11 @@ public partial class BuildUi : Container {
     public void Initialize(Inventory inventory) {
         _inventory = inventory;
         _inventory.InventoryChanged += OnInventoryChanged;
-
-        Player.LocalPlayer.BuildStateEntered += OnBuildStateEntered;
-        Player.LocalPlayer.BuildStateLeft += OnBuildStateLeft;
+        
+        Player.LocalPlayerSpawned += player => {
+            player.BuildStateEntered += OnBuildStateEntered;
+            player.BuildStateLeft += OnBuildStateLeft;
+        };
     }
 
     public override void _Ready() {

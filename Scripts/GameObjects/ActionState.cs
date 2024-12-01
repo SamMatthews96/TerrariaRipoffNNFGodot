@@ -8,6 +8,12 @@ public partial class ActionState : Node {
     public event Action LeftState;
     public event Action<Vector2> PrimaryActionStarted;
     public event Action<Vector2> PrimaryActionEnded;
+    
+    public enum State {
+        Gather,
+        Build,
+        Weapon
+    }
 
     public void EnterState() {
         EnteredState?.Invoke();

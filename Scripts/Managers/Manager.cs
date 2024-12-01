@@ -4,10 +4,10 @@ using Godot.Collections;
 namespace TerrariaRipoffNNF;
 
 public partial class Manager : Node {
-    public const int MultiplayerHostId = 1;
+    public const int HostId = 1;
 
-    [Export] private int port = 8910;
-    [Export] private string address = "127.0.0.1";
+    [Export] private int _port = 8910;
+    [Export] private string _address = "127.0.0.1";
     [Export] private PackedScene _gameManagerPackedScene;
     [Export] private MainMenu _mainMenu;
 
@@ -37,7 +37,7 @@ public partial class Manager : Node {
 
     private void OnMainMenuHostClickedEnterWorld(Dictionary world, PlayerInfo playerInfo) {
         _peer = new ENetMultiplayerPeer();
-        Error error = _peer.CreateServer(port);
+        Error error = _peer.CreateServer(_port);
         if (error != Error.Ok) {
             throw new Exception("error cannot host! [20240808.1336.1] :" + error);
         }
@@ -52,7 +52,7 @@ public partial class Manager : Node {
         Multiplayer.ConnectedToServer += () => { LaunchGame(playerInfo); };
 
         _peer = new ENetMultiplayerPeer();
-        Error error = _peer.CreateClient(ip, port);
+        Error error = _peer.CreateClient(ip, _port);
         if (error != Error.Ok) {
             throw new Exception("error cannot join! [20240808.1337.1] :" + error);
         }

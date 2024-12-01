@@ -1,19 +1,36 @@
 ﻿using System;
 using Godot;
+using Godot.Collections;
+
 namespace TerrariaRipoffNNF;
 
 public partial class PlayerManager : Node {
     [Export] private PackedScene _hostPlayerPackedScene;
 
+    public Vector2 DefaultSpawnPosition { get; private set; }
+
+    public event Action<PlayerInfo> BeforePlayerSpawned;
     public event Action<Player> PlayerSpawned;
 
-    public void SpawnPlayer(int peerId, PlayerInfo playerInfo) {
-        Vector2 spawnPosition = Manager.Instance.Game.Host.DefaultSpawnPosition * Game.BlockSize;
-        Player player = Player.New(Manager.Instance.Game.PlayerParent, _hostPlayerPackedScene)
+    public override void _Ready() {
+        Manager.Instance.Game.PlayerConnected += OnGamePlayerConnected;
+    }
+
+    public void Initialize(Dictionary worldDictionary) {
+        DefaultSpawnPosition = new Vector2(
+            (float)worldDictionary["DefaultSpawnPosition"].AsGodotArray()[0].AsDouble(),
+            (float)worldDictionary["DefaultSpawnPosition"].AsGodotArray()[1].AsDouble());
+    }
+
+    private void OnGamePlayerConnected(PlayerInfo playerInfo, int peerId) {
+        BeforePlayerSpawned?.Invoke(playerInfo);
+
+        Vector2 spawnPosition = DefaultSpawnPosition * Game.BlockSize;
+        Player player = Player.New(_hostPlayerPackedScene)
             .WithPeerId(peerId)
             .WithSpawnPosition(spawnPosition)
             .Build();
-        
+
         PlayerSpawned?.Invoke(player);
     }
 }
