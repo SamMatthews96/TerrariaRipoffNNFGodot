@@ -14,7 +14,7 @@ properties/1/path = NodePath(".:Height")
 properties/1/spawn = true
 properties/1/replication_mode = 2
 
-[node name="GameManager" type="Node" node_paths=PackedStringArray("Region", "BlockParent", "PlayerParent", "Interface")]
+[node name="Game" type="Node" node_paths=PackedStringArray("Region", "BlockParent", "PlayerParent", "Interface")]
 script = ExtResource("1_6kfdr")
 Region = NodePath("RegionHelper")
 BlockParent = NodePath("BlockParent")

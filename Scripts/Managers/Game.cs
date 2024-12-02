@@ -22,6 +22,7 @@ public partial class Game : Node {
 
     public event Action<PlayerInfo, int> PlayerConnected;
 
+    // @todo for initializers with parameters, can events be used in their place?
     public void Initialize(PlayerInfo playerInfo, Dictionary world) {
         if (IsHost) {
             Width = (int)world["Width"];

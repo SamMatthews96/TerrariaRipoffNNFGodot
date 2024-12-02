@@ -19,7 +19,7 @@ properties/0/replication_mode = 1
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_raw6a"]
 size = Vector2(44, 93)
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("_positionSynchronizer", "_camera", "_pickupArea", "_inventory", "_gatherActionState", "_buildActionState", "_weaponActionState", "ActionController")]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("_positionSynchronizer", "_camera", "_pickupArea", "_inventory", "_gatherActionState", "ActionController")]
 collision_mask = 2
 script = ExtResource("1_8yy3a")
 _positionSynchronizer = NodePath("PositionSync")
@@ -27,8 +27,6 @@ _camera = NodePath("Camera2D")
 _pickupArea = NodePath("PickupArea")
 _inventory = NodePath("Inventory")
 _gatherActionState = NodePath("ActionController/GatherActionState")
-_buildActionState = NodePath("ActionController/BuildActionState")
-_weaponActionState = NodePath("ActionController/WeaponActionState")
 ActionController = NodePath("ActionController")
 
 [node name="PlayerInfoSync" type="MultiplayerSynchronizer" parent="."]

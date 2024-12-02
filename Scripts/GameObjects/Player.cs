@@ -16,9 +16,6 @@ public partial class Player : CharacterBody2D {
     [Export] private Vector2 _spawnPosition;
 
     [Export] private ActionState _gatherActionState;
-    [Export] private ActionState _buildActionState;
-    [Export] private ActionState _weaponActionState;
-    
     [Export] public ActionController ActionController { get; private set; }
 
     private int _horizontalInput;
@@ -42,7 +39,7 @@ public partial class Player : CharacterBody2D {
 
     public override void _EnterTree() {
         _positionSynchronizer.SetMultiplayerAuthority(PeerId);
-        
+
         BeforeLocalPlayerSpawned?.Invoke(this);
     }
 
@@ -50,6 +47,7 @@ public partial class Player : CharacterBody2D {
         Position = _spawnPosition;
 
         if (Manager.Instance.Game.IsHost) {
+            //@todo this can be done inside the pickuparea node, add a script to it.
             _pickupArea.BodyEntered += OnServerCollidedWithPickup;
         }
 
@@ -59,7 +57,6 @@ public partial class Player : CharacterBody2D {
     }
 
     private void InitializeLocalPlayer() {
-        
         Manager.Instance.Game.Interface.InventoryUi.Initialize(_inventory);
 
         _camera.Enabled = true;
@@ -122,6 +119,8 @@ public partial class Player : CharacterBody2D {
     private void OnGatherStartAction(Vector2 mouseWorldPosition) {
         RpcId(Manager.HostId, nameof(HostGatherStartAction),
             mouseWorldPosition);
+        // @todo this should occur inside the ActionState item
+        // it should pass player and mouseWorldPosition as arguments
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]

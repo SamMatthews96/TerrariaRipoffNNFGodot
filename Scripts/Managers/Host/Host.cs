@@ -5,7 +5,6 @@ using Godot.Collections;
 namespace TerrariaRipoffNNF;
 
 public partial class Host : Node {
-    
     [Export] public PlayerManager PlayerManager { get; private set; }
     [Export] public BlockManager BlockManager { get; private set; }
     [Export] public PickupManager PickupManager { get; private set; }
@@ -23,7 +22,5 @@ public partial class Host : Node {
     public void Initialize(Dictionary worldDictionary) {
         PlayerManager.Initialize(worldDictionary);
         BlockManager.Initialize(worldDictionary);
-        PickupManager.Initialize();
     }
-    
 }

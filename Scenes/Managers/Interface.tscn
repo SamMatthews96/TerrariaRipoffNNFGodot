@@ -70,7 +70,6 @@ theme_override_constants/margin_bottom = 3
 layout_mode = 2
 
 [node name="GatherButton" type="TextureButton" parent="ActionBar/MarginContainer/ButtonContainer"]
-modulate = Color(1, 1, 1, 0.505882)
 layout_mode = 2
 texture_normal = ExtResource("6_32d80")
 script = ExtResource("6_eri8v")

@@ -10,7 +10,8 @@ public partial class PickupManager : Node {
     private List<SavedPickup>[,] _savedPickups;
     private List<ActivePickup>[,] _activePickups;
 
-    public void Initialize() {
+    
+    public override void _Ready() {
         _savedPickups = new List<SavedPickup>[
             Manager.Instance.Game.Width, Manager.Instance.Game.Height];
         _activePickups = new List<ActivePickup>[
