@@ -19,7 +19,7 @@ properties/0/replication_mode = 1
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_raw6a"]
 size = Vector2(44, 93)
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("_positionSynchronizer", "_camera", "_pickupArea", "_inventory", "_gatherActionState", "_buildActionState", "_weaponActionState")]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("_positionSynchronizer", "_camera", "_pickupArea", "_inventory", "_gatherActionState", "_buildActionState", "_weaponActionState", "ActionController")]
 collision_mask = 2
 script = ExtResource("1_8yy3a")
 _positionSynchronizer = NodePath("PositionSync")
@@ -29,6 +29,7 @@ _inventory = NodePath("Inventory")
 _gatherActionState = NodePath("ActionController/GatherActionState")
 _buildActionState = NodePath("ActionController/BuildActionState")
 _weaponActionState = NodePath("ActionController/WeaponActionState")
+ActionController = NodePath("ActionController")
 
 [node name="PlayerInfoSync" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_8kinl")
@@ -61,16 +62,18 @@ shape = SubResource("RectangleShape2D_raw6a")
 [node name="Inventory" type="Node" parent="."]
 script = ExtResource("3_vdjfg")
 
-[node name="ActionController" type="Node" parent="." node_paths=PackedStringArray("_actions", "_player")]
+[node name="ActionController" type="Node" parent="." node_paths=PackedStringArray("_player", "_stateArray")]
 script = ExtResource("4_pogak")
-_actions = [NodePath("GatherActionState"), NodePath("BuildActionState"), NodePath("WeaponActionState")]
 _player = NodePath("..")
+_stateArray = [NodePath("GatherActionState"), NodePath("BuildActionState"), NodePath("WeaponActionState")]
 
 [node name="GatherActionState" type="Node" parent="ActionController"]
 script = ExtResource("5_vfnq6")
 
 [node name="BuildActionState" type="Node" parent="ActionController"]
 script = ExtResource("5_vfnq6")
+State = 1
 
 [node name="WeaponActionState" type="Node" parent="ActionController"]
 script = ExtResource("5_vfnq6")
+State = 2

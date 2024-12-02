@@ -18,6 +18,8 @@ public partial class Player : CharacterBody2D {
     [Export] private ActionState _gatherActionState;
     [Export] private ActionState _buildActionState;
     [Export] private ActionState _weaponActionState;
+    
+    [Export] public ActionController ActionController { get; private set; }
 
     private int _horizontalInput;
     private bool _isFalling;
@@ -31,13 +33,10 @@ public partial class Player : CharacterBody2D {
     private int PeerId => Name.ToString().ToInt();
     public bool IsLocalPlayer => Multiplayer.GetUniqueId() == PeerId;
 
-    public static event Action<Player> LocalPlayerSpawned;
+    public static event Action<Player> BeforeLocalPlayerSpawned;
     public event Action<Dictionary> MovedCell;
     public event Action<ActivePickup> PickedUpItem;
     public event Action<IntVector, float> GatherAttempted;
-
-    public event Action BuildStateEntered;
-    public event Action BuildStateLeft;
 
     #region Creation
 
@@ -58,8 +57,9 @@ public partial class Player : CharacterBody2D {
     }
 
     private void InitializeLocalPlayer() {
+        BeforeLocalPlayerSpawned?.Invoke(this);
+        
         Manager.Instance.Game.Interface.InventoryUi.Initialize(_inventory);
-        Manager.Instance.Game.Interface.BuildUi.Initialize(_inventory);
 
         _camera.Enabled = true;
         InputManager.Instance.HorizontalInputChanged +=
@@ -67,10 +67,7 @@ public partial class Player : CharacterBody2D {
         InputManager.Instance.JumpPressed += OnJumpPressed;
 
         _gatherActionState.PrimaryActionStarted += OnGatherStartAction;
-        _buildActionState.EnteredState += OnBuildStateEntered;
-        _buildActionState.LeftState += OnBuildStateLeft;
 
-        LocalPlayerSpawned?.Invoke(this);
     }
 
     #endregion
@@ -132,13 +129,5 @@ public partial class Player : CharacterBody2D {
         IntVector coords = new(mouseWorldPosition / Game.BlockSize);
         if (!coords.IsInBounds()) return;
         GatherAttempted?.Invoke(coords, 100f);
-    }
-
-    private void OnBuildStateEntered() {
-        BuildStateEntered?.Invoke();
-    }
-
-    private void OnBuildStateLeft() {
-        BuildStateLeft?.Invoke();
     }
 }

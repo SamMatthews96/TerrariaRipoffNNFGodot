@@ -1,15 +1,24 @@
-﻿using Godot;
-using State = TerrariaRipoffNNF.ActionState.State;
+﻿using System;
+using Godot;
 
 namespace TerrariaRipoffNNF;
 
 public partial class ActionBarButton : TextureButton {
-    public State State { get; private set; } 
+    [Export] public PlayerActionState State { get; private set; }
+    
+    public event Action<PlayerActionState> ButtonClicked; 
 
-    public void Initialize(Texture2D texture2D, State state) {
-        TextureNormal = texture2D;
-        State = state;
+    public override void _Ready() {
+        Pressed += () => ButtonClicked?.Invoke(State);
     }
 
-    public override void _Ready() { }
+    public void SetFocus() {
+        Modulate = new Color(1, 1, 1);
+    }
+    
+    public void SetDefocus() {
+        Modulate = new Color(1, 1, 1, 0.5f);
+    }
+    
+    
 }

@@ -1,19 +1,27 @@
 ﻿using System;
 using Godot.Collections;
 using Godot;
+
 namespace TerrariaRipoffNNF;
 
 public partial class ActionController : Node {
-    [Export] private Array<ActionState> _actions;
     [Export] private Player _player;
-    private ActionState currentActionState;
-
+    private ActionState _currentActionState;
     
+    [Export] private Array<ActionState> _stateArray;
+    private Dictionary<PlayerActionState, ActionState> _states;
+    
+    public event Action<PlayerActionState> ActionChanged;
 
     public override void _Ready() {
         if (!_player.IsLocalPlayer) {
             QueueFree();
             return;
+        }
+        
+        _states = new Dictionary<PlayerActionState, ActionState>();
+        foreach (ActionState state in _stateArray) {
+            _states[state.State] = state;
         }
 
         InputManager.Instance.LeftMouseUp += OnInputManagerLeftMouseUp;
@@ -23,25 +31,25 @@ public partial class ActionController : Node {
         
         Manager.Instance.Game.Interface.ActionBar.ButtonClicked += OnActionBarButtonClicked;
 
-        EquipAction(0);
+        EquipAction(PlayerActionState.Gather);
     }
 
-    private void OnActionBarButtonClicked(int index) {
-        EquipAction(index);
+    private void OnActionBarButtonClicked(PlayerActionState state) {
+        EquipAction(state);
     }
 
-    private void EquipAction(int index) {
-        currentActionState?.LeaveState();
-        currentActionState = _actions[index];
-        currentActionState.EnterState();
+    private void EquipAction(PlayerActionState state) {
+        GD.Print("equipped " + state);
+        _currentActionState = _states[state];
+        ActionChanged?.Invoke(state);
     }
 
     private void OnInputManagerLeftMouseUp(Vector2 mouseScreenPosition) {
-        currentActionState.EndPrimaryAction(mouseScreenPosition);
+        _currentActionState.EndPrimaryAction(mouseScreenPosition);
     }
 
     private void OnInputManagerLeftMouseDown(Vector2 mouseScreenPosition) {
-        currentActionState.PrimaryAction(mouseScreenPosition);
+        _currentActionState.PrimaryAction(mouseScreenPosition);
     }
 
     private void OnInputManagerRightMouseUp(Vector2 mouseScreenPosition) {

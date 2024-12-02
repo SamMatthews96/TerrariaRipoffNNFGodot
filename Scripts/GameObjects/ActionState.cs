@@ -2,27 +2,18 @@
 using Godot;
 
 namespace TerrariaRipoffNNF;
+    
+public enum PlayerActionState {
+    Gather,
+    Build,
+    Weapon
+}
 
 public partial class ActionState : Node {
-    public event Action EnteredState;
-    public event Action LeftState;
+    [Export] public PlayerActionState State { get; private set; }
     public event Action<Vector2> PrimaryActionStarted;
     public event Action<Vector2> PrimaryActionEnded;
     
-    public enum State {
-        Gather,
-        Build,
-        Weapon
-    }
-
-    public void EnterState() {
-        EnteredState?.Invoke();
-    }
-
-    public void LeaveState() {
-        LeftState?.Invoke();
-    }
-
     public void PrimaryAction(Vector2 mouseWorldPosition) {
         PrimaryActionStarted?.Invoke(mouseWorldPosition);
     }
