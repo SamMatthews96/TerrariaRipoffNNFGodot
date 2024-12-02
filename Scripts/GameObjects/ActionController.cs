@@ -39,7 +39,6 @@ public partial class ActionController : Node {
     }
 
     private void EquipAction(PlayerActionState state) {
-        GD.Print("equipped " + state);
         _currentActionState = _states[state];
         ActionChanged?.Invoke(state);
     }

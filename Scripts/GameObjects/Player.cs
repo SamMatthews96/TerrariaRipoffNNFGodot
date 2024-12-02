@@ -42,6 +42,8 @@ public partial class Player : CharacterBody2D {
 
     public override void _EnterTree() {
         _positionSynchronizer.SetMultiplayerAuthority(PeerId);
+        
+        BeforeLocalPlayerSpawned?.Invoke(this);
     }
 
     public override void _Ready() {
@@ -57,7 +59,6 @@ public partial class Player : CharacterBody2D {
     }
 
     private void InitializeLocalPlayer() {
-        BeforeLocalPlayerSpawned?.Invoke(this);
         
         Manager.Instance.Game.Interface.InventoryUi.Initialize(_inventory);
 
@@ -67,7 +68,6 @@ public partial class Player : CharacterBody2D {
         InputManager.Instance.JumpPressed += OnJumpPressed;
 
         _gatherActionState.PrimaryActionStarted += OnGatherStartAction;
-
     }
 
     #endregion
