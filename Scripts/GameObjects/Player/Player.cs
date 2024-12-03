@@ -5,18 +5,18 @@ using Godot.Collections;
 namespace TerrariaRipoffNNF;
 
 public partial class Player : CharacterBody2D {
+    [Export] public Inventory Inventory { get; private set; }
+    [Export] public ActionController ActionController { get; private set; }
+    [Export] public Area2D PickupArea { get; private set; }
+
     [Export] private MultiplayerSynchronizer _positionSynchronizer;
     [Export] private Camera2D _camera;
     [Export] private Area2D _pickupArea;
-    [Export] public Inventory Inventory { get; private set; }
-
     [Export] private float _speed = 300f;
     [Export] private float _gravityCoefficient = 1600;
     [Export] private float _jumpStrength = 800;
     [Export] private Vector2 _spawnPosition;
 
-    [Export] public ActionController ActionController { get; private set; }
-    [Export] public PickupArea PickupArea { get; private set; }
 
     private int _horizontalInput;
     private bool _isFalling;

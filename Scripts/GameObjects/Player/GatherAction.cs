@@ -7,7 +7,6 @@ public partial class GatherAction : PlayerAction {
     public event Action<IntVector, float> GatherAttempted;
 
     public override void PrimaryAction(Vector2 mouseWorldPosition) {
-        // @todo make the gather action periodic while the mouse is held down
         RpcId(Manager.HostId, nameof(GatherActionAttempt), mouseWorldPosition);
     }
     

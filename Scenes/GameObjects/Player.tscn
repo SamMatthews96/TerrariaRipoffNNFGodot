@@ -1,11 +1,11 @@
 [gd_scene load_steps=10 format=3 uid="uid://bx6lgpicpfal4"]
 
-[ext_resource type="Script" path="res://Scripts/GameObjects/Player.cs" id="1_8yy3a"]
+[ext_resource type="Script" path="res://Scripts/GameObjects/Player/Player.cs" id="1_hx4ms"]
 [ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://Assets/Images/icon.svg" id="2_5yc1a"]
 [ext_resource type="Script" path="res://Scripts/GameObjects/Player/Inventory.cs" id="3_81ck4"]
-[ext_resource type="Script" path="res://Scripts/GameObjects/Player/PickupArea.cs" id="3_xjni3"]
 [ext_resource type="Script" path="res://Scripts/GameObjects/Player/ActionController.cs" id="4_00ysa"]
-[ext_resource type="Script" path="res://Scripts/GameObjects/GatherAction.cs" id="5_l8rnf"]
+[ext_resource type="Script" path="res://Scripts/GameObjects/Player/GatherAction.cs" id="5_l1f4o"]
+[ext_resource type="Script" path="res://Scripts/GameObjects/Player/BuildAction.cs" id="6_qab18"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_8kinl"]
 properties/0/path = NodePath(".:_spawnPosition")
@@ -20,15 +20,15 @@ properties/0/replication_mode = 1
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_raw6a"]
 size = Vector2(44, 93)
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("_positionSynchronizer", "_camera", "_pickupArea", "Inventory", "ActionController", "PickupArea")]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("Inventory", "ActionController", "PickupArea", "_positionSynchronizer", "_camera", "_pickupArea")]
 collision_mask = 2
-script = ExtResource("1_8yy3a")
-_positionSynchronizer = NodePath("PositionSync")
-_camera = NodePath("Camera2D")
-_pickupArea = NodePath("PickupArea")
+script = ExtResource("1_hx4ms")
 Inventory = NodePath("Inventory")
 ActionController = NodePath("ActionController")
 PickupArea = NodePath("PickupArea")
+_positionSynchronizer = NodePath("PositionSync")
+_camera = NodePath("Camera2D")
+_pickupArea = NodePath("PickupArea")
 
 [node name="PlayerInfoSync" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_8kinl")
@@ -51,27 +51,29 @@ enabled = false
 position_smoothing_enabled = true
 position_smoothing_speed = 25.0
 
-[node name="PickupArea" type="Area2D" parent="." node_paths=PackedStringArray("_player")]
+[node name="PickupArea" type="Area2D" parent="."]
 collision_mask = 4
-script = ExtResource("3_xjni3")
-_player = NodePath("..")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PickupArea"]
 position = Vector2(0, -46.5)
 shape = SubResource("RectangleShape2D_raw6a")
 
-[node name="Inventory" type="Node" parent="."]
+[node name="Inventory" type="Node" parent="." node_paths=PackedStringArray("_player")]
 script = ExtResource("3_81ck4")
+_player = NodePath("..")
 
-[node name="ActionController" type="Node" parent="." node_paths=PackedStringArray("_player", "_gatherAction")]
+[node name="ActionController" type="Node" parent="." node_paths=PackedStringArray("_player", "_gatherAction", "_buildAction")]
 script = ExtResource("4_00ysa")
 _player = NodePath("..")
 _gatherAction = NodePath("GatherActionState")
+_buildAction = NodePath("BuildActionState")
 
 [node name="GatherActionState" type="Node" parent="ActionController" node_paths=PackedStringArray("Player")]
-script = ExtResource("5_l8rnf")
+script = ExtResource("5_l1f4o")
 Player = NodePath("../..")
 
-[node name="BuildActionState" type="Node" parent="ActionController"]
+[node name="BuildActionState" type="Node" parent="ActionController" node_paths=PackedStringArray("Player")]
+script = ExtResource("6_qab18")
+Player = NodePath("../..")
 
 [node name="WeaponActionState" type="Node" parent="ActionController"]

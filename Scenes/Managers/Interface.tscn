@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://javhx4rej0q4"]
+[gd_scene load_steps=10 format=3 uid="uid://javhx4rej0q4"]
 
 [ext_resource type="Script" path="res://Scripts/Managers/Interface.cs" id="1_2s5nd"]
 [ext_resource type="Script" path="res://Scripts/UI/InventoryUi.cs" id="2_huspd"]
@@ -8,6 +8,7 @@
 [ext_resource type="Script" path="res://Scripts/UI/ActionBarButton.cs" id="6_eri8v"]
 [ext_resource type="Texture2D" uid="uid://c43ihljnqox3q" path="res://Assets/Images/buildButton.png" id="7_hnsx4"]
 [ext_resource type="Texture2D" uid="uid://5s1dp1pvh1xy" path="res://Assets/Images/weaponButton.png" id="8_y013w"]
+[ext_resource type="Script" path="res://Scripts/UI/BuildUi.cs" id="9_naaai"]
 
 [node name="Interface" type="CanvasLayer" node_paths=PackedStringArray("InventoryUi", "ActionBar")]
 script = ExtResource("1_2s5nd")
@@ -85,3 +86,24 @@ layout_mode = 2
 texture_normal = ExtResource("8_y013w")
 script = ExtResource("6_eri8v")
 State = 2
+
+[node name="BuildBar" type="PanelContainer" parent="."]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 35.0
+offset_top = -169.0
+offset_right = 306.0
+offset_bottom = -35.0
+grow_vertical = 0
+script = ExtResource("9_naaai")
+
+[node name="MarginContainer" type="MarginContainer" parent="BuildBar"]
+layout_mode = 2
+theme_override_constants/margin_left = 3
+theme_override_constants/margin_top = 3
+theme_override_constants/margin_right = 3
+theme_override_constants/margin_bottom = 3
+
+[node name="ButtonContainer" type="HBoxContainer" parent="BuildBar/MarginContainer"]
+layout_mode = 2

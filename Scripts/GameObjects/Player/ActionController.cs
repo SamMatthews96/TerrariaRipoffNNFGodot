@@ -9,6 +9,7 @@ public partial class ActionController : Node {
     private PlayerAction _currentPlayerAction;
     
     [Export] private GatherAction _gatherAction;
+    [Export] private BuildAction _buildAction;
     
     public event Action<PlayerAction.Type> ActionChanged;
     public event Action<IntVector,float> GatherAttempted;
@@ -33,7 +34,6 @@ public partial class ActionController : Node {
     }
 
     private void OnActionBarButtonClicked(PlayerAction.Type state) {
-        
         EquipAction(state);
     }
 
@@ -43,7 +43,8 @@ public partial class ActionController : Node {
                 _currentPlayerAction = _gatherAction;
                 break;
             case PlayerAction.Type.Build:
-                throw new NotImplementedException();
+                _currentPlayerAction = _buildAction;
+                break;
             case PlayerAction.Type.Weapon:
                 throw new NotImplementedException();
             default:
