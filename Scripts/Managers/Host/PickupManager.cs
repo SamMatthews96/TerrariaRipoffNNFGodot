@@ -21,7 +21,7 @@ public partial class PickupManager : Node {
     }
 
     private void OnPlayerManagerPlayerSpawned(Player player) {
-        player.PickedUpItem += OnPlayerPickedUpItem;
+        player.PickupArea.PickedUpItem += OnPlayerPickedUpItem;
     }
 
     private void OnPlayerPickedUpItem(ActivePickup activePickup) {

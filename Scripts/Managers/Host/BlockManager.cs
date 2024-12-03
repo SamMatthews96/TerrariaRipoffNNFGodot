@@ -35,7 +35,7 @@ public partial class BlockManager : Node {
 
     private void OnPlayerManagerPlayerSpawned(Player player) {
         player.MovedCell += OnLocalPlayerMoved;
-        player.GatherAttempted += OnPlayerGatherAction;
+        player.ActionController.GatherAttempted += OnPlayerGatherAction;
     }
     
     private void OnPlayerManagerBeforePlayerSpawned(PlayerInfo playerInfo) {

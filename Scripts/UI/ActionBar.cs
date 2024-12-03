@@ -7,7 +7,7 @@ namespace TerrariaRipoffNNF;
 public partial class ActionBar : PanelContainer {
     [Export] private Array<ActionBarButton> _buttons;
     
-    public event Action<PlayerActionState> ButtonClicked;
+    public event Action<PlayerAction.Type> ButtonClicked;
     
     public override void _Ready() {
         foreach (ActionBarButton button in _buttons) {
@@ -23,7 +23,7 @@ public partial class ActionBar : PanelContainer {
         player.ActionController.ActionChanged += OnPlayerActionChanged;
     }
     
-    private void OnPlayerActionChanged(PlayerActionState state) {
+    private void OnPlayerActionChanged(PlayerAction.Type state) {
         foreach (ActionBarButton button in _buttons) {
             if (button.State == state) {
                 button.SetFocus();

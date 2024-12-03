@@ -4,9 +4,9 @@ using Godot;
 namespace TerrariaRipoffNNF;
 
 public partial class ActionBarButton : TextureButton {
-    [Export] public PlayerActionState State { get; private set; }
+    [Export] public PlayerAction.Type State { get; private set; }
     
-    public event Action<PlayerActionState> ButtonClicked; 
+    public event Action<PlayerAction.Type> ButtonClicked; 
 
     public override void _Ready() {
         Pressed += () => ButtonClicked?.Invoke(State);
