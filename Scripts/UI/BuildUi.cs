@@ -35,13 +35,17 @@ public partial class BuildUi : Container {
                 BlockTypeButton.New(_buttonContainer, _packedButton, blockType)
                     .WithFocus(blockType == _selectedBlockType)
                     .Build();
-            button.ButtonDown += () => OnBlockTypeButtonPressed(button);
+            button.ButtonDown += () => SelectButton(button);
 
             _blockTypeButtons.Add(button);
         });
+        
+        if (_blockTypeButtons.Count > 0 && _selectedBlockType == null) {
+            SelectButton(_blockTypeButtons[0]);
+        }
     }
     
-    private void OnBlockTypeButtonPressed(BlockTypeButton button) {
+    private void SelectButton(BlockTypeButton button) {
         _blockTypeButtons.ForEach(blockTypeButton => {
             if (blockTypeButton == button) {
                 _selectedBlockType = blockTypeButton.BlockType;
