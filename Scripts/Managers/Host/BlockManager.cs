@@ -36,6 +36,7 @@ public partial class BlockManager : Node {
     private void OnPlayerManagerPlayerSpawned(Player player) {
         player.MovedCell += OnLocalPlayerMoved;
         player.ActionController.GatherAttempted += OnPlayerGatherAction;
+        player.ActionController.BuildAttempted += OnPlayerBuildAction;
     }
     
     private void OnPlayerManagerBeforePlayerSpawned(PlayerInfo playerInfo) {
@@ -102,5 +103,13 @@ public partial class BlockManager : Node {
         ActiveBlock activeBlock = _activeBlocks[coords.X, coords.Y];
         if (activeBlock is null) return;
         DamageActiveBlock(activeBlock, damage);
+    }
+    
+    private void OnPlayerBuildAction(BlockType blockType, IntVector coords) {
+        GD.Print("BlockManager BuildAction");
+        if (_savedBlocks[coords.X, coords.Y] is not null) return;
+        SavedBlock savedBlock = SavedBlock.Builder.New(blockType, coords.X, coords.Y).Build();
+        _savedBlocks[coords.X, coords.Y] = savedBlock;
+        SpawnBlock(savedBlock);
     }
 }

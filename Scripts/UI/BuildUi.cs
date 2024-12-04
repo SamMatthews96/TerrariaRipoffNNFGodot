@@ -10,6 +10,8 @@ public partial class BuildUi : Container {
     [Export] private BoxContainer _buttonContainer;
     private BlockType _selectedBlockType;
 
+    public event Action<BlockType> BlockTypeSelected;
+    
     public override void _Ready() {
         Player.BeforeLocalPlayerSpawned += player => {
             player.ActionController.ActionChanged += OnPlayerActionChanged;
@@ -54,5 +56,6 @@ public partial class BuildUi : Container {
                 blockTypeButton.SetDefocus();
             }
         });
+        BlockTypeSelected?.Invoke(button.BlockType);
     }
 }
