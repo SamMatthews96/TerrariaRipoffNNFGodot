@@ -16,18 +16,28 @@ public partial class ActionController : Node {
 
     public override void _Ready() {
         if (_player.IsLocalPlayer) {
+            GD.Print(_player.Name);
+            
             InputManager.Instance.LeftMouseUp += OnInputManagerLeftMouseUp;
             InputManager.Instance.LeftMouseDown += OnInputManagerLeftMouseDown;
-            // InputManager.Instance.RightMouseUp += OnInputManagerRightMouseUp;
-            // InputManager.Instance.RightMouseDown += OnInputManagerRightMouseDown;
 
             Manager.Instance.Game.Interface.ActionBar.ButtonClicked += OnActionBarButtonClicked;
 
-            _gatherAction.GatherAttempted += (coords, damage) =>
-                GatherAttempted?.Invoke(coords, damage);
-
             EquipAction(PlayerAction.Type.Gather);
         }
+
+        if (Manager.Instance.Game.IsHost) {
+            _gatherAction.GatherAttempted += (coords, damage) =>
+                GatherAttempted?.Invoke(coords, damage);
+        }
+    }
+    
+    private void OnInputManagerLeftMouseUp(Vector2 mouseWorldPosition) {
+        _currentPlayerAction.EndPrimaryAction(mouseWorldPosition);
+    }
+    
+    private void OnInputManagerLeftMouseDown(Vector2 mouseWorldPosition) {
+        _currentPlayerAction.PrimaryAction(mouseWorldPosition);
     }
 
     private void OnActionBarButtonClicked(PlayerAction.Type state) {
@@ -49,21 +59,5 @@ public partial class ActionController : Node {
         }
 
         ActionChanged?.Invoke(state);
-    }
-
-    private void OnInputManagerLeftMouseUp(Vector2 mouseScreenPosition) {
-        _currentPlayerAction.EndPrimaryAction(mouseScreenPosition);
-    }
-
-    private void OnInputManagerLeftMouseDown(Vector2 mouseScreenPosition) {
-        _currentPlayerAction.PrimaryAction(mouseScreenPosition);
-    }
-
-    private void OnInputManagerRightMouseUp(Vector2 mouseScreenPosition) {
-        throw new NotImplementedException();
-    }
-
-    private void OnInputManagerRightMouseDown(Vector2 mouseScreenPosition) {
-        throw new NotImplementedException();
     }
 }

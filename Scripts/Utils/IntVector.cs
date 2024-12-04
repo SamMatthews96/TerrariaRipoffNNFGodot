@@ -30,6 +30,15 @@ public struct IntVector {
         Y = (int)Math.Round(vector2.Y);
     }
 
+    public IntVector(Array array) {
+        try {
+            X = (int)array[0];
+            Y = (int)array[1];
+        } catch (Exception e) {
+            throw new Exception("[20241204.0957.1] Error deserializing IntVector from Array", e);
+        }
+    }
+
     public bool IsInBounds() {
         return X >= 0 && X < Manager.Instance.Game.Width && Y >= 0 && Y < Manager.Instance.Game.Height;
     }
