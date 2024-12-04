@@ -7,30 +7,27 @@ namespace TerrariaRipoffNNF;
 public partial class ActionController : Node {
     [Export] private Player _player;
     private PlayerAction _currentPlayerAction;
-    
+
     [Export] private GatherAction _gatherAction;
     [Export] private BuildAction _buildAction;
-    
+
     public event Action<PlayerAction.Type> ActionChanged;
-    public event Action<IntVector,float> GatherAttempted;
+    public event Action<IntVector, float> GatherAttempted;
 
     public override void _Ready() {
-        if (!_player.IsLocalPlayer) {
-            QueueFree();
-            return;
+        if (_player.IsLocalPlayer) {
+            InputManager.Instance.LeftMouseUp += OnInputManagerLeftMouseUp;
+            InputManager.Instance.LeftMouseDown += OnInputManagerLeftMouseDown;
+            // InputManager.Instance.RightMouseUp += OnInputManagerRightMouseUp;
+            // InputManager.Instance.RightMouseDown += OnInputManagerRightMouseDown;
+
+            Manager.Instance.Game.Interface.ActionBar.ButtonClicked += OnActionBarButtonClicked;
+
+            _gatherAction.GatherAttempted += (coords, damage) =>
+                GatherAttempted?.Invoke(coords, damage);
+
+            EquipAction(PlayerAction.Type.Gather);
         }
-
-        InputManager.Instance.LeftMouseUp += OnInputManagerLeftMouseUp;
-        InputManager.Instance.LeftMouseDown += OnInputManagerLeftMouseDown;
-        // InputManager.Instance.RightMouseUp += OnInputManagerRightMouseUp;
-        // InputManager.Instance.RightMouseDown += OnInputManagerRightMouseDown;
-        
-        Manager.Instance.Game.Interface.ActionBar.ButtonClicked += OnActionBarButtonClicked;
-
-        _gatherAction.GatherAttempted += (coords, damage) => 
-            GatherAttempted?.Invoke(coords,damage);
-        
-        EquipAction(PlayerAction.Type.Gather);
     }
 
     private void OnActionBarButtonClicked(PlayerAction.Type state) {
@@ -50,6 +47,7 @@ public partial class ActionController : Node {
             default:
                 throw new ArgumentOutOfRangeException(nameof(state), state, null);
         }
+
         ActionChanged?.Invoke(state);
     }
 

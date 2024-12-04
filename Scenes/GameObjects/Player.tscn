@@ -75,5 +75,6 @@ Player = NodePath("../..")
 [node name="BuildActionState" type="Node" parent="ActionController" node_paths=PackedStringArray("Player")]
 script = ExtResource("6_qab18")
 Player = NodePath("../..")
+State = 1
 
 [node name="WeaponActionState" type="Node" parent="ActionController"]

@@ -5,13 +5,14 @@ using Godot;
 namespace TerrariaRipoffNNF;
 
 public partial class BuildUi : Container {
+    private List<TextureButton> _blockTypeButtons = new();
+    [Export] private PackedScene _packedButton;
+    [Export] private BoxContainer _buttonContainer;
+
     public override void _Ready() {
-        // _inventory.InventoryChanged += OnInventoryChanged;
-        // Player.BeforeLocalPlayerSpawned += player => {
-        //     player.ActionController.ActionChanged += OnPlayerActionChanged;
-        // };
         Player.BeforeLocalPlayerSpawned += player => {
             player.ActionController.ActionChanged += OnPlayerActionChanged;
+            player.Inventory.InventoryChanged += OnInventoryChanged;
         };
     }
 
@@ -23,19 +24,21 @@ public partial class BuildUi : Container {
         }
     }
 
-    private void OnInventoryChanged() {
-        // _blockTypeButtons.ForEach(button => button.QueueFree());
-        // _blockTypeButtons.Clear();
-        //
-        // List<InventoryItems> blockTypes = _inventory.InventoryItemsList.FindAll(inventoryItems =>
-        //     inventoryItems.ItemType is BlockType);
-        // blockTypes.ForEach(blockType => {
-        //     ActionBarButton button = _uiButton.Instantiate<ActionBarButton>();
-        //     // button.Initialize(blockType.ItemType.IconTexture);
-        //     button.ButtonDown += () => { BlockTypeSelected?.Invoke((BlockType)blockType.ItemType); };
-        //
-        //     _blockTypeButtons.Add(button);
-        //     _blockTypesUi.AddChild(button);
-        // });
+    private void OnInventoryChanged(Inventory inventory) {
+        _blockTypeButtons.ForEach(button => button.QueueFree());
+        _blockTypeButtons.Clear();
+        
+        inventory.StackedItemsList.ForEach(stack => {
+            if (stack.ItemType is not BlockType blockType) return;
+            BlockTypeButton button = BlockTypeButton.New(_packedButton, blockType);
+            button.ButtonDown += () => OnBlockTypeButtonPressed(blockType);
+
+            _blockTypeButtons.Add(button);
+            _buttonContainer.AddChild(button);
+        });
+    }
+    
+    private void OnBlockTypeButtonPressed(BlockType blockType) {
+        GD.Print(blockType);
     }
 }

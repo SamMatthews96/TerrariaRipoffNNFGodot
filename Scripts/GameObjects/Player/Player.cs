@@ -17,7 +17,6 @@ public partial class Player : CharacterBody2D {
     [Export] private float _jumpStrength = 800;
     [Export] private Vector2 _spawnPosition;
 
-
     private int _horizontalInput;
     private bool _isFalling;
     private float _xVelocity;
@@ -33,13 +32,13 @@ public partial class Player : CharacterBody2D {
     public static event Action<Player> BeforeLocalPlayerSpawned;
     public event Action<Dictionary> MovedCell;
 
-
     #region Creation
 
     public override void _EnterTree() {
         _positionSynchronizer.SetMultiplayerAuthority(PeerId);
-
-        BeforeLocalPlayerSpawned?.Invoke(this);
+        if (IsLocalPlayer) {
+            BeforeLocalPlayerSpawned?.Invoke(this);
+        }
     }
 
     public override void _Ready() {
@@ -51,8 +50,6 @@ public partial class Player : CharacterBody2D {
     }
 
     private void InitializeLocalPlayer() {
-        Manager.Instance.Game.Interface.InventoryUi.Initialize(Inventory);
-
         _camera.Enabled = true;
         InputManager.Instance.HorizontalInputChanged +=
             newInput => _horizontalInput = newInput;

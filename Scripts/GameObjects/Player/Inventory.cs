@@ -10,9 +10,10 @@ public partial class Inventory : Node {
     public float UsedSpace { get; private set; }
 
     private List<InventoryItems> _inventoryItemsList;
-    public List<InventoryItems> InventoryItemsList => _inventoryItemsList;
+    public List<StackedItems> StackedItemsList => 
+        _inventoryItemsList.ConvertAll(inventoryItems => inventoryItems.ToStackedItems());
 
-    public event Action InventoryChanged;
+    public event Action<Inventory> InventoryChanged;
     public event Action<ActivePickup> PickedUpItem;
 
     [Export] private Player _player;
@@ -55,6 +56,6 @@ public partial class Inventory : Node {
             currentInventoryItems.AddItems(newInventoryItems.Count);
         }
 
-        InventoryChanged?.Invoke();
+        InventoryChanged?.Invoke(this);
     }
 }

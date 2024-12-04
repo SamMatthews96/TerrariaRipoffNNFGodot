@@ -1,13 +1,7 @@
-﻿using Godot.Collections;
+﻿namespace TerrariaRipoffNNF;
 
-namespace TerrariaRipoffNNF;
-
-public class InventoryItems {
-    public int Count { get; private set; }
-    public ItemType ItemType { get; }
-    public float TotalSpace => Count * ItemType.InventorySpace;
-    
-    public InventoryItems(ItemType itemType, int count) {
+public class InventoryItems : StackedItems {
+    public InventoryItems(ItemType itemType, int count = 1) : base(itemType, count) {
         ItemType = itemType;
         Count = count;
     }
@@ -18,18 +12,5 @@ public class InventoryItems {
 
     public void RemoveItems(int count) {
         Count -= count;
-    }
-    
-    public Dictionary Serialize() {
-        return new Dictionary {
-            { "ItemType", ItemType.Serialize() },
-            { "Count", Count }
-        };
-    }
-    
-    public static InventoryItems Deserialize(Dictionary dictionary) {
-        ItemType itemType = ItemType.Deserialize(dictionary["ItemType"].AsGodotDictionary());
-        int count = (int)dictionary["Count"];
-        return new InventoryItems(itemType, count);
     }
 }
