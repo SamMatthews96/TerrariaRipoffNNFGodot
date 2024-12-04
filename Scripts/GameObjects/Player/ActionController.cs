@@ -16,12 +16,10 @@ public partial class ActionController : Node {
 
     public override void _Ready() {
         if (_player.IsLocalPlayer) {
-            GD.Print(_player.Name);
-            
             InputManager.Instance.LeftMouseUp += OnInputManagerLeftMouseUp;
             InputManager.Instance.LeftMouseDown += OnInputManagerLeftMouseDown;
 
-            Manager.Instance.Game.Interface.ActionBar.ButtonClicked += OnActionBarButtonClicked;
+            Manager.Instance.Game.Interface.ActionBar.ButtonClicked += EquipAction;
 
             EquipAction(PlayerAction.Type.Gather);
         }
@@ -40,23 +38,13 @@ public partial class ActionController : Node {
         _currentPlayerAction.PrimaryAction(mouseWorldPosition);
     }
 
-    private void OnActionBarButtonClicked(PlayerAction.Type state) {
-        EquipAction(state);
-    }
-
     private void EquipAction(PlayerAction.Type state) {
-        switch (state) {
-            case PlayerAction.Type.Gather:
-                _currentPlayerAction = _gatherAction;
-                break;
-            case PlayerAction.Type.Build:
-                _currentPlayerAction = _buildAction;
-                break;
-            case PlayerAction.Type.Weapon:
-                throw new NotImplementedException();
-            default:
-                throw new ArgumentOutOfRangeException(nameof(state), state, null);
-        }
+        _currentPlayerAction = state switch {
+            PlayerAction.Type.Gather => _gatherAction,
+            PlayerAction.Type.Build => _buildAction,
+            PlayerAction.Type.Weapon => throw new NotImplementedException(),
+            _ => throw new ArgumentOutOfRangeException(nameof(state), state, null)
+        };
 
         ActionChanged?.Invoke(state);
     }

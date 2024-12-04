@@ -5,9 +5,10 @@ using Godot;
 namespace TerrariaRipoffNNF;
 
 public partial class BuildUi : Container {
-    private List<TextureButton> _blockTypeButtons = new();
+    private readonly List<BlockTypeButton> _blockTypeButtons = new();
     [Export] private PackedScene _packedButton;
     [Export] private BoxContainer _buttonContainer;
+    private BlockType _selectedBlockType;
 
     public override void _Ready() {
         Player.BeforeLocalPlayerSpawned += player => {
@@ -30,15 +31,24 @@ public partial class BuildUi : Container {
         
         inventory.StackedItemsList.ForEach(stack => {
             if (stack.ItemType is not BlockType blockType) return;
-            BlockTypeButton button = BlockTypeButton.New(_packedButton, blockType);
-            button.ButtonDown += () => OnBlockTypeButtonPressed(blockType);
+            BlockTypeButton button = 
+                BlockTypeButton.New(_buttonContainer, _packedButton, blockType)
+                    .WithFocus(blockType == _selectedBlockType)
+                    .Build();
+            button.ButtonDown += () => OnBlockTypeButtonPressed(button);
 
             _blockTypeButtons.Add(button);
-            _buttonContainer.AddChild(button);
         });
     }
     
-    private void OnBlockTypeButtonPressed(BlockType blockType) {
-        GD.Print(blockType);
+    private void OnBlockTypeButtonPressed(BlockTypeButton button) {
+        _blockTypeButtons.ForEach(blockTypeButton => {
+            if (blockTypeButton == button) {
+                _selectedBlockType = blockTypeButton.BlockType;
+                blockTypeButton.SetFocus();
+            } else {
+                blockTypeButton.SetDefocus();
+            }
+        });
     }
 }
