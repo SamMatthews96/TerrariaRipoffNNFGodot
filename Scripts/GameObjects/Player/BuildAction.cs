@@ -15,7 +15,6 @@ public partial class BuildAction : PlayerAction {
     }
 
     public override void EndPrimaryAction(Vector2 mouseWorldPosition) {
-        GD.Print("end");
-
+        
     }
 }

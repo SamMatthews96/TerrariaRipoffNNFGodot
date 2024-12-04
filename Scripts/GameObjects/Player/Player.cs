@@ -24,7 +24,7 @@ public partial class Player : CharacterBody2D {
 
     private IntVector _previousCoords;
 
-    private IntVector Coords => new(Position / Game.BlockSize);
+    public IntVector Coords => new(Position / Game.BlockSize);
 
     private int PeerId => Name.ToString().ToInt();
     public bool IsLocalPlayer => Multiplayer.GetUniqueId() == PeerId;

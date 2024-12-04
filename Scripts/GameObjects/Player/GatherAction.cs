@@ -10,27 +10,25 @@ public partial class GatherAction : PlayerAction {
     public override void PrimaryAction(Vector2 mouseWorldPosition) {
         IntVector coords = new(mouseWorldPosition / Game.BlockSize);
         if (!coords.IsInBounds()) return;
-        
-        // get properties of player that aren't defined yet
-        // mine speed, range, damage
-        // for now, use constants
+
+        // @todo get properties of player that aren't defined yet
+        // @todo trigger action every mineSpeed seconds
         float mineSpeed = 1;
-        float range = 1;
+        float range = 4;
         float damage = 100;
-        
-        RpcId(Manager.HostId, nameof(HostGatherAttempted), 
-            coords.ToSerialised(), damage);
+        if (range >= IntVector.Distance(coords, Player.Coords)) {
+            RpcId(Manager.HostId, nameof(HostGatherAttempted),
+                coords.ToSerialised(), damage);
+        }
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     public void HostGatherAttempted(Array intVectorArray, float damage) {
-        IntVector coords = new (intVectorArray);
-        
+        IntVector coords = new(intVectorArray);
+
         GatherAttempted?.Invoke(coords, damage);
     }
 
     public override void EndPrimaryAction(Vector2 mouseWorldPosition) {
-        GD.Print("end");
-
     }
 }
