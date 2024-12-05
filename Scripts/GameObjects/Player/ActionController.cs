@@ -20,7 +20,10 @@ public partial class ActionController : Node {
             InputManager.Instance.LeftMouseDown += OnInputManagerLeftMouseDown;
 
             Manager.Instance.Game.Interface.ActionBar.ButtonClicked += EquipAction;
-
+            
+            InputManager.Instance.GatherModePressed += () => EquipAction(PlayerAction.Type.Gather);
+            InputManager.Instance.BuildModePressed += () => EquipAction(PlayerAction.Type.Build);
+            
             EquipAction(PlayerAction.Type.Gather);
         }
 

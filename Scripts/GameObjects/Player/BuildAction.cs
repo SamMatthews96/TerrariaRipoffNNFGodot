@@ -13,6 +13,7 @@ public partial class BuildAction : PlayerAction {
     public override void _Ready() {
         if (Player.IsLocalPlayer) {
             Manager.Instance.Game.Interface.BuildUi.BlockTypeSelected += OnBuildBlockTypeSelected;
+            Player.Inventory.InventoryChanged += OnInventoryChanged;
         }
     }
 
@@ -23,7 +24,7 @@ public partial class BuildAction : PlayerAction {
     public override void PrimaryAction(Vector2 mouseWorldPosition) {
         IntVector coords = new(mouseWorldPosition / Game.BlockSize);
         if (!coords.IsInBounds()) return;
-
+        
         float buildSpeed = 1;
         float range = 8;
         if (_blockType is not null && range >= IntVector.Distance(coords, Player.Coords)) {
@@ -31,7 +32,6 @@ public partial class BuildAction : PlayerAction {
                 coords.ToSerialised(), _blockType.Serialize());
         }
     }
-
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void BuildActionAttempt(Array intVectorArray, Dictionary blockTypeDict) {
@@ -43,4 +43,9 @@ public partial class BuildAction : PlayerAction {
     }
 
     public override void EndPrimaryAction(Vector2 mouseWorldPosition) { }
+
+    private void OnInventoryChanged(Inventory inventory) {
+        if (inventory.StackedItemsList.Exists(stack => stack.ItemType == _blockType)) return;
+        _blockType = null;
+    }
 }

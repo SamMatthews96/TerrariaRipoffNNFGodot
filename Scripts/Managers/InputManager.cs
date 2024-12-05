@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Godot;
 
 namespace TerrariaRipoffNNF;
@@ -11,6 +12,9 @@ public partial class InputManager : Node {
     private const string RightMouse = "rightMouse";
     private const string Save = "save";
     private const string ToggleInventory = "toggleInventory";
+    private const string BuildMode = "buildMode";
+    private const string GatherMode = "gatherMode";
+    
 
     [Export] private Node2D _node2D;
 
@@ -25,6 +29,8 @@ public partial class InputManager : Node {
     public event Action JumpPressed;
     public event Action SaveGamePressed;
     public event Action ToggleInventoryPressed;
+    public event Action BuildModePressed;
+    public event Action GatherModePressed;
 
     public override void _EnterTree() {
         Instance = this;
@@ -94,6 +100,14 @@ public partial class InputManager : Node {
 
         if (Input.IsActionJustPressed(ToggleInventory)) {
             ToggleInventoryPressed?.Invoke();
+        }
+
+        if (Input.IsActionJustPressed(GatherMode)) {
+            GatherModePressed?.Invoke();
+        }
+        
+        if (Input.IsActionJustPressed(BuildMode)) {
+            BuildModePressed?.Invoke();
         }
     }
 }
