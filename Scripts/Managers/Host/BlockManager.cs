@@ -7,7 +7,6 @@ using Array = Godot.Collections.Array;
 namespace TerrariaRipoffNNF;
 
 public partial class BlockManager : Node {
-
     [Export] private PackedScene _blockPackedScene;
 
     public const int BlockSpawnDistance = 20;
@@ -15,8 +14,13 @@ public partial class BlockManager : Node {
     private SavedBlock[,] _savedBlocks;
     private ActiveBlock[,] _activeBlocks;
 
+    public bool IsCellOccupied(IntVector coords) {
+        return _savedBlocks[coords.X, coords.Y] is not null;
+    }
+
     public event Action<SavedBlock> BlockDestroyed;
 
+    // @todo potental refactor
     public void Initialize(Dictionary worldDictionary) {
         _savedBlocks = new SavedBlock[
             Manager.Instance.Game.Width, Manager.Instance.Game.Height];
@@ -36,17 +40,17 @@ public partial class BlockManager : Node {
     private void OnPlayerManagerPlayerSpawned(Player player) {
         player.MovedCell += OnLocalPlayerMoved;
         player.ActionController.GatherAttempted += OnPlayerGatherAction;
-        player.ActionController.BuildAttempted += OnPlayerBuildAction;
+        player.ActionController.BlockPlaced += OnPlayerBuildAction;
     }
-    
+
     private void OnPlayerManagerBeforePlayerSpawned(PlayerInfo playerInfo) {
         IntVector spawnPosition = new(Manager.Instance.Game.Host.PlayerManager.DefaultSpawnPosition);
         List<IntVector> region = Manager.Instance.Game.Region.GetRegion(
             spawnPosition, BlockSpawnDistance);
-        
+
         SpawnBlocksInRegion(region);
     }
-    
+
     private void SpawnBlocksInRegion(List<IntVector> region) {
         List<SavedBlock> savedBlocks = GetSavedBlocksInRegion(region);
         foreach (SavedBlock savedBlock in savedBlocks) {
@@ -104,9 +108,8 @@ public partial class BlockManager : Node {
         if (activeBlock is null) return;
         DamageActiveBlock(activeBlock, damage);
     }
-    
+
     private void OnPlayerBuildAction(BlockType blockType, IntVector coords) {
-        GD.Print("BlockManager BuildAction");
         if (_savedBlocks[coords.X, coords.Y] is not null) return;
         SavedBlock savedBlock = SavedBlock.Builder.New(blockType, coords.X, coords.Y).Build();
         _savedBlocks[coords.X, coords.Y] = savedBlock;

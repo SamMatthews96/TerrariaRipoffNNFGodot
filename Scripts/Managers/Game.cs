@@ -6,6 +6,8 @@ namespace TerrariaRipoffNNF;
 
 public partial class Game : Node {
     [Export] public Region Region { get; private set; }
+
+    // @todo do these 3 need public accessors
     [Export] public Node BlockParent { get; private set; }
     [Export] public Node PlayerParent { get; private set; }
     [Export] public PackedScene HostManagerScene { get; private set; }
@@ -16,12 +18,16 @@ public partial class Game : Node {
     [Export] public int Width { get; private set; }
     [Export] public int Height { get; private set; }
 
-    public Host Host { get; private set; }
+    private Host _host;
+    public Host Host {
+        get => _host ?? throw new Exception("[20241205.2011.1] Host not instantiated");
+        private set => _host = value;
+    }
 
     public bool IsHost => Multiplayer.GetUniqueId() == Manager.HostId;
 
     public event Action<PlayerInfo, int> PlayerConnected;
-    
+
     public void Initialize(PlayerInfo playerInfo, Dictionary world) {
         if (IsHost) {
             Width = (int)world["Width"];

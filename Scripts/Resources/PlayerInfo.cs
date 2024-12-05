@@ -4,6 +4,7 @@ using Godot.Collections;
 
 namespace TerrariaRipoffNNF;
 
+// @todo does this class need to exist, can we just use dictionary
 public partial class PlayerInfo : Resource {
     public string Name { get; private set; }
 

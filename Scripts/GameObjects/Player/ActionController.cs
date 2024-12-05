@@ -12,7 +12,7 @@ public partial class ActionController : Node {
 
     public event Action<PlayerAction.Type> ActionChanged;
     public event Action<IntVector, float> GatherAttempted;
-    public event Action<BlockType, IntVector> BuildAttempted;
+    public event Action<BlockType, IntVector> BlockPlaced;
 
     public override void _Ready() {
         if (_player.IsLocalPlayer) {
@@ -27,8 +27,8 @@ public partial class ActionController : Node {
         if (Manager.Instance.Game.IsHost) {
             _gatherAction.GatherAttempted += (coords, damage) =>
                 GatherAttempted?.Invoke(coords, damage);
-            _buildAction.BuildAttempted += (blockType, coords) => 
-                BuildAttempted?.Invoke(blockType, coords);
+            _buildAction.BlockPlaced += (blockType, coords) => 
+                BlockPlaced?.Invoke(blockType, coords);
         }
     }
     

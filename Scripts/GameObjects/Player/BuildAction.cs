@@ -8,7 +8,7 @@ namespace TerrariaRipoffNNF;
 public partial class BuildAction : PlayerAction {
     private BlockType _blockType;
 
-    public event Action<BlockType, IntVector> BuildAttempted;
+    public event Action<BlockType, IntVector> BlockPlaced;
 
     public override void _Ready() {
         if (Player.IsLocalPlayer) {
@@ -38,8 +38,8 @@ public partial class BuildAction : PlayerAction {
         IntVector coords = new(intVectorArray);
         BlockType blockType = BlockType.Deserialize(blockTypeDict);
 
-        GD.Print("BuildActionAttempt", intVectorArray, blockTypeDict);
-        BuildAttempted?.Invoke(blockType, coords);
+        if (Manager.Instance.Game.Host.BlockManager.IsCellOccupied(coords)) return;
+        BlockPlaced?.Invoke(blockType, coords);
     }
 
     public override void EndPrimaryAction(Vector2 mouseWorldPosition) { }

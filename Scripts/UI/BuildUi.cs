@@ -30,9 +30,13 @@ public partial class BuildUi : Container {
     private void OnInventoryChanged(Inventory inventory) {
         _blockTypeButtons.ForEach(button => button.QueueFree());
         _blockTypeButtons.Clear();
-        
+       
+        bool isSelectedBlockFound = false;
         inventory.StackedItemsList.ForEach(stack => {
             if (stack.ItemType is not BlockType blockType) return;
+            if (blockType == _selectedBlockType) {
+                isSelectedBlockFound = true;
+            }
             BlockTypeButton button = 
                 BlockTypeButton.New(_buttonContainer, _packedButton, blockType)
                     .WithFocus(blockType == _selectedBlockType)
@@ -41,6 +45,10 @@ public partial class BuildUi : Container {
 
             _blockTypeButtons.Add(button);
         });
+
+        if (!isSelectedBlockFound) {
+            _selectedBlockType = null;
+        }
         
         if (_blockTypeButtons.Count > 0 && _selectedBlockType == null) {
             SelectButton(_blockTypeButtons[0]);

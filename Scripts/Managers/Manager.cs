@@ -1,6 +1,7 @@
 ﻿using System;
 using Godot;
 using Godot.Collections;
+
 namespace TerrariaRipoffNNF;
 
 public partial class Manager : Node {
@@ -13,7 +14,12 @@ public partial class Manager : Node {
 
     private ENetMultiplayerPeer _peer;
 
-    public Game Game { get; private set; }
+
+    private Game _game;
+    public Game Game {
+        get => _game ?? throw new Exception("[20241205.2000.8] Game not instantiated");
+        private set => _game = value;
+    }
 
     public static Manager Instance { get; private set; }
 

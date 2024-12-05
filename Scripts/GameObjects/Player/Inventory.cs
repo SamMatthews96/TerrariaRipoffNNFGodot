@@ -10,7 +10,8 @@ public partial class Inventory : Node {
     public float UsedSpace { get; private set; }
 
     private List<InventoryItems> _inventoryItemsList;
-    public List<StackedItems> StackedItemsList => 
+
+    public List<StackedItems> StackedItemsList =>
         _inventoryItemsList.ConvertAll(inventoryItems => inventoryItems.ToStackedItems());
 
     public event Action<Inventory> InventoryChanged;
@@ -23,10 +24,12 @@ public partial class Inventory : Node {
 
         if (Manager.Instance.Game.IsHost) {
             _player.PickupArea.BodyEntered += OnCollidedWithPickup;
+            _player.ActionController.BlockPlaced += OnBlockPlaced;
         }
     }
 
     private void OnCollidedWithPickup(Node node) {
+        // @todo this logic could be moved inside the pickup
         if (node is not ActivePickup activePickup) {
             throw new Exception("[20240816.0934.1] Pickup area collision with non-pickup");
         }
@@ -40,20 +43,53 @@ public partial class Inventory : Node {
         PickedUpItem?.Invoke(activePickup);
     }
 
+    private void OnBlockPlaced(BlockType blockType, IntVector _) {
+        InventoryItems inventoryItems = new(blockType, 1);
+        Dictionary inventoryItemsDictionary = inventoryItems.Serialize();
+        Rpc(nameof(ClientRemoveItems), inventoryItemsDictionary);
+    }
+
     [Rpc(CallLocal = true)]
-    private void ClientAddItems(Dictionary newInventoryItemsDictionary) {
-        InventoryItems newInventoryItems =
-            InventoryItems.Deserialize(newInventoryItemsDictionary);
-        UsedSpace += newInventoryItems.TotalSpace;
+    private void ClientAddItems(Dictionary inventoryItemsDictionary) {
+        InventoryItems inventoryItemsToAdd =
+            StackedItems.Deserialize(inventoryItemsDictionary);
+        UsedSpace += inventoryItemsToAdd.TotalSpace;
 
-        InventoryItems currentInventoryItems =
-            _inventoryItemsList.Find(inventoryItems =>
-                inventoryItems.ItemType == newInventoryItems.ItemType);
+        int index = _inventoryItemsList.FindIndex(inventoryItems =>
+            inventoryItems.ItemType == inventoryItemsToAdd.ItemType);
 
-        if (currentInventoryItems == null) {
-            _inventoryItemsList.Add(newInventoryItems);
+        if (index == -1) {
+            _inventoryItemsList.Add(inventoryItemsToAdd);
         } else {
-            currentInventoryItems.AddItems(newInventoryItems.Count);
+            _inventoryItemsList[index] += inventoryItemsToAdd;
+        }
+
+        InventoryChanged?.Invoke(this);
+    }
+
+    [Rpc(CallLocal = true)]
+    private void ClientRemoveItems(Dictionary inventoryItemsDictionary) {
+        InventoryItems inventoryItemsToRemove =
+            StackedItems.Deserialize(inventoryItemsDictionary);
+        UsedSpace -= inventoryItemsToRemove.TotalSpace;
+
+        int index = _inventoryItemsList.FindIndex(inventoryItems =>
+            inventoryItems.ItemType == inventoryItemsToRemove.ItemType);
+        
+        if (index == -1) {
+            throw new Exception("[20240815.0934.1] Inventory item not found");
+        }
+
+        _inventoryItemsList[index] -= inventoryItemsToRemove;
+
+        switch (_inventoryItemsList[index].Count) {
+            case > 0:
+                break;
+            case 0:
+                _inventoryItemsList.RemoveAt(index);
+                break;
+            case < 0:
+                throw new Exception("[20240815.0934.1] Inventory space went negative");
         }
 
         InventoryChanged?.Invoke(this);
