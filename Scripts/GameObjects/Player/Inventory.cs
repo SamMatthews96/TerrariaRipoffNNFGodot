@@ -29,7 +29,6 @@ public partial class Inventory : Node {
     }
 
     private void OnCollidedWithPickup(Node node) {
-        // @todo this logic could be moved inside the pickup
         if (node is not ActivePickup activePickup) {
             throw new Exception("[20240816.0934.1] Pickup area collision with non-pickup");
         }

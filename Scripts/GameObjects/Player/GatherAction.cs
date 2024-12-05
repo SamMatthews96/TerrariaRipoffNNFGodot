@@ -11,8 +11,6 @@ public partial class GatherAction : PlayerAction {
         IntVector coords = new(mouseWorldPosition / Game.BlockSize);
         if (!coords.IsInBounds()) return;
 
-        // @todo get properties of player that aren't defined yet
-        // @todo trigger action every mineSpeed seconds
         float mineSpeed = 1;
         float range = 4;
         float damage = 100;

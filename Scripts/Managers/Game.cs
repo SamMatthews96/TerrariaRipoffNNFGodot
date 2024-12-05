@@ -7,7 +7,6 @@ namespace TerrariaRipoffNNF;
 public partial class Game : Node {
     [Export] public Region Region { get; private set; }
 
-    // @todo do these 3 need public accessors
     [Export] public Node BlockParent { get; private set; }
     [Export] public Node PlayerParent { get; private set; }
     [Export] public PackedScene HostManagerScene { get; private set; }

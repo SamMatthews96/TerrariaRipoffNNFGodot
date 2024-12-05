@@ -6,7 +6,6 @@ namespace TerrariaRipoffNNF;
 
 public partial class PlayerManager : Node {
     [Export] private PackedScene _hostPlayerPackedScene;
-    //@todo default spawn position should be taken from world
     public Vector2 DefaultSpawnPosition { get; private set; }
 
     public event Action<PlayerInfo> BeforePlayerSpawned;
@@ -15,7 +14,7 @@ public partial class PlayerManager : Node {
     public override void _Ready() {
         Manager.Instance.Game.PlayerConnected += OnGamePlayerConnected;
     }
-    // @todo does this need refactor
+    
     public void Initialize(Dictionary worldDictionary) {
         DefaultSpawnPosition = new Vector2(
             (float)worldDictionary["DefaultSpawnPosition"].AsGodotArray()[0].AsDouble(),

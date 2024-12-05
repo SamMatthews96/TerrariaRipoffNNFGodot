@@ -20,7 +20,6 @@ public partial class BlockManager : Node {
 
     public event Action<SavedBlock> BlockDestroyed;
 
-    // @todo potental refactor
     public void Initialize(Dictionary worldDictionary) {
         _savedBlocks = new SavedBlock[
             Manager.Instance.Game.Width, Manager.Instance.Game.Height];

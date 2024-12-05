@@ -19,7 +19,6 @@ public partial class Host : Node {
         RequireHost();
     }
 
-    // @todo initialisers
     public void Initialize(Dictionary worldDictionary) {
         PlayerManager.Initialize(worldDictionary);
         BlockManager.Initialize(worldDictionary);
