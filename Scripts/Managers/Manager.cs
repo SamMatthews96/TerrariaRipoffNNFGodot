@@ -37,11 +37,11 @@ public partial class Manager : Node {
         _mainMenu.ClientEnteredWorld += OnMainMenuClientClickedEnterWorld;
     }
 
-    private void OnMainMenuSinglePlayerClickedEnterWorld(Dictionary world, PlayerInfo playerInfo) {
+    private void OnMainMenuSinglePlayerClickedEnterWorld(Dictionary world, Dictionary playerInfo) {
         LaunchGame(playerInfo, world);
     }
 
-    private void OnMainMenuHostClickedEnterWorld(Dictionary world, PlayerInfo playerInfo) {
+    private void OnMainMenuHostClickedEnterWorld(Dictionary world, Dictionary playerInfo) {
         _peer = new ENetMultiplayerPeer();
         Error error = _peer.CreateServer(_port);
         if (error != Error.Ok) {
@@ -54,7 +54,7 @@ public partial class Manager : Node {
         LaunchGame(playerInfo, world);
     }
 
-    private void OnMainMenuClientClickedEnterWorld(string ip, PlayerInfo playerInfo) {
+    private void OnMainMenuClientClickedEnterWorld(string ip, Dictionary playerInfo) {
         Multiplayer.ConnectedToServer += () => { LaunchGame(playerInfo); };
 
         _peer = new ENetMultiplayerPeer();
@@ -67,7 +67,7 @@ public partial class Manager : Node {
         Multiplayer.MultiplayerPeer = _peer;
     }
 
-    private void LaunchGame(PlayerInfo playerInfo, Dictionary world = null) {
+    private void LaunchGame(Dictionary playerInfo, Dictionary world = null) {
         Game = _gameManagerPackedScene.Instantiate<Game>();
         AddChild(Game);
         Game.Initialize(playerInfo, world);

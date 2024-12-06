@@ -8,7 +8,7 @@ public partial class PlayerManager : Node {
     [Export] private PackedScene _hostPlayerPackedScene;
     public Vector2 DefaultSpawnPosition { get; private set; }
 
-    public event Action<PlayerInfo> BeforePlayerSpawned;
+    public event Action<Dictionary> BeforePlayerSpawned;
     public event Action<Player> PlayerSpawned;
 
     public override void _Ready() {
@@ -21,7 +21,7 @@ public partial class PlayerManager : Node {
             (float)worldDictionary["DefaultSpawnPosition"].AsGodotArray()[1].AsDouble());
     }
 
-    private void OnGamePlayerConnected(PlayerInfo playerInfo, int peerId) {
+    private void OnGamePlayerConnected(Dictionary playerInfo, int peerId) {
         BeforePlayerSpawned?.Invoke(playerInfo);
 
         Vector2 spawnPosition = DefaultSpawnPosition * Game.BlockSize;

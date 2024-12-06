@@ -25,15 +25,15 @@ public partial class MainMenu : Control {
 
     [Signal]
     public delegate void SinglePlayerClickedEnterWorldEventHandler(
-        Dictionary world, PlayerInfo playerInfo);
+        Dictionary world, Dictionary playerInfo);
 
     [Signal]
     public delegate void HostClickedEnterWorldEventHandler(
-        Dictionary world, PlayerInfo playerInfo);
+        Dictionary world, Dictionary playerInfo);
 
     [Signal]
     public delegate void ClientEnteredWorldEventHandler(
-        string ipText, PlayerInfo playerInfo);
+        string ipText, Dictionary playerInfo);
 
     public override void _Ready() {
         menus.Add(mainMenu);
@@ -99,8 +99,9 @@ public partial class MainMenu : Control {
 
     private async void OnWorldMenuEnterWorldButtonDown(WorldBasicInfo worldBasicInfo) {
         Dictionary world = await Task.Run(() => FileManager.LoadWorld(worldBasicInfo));
-        PlayerInfo playerInfo = new("123-432", "Host");
-
+        Dictionary playerInfo = new();
+        playerInfo.Add("Name", "123-456");
+        
         EmitSignal(
             gameType == GameType.Host
                 ? SignalName.HostClickedEnterWorld
@@ -131,7 +132,9 @@ public partial class MainMenu : Control {
     #region JoinMenu EventHandlers
 
     private void OnJoinMenuEnterWorldButtonDown() {
-        PlayerInfo playerInfo = new("457-543", "Client");
+        Dictionary playerInfo = new();
+        playerInfo.Add("Name", "654-321");
+        
         // temporary ip address
         EmitSignal(SignalName.ClientEnteredWorld, "127.0.0.1", playerInfo);
     }

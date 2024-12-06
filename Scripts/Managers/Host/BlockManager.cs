@@ -42,7 +42,7 @@ public partial class BlockManager : Node {
         player.ActionController.BlockPlaced += OnPlayerBuildAction;
     }
 
-    private void OnPlayerManagerBeforePlayerSpawned(PlayerInfo playerInfo) {
+    private void OnPlayerManagerBeforePlayerSpawned(Dictionary playerInfo) {
         IntVector spawnPosition = new(Manager.Instance.Game.Host.PlayerManager.DefaultSpawnPosition);
         List<IntVector> region = Manager.Instance.Game.Region.GetRegion(
             spawnPosition, BlockSpawnDistance);
