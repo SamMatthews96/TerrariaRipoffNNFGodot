@@ -39,15 +39,44 @@ public partial class EquipType : ItemType {
      * @idea
      * Use only ItemType, and don't use inheritance for any items
      * Use builder pattern to create items with different properties.
+      Need to be able to create from a resource, a Dict, and code
      * This needs to work with Resources, as well as items created by code
-     *
      * 
-     *      
-     */
+        Equipable : ItemProperty
+        Equipable pickaxe = Equipable.New()
+          .AsMiningTool(float power, float speed)
+          .WithPassive();
+          
+
+      Item.New()
+          .AsEquipable(pickaxe)
+
+      Item earthBlock = Item.New()
+          .AsBuildBlock(texture, weight, ...)
+          .Build()
+
+      earthBlock.HasProperty(ItemTypes.Block) === true
+
+      class Trait {
+        private Equipable _owner;
+
+        public Trait(){
+
+        }
+      }
+
+
+
+
+      */
 }
 [GlobalClass]
-public partial class Item : Resource{
+public partial class Item : Resource {
+  public enum Type {
+    Block, Equipment, Weapon, Reagent?
+  }
     public List<IItemProperty> ItemProperties { get; private set; }
+    public bool HasProperty()
     public static Builder New() {
         return new Builder();
     }
@@ -66,9 +95,5 @@ public partial class Item : Resource{
 }
 
 public interface IItemProperty {
-    
-}
-
-public class MiningItem : Resource, IItemProperty {
     
 }
