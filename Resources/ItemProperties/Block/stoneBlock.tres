@@ -1,11 +1,11 @@
 [gd_resource type="Resource" script_class="Block" load_steps=3 format=3 uid="uid://cdtapjxk4h2ch"]
 
 [ext_resource type="Texture2D" uid="uid://des01kpji7vcu" path="res://Assets/Images/Stone.png" id="1_a7qf1"]
-[ext_resource type="Script" path="res://Scripts/Resources/Block.cs" id="1_rrwbs"]
+[ext_resource type="Script" path="res://Scripts/Resources/Item/Block.cs" id="2_5i2qm"]
 
 [resource]
-script = ExtResource("1_rrwbs")
+script = ExtResource("2_5i2qm")
 Weight = 1.0
 TensileStrength = 20.0
-MaxHealth = 100.0
+MaxHealth = 30.0
 Texture = ExtResource("1_a7qf1")
