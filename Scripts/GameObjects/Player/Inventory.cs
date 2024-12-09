@@ -42,8 +42,8 @@ public partial class Inventory : Node {
         PickedUpItem?.Invoke(activePickup);
     }
 
-    private void OnBlockPlaced(BlockType blockType, IntVector _) {
-        InventoryItems inventoryItems = new(blockType, 1);
+    private void OnBlockPlaced(Item item, IntVector _) {
+        InventoryItems inventoryItems = new(item, 1);
         Dictionary inventoryItemsDictionary = inventoryItems.Serialize();
         Rpc(nameof(ClientRemoveItems), inventoryItemsDictionary);
     }
@@ -55,7 +55,7 @@ public partial class Inventory : Node {
         UsedSpace += inventoryItemsToAdd.TotalSpace;
 
         int index = _inventoryItemsList.FindIndex(inventoryItems =>
-            inventoryItems.ItemType == inventoryItemsToAdd.ItemType);
+            inventoryItems.Item == inventoryItemsToAdd.Item);
 
         if (index == -1) {
             _inventoryItemsList.Add(inventoryItemsToAdd);
@@ -73,7 +73,7 @@ public partial class Inventory : Node {
         UsedSpace -= inventoryItemsToRemove.TotalSpace;
 
         int index = _inventoryItemsList.FindIndex(inventoryItems =>
-            inventoryItems.ItemType == inventoryItemsToRemove.ItemType);
+            inventoryItems.Item == inventoryItemsToRemove.Item);
         
         if (index == -1) {
             throw new Exception("[20240815.0934.1] Inventory item not found");

@@ -5,18 +5,27 @@ using Array = Godot.Collections.Array;
 
 namespace TerrariaRipoffNNF;
 
-public static class WorldCreator {
-    public static void CreateWorld(WorldBasicInfo worldBasicInfo) {
+public partial class WorldCreator : Node {
+    [Export] private Item _stone;
+    [Export] private Item _earth;
+
+    public static WorldCreator Instance { get; private set; }
+
+    public override void _Ready() {
+        Instance = this;
+        //@todo change from singleton
+    }
+
+    public void CreateWorld(WorldBasicInfo worldBasicInfo) {
         int mid = 7;
-        BlockType stoneType = ResourceLoader.Load<BlockType>("res://Resources/BlockType/Stone.tres");
-        BlockType earthType = ResourceLoader.Load<BlockType>("res://Resources/BlockType/Earth.tres");
-        BlockType[] types = { stoneType, earthType };
+
+        Item[] types = { _stone, _earth };
         Random random = new();
 
         Array savedBlockArray = new();
         for (int x = 0; x < worldBasicInfo.Width; x++) {
             for (int y = mid; y < worldBasicInfo.Height; y++) {
-                BlockType type = types[random.Next(2)];
+                Item type = types[random.Next(2)];
                 SavedBlock savedBlock = SavedBlock.Builder.New(type, x, y).Build();
                 savedBlockArray.Add(savedBlock.Serialize());
             }
@@ -25,8 +34,8 @@ public static class WorldCreator {
         int defaultSpawnX = 5;
         int defaultSpawnY = 5;
 
-
         Dictionary worldDictionary = new();
+        worldDictionary.Add("Name", worldBasicInfo.Name);
         worldDictionary.Add("Width", worldBasicInfo.Width);
         worldDictionary.Add("Height", worldBasicInfo.Height);
         worldDictionary.Add("SavedBlocks", savedBlockArray);

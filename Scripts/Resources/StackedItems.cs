@@ -4,11 +4,11 @@ namespace TerrariaRipoffNNF;
 
 public class StackedItems {
     public int Count { get; protected set; }
-    public ItemType ItemType { get; protected init; }
-    public float TotalSpace => Count * ItemType.InventorySpace;
+    public Item Item { get; protected init; }
+    public float TotalSpace => Count * Item.InventorySpace;
 
-    public StackedItems(ItemType itemType, int count = 1) {
-        ItemType = itemType;
+    public StackedItems(Item item, int count = 1) {
+        Item = item;
         Count = count;
     }
     
@@ -18,14 +18,14 @@ public class StackedItems {
 
     public Dictionary Serialize() {
         return new Dictionary {
-            { "ItemType", ItemType.Serialize() },
+            { "ItemType", Item.ToDictionary() },
             { "Count", Count }
         };
     }
 
     public static InventoryItems Deserialize(Dictionary dictionary) {
-        ItemType itemType = ItemType.Deserialize(dictionary["ItemType"].AsGodotDictionary());
+        Item item = Item.FromDictionary(dictionary["ItemType"].AsGodotDictionary());
         int count = (int)dictionary["Count"];
-        return new InventoryItems(itemType, count);
+        return new InventoryItems(item, count);
     }
 }

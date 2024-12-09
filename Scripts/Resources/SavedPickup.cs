@@ -7,8 +7,8 @@ public partial class SavedPickup : Resource {
     public InventoryItems InventoryItems { get; }
     public IntVector Indices { get; set; }
 
-    public SavedPickup(ItemType itemType, Vector2 position, int count = 1) {
-        InventoryItems = new InventoryItems(itemType, count);
+    public SavedPickup(Item item, Vector2 position, int count = 1) {
+        InventoryItems = new InventoryItems(item, count);
         Position = position;
         Indices = new IntVector(position / Game.BlockSize);
     }
@@ -24,7 +24,7 @@ public partial class SavedPickup : Resource {
         InventoryItems inventoryItems =
             InventoryItems.Deserialize(dictionary["InventoryItemType"].AsGodotDictionary());
         Vector2 position = (Vector2)dictionary["Position"];
-        return new SavedPickup(inventoryItems.ItemType, position, inventoryItems.Count);
+        return new SavedPickup(inventoryItems.Item, position, inventoryItems.Count);
     }
 
     public SavedPickup() { }

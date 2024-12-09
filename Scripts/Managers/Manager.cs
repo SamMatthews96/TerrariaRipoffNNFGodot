@@ -11,6 +11,8 @@ public partial class Manager : Node {
     [Export] private string _address = "127.0.0.1";
     [Export] private PackedScene _gameManagerPackedScene;
     [Export] private MainMenu _mainMenu;
+    
+    [Export] private WorldCreator _worldCreator;
 
     private ENetMultiplayerPeer _peer;
 

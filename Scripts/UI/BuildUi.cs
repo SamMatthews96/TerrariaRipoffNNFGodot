@@ -8,10 +8,10 @@ public partial class BuildUi : Container {
     private readonly List<BlockTypeButton> _blockTypeButtons = new();
     [Export] private PackedScene _packedButton;
     [Export] private BoxContainer _buttonContainer;
-    private BlockType _selectedBlockType;
+    private Block _selectedBlock;
 
-    public event Action<BlockType> BlockTypeSelected;
-    
+    public event Action<Item> BlockTypeSelected;
+
     public override void _Ready() {
         Player.BeforeLocalPlayerSpawned += player => {
             player.ActionController.ActionChanged += OnPlayerActionChanged;
@@ -30,16 +30,17 @@ public partial class BuildUi : Container {
     private void OnInventoryChanged(Inventory inventory) {
         _blockTypeButtons.ForEach(button => button.QueueFree());
         _blockTypeButtons.Clear();
-       
+
         bool isSelectedBlockFound = false;
         inventory.StackedItemsList.ForEach(stack => {
-            if (stack.ItemType is not BlockType blockType) return;
-            if (blockType == _selectedBlockType) {
+            if (!stack.Item.TryGetProperty(out Block property)) return;
+            if (property == _selectedBlock) {
                 isSelectedBlockFound = true;
             }
-            BlockTypeButton button = 
-                BlockTypeButton.New(_buttonContainer, _packedButton, blockType)
-                    .WithFocus(blockType == _selectedBlockType)
+
+            BlockTypeButton button =
+                BlockTypeButton.New(_buttonContainer, _packedButton, stack.Item)
+                    .WithFocus(property == _selectedBlock)
                     .Build();
             button.ButtonDown += () => SelectButton(button);
 
@@ -47,23 +48,23 @@ public partial class BuildUi : Container {
         });
 
         if (!isSelectedBlockFound) {
-            _selectedBlockType = null;
+            _selectedBlock = null;
         }
-        
-        if (_blockTypeButtons.Count > 0 && _selectedBlockType == null) {
+
+        if (_blockTypeButtons.Count > 0 && _selectedBlock == null) {
             SelectButton(_blockTypeButtons[0]);
         }
     }
-    
+
     private void SelectButton(BlockTypeButton button) {
         _blockTypeButtons.ForEach(blockTypeButton => {
             if (blockTypeButton == button) {
-                _selectedBlockType = blockTypeButton.BlockType;
+                _selectedBlock = blockTypeButton.BlockItem.GetProperty<Block>();
                 blockTypeButton.SetFocus();
             } else {
                 blockTypeButton.SetDefocus();
             }
         });
-        BlockTypeSelected?.Invoke(button.BlockType);
+        BlockTypeSelected?.Invoke(button.BlockItem);
     }
 }

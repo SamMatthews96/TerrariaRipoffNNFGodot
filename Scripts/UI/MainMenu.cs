@@ -26,11 +26,11 @@ public partial class MainMenu : Control {
     [Signal]
     public delegate void SinglePlayerClickedEnterWorldEventHandler(
         Dictionary world, Dictionary playerInfo);
-
+    
     [Signal]
     public delegate void HostClickedEnterWorldEventHandler(
         Dictionary world, Dictionary playerInfo);
-
+    
     [Signal]
     public delegate void ClientEnteredWorldEventHandler(
         string ipText, Dictionary playerInfo);
@@ -80,7 +80,9 @@ public partial class MainMenu : Control {
 
     private async void OnWorldMenuCreateWorldButtonDown() {
         WorldBasicInfo worldBasicInfo = new(worldNameEdit.Text, 100, 100);
-        await Task.Run(() => WorldCreator.CreateWorld(worldBasicInfo));
+        await Task.Run(() => {
+            WorldCreator.Instance.CreateWorld(worldBasicInfo);
+        });
         AddEnterWorldButton(worldBasicInfo);
     }
 

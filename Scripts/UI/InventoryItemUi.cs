@@ -10,6 +10,6 @@ public partial class InventoryItemUi : TextureRect {
     public void Update(StackedItems stackedItems) {
         _inventoryItems = stackedItems;
         _countLabel.Text = _inventoryItems.Count.ToString();
-        _iconTextureRect.Texture = _inventoryItems.ItemType.IconTexture;
+        _iconTextureRect.Texture = _inventoryItems.Item.IconTexture;
     }
 }

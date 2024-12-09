@@ -3,7 +3,7 @@
 namespace TerrariaRipoffNNF;
 
 public partial class BlockTypeButton : TextureButton {
-    public BlockType BlockType { get; private set; }
+    public Item BlockItem { get; private set; }
     
     public void SetFocus() {
         Modulate = new Color(1, 1, 1);
@@ -17,13 +17,13 @@ public partial class BlockTypeButton : TextureButton {
         private BlockTypeButton _blockTypeButton;
         private Node _parent;
 
-        public Builder(Node parent, PackedScene packedScene, BlockType blockType) {
+        public Builder(Node parent, PackedScene packedScene, Item item) {
             _parent = parent;
             _blockTypeButton = packedScene.Instantiate<BlockTypeButton>();
-            _blockTypeButton.TextureNormal = blockType.IconTexture;
-            _blockTypeButton.BlockType = blockType;
+            _blockTypeButton.TextureNormal = item.IconTexture;
+            _blockTypeButton.BlockItem = item;
         }
-        
+
         public Builder WithFocus(bool isFocused) {
             if (isFocused) {
                 _blockTypeButton.SetFocus();
@@ -40,7 +40,7 @@ public partial class BlockTypeButton : TextureButton {
         }
     }
 
-    public static Builder New(Node parent, PackedScene packedScene, BlockType blockType) {
-        return new Builder(parent, packedScene, blockType);
+    public static Builder New(Node parent, PackedScene packedScene, Item item) {
+        return new Builder(parent, packedScene, item);
     }
 }

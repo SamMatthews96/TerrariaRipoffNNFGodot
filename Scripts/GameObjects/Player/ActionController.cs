@@ -12,7 +12,7 @@ public partial class ActionController : Node {
 
     public event Action<PlayerAction.Type> ActionChanged;
     public event Action<IntVector, float> GatherAttempted;
-    public event Action<BlockType, IntVector> BlockPlaced;
+    public event Action<Item, IntVector> BlockPlaced;
 
     public override void _Ready() {
         if (_player.IsLocalPlayer) {

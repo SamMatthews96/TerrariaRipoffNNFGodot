@@ -32,13 +32,13 @@ public partial class PickupManager : Node {
         Vector2 position = new(savedBlock.XPosition * Game.BlockSize,
             savedBlock.YPosition * Game.BlockSize);
 
-        CreatePickup(savedBlock.BlockType, position);
+        CreatePickup(savedBlock.Item, position);
     }
 
-    private void CreatePickup(ItemType itemType, Vector2 position) {
+    private void CreatePickup(Item item, Vector2 position) {
         IntVector coords = new(position / Game.BlockSize);
 
-        SavedPickup savedPickup = new(itemType, position);
+        SavedPickup savedPickup = new(item, position);
         _savedPickups[coords.X, coords.Y] ??= new List<SavedPickup>();
         _savedPickups[coords.X, coords.Y].Add(savedPickup);
 

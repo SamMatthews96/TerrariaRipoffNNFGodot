@@ -1,6 +1,7 @@
 using System;
 using Godot;
 using Godot.Collections;
+
 namespace TerrariaRipoffNNF;
 
 public static class FileManager {
@@ -8,35 +9,28 @@ public static class FileManager {
     // C:\Users\Sam-M\AppData\Roaming\Godot\app_userdata\TerrariaRipoffNNF\SavedData
 
     public static void SaveWorld(Dictionary worldDictionary) {
-        try {
-            string name = worldDictionary["Name"].ToString();
-            int width = worldDictionary["Width"].ToString().ToInt();
-            int height = worldDictionary["Height"].ToString().ToInt();
-            string worldString = worldDictionary.ToString();
+        string name = worldDictionary["Name"].ToString();
+        int width = worldDictionary["Width"].ToString().ToInt();
+        int height = worldDictionary["Height"].ToString().ToInt();
+        string worldString = worldDictionary.ToString();
 
-            EnsureDirectoryExists($"{WorldDir}/{name}");
-            FileAccess fileBasicData = FileAccess.Open(
-                $"{WorldDir}/{name}/worldBasicData.txt", FileAccess.ModeFlags.Write);
+        EnsureDirectoryExists($"{WorldDir}/{name}");
+        FileAccess fileBasicData = FileAccess.Open(
+            $"{WorldDir}/{name}/worldBasicData.txt", FileAccess.ModeFlags.Write);
 
-            Dictionary worldBasicInfoDictionary = new();
-            worldBasicInfoDictionary.Add("Name", name);
-            worldBasicInfoDictionary.Add("Width", width);
-            worldBasicInfoDictionary.Add("Height", height);
+        Dictionary worldBasicInfoDictionary = new();
+        worldBasicInfoDictionary.Add("Name", name);
+        worldBasicInfoDictionary.Add("Width", width);
+        worldBasicInfoDictionary.Add("Height", height);
 
-            string worldBasicString = worldBasicInfoDictionary.ToString();
-            fileBasicData.StoreString(worldBasicString);
-            fileBasicData.Dispose();
+        string worldBasicString = worldBasicInfoDictionary.ToString();
+        fileBasicData.StoreString(worldBasicString);
+        fileBasicData.Dispose();
 
-            FileAccess file = FileAccess.Open(
-                $"{WorldDir}/{name}/world.txt", FileAccess.ModeFlags.Write);
-            file.StoreString(worldString);
-            file.Dispose();
-        }
-        catch (Exception e) {
-            GD.PrintErr("Error saving world");
-            GD.PrintErr(e.Message);
-            throw new NotImplementedException();
-        }
+        FileAccess file = FileAccess.Open(
+            $"{WorldDir}/{name}/world.txt", FileAccess.ModeFlags.Write);
+        file.StoreString(worldString);
+        file.Dispose();
     }
 
     public static WorldBasicInfo[] LoadAllWorldBasicData() {
@@ -84,5 +78,4 @@ public static class FileManager {
             dirAccess.ChangeDir(currentFile);
         }
     }
-
 }

@@ -27,7 +27,7 @@ public partial class ActivePickup : RigidBody2D {
     public override void _Ready() {
         SavedPickup ??= SavedPickup.Deserialize(_savedPickupDictionary);
         Position = SavedPickup.Position;
-        _sprite.Texture = SavedPickup.InventoryItems.ItemType.IconTexture;
+        _sprite.Texture = SavedPickup.InventoryItems.Item.IconTexture;
         _previousCoords = Coords;
     }
 

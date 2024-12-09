@@ -108,9 +108,9 @@ public partial class BlockManager : Node {
         DamageActiveBlock(activeBlock, damage);
     }
 
-    private void OnPlayerBuildAction(BlockType blockType, IntVector coords) {
+    private void OnPlayerBuildAction(Item item, IntVector coords) {
         if (_savedBlocks[coords.X, coords.Y] is not null) return;
-        SavedBlock savedBlock = SavedBlock.Builder.New(blockType, coords.X, coords.Y).Build();
+        SavedBlock savedBlock = SavedBlock.Builder.New(item, coords.X, coords.Y).Build();
         _savedBlocks[coords.X, coords.Y] = savedBlock;
         SpawnBlock(savedBlock);
     }

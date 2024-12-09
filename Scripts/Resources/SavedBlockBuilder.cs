@@ -6,9 +6,9 @@ public partial class SavedBlock {
     public class Builder {
         private SavedBlock _savedBlock;
 
-        public static Builder New(BlockType blockType, int xPosition, int yPosition) {
+        public static Builder New(Item block, int xPosition, int yPosition) {
             SavedBlock savedBlock = new() {
-                BlockType = blockType,
+                Item = block,
                 XPosition = xPosition,
                 YPosition = yPosition
             };
@@ -24,7 +24,7 @@ public partial class SavedBlock {
 
         public SavedBlock Build() {
             if (_savedBlock.CurrentHealth == 0) {
-                _savedBlock.CurrentHealth = _savedBlock.BlockType.MaxHealth;
+                _savedBlock.CurrentHealth = _savedBlock.Item.GetProperty<Block>().MaxHealth;
             }
 
             return _savedBlock;
