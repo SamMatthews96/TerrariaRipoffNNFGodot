@@ -25,7 +25,13 @@ public partial class Inventory : Node {
         if (Manager.Instance.Game.IsHost) {
             _player.PickupArea.BodyEntered += OnCollidedWithPickup;
             _player.ActionController.BlockPlaced += OnBlockPlaced;
+            
+            // @todo temporary for testing
+            // create two pickaxe items
+            
         }
+        
+        
     }
 
     private void OnCollidedWithPickup(Node node) {

@@ -13,7 +13,6 @@ public partial class WorldCreator : Node {
 
     public override void _Ready() {
         Instance = this;
-        //@todo change from singleton
     }
 
     public void CreateWorld(WorldBasicInfo worldBasicInfo) {

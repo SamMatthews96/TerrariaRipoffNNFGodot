@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://djfevv5lx0bv"]
+[gd_scene load_steps=8 format=3 uid="uid://djfevv5lx0bv"]
 
 [ext_resource type="Script" path="res://Scripts/Managers/Manager.cs" id="1_y2fq1"]
 [ext_resource type="PackedScene" uid="uid://tbvohnqfn3cl" path="res://Scenes/UI/MainMenu.tscn" id="2_2kika"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://Scripts/Managers/WorldCreator.cs" id="4_ognnp"]
 [ext_resource type="Resource" uid="uid://daxqeqjpn4ve1" path="res://Resources/Items/stoneBlockItem.tres" id="5_ijh35"]
 [ext_resource type="Resource" uid="uid://cpty2vp0h2w83" path="res://Resources/Items/earthBlockItem.tres" id="6_tlxrb"]
+[ext_resource type="Script" path="res://testScripts/FpsCounter.cs" id="7_w8f5d"]
 
 [node name="Manager" type="Node" node_paths=PackedStringArray("_mainMenu", "_worldCreator")]
 script = ExtResource("1_y2fq1")
@@ -19,3 +20,6 @@ _worldCreator = NodePath("WorldCreator")
 script = ExtResource("4_ognnp")
 _stone = ExtResource("5_ijh35")
 _earth = ExtResource("6_tlxrb")
+
+[node name="FpsCounter" type="Label" parent="."]
+script = ExtResource("7_w8f5d")

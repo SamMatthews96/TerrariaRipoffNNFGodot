@@ -9,6 +9,7 @@ public partial class CurrentEquipment : Node {
 
 
     public override void _Ready() {
+        // @todo temporary
         Equipment pickaxe = Equipment.New(
             MiningSlot.New(1, 8, 10)
                 .Build()

@@ -8,6 +8,8 @@ public partial class GatherAction : PlayerAction {
     public event Action<IntVector, float> GatherAttempted;
 
     public override void PrimaryAction(Vector2 mouseWorldPosition) {
+        if (Player.CurrentEquipment.Pickaxe is null) return;
+        
         IntVector coords = new(mouseWorldPosition / Game.BlockSize);
         if (!coords.IsInBounds()) return;
 
