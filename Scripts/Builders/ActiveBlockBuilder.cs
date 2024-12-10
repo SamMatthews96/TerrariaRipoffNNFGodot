@@ -20,7 +20,6 @@ public partial class ActiveBlock {
     }
     
     public static Builder New(Node parent, PackedScene packedScene, SavedBlock savedBlock) {
-        Host.RequireHost();
         return new Builder(parent, packedScene, savedBlock);
     }
 }

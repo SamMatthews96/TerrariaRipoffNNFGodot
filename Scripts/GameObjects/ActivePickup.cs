@@ -19,7 +19,6 @@ public partial class ActivePickup : RigidBody2D {
     public event Action<ActivePickup, Dictionary> MovedCell;
 
     public void Initialize(SavedPickup savedPickup) {
-        Host.RequireHost();
         SavedPickup = savedPickup;
         _savedPickupDictionary = savedPickup.Serialize();
     }

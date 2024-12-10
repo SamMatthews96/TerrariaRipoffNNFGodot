@@ -30,7 +30,6 @@ public partial class Player {
     }
 
     public static Builder New(PackedScene packedScene) {
-        Host.RequireHost();
         return new Builder(packedScene);
     }
 }

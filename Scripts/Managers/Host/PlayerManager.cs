@@ -13,9 +13,10 @@ public partial class PlayerManager : Node {
 
     public override void _Ready() {
         Manager.Instance.Game.PlayerConnected += OnGamePlayerConnected;
+        Manager.Instance.Game.LaunchedGameAsHost += OnGameLaunchedAsHost;
     }
     
-    public void Initialize(Dictionary worldDictionary) {
+    private void OnGameLaunchedAsHost(Dictionary worldDictionary) {
         DefaultSpawnPosition = new Vector2(
             (float)worldDictionary["DefaultSpawnPosition"].AsGodotArray()[0].AsDouble(),
             (float)worldDictionary["DefaultSpawnPosition"].AsGodotArray()[1].AsDouble());

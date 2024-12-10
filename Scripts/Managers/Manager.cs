@@ -11,13 +11,13 @@ public partial class Manager : Node {
     [Export] private string _address = "127.0.0.1";
     [Export] private PackedScene _gameManagerPackedScene;
     [Export] private MainMenu _mainMenu;
-    
     [Export] private WorldCreator _worldCreator;
-
     private ENetMultiplayerPeer _peer;
-
-
     private Game _game;
+
+    public event Action<Dictionary> LaunchedGameAsHost;
+    public event Action<Dictionary> JoinedGame;
+    
     public Game Game {
         get => _game ?? throw new Exception("[20241205.2000.8] Game not instantiated");
         private set => _game = value;
@@ -40,7 +40,9 @@ public partial class Manager : Node {
     }
 
     private void OnMainMenuSinglePlayerClickedEnterWorld(Dictionary world, Dictionary playerInfo) {
-        LaunchGame(playerInfo, world);
+        CreateNewGame();
+        LaunchedGameAsHost?.Invoke(world);
+        JoinedGame?.Invoke(playerInfo);
     }
 
     private void OnMainMenuHostClickedEnterWorld(Dictionary world, Dictionary playerInfo) {
@@ -53,11 +55,16 @@ public partial class Manager : Node {
         _peer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
         Multiplayer.MultiplayerPeer = _peer;
 
-        LaunchGame(playerInfo, world);
+        CreateNewGame();
+        LaunchedGameAsHost?.Invoke(world);
+        JoinedGame?.Invoke(playerInfo);
     }
 
     private void OnMainMenuClientClickedEnterWorld(string ip, Dictionary playerInfo) {
-        Multiplayer.ConnectedToServer += () => { LaunchGame(playerInfo); };
+        Multiplayer.ConnectedToServer += () => {
+            CreateNewGame();
+            JoinedGame?.Invoke(playerInfo);
+        };
 
         _peer = new ENetMultiplayerPeer();
         Error error = _peer.CreateClient(ip, _port);
@@ -69,11 +76,9 @@ public partial class Manager : Node {
         Multiplayer.MultiplayerPeer = _peer;
     }
 
-    private void LaunchGame(Dictionary playerInfo, Dictionary world = null) {
+    private void CreateNewGame() {
+        _mainMenu.QueueFree();
         Game = _gameManagerPackedScene.Instantiate<Game>();
         AddChild(Game);
-        Game.Initialize(playerInfo, world);
-
-        _mainMenu.QueueFree();
     }
 }

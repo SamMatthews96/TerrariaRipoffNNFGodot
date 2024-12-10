@@ -20,7 +20,11 @@ public partial class BlockManager : Node {
 
     public event Action<SavedBlock> BlockDestroyed;
 
-    public void Initialize(Dictionary worldDictionary) {
+    public override void _Ready() {
+        Manager.Instance.Game.LaunchedGameAsHost += OnGameLaunchedAsHost;
+    }
+
+    private void OnGameLaunchedAsHost(Dictionary worldDictionary) {
         _savedBlocks = new SavedBlock[
             Manager.Instance.Game.Width, Manager.Instance.Game.Height];
         _activeBlocks = new ActiveBlock[
