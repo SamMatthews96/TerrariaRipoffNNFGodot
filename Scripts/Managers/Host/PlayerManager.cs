@@ -5,7 +5,6 @@ using Godot.Collections;
 namespace TerrariaRipoffNNF;
 
 public partial class PlayerManager : Node {
-    [Export] private PackedScene _hostPlayerPackedScene;
     public Vector2 DefaultSpawnPosition { get; private set; }
 
     public event Action<Dictionary> BeforePlayerSpawned;
@@ -26,7 +25,7 @@ public partial class PlayerManager : Node {
         BeforePlayerSpawned?.Invoke(playerInfo);
 
         Vector2 spawnPosition = DefaultSpawnPosition * Game.BlockSize;
-        Player player = Player.New(_hostPlayerPackedScene)
+        Player player = Player.New()
             .WithPeerId(peerId)
             .WithSpawnPosition(spawnPosition)
             .Build();

@@ -4,12 +4,8 @@ using Godot.Collections;
 namespace TerrariaRipoffNNF;
 
 public partial class PickupManager : Node {
-
-    [Export] private PackedScene _pickupPackedScene;
-
     private List<SavedPickup>[,] _savedPickups;
     private List<ActivePickup>[,] _activePickups;
-
     
     public override void _Ready() {
         _savedPickups = new List<SavedPickup>[
@@ -42,7 +38,7 @@ public partial class PickupManager : Node {
         _savedPickups[coords.X, coords.Y] ??= new List<SavedPickup>();
         _savedPickups[coords.X, coords.Y].Add(savedPickup);
 
-        ActivePickup activePickup = _pickupPackedScene.Instantiate<ActivePickup>();
+        ActivePickup activePickup = Manager.Instance.PackedScenes.PackedPickup.Instantiate<ActivePickup>();
         activePickup.Initialize(savedPickup);
         _activePickups[coords.X, coords.Y] ??= new List<ActivePickup>();
         _activePickups[coords.X, coords.Y].Add(activePickup);

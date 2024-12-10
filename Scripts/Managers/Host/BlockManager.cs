@@ -7,8 +7,6 @@ using Array = Godot.Collections.Array;
 namespace TerrariaRipoffNNF;
 
 public partial class BlockManager : Node {
-    [Export] private PackedScene _blockPackedScene;
-
     public const int BlockSpawnDistance = 20;
 
     private SavedBlock[,] _savedBlocks;
@@ -68,7 +66,7 @@ public partial class BlockManager : Node {
         }
 
         ActiveBlock activeBlock = ActiveBlock.New(
-            Manager.Instance.Game.BlockParent, _blockPackedScene, savedBlock).Build();
+            Manager.Instance.Game.BlockParent, savedBlock).Build();
         _activeBlocks[savedBlock.XPosition, savedBlock.YPosition] = activeBlock;
     }
 

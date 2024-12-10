@@ -7,8 +7,9 @@ public partial class ActiveBlock {
         private ActiveBlock _activeBlock;
         private Node _parent;
         
-        public Builder(Node parent, PackedScene packedScene, SavedBlock savedBlock) {
-            _activeBlock = packedScene.Instantiate<ActiveBlock>();
+        public Builder(Node parent, SavedBlock savedBlock) {
+            
+            _activeBlock = Manager.Instance.PackedScenes.PackedBlock.Instantiate<ActiveBlock>();
             _activeBlock._savedBlockDictionary = savedBlock.Serialize();
             _parent = parent;
         }
@@ -19,7 +20,7 @@ public partial class ActiveBlock {
         }
     }
     
-    public static Builder New(Node parent, PackedScene packedScene, SavedBlock savedBlock) {
-        return new Builder(parent, packedScene, savedBlock);
+    public static Builder New(Node parent, SavedBlock savedBlock) {
+        return new Builder(parent, savedBlock);
     }
 }

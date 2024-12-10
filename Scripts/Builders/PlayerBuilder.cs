@@ -7,8 +7,8 @@ public partial class Player {
         private Player _player;
         private int _peerId = 1;
         
-        public Builder(PackedScene packedScene) {
-            _player = packedScene.Instantiate<Player>();
+        public Builder() {
+            _player = Manager.Instance.PackedScenes.PackedPlayer.Instantiate<Player>();
         }
         
         public Builder WithPeerId(int peerId) {
@@ -29,7 +29,7 @@ public partial class Player {
         }
     }
 
-    public static Builder New(PackedScene packedScene) {
-        return new Builder(packedScene);
+    public static Builder New() {
+        return new Builder();
     }
 }
