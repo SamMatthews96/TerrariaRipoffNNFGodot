@@ -52,9 +52,9 @@ public partial class Player : CharacterBody2D {
 
     private void InitializeLocalPlayer() {
         _camera.Enabled = true;
-        InputManager.Instance.HorizontalInputChanged +=
+        Manager.Instance.Game.InputManager.HorizontalInputChanged +=
             newInput => _horizontalInput = newInput;
-        InputManager.Instance.JumpPressed += OnJumpPressed;
+        Manager.Instance.Game.InputManager.JumpPressed += OnJumpPressed;
     }
 
     #endregion

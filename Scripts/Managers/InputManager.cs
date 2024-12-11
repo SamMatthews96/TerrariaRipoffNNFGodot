@@ -13,12 +13,8 @@ public partial class InputManager : Node {
     private const string ToggleInventory = "toggleInventory";
     private const string BuildMode = "buildMode";
     private const string GatherMode = "gatherMode";
-    
 
     [Export] private Node2D _node2D;
-
-    public static InputManager Instance { get; private set; }
-
 
     public event Action<Vector2> LeftMouseDown;
     public event Action<Vector2> LeftMouseUp;
@@ -30,10 +26,6 @@ public partial class InputManager : Node {
     public event Action ToggleInventoryPressed;
     public event Action BuildModePressed;
     public event Action GatherModePressed;
-
-    public override void _EnterTree() {
-        Instance = this;
-    }
 
     public override void _Process(double delta) {
         // Vector2 mousePosition = GetViewport().GetMousePosition();
@@ -104,7 +96,7 @@ public partial class InputManager : Node {
         if (Input.IsActionJustPressed(GatherMode)) {
             GatherModePressed?.Invoke();
         }
-        
+
         if (Input.IsActionJustPressed(BuildMode)) {
             BuildModePressed?.Invoke();
         }

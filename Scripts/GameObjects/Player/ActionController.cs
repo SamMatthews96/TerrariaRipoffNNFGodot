@@ -16,29 +16,31 @@ public partial class ActionController : Node {
 
     public override void _Ready() {
         if (_player.IsLocalPlayer) {
-            InputManager.Instance.LeftMouseUp += OnInputManagerLeftMouseUp;
-            InputManager.Instance.LeftMouseDown += OnInputManagerLeftMouseDown;
+            Manager.Instance.Game.InputManager.LeftMouseUp += OnInputManagerLeftMouseUp;
+            Manager.Instance.Game.InputManager.LeftMouseDown += OnInputManagerLeftMouseDown;
 
             Manager.Instance.Game.Interface.ActionBar.ButtonClicked += EquipAction;
-            
-            InputManager.Instance.GatherModePressed += () => EquipAction(PlayerAction.Type.Gather);
-            InputManager.Instance.BuildModePressed += () => EquipAction(PlayerAction.Type.Build);
-            
+
+            Manager.Instance.Game.InputManager.GatherModePressed += () =>
+                EquipAction(PlayerAction.Type.Gather);
+            Manager.Instance.Game.InputManager.BuildModePressed += () =>
+                EquipAction(PlayerAction.Type.Build);
+
             EquipAction(PlayerAction.Type.Gather);
         }
 
         if (Manager.Instance.Game.IsHost) {
             _gatherAction.GatherAttempted += (coords, damage) =>
                 GatherAttempted?.Invoke(coords, damage);
-            _buildAction.BlockPlaced += (blockType, coords) => 
+            _buildAction.BlockPlaced += (blockType, coords) =>
                 BlockPlaced?.Invoke(blockType, coords);
         }
     }
-    
+
     private void OnInputManagerLeftMouseUp(Vector2 mouseWorldPosition) {
         _currentPlayerAction.EndPrimaryAction(mouseWorldPosition);
     }
-    
+
     private void OnInputManagerLeftMouseDown(Vector2 mouseWorldPosition) {
         _currentPlayerAction.PrimaryAction(mouseWorldPosition);
     }

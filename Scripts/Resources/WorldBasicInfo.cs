@@ -14,6 +14,9 @@ public partial class WorldBasicInfo : Resource {
         Height = height;
     }
 
+    // ReSharper disable once UnusedMember.Global
+    public WorldBasicInfo() { }
+
     public Dictionary Serialize() {
         Dictionary serializedData = new();
         serializedData.Add("Name", Name);

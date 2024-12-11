@@ -15,7 +15,7 @@ public partial class InventoryUi : Control {
 
     public override void _Ready() {
         Visible = false;
-        InputManager.Instance.ToggleInventoryPressed += OnInputManagerToggleInventoryPressed;
+        Manager.Instance.Game.InputManager.ToggleInventoryPressed += OnInputManagerToggleInventoryPressed;
         
         Player.BeforeLocalPlayerSpawned += player => {
             player.Inventory.InventoryChanged += OnInventoryChanged;

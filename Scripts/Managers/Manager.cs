@@ -12,10 +12,10 @@ public partial class Manager : Node {
     [Export] private PackedScene _gameManagerPackedScene;
     [Export] private MainMenu _mainMenu;
     [Export] private WorldCreator _worldCreator;
+    
     [Export] public PackedScenes PackedScenes { get; private set; }
     private ENetMultiplayerPeer _peer;
     private Game _game;
-    
 
     public event Action<Dictionary> LaunchedGameAsHost;
     public event Action<Dictionary> JoinedGame;
