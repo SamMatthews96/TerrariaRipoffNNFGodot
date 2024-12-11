@@ -26,6 +26,7 @@ public partial class WorldListItem : Control {
     }
     
     private void OnDeleteWorldButtonDown() {
+        FileManager.DeleteWorld(_worldBasicInfo);
         DeleteWorldButtonDown?.Invoke(_worldBasicInfo);
         QueueFree();
     }

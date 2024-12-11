@@ -32,6 +32,14 @@ public static class FileManager {
         file.StoreString(worldString);
         file.Dispose();
     }
+    
+    public static void DeleteWorld(WorldBasicInfo worldBasicInfo) {
+        string worldName = worldBasicInfo.Name;
+        DirAccess dirAccess = DirAccess.Open(WorldDir);
+        dirAccess.Remove($"{worldName}/world.txt");
+        dirAccess.Remove($"{worldName}/worldBasicData.txt");
+        dirAccess.Remove(worldName);
+    }
 
     public static WorldBasicInfo[] LoadAllWorldBasicData() {
         EnsureDirectoryExists(WorldDir);
