@@ -40,7 +40,7 @@ public partial class MainMenu : Control {
     
     public event Action<Dictionary, Dictionary> SinglePlayerClickedEnterWorld;
     public event Action<Dictionary, Dictionary> HostClickedEnterWorld;
-    public event Action<string, Dictionary> ClientEnteredWorld;
+    public event Action<string, Dictionary> ClientClickedEnterWorld;
 
     public override void _Ready() {
         _singlePlayerButton.ButtonDown += OnMainMenuSinglePlayerButtonDown;
@@ -161,7 +161,7 @@ public partial class MainMenu : Control {
         playerInfo.Add("Name", "654-321");
         
         // temporary ip address
-        ClientEnteredWorld?.Invoke("127.0.0.1", playerInfo);
+        ClientClickedEnterWorld?.Invoke("127.0.0.1", playerInfo);
     }
 
     private void OnJoinMenuBackButtonDown() {

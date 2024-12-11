@@ -1,11 +1,8 @@
-[gd_scene load_steps=12 format=3 uid="uid://djfevv5lx0bv"]
+[gd_scene load_steps=9 format=3 uid="uid://djfevv5lx0bv"]
 
 [ext_resource type="Script" path="res://Scripts/Managers/Manager.cs" id="1_y2fq1"]
 [ext_resource type="PackedScene" uid="uid://tbvohnqfn3cl" path="res://Scenes/Interface/MainMenu.tscn" id="2_2kika"]
 [ext_resource type="PackedScene" uid="uid://d3hhhiiydcfft" path="res://Scenes/Managers/Game.tscn" id="2_jb22y"]
-[ext_resource type="Script" path="res://Scripts/Managers/WorldCreator.cs" id="4_ognnp"]
-[ext_resource type="Resource" uid="uid://daxqeqjpn4ve1" path="res://Resources/Items/stoneBlockItem.tres" id="5_ijh35"]
-[ext_resource type="Resource" uid="uid://cpty2vp0h2w83" path="res://Resources/Items/earthBlockItem.tres" id="6_tlxrb"]
 [ext_resource type="Script" path="res://testScripts/FpsCounter.cs" id="7_w8f5d"]
 [ext_resource type="Script" path="res://Scripts/Managers/PackedScenes.cs" id="8_b0yxk"]
 [ext_resource type="PackedScene" uid="uid://bx6lgpicpfal4" path="res://Scenes/GameObjects/Player.tscn" id="9_yv1m1"]
@@ -16,16 +13,11 @@
 script = ExtResource("1_y2fq1")
 _gameManagerPackedScene = ExtResource("2_jb22y")
 _mainMenu = NodePath("MainMenuScene")
-_worldCreator = NodePath("WorldCreator")
+_worldCreator = NodePath("")
 PackedScenes = NodePath("PackedScenes")
 
 [node name="MainMenuScene" parent="." node_paths=PackedStringArray("_worldCreator") instance=ExtResource("2_2kika")]
-_worldCreator = NodePath("../WorldCreator")
-
-[node name="WorldCreator" type="Node" parent="."]
-script = ExtResource("4_ognnp")
-_stone = ExtResource("5_ijh35")
-_earth = ExtResource("6_tlxrb")
+_worldCreator = NodePath("")
 
 [node name="FpsCounter" type="Label" parent="."]
 script = ExtResource("7_w8f5d")

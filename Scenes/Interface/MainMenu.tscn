@@ -1,9 +1,10 @@
-[gd_scene load_steps=3 format=3 uid="uid://tbvohnqfn3cl"]
+[gd_scene load_steps=4 format=3 uid="uid://tbvohnqfn3cl"]
 
 [ext_resource type="Script" path="res://Scripts/Interface/MainMenu/MainMenu.cs" id="1_tso7g"]
 [ext_resource type="PackedScene" uid="uid://buekj451osmbs" path="res://Scenes/Interface/WorldListItem.tscn" id="2_5m7q5"]
+[ext_resource type="PackedScene" uid="uid://bmavfj78dtk17" path="res://Scenes/Managers/WorldCreator.tscn" id="3_1exum"]
 
-[node name="MainMenuScene" type="Control" node_paths=PackedStringArray("_mainMenu", "_multiplayerMenu", "_worldMenu", "_joinMenu", "_worldListContainer", "_worldNameEdit", "_singlePlayerButton", "_multiplayerButton", "_exitButton", "_createWorldButton", "_worldBackButton", "_hostButton", "_joinButton", "_multiplayerBackButton", "_joinWorldButton", "_joinBackButton")]
+[node name="MainMenuScene" type="Control" node_paths=PackedStringArray("_mainMenu", "_multiplayerMenu", "_worldMenu", "_joinMenu", "_worldListContainer", "_worldNameEdit", "_worldCreator", "_singlePlayerButton", "_multiplayerButton", "_exitButton", "_createWorldButton", "_worldBackButton", "_hostButton", "_joinButton", "_multiplayerBackButton", "_joinWorldButton", "_joinBackButton")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -20,6 +21,7 @@ _joinMenu = NodePath("JoinMenu")
 _worldListContainer = NodePath("WorldMenu/WorldListContainer")
 _packedWorldListItem = ExtResource("2_5m7q5")
 _worldNameEdit = NodePath("WorldMenu/WorldNameEdit")
+_worldCreator = NodePath("WorldCreator")
 _singlePlayerButton = NodePath("MainMenu/VBoxContainer/SinglePlayerButton")
 _multiplayerButton = NodePath("MainMenu/VBoxContainer/MultiplayerButton")
 _exitButton = NodePath("MainMenu/VBoxContainer/ExitButton")
@@ -165,3 +167,16 @@ offset_top = 282.0
 offset_right = 1085.0
 offset_bottom = 315.0
 text = "Back"
+
+[node name="WorldCreator" parent="." instance=ExtResource("3_1exum")]
+
+[node name="PlayerSelectMenu" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 398.0
+offset_bottom = 203.0
+
+[node name="CreatePlayerButton" type="Button" parent="PlayerSelectMenu"]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+text = "Create"
