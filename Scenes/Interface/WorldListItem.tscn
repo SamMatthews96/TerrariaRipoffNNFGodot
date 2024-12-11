@@ -1,0 +1,35 @@
+[gd_scene load_steps=2 format=3 uid="uid://buekj451osmbs"]
+
+[ext_resource type="Script" path="res://Scripts/Interface/MainMenu/WorldListItem.cs" id="1_cuqe0"]
+
+[node name="WorldListItem" type="VBoxContainer" node_paths=PackedStringArray("_worldNameLabel", "_enterWorldButton", "_deleteWorldButton")]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -1645.0
+offset_bottom = -1027.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_cuqe0")
+_worldNameLabel = NodePath("WorldNameLabel")
+_enterWorldButton = NodePath("HBoxContainer/SelectWorldButton")
+_deleteWorldButton = NodePath("HBoxContainer/DeleteWorldButton")
+
+[node name="WorldNameLabel" type="Label" parent="."]
+layout_mode = 2
+text = "WorldName"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="SelectWorldButton" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.5
+text = "Select"
+
+[node name="DeleteWorldButton" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Delete"

@@ -6,16 +6,16 @@ using Godot.Collections;
 namespace TerrariaRipoffNNF;
 
 public partial class MainMenu : Control {
-    [Export] private Control mainMenu;
-    [Export] private Control multiplayerMenu;
-    [Export] private Control worldMenu;
-    [Export] private Control joinMenu;
-    [Export] private VBoxContainer worldListContainer;
-    [Export] private PackedScene packedEnterWorldButton;
-    [Export] private LineEdit worldNameEdit;
-    [Export] private LineEdit ipEdit;
-    private readonly List<Control> menus = new();
-    private GameType gameType;
+    [Export] private Control _mainMenu;
+    [Export] private Control _multiplayerMenu;
+    [Export] private Control _worldMenu;
+    [Export] private Control _joinMenu;
+    [Export] private VBoxContainer _worldListContainer;
+    [Export] private PackedScene _packedWorldListItem;
+    [Export] private LineEdit _worldNameEdit;
+    [Export] private LineEdit _ipEdit;
+    private readonly List<Control> _menus = new();
+    private GameType _gameType;
     [Export] private WorldCreator _worldCreator;
 
     private enum GameType {
@@ -37,11 +37,11 @@ public partial class MainMenu : Control {
         string ipText, Dictionary playerInfo);
 
     public override void _Ready() {
-        menus.Add(mainMenu);
-        menus.Add(multiplayerMenu);
-        menus.Add(worldMenu);
-        menus.Add(joinMenu);
-        ChangeToMenu(mainMenu);
+        _menus.Add(_mainMenu);
+        _menus.Add(_multiplayerMenu);
+        _menus.Add(_worldMenu);
+        _menus.Add(_joinMenu);
+        ChangeToMenu(_mainMenu);
 
         Task<WorldBasicInfo[]> task = Task.Run(FileManager.LoadAllWorldBasicData);
         task.GetAwaiter().OnCompleted(() => {
@@ -53,7 +53,7 @@ public partial class MainMenu : Control {
     }
 
     private void ChangeToMenu(Control menu) {
-        foreach (Control menuToDisable in menus) {
+        foreach (Control menuToDisable in _menus) {
             menuToDisable.Hide();
         }
 
@@ -63,12 +63,12 @@ public partial class MainMenu : Control {
     #region MenuMenu EventHandlers
 
     private void OnMainMenuSinglePlayerButtonDown() {
-        gameType = GameType.SinglePlayer;
-        ChangeToMenu(worldMenu);
+        _gameType = GameType.SinglePlayer;
+        ChangeToMenu(_worldMenu);
     }
 
     private void OnMainMenuMultiplayerButtonDown() {
-        ChangeToMenu(multiplayerMenu);
+        ChangeToMenu(_multiplayerMenu);
     }
 
     private void OnMainMenuExitButtonDown() {
@@ -80,7 +80,7 @@ public partial class MainMenu : Control {
     #region WorldMenu EventHandlers
 
     private async void OnWorldMenuCreateWorldButtonDown() {
-        WorldBasicInfo worldBasicInfo = new(worldNameEdit.Text, 100, 100);
+        WorldBasicInfo worldBasicInfo = new(_worldNameEdit.Text, 100, 100);
         await Task.Run(() => {
             _worldCreator.CreateWorld(worldBasicInfo);
         });
@@ -88,28 +88,42 @@ public partial class MainMenu : Control {
     }
 
     private void OnWorldMenuBackButtonDown() {
-        switch (gameType) {
+        switch (_gameType) {
             case GameType.SinglePlayer:
-                ChangeToMenu(mainMenu);
+                ChangeToMenu(_mainMenu);
                 break;
             case GameType.Host:
-                ChangeToMenu(multiplayerMenu);
+                ChangeToMenu(_multiplayerMenu);
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
         }
     }
 
-    private async void OnWorldMenuEnterWorldButtonDown(WorldBasicInfo worldBasicInfo) {
+    private async void OnWorldMenuSelectWorldButtonDown(WorldBasicInfo worldBasicInfo) {
         Dictionary world = await Task.Run(() => FileManager.LoadWorld(worldBasicInfo));
         Dictionary playerInfo = new();
         playerInfo.Add("Name", "123-456");
         
         EmitSignal(
-            gameType == GameType.Host
+            _gameType == GameType.Host
                 ? SignalName.HostClickedEnterWorld
                 : SignalName.SinglePlayerClickedEnterWorld,
             world, playerInfo);
+    }
+    
+    private async void OnWorldMenuDeleteWorldbuttonDown(WorldBasicInfo worldBasicInfo) {
+        GD.Print("delete world");
+        // await Task.Run(() => {
+        //     FileManager.DeleteWorld(worldBasicInfo);
+        // });
+        // foreach (Control child in _worldListContainer.GetChildren()) {
+        //     WorldListItem worldListItem = (WorldListItem) child;
+        //     if (worldListItem.WorldBasicInfo == worldBasicInfo) {
+        //         _worldListContainer.RemoveChild(worldListItem);
+        //         break;
+        //     }
+        // }
     }
 
     #endregion
@@ -117,17 +131,17 @@ public partial class MainMenu : Control {
     #region MultiplayerMenu EventHandlers
 
     private void OnMultiplayerMenuHostButtonDown() {
-        gameType = GameType.Host;
-        ChangeToMenu(worldMenu);
+        _gameType = GameType.Host;
+        ChangeToMenu(_worldMenu);
     }
 
     private void OnMultiplayerMenuJoinButtonDown() {
-        gameType = GameType.Client;
-        ChangeToMenu(joinMenu);
+        _gameType = GameType.Client;
+        ChangeToMenu(_joinMenu);
     }
 
     private void OnMultiplayerMenuBackButtonDown() {
-        ChangeToMenu(mainMenu);
+        ChangeToMenu(_mainMenu);
     }
 
     #endregion
@@ -143,15 +157,16 @@ public partial class MainMenu : Control {
     }
 
     private void OnJoinMenuBackButtonDown() {
-        ChangeToMenu(multiplayerMenu);
+        ChangeToMenu(_multiplayerMenu);
     }
 
     #endregion
 
     private void AddEnterWorldButton(WorldBasicInfo worldBasicInfo) {
-        EnterWorldButton enterWorldButton = packedEnterWorldButton.Instantiate<EnterWorldButton>();
-        enterWorldButton.Initialize(worldBasicInfo);
-        enterWorldButton.EnterWorldButtonDown += OnWorldMenuEnterWorldButtonDown;
-        worldListContainer.AddChild(enterWorldButton);
+        WorldListItem worldListItem = _packedWorldListItem.Instantiate<WorldListItem>();
+        worldListItem.Initialize(worldBasicInfo);
+        worldListItem.SelectWorldButtonDown += OnWorldMenuSelectWorldButtonDown;
+        worldListItem.DeleteWorldButtonDown += OnWorldMenuDeleteWorldbuttonDown;
+        _worldListContainer.AddChild(worldListItem);
     }
 }

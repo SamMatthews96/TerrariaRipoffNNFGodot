@@ -1,9 +1,9 @@
 [gd_scene load_steps=3 format=3 uid="uid://tbvohnqfn3cl"]
 
 [ext_resource type="Script" path="res://Scripts/Interface/MainMenu/MainMenu.cs" id="1_tso7g"]
-[ext_resource type="PackedScene" uid="uid://buekj451osmbs" path="res://Scenes/Interface/EnterWorldButton.tscn" id="2_vjtmq"]
+[ext_resource type="PackedScene" uid="uid://buekj451osmbs" path="res://Scenes/Interface/WorldListItem.tscn" id="2_5m7q5"]
 
-[node name="MainMenuScene" type="Control" node_paths=PackedStringArray("mainMenu", "multiplayerMenu", "worldMenu", "joinMenu", "worldListContainer", "worldNameEdit")]
+[node name="MainMenuScene" type="Control" node_paths=PackedStringArray("_mainMenu", "_multiplayerMenu", "_worldMenu", "_joinMenu", "_worldListContainer", "_worldNameEdit")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -13,13 +13,13 @@ offset_bottom = -2.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_tso7g")
-mainMenu = NodePath("MainMenu")
-multiplayerMenu = NodePath("MultiplayerMenu")
-worldMenu = NodePath("WorldMenu")
-joinMenu = NodePath("JoinMenu")
-worldListContainer = NodePath("WorldMenu/WorldListContainer")
-packedEnterWorldButton = ExtResource("2_vjtmq")
-worldNameEdit = NodePath("WorldMenu/WorldNameEdit")
+_mainMenu = NodePath("MainMenu")
+_multiplayerMenu = NodePath("MultiplayerMenu")
+_worldMenu = NodePath("WorldMenu")
+_joinMenu = NodePath("JoinMenu")
+_worldListContainer = NodePath("WorldMenu/WorldListContainer")
+_packedWorldListItem = ExtResource("2_5m7q5")
+_worldNameEdit = NodePath("WorldMenu/WorldNameEdit")
 
 [node name="MainMenu" type="Control" parent="."]
 layout_mode = 1
