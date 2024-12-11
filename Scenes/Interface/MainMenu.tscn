@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://Scripts/Interface/MainMenu/MainMenu.cs" id="1_tso7g"]
 [ext_resource type="PackedScene" uid="uid://buekj451osmbs" path="res://Scenes/Interface/WorldListItem.tscn" id="2_5m7q5"]
 
-[node name="MainMenuScene" type="Control" node_paths=PackedStringArray("_mainMenu", "_multiplayerMenu", "_worldMenu", "_joinMenu", "_worldListContainer", "_worldNameEdit")]
+[node name="MainMenuScene" type="Control" node_paths=PackedStringArray("_mainMenu", "_multiplayerMenu", "_worldMenu", "_joinMenu", "_worldListContainer", "_worldNameEdit", "_singlePlayerButton", "_multiplayerButton", "_exitButton", "_createWorldButton", "_worldBackButton", "_hostButton", "_joinButton", "_multiplayerBackButton", "_joinWorldButton", "_joinBackButton")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -20,6 +20,16 @@ _joinMenu = NodePath("JoinMenu")
 _worldListContainer = NodePath("WorldMenu/WorldListContainer")
 _packedWorldListItem = ExtResource("2_5m7q5")
 _worldNameEdit = NodePath("WorldMenu/WorldNameEdit")
+_singlePlayerButton = NodePath("MainMenu/VBoxContainer/SinglePlayerButton")
+_multiplayerButton = NodePath("MainMenu/VBoxContainer/MultiplayerButton")
+_exitButton = NodePath("MainMenu/VBoxContainer/ExitButton")
+_createWorldButton = NodePath("WorldMenu/CreateWorldButton")
+_worldBackButton = NodePath("WorldMenu/BackButton")
+_hostButton = NodePath("MultiplayerMenu/VBoxContainer/HostButton")
+_joinButton = NodePath("MultiplayerMenu/VBoxContainer/JoinButton")
+_multiplayerBackButton = NodePath("MultiplayerMenu/VBoxContainer/BackButton")
+_joinWorldButton = NodePath("JoinMenu/EnterWorldButton")
+_joinBackButton = NodePath("JoinMenu/BackButton")
 
 [node name="MainMenu" type="Control" parent="."]
 layout_mode = 1
@@ -155,14 +165,3 @@ offset_top = 282.0
 offset_right = 1085.0
 offset_bottom = 315.0
 text = "Back"
-
-[connection signal="button_down" from="MainMenu/VBoxContainer/SinglePlayerButton" to="." method="OnMainMenuSinglePlayerButtonDown"]
-[connection signal="button_down" from="MainMenu/VBoxContainer/MultiplayerButton" to="." method="OnMainMenuMultiplayerButtonDown"]
-[connection signal="button_down" from="MainMenu/VBoxContainer/ExitButton" to="." method="OnMainMenuExitButtonDown"]
-[connection signal="button_down" from="WorldMenu/CreateWorldButton" to="." method="OnWorldMenuCreateWorldButtonDown"]
-[connection signal="button_down" from="WorldMenu/BackButton" to="." method="OnWorldMenuBackButtonDown"]
-[connection signal="button_down" from="MultiplayerMenu/VBoxContainer/HostButton" to="." method="OnMultiplayerMenuHostButtonDown"]
-[connection signal="button_down" from="MultiplayerMenu/VBoxContainer/JoinButton" to="." method="OnMultiplayerMenuJoinButtonDown"]
-[connection signal="button_down" from="MultiplayerMenu/VBoxContainer/BackButton" to="." method="OnMultiplayerMenuBackButtonDown"]
-[connection signal="button_down" from="JoinMenu/EnterWorldButton" to="." method="OnJoinMenuEnterWorldButtonDown"]
-[connection signal="button_down" from="JoinMenu/BackButton" to="." method="OnJoinMenuBackButtonDown"]

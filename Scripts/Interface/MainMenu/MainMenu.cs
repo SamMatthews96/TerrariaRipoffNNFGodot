@@ -17,26 +17,43 @@ public partial class MainMenu : Control {
     private readonly List<Control> _menus = new();
     private GameType _gameType;
     [Export] private WorldCreator _worldCreator;
+    
+    [Export] private Button _singlePlayerButton;
+    [Export] private Button _multiplayerButton;
+    [Export] private Button _exitButton;
+    
+    [Export] private Button _createWorldButton;
+    [Export] private Button _worldBackButton;
+    
+    [Export] private Button _hostButton;
+    [Export] private Button _joinButton;
+    [Export] private Button _multiplayerBackButton;
+    
+    [Export] private Button _joinWorldButton;
+    [Export] private Button _joinBackButton;
 
     private enum GameType {
         SinglePlayer,
         Host,
         Client
     }
-
-    [Signal]
-    public delegate void SinglePlayerClickedEnterWorldEventHandler(
-        Dictionary world, Dictionary playerInfo);
     
-    [Signal]
-    public delegate void HostClickedEnterWorldEventHandler(
-        Dictionary world, Dictionary playerInfo);
-    
-    [Signal]
-    public delegate void ClientEnteredWorldEventHandler(
-        string ipText, Dictionary playerInfo);
+    public event Action<Dictionary, Dictionary> SinglePlayerClickedEnterWorld;
+    public event Action<Dictionary, Dictionary> HostClickedEnterWorld;
+    public event Action<string, Dictionary> ClientEnteredWorld;
 
     public override void _Ready() {
+        _singlePlayerButton.ButtonDown += OnMainMenuSinglePlayerButtonDown;
+        _multiplayerButton.ButtonDown += OnMainMenuMultiplayerButtonDown;
+        _exitButton.ButtonDown += OnMainMenuExitButtonDown;
+        _createWorldButton.ButtonDown += OnWorldMenuCreateWorldButtonDown;
+        _worldBackButton.ButtonDown += OnWorldMenuBackButtonDown;
+        _hostButton.ButtonDown += OnMultiplayerMenuHostButtonDown;
+        _joinButton.ButtonDown += OnMultiplayerMenuJoinButtonDown;
+        _multiplayerBackButton.ButtonDown += OnMultiplayerMenuBackButtonDown;
+        _joinWorldButton.ButtonDown += OnJoinMenuEnterWorldButtonDown;
+        _joinBackButton.ButtonDown += OnJoinMenuBackButtonDown;
+        
         _menus.Add(_mainMenu);
         _menus.Add(_multiplayerMenu);
         _menus.Add(_worldMenu);
@@ -105,25 +122,16 @@ public partial class MainMenu : Control {
         Dictionary playerInfo = new();
         playerInfo.Add("Name", "123-456");
         
-        EmitSignal(
-            _gameType == GameType.Host
-                ? SignalName.HostClickedEnterWorld
-                : SignalName.SinglePlayerClickedEnterWorld,
-            world, playerInfo);
-    }
-    
-    private async void OnWorldMenuDeleteWorldbuttonDown(WorldBasicInfo worldBasicInfo) {
-        GD.Print("delete world");
-        // await Task.Run(() => {
-        //     FileManager.DeleteWorld(worldBasicInfo);
-        // });
-        // foreach (Control child in _worldListContainer.GetChildren()) {
-        //     WorldListItem worldListItem = (WorldListItem) child;
-        //     if (worldListItem.WorldBasicInfo == worldBasicInfo) {
-        //         _worldListContainer.RemoveChild(worldListItem);
-        //         break;
-        //     }
-        // }
+        switch (_gameType) {
+            case GameType.Host:
+                HostClickedEnterWorld?.Invoke(world, playerInfo);
+                break;
+            case GameType.SinglePlayer:
+                SinglePlayerClickedEnterWorld?.Invoke(world, playerInfo);
+                break;
+            default:
+                throw new Exception("[20241211.2227.1] Invalid game type");
+        }
     }
 
     #endregion
@@ -153,7 +161,7 @@ public partial class MainMenu : Control {
         playerInfo.Add("Name", "654-321");
         
         // temporary ip address
-        EmitSignal(SignalName.ClientEnteredWorld, "127.0.0.1", playerInfo);
+        ClientEnteredWorld?.Invoke("127.0.0.1", playerInfo);
     }
 
     private void OnJoinMenuBackButtonDown() {
@@ -166,7 +174,6 @@ public partial class MainMenu : Control {
         WorldListItem worldListItem = _packedWorldListItem.Instantiate<WorldListItem>();
         worldListItem.Initialize(worldBasicInfo);
         worldListItem.SelectWorldButtonDown += OnWorldMenuSelectWorldButtonDown;
-        worldListItem.DeleteWorldButtonDown += OnWorldMenuDeleteWorldbuttonDown;
         _worldListContainer.AddChild(worldListItem);
     }
 }
