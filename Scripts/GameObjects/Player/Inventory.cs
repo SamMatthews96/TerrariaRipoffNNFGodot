@@ -23,7 +23,7 @@ public partial class Inventory : Node {
         _inventoryItemsList = new List<InventoryItems>();
 
         if (Manager.Instance.Game.IsHost) {
-            _player.PickupArea.BodyEntered += OnCollidedWithPickup;
+            _player.PickupArea.TouchedItem += OnCollidedWithPickup;
             _player.ActionController.BlockPlaced += OnBlockPlaced;
             
             // @todo temporary for testing
@@ -34,11 +34,7 @@ public partial class Inventory : Node {
         
     }
 
-    private void OnCollidedWithPickup(Node node) {
-        if (node is not ActivePickup activePickup) {
-            throw new Exception("[20240816.0934.1] Pickup area collision with non-pickup");
-        }
-
+    private void OnCollidedWithPickup(ActivePickup activePickup) {
         if (activePickup.SavedPickup.InventoryItems.TotalSpace > MaximumSpace - UsedSpace) {
             return;
         }

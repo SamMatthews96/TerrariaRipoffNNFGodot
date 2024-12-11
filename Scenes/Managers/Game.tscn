@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://cvfy8a4lwu7a2" path="res://Scenes/Managers/Host.tscn" id="2_miuiv"]
 [ext_resource type="Script" path="res://Scripts/Utils/Region.cs" id="3_8fqtf"]
 [ext_resource type="Script" path="res://Scripts/Managers/InputManager.cs" id="4_lvxpj"]
-[ext_resource type="PackedScene" uid="uid://javhx4rej0q4" path="res://Scenes/Managers/Interface.tscn" id="5_f3nxw"]
+[ext_resource type="PackedScene" uid="uid://javhx4rej0q4" path="res://Scenes/Interface/GameInterface.tscn" id="5_f3nxw"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_jdm7i"]
 properties/0/path = NodePath(".:Width")

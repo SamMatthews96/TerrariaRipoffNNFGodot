@@ -7,7 +7,7 @@ namespace TerrariaRipoffNNF;
 public partial class Player : CharacterBody2D {
     [Export] public Inventory Inventory { get; private set; }
     [Export] public ActionController ActionController { get; private set; }
-    [Export] public Area2D PickupArea { get; private set; }
+    [Export] public PickupArea PickupArea { get; private set; }
     [Export] public CurrentEquipment CurrentEquipment { get; private set; }
 
     [Export] private MultiplayerSynchronizer _positionSynchronizer;

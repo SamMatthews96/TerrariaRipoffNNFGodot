@@ -65,8 +65,7 @@ public partial class BlockManager : Node {
             throw new Exception("[20240814.2208.1] Block already spawned");
         }
 
-        ActiveBlock activeBlock = ActiveBlock.New(
-            Manager.Instance.Game.BlockParent, savedBlock).Build();
+        ActiveBlock activeBlock = ActiveBlock.New(savedBlock).Build();
         _activeBlocks[savedBlock.XPosition, savedBlock.YPosition] = activeBlock;
     }
 

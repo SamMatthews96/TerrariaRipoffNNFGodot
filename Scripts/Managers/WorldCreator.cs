@@ -9,12 +9,6 @@ public partial class WorldCreator : Node {
     [Export] private Item _stone;
     [Export] private Item _earth;
 
-    public static WorldCreator Instance { get; private set; }
-
-    public override void _Ready() {
-        Instance = this;
-    }
-
     public void CreateWorld(WorldBasicInfo worldBasicInfo) {
         int mid = 7;
 

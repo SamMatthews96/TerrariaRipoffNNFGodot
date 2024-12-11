@@ -12,7 +12,6 @@ public partial class Game : Node {
     [Export] public PackedScene HostManagerScene { get; private set; }
     [Export] public Interface Interface { get; private set; }
 
-
     [Export] public int Width { get; private set; }
     [Export] public int Height { get; private set; }
 

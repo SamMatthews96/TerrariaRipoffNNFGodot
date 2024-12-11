@@ -1,7 +1,7 @@
 [gd_scene load_steps=12 format=3 uid="uid://djfevv5lx0bv"]
 
 [ext_resource type="Script" path="res://Scripts/Managers/Manager.cs" id="1_y2fq1"]
-[ext_resource type="PackedScene" uid="uid://tbvohnqfn3cl" path="res://Scenes/UI/MainMenu.tscn" id="2_2kika"]
+[ext_resource type="PackedScene" uid="uid://tbvohnqfn3cl" path="res://Scenes/Interface/MainMenu.tscn" id="2_2kika"]
 [ext_resource type="PackedScene" uid="uid://d3hhhiiydcfft" path="res://Scenes/Managers/Game.tscn" id="2_jb22y"]
 [ext_resource type="Script" path="res://Scripts/Managers/WorldCreator.cs" id="4_ognnp"]
 [ext_resource type="Resource" uid="uid://daxqeqjpn4ve1" path="res://Resources/Items/stoneBlockItem.tres" id="5_ijh35"]
@@ -19,7 +19,8 @@ _mainMenu = NodePath("MainMenuScene")
 _worldCreator = NodePath("WorldCreator")
 PackedScenes = NodePath("PackedScenes")
 
-[node name="MainMenuScene" parent="." instance=ExtResource("2_2kika")]
+[node name="MainMenuScene" parent="." node_paths=PackedStringArray("_worldCreator") instance=ExtResource("2_2kika")]
+_worldCreator = NodePath("../WorldCreator")
 
 [node name="WorldCreator" type="Node" parent="."]
 script = ExtResource("4_ognnp")
