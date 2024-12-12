@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://tbvohnqfn3cl"]
+[gd_scene load_steps=8 format=3 uid="uid://tbvohnqfn3cl"]
 
 [ext_resource type="Script" path="res://Scripts/Interface/MainMenu/MainMenu.cs" id="1_tso7g"]
 [ext_resource type="PackedScene" uid="uid://buekj451osmbs" path="res://Scenes/Interface/WorldListItem.tscn" id="2_5m7q5"]
@@ -6,28 +6,23 @@
 [ext_resource type="Script" path="res://Scripts/Interface/MainMenu/WorldMenu.cs" id="4_vxgly"]
 [ext_resource type="Script" path="res://Scripts/Interface/MainMenu/MultiplayerMenu.cs" id="5_lsepk"]
 [ext_resource type="PackedScene" uid="uid://bmavfj78dtk17" path="res://Scenes/Managers/WorldCreator.tscn" id="6_vhlka"]
+[ext_resource type="Script" path="res://Scripts/Interface/MainMenu/PlayerSelectMenu.cs" id="7_n0wde"]
 
-[node name="MainMenuScene" type="Control" node_paths=PackedStringArray("_selectGameTypeMenu", "_multiplayerMenu", "_worldMenu", "_worldListContainer", "_worldNameEdit", "WorldCreator")]
+[node name="MainMenuScene" type="Control" node_paths=PackedStringArray("_selectGameTypeMenu", "_multiplayerMenu", "_worldMenu", "_playerSelectMenu")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 22.0
-offset_top = -25.0
-offset_right = 22.0
-offset_bottom = -25.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_tso7g")
 _selectGameTypeMenu = NodePath("SelectGameTypeMenu")
 _multiplayerMenu = NodePath("MultiplayerMenu")
 _worldMenu = NodePath("WorldMenu")
-_worldListContainer = NodePath("WorldMenu/WorldListContainer")
+_playerSelectMenu = NodePath("PlayerSelectMenu")
 _packedWorldListItem = ExtResource("2_5m7q5")
-_worldNameEdit = NodePath("WorldMenu/WorldNameEdit")
-WorldCreator = NodePath("WorldCreator")
 
-[node name="SelectGameTypeMenu" type="Control" parent="." node_paths=PackedStringArray("SinglePlayerButton", "MultiplayerButton", "ExitButton")]
+[node name="SelectGameTypeMenu" type="Control" parent="." node_paths=PackedStringArray("_singlePlayerButton", "_multiplayerButton", "_exitButton")]
 layout_mode = 1
 anchor_right = 1.0
 anchor_bottom = 0.248
@@ -37,9 +32,9 @@ offset_right = -1.0
 offset_bottom = -30.84
 grow_horizontal = 2
 script = ExtResource("3_xna4i")
-SinglePlayerButton = NodePath("VBoxContainer/SinglePlayerButton")
-MultiplayerButton = NodePath("VBoxContainer/MultiplayerButton")
-ExitButton = NodePath("VBoxContainer/ExitButton")
+_singlePlayerButton = NodePath("VBoxContainer/SinglePlayerButton")
+_multiplayerButton = NodePath("VBoxContainer/MultiplayerButton")
+_exitButton = NodePath("VBoxContainer/ExitButton")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="SelectGameTypeMenu"]
 layout_mode = 1
@@ -67,7 +62,7 @@ text = "Multiplayer"
 layout_mode = 2
 text = "Exit"
 
-[node name="WorldMenu" type="Control" parent="." node_paths=PackedStringArray("CreateWorldButton", "BackButton")]
+[node name="WorldMenu" type="Control" parent="." node_paths=PackedStringArray("_createWorldButton", "_backButton", "_worldListContainer", "_worldNameEdit", "_worldCreator")]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -76,8 +71,12 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("4_vxgly")
-CreateWorldButton = NodePath("CreateWorldButton")
-BackButton = NodePath("BackButton")
+_createWorldButton = NodePath("CreateWorldButton")
+_backButton = NodePath("BackButton")
+_worldListContainer = NodePath("WorldListContainer")
+_packedWorldListItem = ExtResource("2_5m7q5")
+_worldNameEdit = NodePath("WorldNameEdit")
+_worldCreator = NodePath("WorldCreator")
 
 [node name="CreateWorldButton" type="Button" parent="WorldMenu"]
 layout_mode = 1
@@ -109,7 +108,9 @@ offset_top = 860.0
 offset_right = 1114.0
 offset_bottom = 891.0
 
-[node name="MultiplayerMenu" type="Control" parent="." node_paths=PackedStringArray("HostButton", "JoinButton", "BackButton")]
+[node name="WorldCreator" parent="WorldMenu" instance=ExtResource("6_vhlka")]
+
+[node name="MultiplayerMenu" type="Control" parent="." node_paths=PackedStringArray("_hostButton", "_joinButton", "_backButton")]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -118,9 +119,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("5_lsepk")
-HostButton = NodePath("VBoxContainer/HostButton")
-JoinButton = NodePath("VBoxContainer/JoinButton")
-BackButton = NodePath("VBoxContainer/BackButton")
+_hostButton = NodePath("VBoxContainer/HostButton")
+_joinButton = NodePath("VBoxContainer/JoinButton")
+_backButton = NodePath("VBoxContainer/BackButton")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MultiplayerMenu"]
 layout_mode = 1
@@ -144,15 +145,40 @@ text = "Join"
 layout_mode = 2
 text = "Back"
 
-[node name="PlayerSelectMenu" type="Control" parent="."]
-anchors_preset = 0
-offset_right = 398.0
-offset_bottom = 203.0
+[node name="PlayerSelectMenu" type="Control" parent="." node_paths=PackedStringArray("_mainMenu", "_createPlayerButton", "_backButton", "_playerListContainer")]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("7_n0wde")
+_mainMenu = NodePath("..")
+_createPlayerButton = NodePath("CreatePlayerButton")
+_backButton = NodePath("BackButton")
+_playerListContainer = NodePath("PlayerListContainer")
+
+[node name="BackButton" type="Button" parent="PlayerSelectMenu"]
+offset_left = 972.0
+offset_top = 415.0
+offset_right = 1116.0
+offset_bottom = 478.0
+text = "Back"
 
 [node name="CreatePlayerButton" type="Button" parent="PlayerSelectMenu"]
-layout_mode = 0
-offset_right = 8.0
-offset_bottom = 8.0
+layout_mode = 2
+offset_left = 779.0
+offset_top = 415.0
+offset_right = 923.0
+offset_bottom = 478.0
 text = "Create"
+
+[node name="PlayerListContainer" type="VBoxContainer" parent="PlayerSelectMenu"]
+layout_mode = 0
+offset_left = 801.0
+offset_top = 501.0
+offset_right = 1087.0
+offset_bottom = 899.0
 
 [node name="WorldCreator" parent="." instance=ExtResource("6_vhlka")]

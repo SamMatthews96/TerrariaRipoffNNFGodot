@@ -9,15 +9,13 @@
 [ext_resource type="PackedScene" uid="uid://me8wg1m67cje" path="res://Scenes/GameObjects/ActiveBlock.tscn" id="10_x622a"]
 [ext_resource type="PackedScene" uid="uid://dq4nb0kwitffr" path="res://Scenes/GameObjects/ActivePickup.tscn" id="11_cq83w"]
 
-[node name="Manager" type="Node" node_paths=PackedStringArray("_mainMenu", "_worldCreator", "PackedScenes")]
+[node name="Manager" type="Node" node_paths=PackedStringArray("_mainMenu", "PackedScenes")]
 script = ExtResource("1_y2fq1")
 _gameManagerPackedScene = ExtResource("2_jb22y")
 _mainMenu = NodePath("MainMenuScene")
-_worldCreator = NodePath("")
 PackedScenes = NodePath("PackedScenes")
 
-[node name="MainMenuScene" parent="." node_paths=PackedStringArray("_worldCreator") instance=ExtResource("2_2kika")]
-_worldCreator = NodePath("")
+[node name="MainMenuScene" parent="." instance=ExtResource("2_2kika")]
 
 [node name="FpsCounter" type="Label" parent="."]
 script = ExtResource("7_w8f5d")
