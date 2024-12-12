@@ -1,0 +1,24 @@
+﻿using System;
+using Godot;
+
+namespace TerrariaRipoffNNF;
+
+public partial class GameMenu : Control {
+    [Export] private Button _exitGameButton;
+    
+    public event Action ExitGameButtonDown;
+
+    public override void _Ready() {
+        Hide();
+        _exitGameButton.ButtonDown += OnExitGameButtonDown;
+        Manager.Instance.Game.InputManager.EscapePressed += OnEscapePressed;
+    }
+    
+    private void OnExitGameButtonDown() {
+        ExitGameButtonDown?.Invoke();
+    }
+    
+    private void OnEscapePressed() {
+        Show();
+    }
+}

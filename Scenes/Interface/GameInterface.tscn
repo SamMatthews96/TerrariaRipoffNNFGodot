@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://javhx4rej0q4"]
+[gd_scene load_steps=12 format=3 uid="uid://javhx4rej0q4"]
 
 [ext_resource type="Script" path="res://Scripts/Interface/Game/Interface.cs" id="1_2s5nd"]
 [ext_resource type="Script" path="res://Scripts/Interface/Game/InventoryUi.cs" id="2_huspd"]
@@ -10,12 +10,14 @@
 [ext_resource type="Texture2D" uid="uid://5s1dp1pvh1xy" path="res://Assets/Images/weaponButton.png" id="8_y013w"]
 [ext_resource type="Script" path="res://Scripts/Interface/Game/BuildUi.cs" id="9_naaai"]
 [ext_resource type="PackedScene" uid="uid://dsp7h2dpxh0i6" path="res://Scenes/Interface/SelectBuildBlockButton.tscn" id="10_i1foi"]
+[ext_resource type="Script" path="res://Scripts/Interface/Game/GameMenu.cs" id="11_22hm5"]
 
-[node name="GameInterface" type="CanvasLayer" node_paths=PackedStringArray("InventoryUi", "ActionBar", "BuildUi")]
+[node name="GameInterface" type="CanvasLayer" node_paths=PackedStringArray("InventoryUi", "ActionBar", "BuildUi", "GameMenu")]
 script = ExtResource("1_2s5nd")
 InventoryUi = NodePath("Inventory")
 ActionBar = NodePath("ActionBar")
 BuildUi = NodePath("BuildBar")
+GameMenu = NodePath("GameMenu")
 
 [node name="Inventory" type="PanelContainer" parent="." node_paths=PackedStringArray("_capacityLabel", "_inventoryItemUiContainer")]
 offset_left = 33.0
@@ -113,3 +115,44 @@ theme_override_constants/margin_bottom = 3
 
 [node name="ButtonContainer" type="HBoxContainer" parent="BuildBar/MarginContainer"]
 layout_mode = 2
+
+[node name="GameMenu" type="Control" parent="." node_paths=PackedStringArray("_exitGameButton")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("11_22hm5")
+_exitGameButton = NodePath("HBoxContainer/VBoxContainer/ExitGameButton")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="GameMenu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LeftSpacer" type="Control" parent="GameMenu/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GameMenu/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.7
+
+[node name="Control" type="Control" parent="GameMenu/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+
+[node name="ExitGameButton" type="Button" parent="GameMenu/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+text = "Exit Game
+"
+
+[node name="RightSpacer" type="Control" parent="GameMenu/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3

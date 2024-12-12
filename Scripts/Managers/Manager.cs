@@ -11,14 +11,14 @@ public partial class Manager : Node {
     [Export] private string _address = "127.0.0.1";
     [Export] private PackedScene _gameManagerPackedScene;
     [Export] private MainMenu _mainMenu;
-    
+
     [Export] public PackedScenes PackedScenes { get; private set; }
     private ENetMultiplayerPeer _peer;
     private Game _game;
 
     public event Action<Dictionary> LaunchedGameAsHost;
     public event Action<Dictionary> JoinedGame;
-    
+
     public Game Game {
         get => _game ?? throw new Exception("[20241205.2000.8] Game not instantiated");
         private set => _game = value;
@@ -80,6 +80,17 @@ public partial class Manager : Node {
     private void CreateNewGame() {
         _mainMenu.QueueFree();
         Game = _gameManagerPackedScene.Instantiate<Game>();
+        Game.Interface.GameMenu.ExitGameButtonDown += ExitGame;
         AddChild(Game);
+    }
+
+    private void ExitGame() {
+        Game.QueueFree();
+        _mainMenu = PackedScenes.PackedMainMenu.Instantiate<MainMenu>();
+        AddChild(_mainMenu);
+    }
+
+    private void CreateMainMenu() {
+        
     }
 }
