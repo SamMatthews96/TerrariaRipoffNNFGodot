@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Godot;
 using Godot.Collections;
+
 namespace TerrariaRipoffNNF;
 
 public partial class MainMenu : Control {
-    [Export] private Control _mainMenu;
-    [Export] private Control _multiplayerMenu;
-    [Export] private Control _worldMenu;
-    [Export] private Control _joinMenu;
+    [Export] private SelectGameTypeMenu _selectGameTypeMenu;
+    [Export] private MultiplayerMenu _multiplayerMenu;
+    [Export] private WorldMenu _worldMenu;
+
     [Export] private VBoxContainer _worldListContainer;
     [Export] private PackedScene _packedWorldListItem;
     [Export] private LineEdit _worldNameEdit;
@@ -17,48 +18,31 @@ public partial class MainMenu : Control {
     private readonly List<Control> _menus = new();
     private GameType _gameType;
     [Export] private WorldCreator _worldCreator;
-    
-    [Export] private Button _singlePlayerButton;
-    [Export] private Button _multiplayerButton;
-    [Export] private Button _exitButton;
-    
-    [Export] private Button _createWorldButton;
-    [Export] private Button _worldBackButton;
-    
-    [Export] private Button _hostButton;
-    [Export] private Button _joinButton;
-    [Export] private Button _multiplayerBackButton;
-    
-    [Export] private Button _joinWorldButton;
-    [Export] private Button _joinBackButton;
 
     private enum GameType {
         SinglePlayer,
         Host,
         Client
     }
-    
+
     public event Action<Dictionary, Dictionary> SinglePlayerClickedEnterWorld;
     public event Action<Dictionary, Dictionary> HostClickedEnterWorld;
     public event Action<string, Dictionary> ClientClickedEnterWorld;
 
     public override void _Ready() {
-        _singlePlayerButton.ButtonDown += OnMainMenuSinglePlayerButtonDown;
-        _multiplayerButton.ButtonDown += OnMainMenuMultiplayerButtonDown;
-        _exitButton.ButtonDown += OnMainMenuExitButtonDown;
-        _createWorldButton.ButtonDown += OnWorldMenuCreateWorldButtonDown;
-        _worldBackButton.ButtonDown += OnWorldMenuBackButtonDown;
-        _hostButton.ButtonDown += OnMultiplayerMenuHostButtonDown;
-        _joinButton.ButtonDown += OnMultiplayerMenuJoinButtonDown;
-        _multiplayerBackButton.ButtonDown += OnMultiplayerMenuBackButtonDown;
-        _joinWorldButton.ButtonDown += OnJoinMenuEnterWorldButtonDown;
-        _joinBackButton.ButtonDown += OnJoinMenuBackButtonDown;
-        
-        _menus.Add(_mainMenu);
+        _selectGameTypeMenu.SinglePlayerButton.ButtonDown += OnMainMenuSinglePlayerButtonDown;
+        _selectGameTypeMenu.MultiplayerButton.ButtonDown += OnMainMenuMultiplayerButtonDown;
+        _selectGameTypeMenu.ExitButton.ButtonDown += OnMainMenuExitButtonDown;
+        _worldMenu.CreateWorldButton.ButtonDown += OnWorldMenuCreateWorldButtonDown;
+        _worldMenu.BackButton.ButtonDown += OnWorldMenuBackButtonDown;
+        _multiplayerMenu.HostButton.ButtonDown += OnMultiplayerMenuHostButtonDown;
+        _multiplayerMenu.JoinButton.ButtonDown += OnMultiplayerMenuJoinButtonDown;
+        _multiplayerMenu.BackButton.ButtonDown += OnMultiplayerMenuBackButtonDown;
+
+        _menus.Add(_selectGameTypeMenu);
         _menus.Add(_multiplayerMenu);
         _menus.Add(_worldMenu);
-        _menus.Add(_joinMenu);
-        ChangeToMenu(_mainMenu);
+        ChangeToMenu(_selectGameTypeMenu);
 
         Task<WorldBasicInfo[]> task = Task.Run(FileManager.LoadAllWorldBasicData);
         task.GetAwaiter().OnCompleted(() => {
@@ -98,16 +82,14 @@ public partial class MainMenu : Control {
 
     private async void OnWorldMenuCreateWorldButtonDown() {
         WorldBasicInfo worldBasicInfo = new(_worldNameEdit.Text, 100, 100);
-        await Task.Run(() => {
-            _worldCreator.CreateWorld(worldBasicInfo);
-        });
+        await Task.Run(() => { _worldCreator.CreateWorld(worldBasicInfo); });
         AddEnterWorldButton(worldBasicInfo);
     }
 
     private void OnWorldMenuBackButtonDown() {
         switch (_gameType) {
             case GameType.SinglePlayer:
-                ChangeToMenu(_mainMenu);
+                ChangeToMenu(_selectGameTypeMenu);
                 break;
             case GameType.Host:
                 ChangeToMenu(_multiplayerMenu);
@@ -121,7 +103,7 @@ public partial class MainMenu : Control {
         Dictionary world = await Task.Run(() => FileManager.LoadWorld(worldBasicInfo));
         Dictionary playerInfo = new();
         playerInfo.Add("Name", "123-456");
-        
+
         switch (_gameType) {
             case GameType.Host:
                 HostClickedEnterWorld?.Invoke(world, playerInfo);
@@ -145,27 +127,15 @@ public partial class MainMenu : Control {
 
     private void OnMultiplayerMenuJoinButtonDown() {
         _gameType = GameType.Client;
-        ChangeToMenu(_joinMenu);
-    }
-
-    private void OnMultiplayerMenuBackButtonDown() {
-        ChangeToMenu(_mainMenu);
-    }
-
-    #endregion
-
-    #region JoinMenu EventHandlers
-
-    private void OnJoinMenuEnterWorldButtonDown() {
         Dictionary playerInfo = new();
         playerInfo.Add("Name", "654-321");
-        
+
         // temporary ip address
         ClientClickedEnterWorld?.Invoke("127.0.0.1", playerInfo);
     }
 
-    private void OnJoinMenuBackButtonDown() {
-        ChangeToMenu(_multiplayerMenu);
+    private void OnMultiplayerMenuBackButtonDown() {
+        ChangeToMenu(_selectGameTypeMenu);
     }
 
     #endregion

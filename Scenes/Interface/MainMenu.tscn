@@ -1,10 +1,13 @@
-[gd_scene load_steps=4 format=3 uid="uid://tbvohnqfn3cl"]
+[gd_scene load_steps=7 format=3 uid="uid://tbvohnqfn3cl"]
 
 [ext_resource type="Script" path="res://Scripts/Interface/MainMenu/MainMenu.cs" id="1_tso7g"]
 [ext_resource type="PackedScene" uid="uid://buekj451osmbs" path="res://Scenes/Interface/WorldListItem.tscn" id="2_5m7q5"]
 [ext_resource type="PackedScene" uid="uid://bmavfj78dtk17" path="res://Scenes/Managers/WorldCreator.tscn" id="3_1exum"]
+[ext_resource type="Script" path="res://Scripts/Interface/MainMenu/SelectGameTypeMenu.cs" id="3_xna4i"]
+[ext_resource type="Script" path="res://Scripts/Interface/MainMenu/WorldMenu.cs" id="4_vxgly"]
+[ext_resource type="Script" path="res://Scripts/Interface/MainMenu/MultiplayerMenu.cs" id="5_lsepk"]
 
-[node name="MainMenuScene" type="Control" node_paths=PackedStringArray("_mainMenu", "_multiplayerMenu", "_worldMenu", "_joinMenu", "_worldListContainer", "_worldNameEdit", "_worldCreator", "_singlePlayerButton", "_multiplayerButton", "_exitButton", "_createWorldButton", "_worldBackButton", "_hostButton", "_joinButton", "_multiplayerBackButton", "_joinWorldButton", "_joinBackButton")]
+[node name="MainMenuScene" type="Control" node_paths=PackedStringArray("_selectGameTypeMenu", "_multiplayerMenu", "_worldMenu", "_worldListContainer", "_worldNameEdit", "_worldCreator")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -14,26 +17,15 @@ offset_bottom = -2.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_tso7g")
-_mainMenu = NodePath("MainMenu")
+_selectGameTypeMenu = NodePath("SelectGameTypeMenu")
 _multiplayerMenu = NodePath("MultiplayerMenu")
 _worldMenu = NodePath("WorldMenu")
-_joinMenu = NodePath("JoinMenu")
 _worldListContainer = NodePath("WorldMenu/WorldListContainer")
 _packedWorldListItem = ExtResource("2_5m7q5")
 _worldNameEdit = NodePath("WorldMenu/WorldNameEdit")
 _worldCreator = NodePath("WorldCreator")
-_singlePlayerButton = NodePath("MainMenu/VBoxContainer/SinglePlayerButton")
-_multiplayerButton = NodePath("MainMenu/VBoxContainer/MultiplayerButton")
-_exitButton = NodePath("MainMenu/VBoxContainer/ExitButton")
-_createWorldButton = NodePath("WorldMenu/CreateWorldButton")
-_worldBackButton = NodePath("WorldMenu/BackButton")
-_hostButton = NodePath("MultiplayerMenu/VBoxContainer/HostButton")
-_joinButton = NodePath("MultiplayerMenu/VBoxContainer/JoinButton")
-_multiplayerBackButton = NodePath("MultiplayerMenu/VBoxContainer/BackButton")
-_joinWorldButton = NodePath("JoinMenu/EnterWorldButton")
-_joinBackButton = NodePath("JoinMenu/BackButton")
 
-[node name="MainMenu" type="Control" parent="."]
+[node name="SelectGameTypeMenu" type="Control" parent="." node_paths=PackedStringArray("SinglePlayerButton", "MultiplayerButton", "ExitButton")]
 layout_mode = 1
 anchor_right = 1.0
 anchor_bottom = 0.248
@@ -42,8 +34,12 @@ offset_top = 4.0
 offset_right = -1.0
 offset_bottom = -30.84
 grow_horizontal = 2
+script = ExtResource("3_xna4i")
+SinglePlayerButton = NodePath("VBoxContainer/SinglePlayerButton")
+MultiplayerButton = NodePath("VBoxContainer/MultiplayerButton")
+ExitButton = NodePath("VBoxContainer/ExitButton")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MainMenu"]
+[node name="VBoxContainer" type="VBoxContainer" parent="SelectGameTypeMenu"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -57,19 +53,19 @@ offset_bottom = 50.5
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="SinglePlayerButton" type="Button" parent="MainMenu/VBoxContainer"]
+[node name="SinglePlayerButton" type="Button" parent="SelectGameTypeMenu/VBoxContainer"]
 layout_mode = 2
 text = "Single Player"
 
-[node name="MultiplayerButton" type="Button" parent="MainMenu/VBoxContainer"]
+[node name="MultiplayerButton" type="Button" parent="SelectGameTypeMenu/VBoxContainer"]
 layout_mode = 2
 text = "Multiplayer"
 
-[node name="ExitButton" type="Button" parent="MainMenu/VBoxContainer"]
+[node name="ExitButton" type="Button" parent="SelectGameTypeMenu/VBoxContainer"]
 layout_mode = 2
 text = "Exit"
 
-[node name="WorldMenu" type="Control" parent="."]
+[node name="WorldMenu" type="Control" parent="." node_paths=PackedStringArray("CreateWorldButton", "BackButton")]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -77,6 +73,9 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("4_vxgly")
+CreateWorldButton = NodePath("CreateWorldButton")
+BackButton = NodePath("BackButton")
 
 [node name="CreateWorldButton" type="Button" parent="WorldMenu"]
 layout_mode = 1
@@ -108,7 +107,7 @@ offset_top = 860.0
 offset_right = 1114.0
 offset_bottom = 891.0
 
-[node name="MultiplayerMenu" type="Control" parent="."]
+[node name="MultiplayerMenu" type="Control" parent="." node_paths=PackedStringArray("HostButton", "JoinButton", "BackButton")]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -116,6 +115,10 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("5_lsepk")
+HostButton = NodePath("VBoxContainer/HostButton")
+JoinButton = NodePath("VBoxContainer/JoinButton")
+BackButton = NodePath("VBoxContainer/BackButton")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MultiplayerMenu"]
 layout_mode = 1
@@ -137,35 +140,6 @@ text = "Join"
 
 [node name="BackButton" type="Button" parent="MultiplayerMenu/VBoxContainer"]
 layout_mode = 2
-text = "Back"
-
-[node name="JoinMenu" type="Control" parent="."]
-visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 66.0
-offset_top = -19.0
-offset_right = 66.0
-offset_bottom = -19.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="EnterWorldButton" type="Button" parent="JoinMenu"]
-layout_mode = 2
-offset_left = 824.0
-offset_top = 244.0
-offset_right = 1083.0
-offset_bottom = 275.0
-text = "Enter World"
-
-[node name="BackButton" type="Button" parent="JoinMenu"]
-layout_mode = 2
-offset_left = 825.0
-offset_top = 282.0
-offset_right = 1085.0
-offset_bottom = 315.0
 text = "Back"
 
 [node name="WorldCreator" parent="." instance=ExtResource("3_1exum")]
