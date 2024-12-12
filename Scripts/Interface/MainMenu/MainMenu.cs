@@ -14,7 +14,9 @@ public partial class MainMenu : Control {
 
     private GameType _gameType;
     private bool _isWorldLoaded;
-    private Dictionary _world;
+    private Dictionary _selectedWorld;
+    private bool _isPlayerSelected;
+    private Dictionary _selectedPlayer;
 
     private enum GameType {
         SinglePlayer,
@@ -70,7 +72,13 @@ public partial class MainMenu : Control {
     }
 
     private void OnWorldMenuSelectWorldButtonDown(WorldBasicInfo worldBasicInfo) {
-        Task.Run(() => { _world = FileManager.LoadWorld(worldBasicInfo); });
+        Task.Run(() => {
+            _selectedWorld = FileManager.LoadWorld(worldBasicInfo);
+            _isWorldLoaded = true;
+            if (_isPlayerSelected) {
+                LaunchGame();
+            }
+        });
 
         _playerSelectMenu.Show();
     }
@@ -111,9 +119,28 @@ public partial class MainMenu : Control {
                 throw new ArgumentOutOfRangeException();
         }
     }
-    
+
 
     private void OnPlayerSelectButtonDown(Dictionary playerInfo) {
-        GD.Print("enter world");
+        _selectedPlayer = playerInfo;
+        if (_isWorldLoaded || _gameType == GameType.Client) {
+            LaunchGame();
+        }
+    }
+
+    private void LaunchGame() {
+        switch (_gameType) {
+            case GameType.SinglePlayer:
+                SinglePlayerClickedEnterWorld?.Invoke(_selectedWorld, _selectedPlayer);
+                break;
+            case GameType.Host:
+                HostClickedEnterWorld?.Invoke(_selectedWorld, _selectedPlayer);
+                break;
+            case GameType.Client:
+                ClientClickedEnterWorld?.Invoke("127.0.0.1", _selectedWorld);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
     }
 }
