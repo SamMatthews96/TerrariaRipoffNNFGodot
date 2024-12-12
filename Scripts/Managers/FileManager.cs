@@ -6,6 +6,7 @@ namespace TerrariaRipoffNNF;
 
 public static class FileManager {
     private const string WorldDir = "user://SavedData/worlds";
+    private const string PlayerDir = "user://SavedData/players";
     // C:\Users\Sam-M\AppData\Roaming\Godot\app_userdata\TerrariaRipoffNNF\SavedData
 
     public static void SaveWorld(Dictionary worldDictionary) {
@@ -85,5 +86,52 @@ public static class FileManager {
 
             dirAccess.ChangeDir(currentFile);
         }
+    }
+    
+    public static void SavePlayer(Dictionary playerDictionary) {
+        string name = playerDictionary["Name"].ToString();
+        string playerString = playerDictionary.ToString();
+
+        EnsureDirectoryExists($"{PlayerDir}/{name}");
+        FileAccess file = FileAccess.Open(
+            $"{PlayerDir}/{name}/playerBasicData.txt", FileAccess.ModeFlags.Write);
+        file.StoreString(playerString);
+        file.Dispose();
+    }
+
+    public static Dictionary[] LoadAllPlayerBasicData() {
+        EnsureDirectoryExists(PlayerDir);
+        DirAccess dirAccess = DirAccess.Open(PlayerDir);
+        
+        string[] directories = dirAccess.GetDirectories();
+        Dictionary[] playerBasicInfos = new Dictionary[directories.Length];
+        
+        for (int i = 0; i < directories.Length; i++) {
+            string playerName = directories[i];
+            FileAccess fileAccess = FileAccess.Open(
+                $"{PlayerDir}/{playerName}/playerBasicData.txt", FileAccess.ModeFlags.Read);
+            string content = fileAccess.GetAsText();
+            fileAccess.Dispose();
+            Dictionary playerBasicInfo = Json.ParseString(content).AsGodotDictionary();
+            playerBasicInfos[i] = playerBasicInfo;
+        }
+
+        return playerBasicInfos;
+    }
+    
+    public static void DeletePlayer(Dictionary playerBasicInfo) {
+        string playerName = playerBasicInfo["Name"].ToString();
+        DirAccess dirAccess = DirAccess.Open(PlayerDir);
+        dirAccess.Remove($"{playerName}/playerBasicData.txt");
+        dirAccess.Remove(playerName);
+    }
+    
+    public static Dictionary LoadPlayer(string playerName) {
+        FileAccess fileAccess = FileAccess.Open(
+            $"{PlayerDir}/{playerName}/playerBasicData.txt", FileAccess.ModeFlags.Read);
+        string content = fileAccess.GetAsText();
+        fileAccess.Dispose();
+        Dictionary playerDict = Json.ParseString(content).AsGodotDictionary();
+        return playerDict;
     }
 }

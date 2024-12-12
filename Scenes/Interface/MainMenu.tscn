@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://tbvohnqfn3cl"]
+[gd_scene load_steps=9 format=3 uid="uid://tbvohnqfn3cl"]
 
 [ext_resource type="Script" path="res://Scripts/Interface/MainMenu/MainMenu.cs" id="1_tso7g"]
 [ext_resource type="PackedScene" uid="uid://buekj451osmbs" path="res://Scenes/Interface/WorldListItem.tscn" id="2_5m7q5"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" path="res://Scripts/Interface/MainMenu/MultiplayerMenu.cs" id="5_lsepk"]
 [ext_resource type="PackedScene" uid="uid://bmavfj78dtk17" path="res://Scenes/Managers/WorldCreator.tscn" id="6_vhlka"]
 [ext_resource type="Script" path="res://Scripts/Interface/MainMenu/PlayerSelectMenu.cs" id="7_n0wde"]
+[ext_resource type="PackedScene" uid="uid://cgxj5nohkfa6v" path="res://Scenes/Interface/PlayerListItem.tscn" id="8_vv6pa"]
 
 [node name="MainMenuScene" type="Control" node_paths=PackedStringArray("_selectGameTypeMenu", "_multiplayerMenu", "_worldMenu", "_playerSelectMenu")]
 layout_mode = 3
@@ -145,8 +146,7 @@ text = "Join"
 layout_mode = 2
 text = "Back"
 
-[node name="PlayerSelectMenu" type="Control" parent="." node_paths=PackedStringArray("_mainMenu", "_createPlayerButton", "_backButton", "_playerListContainer")]
-visible = false
+[node name="PlayerSelectMenu" type="Control" parent="." node_paths=PackedStringArray("_mainMenu", "_createPlayerButton", "_backButton", "_playerListContainer", "_playerNameTextEdit")]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -158,27 +158,36 @@ _mainMenu = NodePath("..")
 _createPlayerButton = NodePath("CreatePlayerButton")
 _backButton = NodePath("BackButton")
 _playerListContainer = NodePath("PlayerListContainer")
+_playerNameTextEdit = NodePath("PlayerNameTextEdit")
+_packedPlayerSelectButton = ExtResource("8_vv6pa")
 
 [node name="BackButton" type="Button" parent="PlayerSelectMenu"]
-offset_left = 972.0
-offset_top = 415.0
-offset_right = 1116.0
-offset_bottom = 478.0
+offset_left = 999.0
+offset_top = 960.0
+offset_right = 1143.0
+offset_bottom = 1023.0
 text = "Back"
 
 [node name="CreatePlayerButton" type="Button" parent="PlayerSelectMenu"]
 layout_mode = 2
-offset_left = 779.0
-offset_top = 415.0
-offset_right = 923.0
-offset_bottom = 478.0
+offset_left = 806.0
+offset_top = 960.0
+offset_right = 950.0
+offset_bottom = 1023.0
 text = "Create"
 
 [node name="PlayerListContainer" type="VBoxContainer" parent="PlayerSelectMenu"]
 layout_mode = 0
-offset_left = 801.0
-offset_top = 501.0
-offset_right = 1087.0
-offset_bottom = 899.0
+offset_left = 697.0
+offset_top = 50.0
+offset_right = 1254.0
+offset_bottom = 870.0
+
+[node name="PlayerNameTextEdit" type="TextEdit" parent="PlayerSelectMenu"]
+layout_mode = 0
+offset_left = 772.0
+offset_top = 898.0
+offset_right = 1177.0
+offset_bottom = 941.0
 
 [node name="WorldCreator" parent="." instance=ExtResource("6_vhlka")]

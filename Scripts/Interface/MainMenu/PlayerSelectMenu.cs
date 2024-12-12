@@ -9,23 +9,33 @@ public partial class PlayerSelectMenu : Control {
     [Export] private Button _createPlayerButton;
     [Export] private Button _backButton; 
     [Export] private Control _playerListContainer;
-
-    public event Action CreatePlayerButtonDown;
+    [Export] private TextEdit _playerNameTextEdit;
+    [Export] private PackedScene _packedPlayerSelectButton;
+    
     public event Action BackButtonDown;
+    public event Action<Dictionary> SelectPlayerButtonDown;
 
     public override void _Ready() {
         Hide();
         _createPlayerButton.ButtonDown += OnCreatePlayerButtonDown;
         _backButton.ButtonDown += OnBackButtonDown;
         
-        // get player objects
-        // add player objects to player list container
+        Dictionary[] playerBasicInfoArray =  FileManager.LoadAllPlayerBasicData();
+        foreach (Dictionary playerBasicInfo in playerBasicInfoArray) {
+            AddSelectPlayerButton(playerBasicInfo);
+        }
+    }
+    
+    private void OnSelectPlayerButtonDown(Dictionary playerDictionary) {
+        Hide();
+        SelectPlayerButtonDown?.Invoke(playerDictionary);
     }
 
     private void OnCreatePlayerButtonDown() {
-        // create player object
-        // save player object
-        // add player object to player list container
+        Dictionary newPlayer = new();
+        newPlayer.Add("Name", _playerNameTextEdit.Text);
+        AddSelectPlayerButton(newPlayer);
+        FileManager.SavePlayer(newPlayer);
     }
 
     private void OnBackButtonDown() {
@@ -33,8 +43,10 @@ public partial class PlayerSelectMenu : Control {
         BackButtonDown?.Invoke();
     }
     
-    private void OnPlayerDictionaryLoaded(Dictionary playerDictionary) {
-        // create player object
-        // add player object to player list container
+    private void AddSelectPlayerButton(Dictionary playerDictionary) {
+        PlayerListItem playerListItem = _packedPlayerSelectButton.Instantiate<PlayerListItem>();
+        playerListItem.Initialize(playerDictionary);
+        playerListItem.SelectPlayerButtonDown += OnSelectPlayerButtonDown;
+        _playerListContainer.AddChild(playerListItem);
     }
 }

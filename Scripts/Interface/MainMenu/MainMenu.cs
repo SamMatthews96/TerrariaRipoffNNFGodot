@@ -38,6 +38,7 @@ public partial class MainMenu : Control {
         _multiplayerMenu.BackButtonDown += OnMultiplayerMenuBackButtonDown;
 
         _playerSelectMenu.BackButtonDown += OnPlayerSelectBackButtonDown;
+        _playerSelectMenu.SelectPlayerButtonDown += OnPlayerSelectButtonDown;
     }
 
     #region MenuMenu EventHandlers
@@ -109,5 +110,10 @@ public partial class MainMenu : Control {
             default:
                 throw new ArgumentOutOfRangeException();
         }
+    }
+    
+
+    private void OnPlayerSelectButtonDown(Dictionary playerInfo) {
+        GD.Print("enter world");
     }
 }
