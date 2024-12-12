@@ -17,7 +17,8 @@ public partial class MainMenu : Control {
     [Export] private LineEdit _ipEdit;
     private readonly List<Control> _menus = new();
     private GameType _gameType;
-    [Export] private WorldCreator _worldCreator;
+
+    [Export] public WorldCreator WorldCreator { get; private set; }
 
     private enum GameType {
         SinglePlayer,
@@ -82,7 +83,9 @@ public partial class MainMenu : Control {
 
     private async void OnWorldMenuCreateWorldButtonDown() {
         WorldBasicInfo worldBasicInfo = new(_worldNameEdit.Text, 100, 100);
-        await Task.Run(() => { _worldCreator.CreateWorld(worldBasicInfo); });
+        // await Task.Run(() => {
+        WorldCreator.CreateWorld(worldBasicInfo);
+        // });
         AddEnterWorldButton(worldBasicInfo);
     }
 

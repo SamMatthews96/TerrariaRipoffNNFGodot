@@ -2,18 +2,20 @@
 
 [ext_resource type="Script" path="res://Scripts/Interface/MainMenu/MainMenu.cs" id="1_tso7g"]
 [ext_resource type="PackedScene" uid="uid://buekj451osmbs" path="res://Scenes/Interface/WorldListItem.tscn" id="2_5m7q5"]
-[ext_resource type="PackedScene" uid="uid://bmavfj78dtk17" path="res://Scenes/Managers/WorldCreator.tscn" id="3_1exum"]
 [ext_resource type="Script" path="res://Scripts/Interface/MainMenu/SelectGameTypeMenu.cs" id="3_xna4i"]
 [ext_resource type="Script" path="res://Scripts/Interface/MainMenu/WorldMenu.cs" id="4_vxgly"]
 [ext_resource type="Script" path="res://Scripts/Interface/MainMenu/MultiplayerMenu.cs" id="5_lsepk"]
+[ext_resource type="PackedScene" uid="uid://bmavfj78dtk17" path="res://Scenes/Managers/WorldCreator.tscn" id="6_vhlka"]
 
-[node name="MainMenuScene" type="Control" node_paths=PackedStringArray("_selectGameTypeMenu", "_multiplayerMenu", "_worldMenu", "_worldListContainer", "_worldNameEdit", "_worldCreator")]
+[node name="MainMenuScene" type="Control" node_paths=PackedStringArray("_selectGameTypeMenu", "_multiplayerMenu", "_worldMenu", "_worldListContainer", "_worldNameEdit", "WorldCreator")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -2.0
-offset_bottom = -2.0
+offset_left = 22.0
+offset_top = -25.0
+offset_right = 22.0
+offset_bottom = -25.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_tso7g")
@@ -23,7 +25,7 @@ _worldMenu = NodePath("WorldMenu")
 _worldListContainer = NodePath("WorldMenu/WorldListContainer")
 _packedWorldListItem = ExtResource("2_5m7q5")
 _worldNameEdit = NodePath("WorldMenu/WorldNameEdit")
-_worldCreator = NodePath("WorldCreator")
+WorldCreator = NodePath("WorldCreator")
 
 [node name="SelectGameTypeMenu" type="Control" parent="." node_paths=PackedStringArray("SinglePlayerButton", "MultiplayerButton", "ExitButton")]
 layout_mode = 1
@@ -142,8 +144,6 @@ text = "Join"
 layout_mode = 2
 text = "Back"
 
-[node name="WorldCreator" parent="." instance=ExtResource("3_1exum")]
-
 [node name="PlayerSelectMenu" type="Control" parent="."]
 anchors_preset = 0
 offset_right = 398.0
@@ -154,3 +154,5 @@ layout_mode = 0
 offset_right = 8.0
 offset_bottom = 8.0
 text = "Create"
+
+[node name="WorldCreator" parent="." instance=ExtResource("6_vhlka")]
