@@ -32,4 +32,8 @@ public partial class ActionBar : PanelContainer {
             }
         }
     }
+    
+    public override void _ExitTree() {
+        Player.BeforeLocalPlayerSpawned -= OnBeforeLocalPlayerSpawned;
+    }
 }

@@ -143,4 +143,10 @@ public partial class MainMenu : Control {
                 throw new ArgumentOutOfRangeException();
         }
     }
+
+    public override void _ExitTree() {
+        // SinglePlayerClickedEnterWorld = null;
+        // HostClickedEnterWorld = null;
+        // ClientClickedEnterWorld = null;
+    }
 }

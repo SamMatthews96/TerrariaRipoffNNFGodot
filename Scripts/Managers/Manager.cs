@@ -10,7 +10,7 @@ public partial class Manager : Node {
     [Export] private int _port = 8910;
     [Export] private string _address = "127.0.0.1";
     [Export] private PackedScene _gameManagerPackedScene;
-    [Export] private MainMenu _mainMenu;
+    private MainMenu _mainMenu;
 
     [Export] public PackedScenes PackedScenes { get; private set; }
     private ENetMultiplayerPeer _peer;
@@ -35,9 +35,7 @@ public partial class Manager : Node {
     }
 
     public override void _Ready() {
-        _mainMenu.SinglePlayerClickedEnterWorld += OnMainMenuSinglePlayerClickedEnterWorld;
-        _mainMenu.HostClickedEnterWorld += OnMainMenuHostClickedEnterWorld;
-        _mainMenu.ClientClickedEnterWorld += OnMainMenuClientClickedEnterWorld;
+        CreateMainMenu();
     }
 
     private void OnMainMenuSinglePlayerClickedEnterWorld(Dictionary world, Dictionary playerInfo) {
@@ -86,11 +84,15 @@ public partial class Manager : Node {
 
     private void ExitGame() {
         Game.QueueFree();
-        _mainMenu = PackedScenes.PackedMainMenu.Instantiate<MainMenu>();
-        AddChild(_mainMenu);
+        CreateMainMenu();
     }
 
     private void CreateMainMenu() {
-        
+        _mainMenu = PackedScenes.PackedMainMenu.Instantiate<MainMenu>();
+        _mainMenu.SinglePlayerClickedEnterWorld += OnMainMenuSinglePlayerClickedEnterWorld;
+        _mainMenu.HostClickedEnterWorld += OnMainMenuHostClickedEnterWorld;
+        _mainMenu.ClientClickedEnterWorld += OnMainMenuClientClickedEnterWorld;
+
+        AddChild(_mainMenu);
     }
 }
