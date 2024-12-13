@@ -16,10 +16,16 @@ public partial class InventoryUi : Control {
     public override void _Ready() {
         Visible = false;
         Manager.Instance.Game.InputManager.ToggleInventoryPressed += OnInputManagerToggleInventoryPressed;
-        
-        Player.BeforeLocalPlayerSpawned += player => {
-            player.Inventory.InventoryChanged += OnInventoryChanged;
-        };
+        Player.BeforeLocalPlayerSpawned += OnBeforeLocalPlayerSpawned;
+    }
+
+    public override void _ExitTree() {
+        Manager.Instance.Game.InputManager.ToggleInventoryPressed -= OnInputManagerToggleInventoryPressed;
+        Player.BeforeLocalPlayerSpawned -= OnBeforeLocalPlayerSpawned;
+    }
+
+    private void OnBeforeLocalPlayerSpawned(Player player) {
+        player.Inventory.InventoryChanged += OnInventoryChanged;
     }
 
     private void OnInventoryChanged(Inventory inventory) {

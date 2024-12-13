@@ -23,6 +23,11 @@ public partial class PlayerListItem : Control {
         _deletePlayerButton.ButtonDown += OnDeletePlayerButtonDown;
     }
 
+    public override void _ExitTree() {
+        _enterPlayerButton.ButtonDown -= OnEnterPlayerButtonDown;
+        _deletePlayerButton.ButtonDown -= OnDeletePlayerButtonDown;
+    }
+
     private void OnEnterPlayerButtonDown() {
         SelectPlayerButtonDown?.Invoke(_playerBasicInfo);
     }

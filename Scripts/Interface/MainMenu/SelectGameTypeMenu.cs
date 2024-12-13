@@ -18,6 +18,12 @@ public partial class SelectGameTypeMenu : Control {
         _exitButton.ButtonDown += OnExitButtonDown;
     }
 
+    public override void _ExitTree() {
+        _singlePlayerButton.ButtonDown -= OnSinglePlayerButtonDown;
+        _multiplayerButton.ButtonDown -= OnMultiplayerButtonDown;
+        _exitButton.ButtonDown -= OnExitButtonDown;
+    }
+
     private void OnSinglePlayerButtonDown() {
         Hide();
         SinglePlayerButtonDown?.Invoke();

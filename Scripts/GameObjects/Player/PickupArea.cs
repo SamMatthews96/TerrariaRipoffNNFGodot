@@ -12,6 +12,12 @@ public partial class PickupArea : Area2D {
         BodyEntered += OnCollidedWithPickup;
     }
 
+    public override void _ExitTree() {
+        if (!Manager.Instance.Game.IsHost) return;
+
+        BodyEntered -= OnCollidedWithPickup;
+    }
+
     private void OnCollidedWithPickup(Node2D node) {
         if (node is ActivePickup activePickup) {
             TouchedItem?.Invoke(activePickup);

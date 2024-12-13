@@ -16,6 +16,11 @@ public partial class PickupManager : Node {
         Manager.Instance.Game.Host.PlayerManager.PlayerSpawned += OnPlayerManagerPlayerSpawned;
     }
 
+    public override void _ExitTree() {
+        Manager.Instance.Game.Host.BlockManager.BlockDestroyed -= OnBlockManagerBlockDestroyed;
+        Manager.Instance.Game.Host.PlayerManager.PlayerSpawned -= OnPlayerManagerPlayerSpawned;
+    }
+
     private void OnPlayerManagerPlayerSpawned(Player player) {
         player.Inventory.PickedUpItem += OnPlayerPickedUpItem;
     }

@@ -14,7 +14,12 @@ public partial class PlayerManager : Node {
         Manager.Instance.Game.PlayerConnected += OnGamePlayerConnected;
         Manager.Instance.Game.LaunchedGameAsHost += OnGameLaunchedAsHost;
     }
-    
+
+    public override void _ExitTree() {
+        Manager.Instance.Game.PlayerConnected -= OnGamePlayerConnected;
+        Manager.Instance.Game.LaunchedGameAsHost -= OnGameLaunchedAsHost;
+    }
+
     private void OnGameLaunchedAsHost(Dictionary worldDictionary) {
         DefaultSpawnPosition = new Vector2(
             (float)worldDictionary["DefaultSpawnPosition"].AsGodotArray()[0].AsDouble(),

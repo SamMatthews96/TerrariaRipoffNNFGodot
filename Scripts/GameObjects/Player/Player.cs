@@ -50,11 +50,21 @@ public partial class Player : CharacterBody2D {
         }
     }
 
+    public override void _ExitTree() {
+        if (IsLocalPlayer) {
+            Manager.Instance.Game.InputManager.HorizontalInputChanged -= OnHorizontalInputChanged;
+            Manager.Instance.Game.InputManager.JumpPressed -= OnJumpPressed;
+        }
+    }
+
     private void InitializeLocalPlayer() {
         _camera.Enabled = true;
-        Manager.Instance.Game.InputManager.HorizontalInputChanged +=
-            newInput => _horizontalInput = newInput;
+        Manager.Instance.Game.InputManager.HorizontalInputChanged += OnHorizontalInputChanged;
         Manager.Instance.Game.InputManager.JumpPressed += OnJumpPressed;
+    }
+    
+    private void OnHorizontalInputChanged(int newInput) {
+        _horizontalInput = newInput;
     }
 
     #endregion

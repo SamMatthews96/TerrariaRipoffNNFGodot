@@ -25,7 +25,13 @@ public partial class PlayerSelectMenu : Control {
             AddSelectPlayerButton(playerBasicInfo);
         }
     }
-    
+
+    public override void _ExitTree() {
+        _createPlayerButton.ButtonDown -= OnCreatePlayerButtonDown;
+        _backButton.ButtonDown -= OnBackButtonDown;
+        //@todo remove all event listeners in a loop
+    }
+
     private void OnSelectPlayerButtonDown(Dictionary playerDictionary) {
         Hide();
         SelectPlayerButtonDown?.Invoke(playerDictionary);

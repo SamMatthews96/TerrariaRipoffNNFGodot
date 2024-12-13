@@ -22,6 +22,11 @@ public partial class BlockManager : Node {
         Manager.Instance.Game.LaunchedGameAsHost += OnGameLaunchedAsHost;
     }
 
+    public override void _ExitTree() {
+        Manager.Instance.Game.LaunchedGameAsHost -= OnGameLaunchedAsHost;
+        //@todo Unsubscribe from player events
+    }
+
     private void OnGameLaunchedAsHost(Dictionary worldDictionary) {
         _savedBlocks = new SavedBlock[
             Manager.Instance.Game.Width, Manager.Instance.Game.Height];

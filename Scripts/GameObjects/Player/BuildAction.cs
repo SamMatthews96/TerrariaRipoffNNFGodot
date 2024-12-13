@@ -16,6 +16,12 @@ public partial class BuildAction : PlayerAction {
         Player.Inventory.InventoryChanged += OnInventoryChanged;
     }
 
+    public override void _ExitTree() {
+        if (!Player.IsLocalPlayer) return;
+        Manager.Instance.Game.Interface.BuildUi.BlockTypeSelected -= OnBuildBlockTypeSelected;
+        Player.Inventory.InventoryChanged -= OnInventoryChanged;
+    }
+
     private void OnBuildBlockTypeSelected(Item item) {
         _blockItem = item;
     }

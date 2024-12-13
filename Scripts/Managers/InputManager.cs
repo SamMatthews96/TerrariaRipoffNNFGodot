@@ -25,8 +25,7 @@ public partial class InputManager : Node {
     public event Action JumpPressed;
     public event Action SaveGamePressed;
     public event Action ToggleInventoryPressed;
-    public event Action BuildModePressed;
-    public event Action GatherModePressed;
+    public event Action<PlayerAction.Type> PlayerActionModeChanged;
     public event Action EscapePressed;
 
     public override void _Process(double delta) {
@@ -96,11 +95,11 @@ public partial class InputManager : Node {
         }
 
         if (Input.IsActionJustPressed(GatherMode)) {
-            GatherModePressed?.Invoke();
+            PlayerActionModeChanged?.Invoke(PlayerAction.Type.Gather);
         }
 
         if (Input.IsActionJustPressed(BuildMode)) {
-            BuildModePressed?.Invoke();
+            PlayerActionModeChanged?.Invoke(PlayerAction.Type.Build);
         }
         
         if (Input.IsActionJustPressed(GameMenu)) {

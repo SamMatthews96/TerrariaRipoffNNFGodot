@@ -13,7 +13,12 @@ public partial class GameMenu : Control {
         _exitGameButton.ButtonDown += OnExitGameButtonDown;
         Manager.Instance.Game.InputManager.EscapePressed += OnEscapePressed;
     }
-    
+
+    public override void _ExitTree() {
+        _exitGameButton.ButtonDown -= OnExitGameButtonDown;
+        Manager.Instance.Game.InputManager.EscapePressed -= OnEscapePressed;
+    }
+
     private void OnExitGameButtonDown() {
         ExitGameButtonDown?.Invoke();
     }

@@ -42,6 +42,21 @@ public partial class MainMenu : Control {
         _playerSelectMenu.BackButtonDown += OnPlayerSelectBackButtonDown;
         _playerSelectMenu.SelectPlayerButtonDown += OnPlayerSelectButtonDown;
     }
+    
+    public override void _ExitTree() {
+        _selectGameTypeMenu.SinglePlayerButtonDown -= OnMainMenuSinglePlayerButtonDown;
+        _selectGameTypeMenu.MultiplayerButtonDown -= OnMainMenuMultiplayerButtonDown;
+
+        _worldMenu.SelectWorldButtonDown -= OnWorldMenuSelectWorldButtonDown;
+        _worldMenu.BackButtonDown -= OnWorldMenuBackButtonDown;
+
+        _multiplayerMenu.HostButtonDown -= OnMultiplayerMenuHostButtonDown;
+        _multiplayerMenu.JoinButtonDown -= OnMultiplayerMenuJoinButtonDown;
+        _multiplayerMenu.BackButtonDown -= OnMultiplayerMenuBackButtonDown;
+
+        _playerSelectMenu.BackButtonDown -= OnPlayerSelectBackButtonDown;
+        _playerSelectMenu.SelectPlayerButtonDown -= OnPlayerSelectButtonDown;
+    }
 
     #region MenuMenu EventHandlers
 
@@ -142,11 +157,5 @@ public partial class MainMenu : Control {
             default:
                 throw new ArgumentOutOfRangeException();
         }
-    }
-
-    public override void _ExitTree() {
-        // SinglePlayerClickedEnterWorld = null;
-        // HostClickedEnterWorld = null;
-        // ClientClickedEnterWorld = null;
     }
 }

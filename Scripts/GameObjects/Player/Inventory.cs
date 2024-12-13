@@ -34,6 +34,13 @@ public partial class Inventory : Node {
         
     }
 
+    public override void _ExitTree() {
+        if (Manager.Instance.Game.IsHost) {
+            _player.PickupArea.TouchedItem -= OnCollidedWithPickup;
+            _player.ActionController.BlockPlaced -= OnBlockPlaced;
+        }
+    }
+
     private void OnCollidedWithPickup(ActivePickup activePickup) {
         if (activePickup.SavedPickup.InventoryItems.TotalSpace > MaximumSpace - UsedSpace) {
             return;

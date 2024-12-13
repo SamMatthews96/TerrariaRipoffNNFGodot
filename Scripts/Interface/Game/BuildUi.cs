@@ -13,10 +13,11 @@ public partial class BuildUi : Container {
     public event Action<Item> BlockTypeSelected;
 
     public override void _Ready() {
-        Player.BeforeLocalPlayerSpawned += player => {
-            player.ActionController.ActionChanged += OnPlayerActionChanged;
-            player.Inventory.InventoryChanged += OnInventoryChanged;
-        };
+        Player.BeforeLocalPlayerSpawned += OnBeforeLocalPlayerSpawned;
+    }
+
+    public override void _ExitTree() {
+        Player.BeforeLocalPlayerSpawned -= OnBeforeLocalPlayerSpawned;
     }
 
     private void OnPlayerActionChanged(PlayerAction.Type type) {
@@ -25,6 +26,11 @@ public partial class BuildUi : Container {
         } else {
             Hide();
         }
+    }
+    
+    private void OnBeforeLocalPlayerSpawned(Player player) {
+        player.ActionController.ActionChanged += OnPlayerActionChanged;
+        player.Inventory.InventoryChanged += OnInventoryChanged;
     }
 
     private void OnInventoryChanged(Inventory inventory) {

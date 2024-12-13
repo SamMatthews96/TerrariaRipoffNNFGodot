@@ -21,6 +21,11 @@ public partial class WorldListItem : Control {
         _deleteWorldButton.ButtonDown += OnDeleteWorldButtonDown;
     }
 
+    public override void _ExitTree() {
+        _enterWorldButton.ButtonDown -= OnEnterWorldButtonDown;
+        _deleteWorldButton.ButtonDown -= OnDeleteWorldButtonDown;
+    }
+
     private void OnEnterWorldButtonDown() {
         SelectWorldButtonDown?.Invoke(_worldBasicInfo);
     }

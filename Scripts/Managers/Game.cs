@@ -31,6 +31,11 @@ public partial class Game : Node {
         Manager.Instance.LaunchedGameAsHost += OnManagerLaunchedGameAsHost;
         Manager.Instance.JoinedGame += OnManagerJoinedGame;
     }
+    
+    public override void _ExitTree() {
+        Manager.Instance.LaunchedGameAsHost -= OnManagerLaunchedGameAsHost;
+        Manager.Instance.JoinedGame -= OnManagerJoinedGame;
+    }
 
     private void OnManagerLaunchedGameAsHost(Dictionary world) {
         Width = (int)world["Width"];
@@ -48,10 +53,5 @@ public partial class Game : Node {
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void ServerHandleNewClient(Dictionary playerDictionary, int peerId) {
         PlayerConnected?.Invoke(playerDictionary, peerId);
-    }
-
-    public override void _ExitTree() {
-        Manager.Instance.LaunchedGameAsHost -= OnManagerLaunchedGameAsHost;
-        Manager.Instance.JoinedGame -= OnManagerJoinedGame;
     }
 }

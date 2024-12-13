@@ -29,6 +29,11 @@ public partial class WorldMenu : Control {
         });
     }
 
+    public override void _ExitTree() {
+        _createWorldButton.ButtonDown -= OnCreateWorldButtonDown;
+        _backButton.ButtonDown -= OnBackButtonDown;
+    }
+
     private void OnSelectWorldButtonDown(WorldBasicInfo worldBasicInfo) {
         Hide();
         SelectWorldButtonDown?.Invoke(worldBasicInfo);

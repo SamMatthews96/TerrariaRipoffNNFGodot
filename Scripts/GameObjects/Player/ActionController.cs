@@ -18,22 +18,29 @@ public partial class ActionController : Node {
         if (_player.IsLocalPlayer) {
             Manager.Instance.Game.InputManager.LeftMouseUp += OnInputManagerLeftMouseUp;
             Manager.Instance.Game.InputManager.LeftMouseDown += OnInputManagerLeftMouseDown;
-
             Manager.Instance.Game.Interface.ActionBar.ButtonClicked += EquipAction;
-
-            Manager.Instance.Game.InputManager.GatherModePressed += () =>
-                EquipAction(PlayerAction.Type.Gather);
-            Manager.Instance.Game.InputManager.BuildModePressed += () =>
-                EquipAction(PlayerAction.Type.Build);
+            Manager.Instance.Game.InputManager.PlayerActionModeChanged += EquipAction;
 
             EquipAction(PlayerAction.Type.Gather);
         }
 
         if (Manager.Instance.Game.IsHost) {
-            _gatherAction.GatherAttempted += (coords, damage) =>
-                GatherAttempted?.Invoke(coords, damage);
-            _buildAction.BlockPlaced += (blockType, coords) =>
-                BlockPlaced?.Invoke(blockType, coords);
+            _gatherAction.GatherAttempted += OnGatherAttempted;
+            _buildAction.BlockPlaced += OnBlockPlaced;
+        }
+    }
+
+    public override void _ExitTree() {
+        if (_player.IsLocalPlayer) {
+            Manager.Instance.Game.InputManager.LeftMouseUp -= OnInputManagerLeftMouseUp;
+            Manager.Instance.Game.InputManager.LeftMouseDown -= OnInputManagerLeftMouseDown;
+            Manager.Instance.Game.Interface.ActionBar.ButtonClicked -= EquipAction;
+            Manager.Instance.Game.InputManager.PlayerActionModeChanged -= EquipAction;
+        }
+
+        if (Manager.Instance.Game.IsHost) {
+            _gatherAction.GatherAttempted -= OnGatherAttempted;
+            _buildAction.BlockPlaced -= OnBlockPlaced;
         }
     }
 
@@ -54,5 +61,13 @@ public partial class ActionController : Node {
         };
 
         ActionChanged?.Invoke(state);
+    }
+
+    private void OnGatherAttempted(IntVector coords, float damage) {
+        GatherAttempted?.Invoke(coords, damage);
+    }
+
+    private void OnBlockPlaced(Item blockType, IntVector coords) {
+        BlockPlaced?.Invoke(blockType, coords);
     }
 }
