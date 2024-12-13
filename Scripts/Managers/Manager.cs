@@ -9,7 +9,6 @@ public partial class Manager : Node {
 
     [Export] private int _port = 8910;
     [Export] private string _address = "127.0.0.1";
-    [Export] private PackedScene _gameManagerPackedScene;
     private MainMenu _mainMenu;
 
     [Export] public PackedScenes PackedScenes { get; private set; }
@@ -76,10 +75,14 @@ public partial class Manager : Node {
     }
 
     private void CreateNewGame() {
+        // spawn load screen
+        // Node loadScreen = PackedScenes.PackedLoadScreen.Instantiate();
+        // AddChild(loadScreen);
         _mainMenu.QueueFree();
-        Game = _gameManagerPackedScene.Instantiate<Game>();
+        Game = PackedScenes.PackedGame.Instantiate<Game>();
         Game.Interface.GameMenu.ExitGameButtonDown += ExitGame;
         AddChild(Game);
+        // delete load screen
     }
 
     private void ExitGame() {

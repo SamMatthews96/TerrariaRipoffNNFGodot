@@ -162,6 +162,7 @@ _playerNameTextEdit = NodePath("PlayerNameTextEdit")
 _packedPlayerSelectButton = ExtResource("8_vv6pa")
 
 [node name="BackButton" type="Button" parent="PlayerSelectMenu"]
+layout_mode = 0
 offset_left = 999.0
 offset_top = 960.0
 offset_right = 1143.0
