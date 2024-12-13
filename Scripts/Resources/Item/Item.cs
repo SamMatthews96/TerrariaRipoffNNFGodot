@@ -7,7 +7,7 @@ using Array = Godot.Collections.Array;
 namespace TerrariaRipoffNNF;
 
 [GlobalClass]
-public partial class Item : Resource {
+public sealed partial class Item : Resource {
     [Export] public float InventorySpace { get; private set; }
     [Export] public bool IsStackable { get; private set; } = true;
     [Export] public Texture2D IconTexture { get; private set; }

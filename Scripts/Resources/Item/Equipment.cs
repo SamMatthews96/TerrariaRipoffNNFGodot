@@ -4,7 +4,7 @@ using Godot.Collections;
 
 namespace TerrariaRipoffNNF;
 
-public partial class Equipment : ItemProperty {
+public sealed partial class Equipment : ItemProperty {
     private EquipmentSlot _equipmentSlot;
     
     public T GetProperty<T>() where T : EquipmentSlot {

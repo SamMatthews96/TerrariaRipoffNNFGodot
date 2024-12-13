@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="Recipe" load_steps=5 format=3 uid="uid://bywgdvcrcpn74"]
+
+[ext_resource type="Script" path="res://Scripts/Resources/RecipeIngredient.cs" id="1_8gh4b"]
+[ext_resource type="Script" path="res://Scripts/Resources/Recipe.cs" id="1_k31e6"]
+
+[sub_resource type="Resource" id="Resource_ba3kf"]
+script = ExtResource("1_8gh4b")
+IngredientType = 0
+Amount = 10
+
+[sub_resource type="Resource" id="Resource_56e3f"]
+script = ExtResource("1_8gh4b")
+IngredientType = 1
+Amount = 8
+
+[resource]
+script = ExtResource("1_k31e6")
+Ingredients = [SubResource("Resource_ba3kf"), SubResource("Resource_56e3f")]

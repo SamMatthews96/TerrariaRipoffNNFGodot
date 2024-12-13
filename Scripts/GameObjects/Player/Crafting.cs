@@ -2,7 +2,7 @@
 
 namespace TerrariaRipoffNNF;
 
-public partial class Crafting : Node {
+public sealed partial class Crafting : Node {
     /*
      * list of craft stations
      *      start with hand crafting station

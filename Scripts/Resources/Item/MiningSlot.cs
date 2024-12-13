@@ -1,6 +1,6 @@
 ﻿namespace TerrariaRipoffNNF;
 
-public partial class MiningSlot : EquipmentSlot {
+public sealed partial class MiningSlot : EquipmentSlot {
     public float MiningSpeed { get; private set; }
     public float Range { get; private set; }
     public float MiningPower { get; private set; }
