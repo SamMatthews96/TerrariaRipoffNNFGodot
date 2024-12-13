@@ -4,7 +4,7 @@ using Godot.Collections;
 namespace TerrariaRipoffNNF;
 
 [GlobalClass]
-public partial class Block : ItemProperty {
+public partial class ItemBlock : ItemProperty {
     [Export] public float Weight { get; private set; }
     [Export] public float TensileStrength { get; private set; }
     [Export] public float MaxHealth { get; private set; }

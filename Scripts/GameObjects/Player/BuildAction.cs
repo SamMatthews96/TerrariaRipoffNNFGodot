@@ -51,7 +51,7 @@ public partial class BuildAction : PlayerAction {
 
     private void OnInventoryChanged(Inventory inventory) {
         if (inventory.StackedItemsList.Exists(stack =>
-                stack.Item.HasProperty<Block>())) return;
+                stack.Item.HasProperty<ItemBlock>())) return;
         _blockItem = null;
     }
 }

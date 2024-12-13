@@ -5,7 +5,7 @@ using Godot.Collections;
 namespace TerrariaRipoffNNF;
 
 [GlobalClass]
-public partial class Ingredient : ItemProperty {
+public partial class ItemIngredient : ItemProperty {
     public override Dictionary ToDictionary() {
         throw new System.NotImplementedException();
     }

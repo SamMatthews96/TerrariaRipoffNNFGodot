@@ -13,11 +13,11 @@ public partial class GatherAction : PlayerAction {
         IntVector coords = new(mouseWorldPosition / Game.BlockSize);
         if (!coords.IsInBounds()) return;
 
-        MiningSlot miningSlot = Player.CurrentEquipment.Pickaxe.GetProperty<MiningSlot>();
+        EquipmentMining equipmentMining = Player.CurrentEquipment.Pickaxe.GetProperty<EquipmentMining>();
        
-        if (miningSlot.Range >= IntVector.Distance(coords, Player.Coords)) {
+        if (equipmentMining.Range >= IntVector.Distance(coords, Player.Coords)) {
             RpcId(Manager.HostId, nameof(HostGatherAttempted),
-                coords.ToSerialised(), miningSlot.MiningPower);
+                coords.ToSerialised(), equipmentMining.MiningPower);
         }
     }
 

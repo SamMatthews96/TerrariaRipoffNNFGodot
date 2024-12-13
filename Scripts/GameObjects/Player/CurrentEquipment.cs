@@ -5,17 +5,17 @@ namespace TerrariaRipoffNNF;
 public partial class CurrentEquipment : Node {
     [Export] private Player _player;
 
-    public Equipment Pickaxe { get; private set; }
+    public ItemEquipment Pickaxe { get; private set; }
 
 
     public override void _Ready() {
         // @todo temporary
-        Equipment pickaxe = Equipment.New(
-            MiningSlot.New(1, 8, 10)
+        ItemEquipment pickaxe = ItemEquipment.New(
+            EquipmentMining.New(1, 8, 10)
                 .Build()
         ).Build();
 
-        if (pickaxe.HasProperty<MiningSlot>()) {
+        if (pickaxe.HasProperty<EquipmentMining>()) {
             Pickaxe = pickaxe;
         }
     }

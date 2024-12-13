@@ -8,7 +8,7 @@ public partial class BuildUi : Container {
     private readonly List<BlockTypeButton> _blockTypeButtons = new();
     [Export] private PackedScene _packedButton;
     [Export] private BoxContainer _buttonContainer;
-    private Block _selectedBlock;
+    private ItemBlock _selectedItemBlock;
 
     public event Action<Item> BlockTypeSelected;
 
@@ -39,14 +39,14 @@ public partial class BuildUi : Container {
 
         bool isSelectedBlockFound = false;
         inventory.StackedItemsList.ForEach(stack => {
-            if (!stack.Item.TryGetProperty(out Block property)) return;
-            if (property == _selectedBlock) {
+            if (!stack.Item.TryGetProperty(out ItemBlock property)) return;
+            if (property == _selectedItemBlock) {
                 isSelectedBlockFound = true;
             }
 
             BlockTypeButton button =
                 BlockTypeButton.New(_buttonContainer, _packedButton, stack.Item)
-                    .WithFocus(property == _selectedBlock)
+                    .WithFocus(property == _selectedItemBlock)
                     .Build();
             button.ButtonDown += () => SelectButton(button);
 
@@ -54,10 +54,10 @@ public partial class BuildUi : Container {
         });
 
         if (!isSelectedBlockFound) {
-            _selectedBlock = null;
+            _selectedItemBlock = null;
         }
 
-        if (_blockTypeButtons.Count > 0 && _selectedBlock == null) {
+        if (_blockTypeButtons.Count > 0 && _selectedItemBlock == null) {
             SelectButton(_blockTypeButtons[0]);
         }
     }
@@ -65,7 +65,7 @@ public partial class BuildUi : Container {
     private void SelectButton(BlockTypeButton button) {
         _blockTypeButtons.ForEach(blockTypeButton => {
             if (blockTypeButton == button) {
-                _selectedBlock = blockTypeButton.BlockItem.GetProperty<Block>();
+                _selectedItemBlock = blockTypeButton.BlockItem.GetProperty<ItemBlock>();
                 blockTypeButton.SetFocus();
             } else {
                 blockTypeButton.SetDefocus();

@@ -2,7 +2,7 @@
 
 namespace TerrariaRipoffNNF;
 
-public abstract partial class EquipmentSlot : Resource {
+public abstract partial class EquipmentProperty : Resource {
     public enum SlotType {
         Mining,
         Building,

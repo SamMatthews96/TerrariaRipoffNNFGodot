@@ -13,4 +13,16 @@ public sealed partial class Crafting : Node {
      *
      * Need to add ingredient property to items
      */
+    
+    // _selectedRecipe
+    // onClickedRecipe
+    // _selectedIngredients
+    
+    private void OnCraftButtonPressed() {
+        // check if player has enough ingredients
+        // remove ingredients from player
+        
+        
+        
+    }
 }

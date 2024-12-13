@@ -24,7 +24,7 @@ public partial class SavedBlock {
 
         public SavedBlock Build() {
             if (_savedBlock.CurrentHealth == 0) {
-                _savedBlock.CurrentHealth = _savedBlock.Item.GetProperty<Block>().MaxHealth;
+                _savedBlock.CurrentHealth = _savedBlock.Item.GetProperty<ItemBlock>().MaxHealth;
             }
 
             return _savedBlock;

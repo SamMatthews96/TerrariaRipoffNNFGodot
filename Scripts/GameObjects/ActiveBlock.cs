@@ -14,6 +14,6 @@ public partial class ActiveBlock : StaticBody2D {
         Position = new Vector2(
             SavedBlock.XPosition * Game.BlockSize,
             SavedBlock.YPosition * Game.BlockSize);
-        _sprite.Texture = SavedBlock.Item.GetProperty<Block>().Texture;
+        _sprite.Texture = SavedBlock.Item.GetProperty<ItemBlock>().Texture;
     }
 }

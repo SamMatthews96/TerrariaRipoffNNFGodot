@@ -1,6 +1,6 @@
 ﻿namespace TerrariaRipoffNNF;
 
-public sealed partial class MiningSlot : EquipmentSlot {
+public sealed partial class EquipmentMining : EquipmentProperty {
     public float MiningSpeed { get; private set; }
     public float Range { get; private set; }
     public float MiningPower { get; private set; }
@@ -10,17 +10,17 @@ public sealed partial class MiningSlot : EquipmentSlot {
     }
 
     public class Builder {
-        private readonly MiningSlot _miningSlot = new();
+        private readonly EquipmentMining _equipmentMining = new();
 
         public Builder(float miningSpeed, float range, float miningPower) {
-            _miningSlot.Slot = SlotType.Mining;
-            _miningSlot.MiningSpeed = miningSpeed;
-            _miningSlot.Range = range;
-            _miningSlot.MiningPower = miningPower;
+            _equipmentMining.Slot = SlotType.Mining;
+            _equipmentMining.MiningSpeed = miningSpeed;
+            _equipmentMining.Range = range;
+            _equipmentMining.MiningPower = miningPower;
         }
 
-        public MiningSlot Build() {
-            return _miningSlot;
+        public EquipmentMining Build() {
+            return _equipmentMining;
         }
     }
 }

@@ -13,6 +13,7 @@ public sealed partial class Item : Resource {
     [Export] public Texture2D IconTexture { get; private set; }
     [Export] private Array<ItemProperty> _itemProperties = new();
     
+
     public T GetProperty<T>() where T : ItemProperty {
         if (TryGetProperty(out T property)) {
             return property;
@@ -20,7 +21,7 @@ public sealed partial class Item : Resource {
 
         throw new KeyNotFoundException($"Item does not have property of type {typeof(T)}");
     }
-    
+
     public bool TryGetProperty<T>(out T property) where T : ItemProperty {
         foreach (ItemProperty itemProperty in _itemProperties) {
             if (itemProperty is not T castedProperty) continue;
@@ -31,7 +32,7 @@ public sealed partial class Item : Resource {
         property = null;
         return false;
     }
-    
+
     public bool HasProperty<T>() where T : ItemProperty {
         return TryGetProperty(out T property);
     }
@@ -46,6 +47,7 @@ public sealed partial class Item : Resource {
             foreach (ItemProperty property in _itemProperties) {
                 serializedProperties.Add(property.ToDictionary());
             }
+
             serialized.Add("ItemProperties", serializedProperties);
         } else {
             serialized.Add("ResourcePath", ResourcePath);
@@ -61,11 +63,20 @@ public sealed partial class Item : Resource {
         } else {
             throw new NotImplementedException();
         }
-        
+
         foreach (ItemProperty property in newItem._itemProperties) {
             // property.
         }
-        
+
         return newItem;
+    }
+
+    public static Item FromRecipe(Recipe recipe) {
+        throw new NotImplementedException();
+        
+        // new item, set surface properties from Recipe.Result
+        // for each ItemProperty in Recipe.Result.ItemProperties
+        // create ItemProperty, add to Item._itemProperties
+        
     }
 }
