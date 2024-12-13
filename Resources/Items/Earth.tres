@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="Item" load_steps=7 format=3 uid="uid://cpty2vp0h2w83"]
+
+[ext_resource type="Texture2D" uid="uid://cfc1e8nv4cp1q" path="res://Assets/Images/Earth.png" id="1_88dew"]
+[ext_resource type="Script" path="res://Scripts/Resources/Item/Block.cs" id="2_betc5"]
+[ext_resource type="Script" path="res://Scripts/Resources/Item/Ingredient.cs" id="3_tg1kw"]
+[ext_resource type="Script" path="res://Scripts/Resources/Item/Item.cs" id="4_441l5"]
+
+[sub_resource type="Resource" id="Resource_ygd2q"]
+script = ExtResource("2_betc5")
+Weight = 1.0
+TensileStrength = 20.0
+MaxHealth = 20.0
+Texture = ExtResource("1_88dew")
+
+[sub_resource type="Resource" id="Resource_5iove"]
+script = ExtResource("3_tg1kw")
+_testTupleArray = []
+
+[resource]
+script = ExtResource("4_441l5")
+InventorySpace = 1.0
+IsStackable = true
+IconTexture = ExtResource("1_88dew")
+_itemProperties = [SubResource("Resource_ygd2q"), SubResource("Resource_5iove")]

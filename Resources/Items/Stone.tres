@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="Item" load_steps=5 format=3 uid="uid://daxqeqjpn4ve1"]
+
+[ext_resource type="Script" path="res://Scripts/Resources/Item/Item.cs" id="1_j7gvl"]
+[ext_resource type="Texture2D" uid="uid://des01kpji7vcu" path="res://Assets/Images/Stone.png" id="1_u42d5"]
+[ext_resource type="Script" path="res://Scripts/Resources/Item/Block.cs" id="2_cg7jn"]
+
+[sub_resource type="Resource" id="Resource_uqxro"]
+script = ExtResource("2_cg7jn")
+Weight = 1.0
+TensileStrength = 20.0
+MaxHealth = 30.0
+Texture = ExtResource("1_u42d5")
+
+[resource]
+script = ExtResource("1_j7gvl")
+InventorySpace = 1.0
+IsStackable = true
+IconTexture = ExtResource("1_u42d5")
+_itemProperties = [SubResource("Resource_uqxro")]

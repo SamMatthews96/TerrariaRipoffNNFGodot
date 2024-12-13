@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://bmavfj78dtk17"]
 
 [ext_resource type="Script" path="res://Scripts/Managers/WorldCreator.cs" id="1_b45t8"]
-[ext_resource type="Resource" uid="uid://daxqeqjpn4ve1" path="res://Resources/Items/stoneBlockItem.tres" id="2_rjklk"]
-[ext_resource type="Resource" uid="uid://cpty2vp0h2w83" path="res://Resources/Items/earthBlockItem.tres" id="3_risgj"]
+[ext_resource type="Resource" uid="uid://daxqeqjpn4ve1" path="res://Resources/Items/Stone.tres" id="2_rjklk"]
+[ext_resource type="Resource" uid="uid://cpty2vp0h2w83" path="res://Resources/Items/Earth.tres" id="3_risgj"]
 
 [node name="WorldCreator" type="Node"]
 script = ExtResource("1_b45t8")
