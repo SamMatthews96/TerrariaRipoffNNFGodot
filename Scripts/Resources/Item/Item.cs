@@ -71,12 +71,4 @@ public sealed partial class Item : Resource {
         return newItem;
     }
 
-    public static Item FromRecipe(Recipe recipe) {
-        throw new NotImplementedException();
-        
-        // new item, set surface properties from Recipe.Result
-        // for each ItemProperty in Recipe.Result.ItemProperties
-        // create ItemProperty, add to Item._itemProperties
-        
-    }
 }

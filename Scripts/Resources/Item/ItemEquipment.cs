@@ -40,9 +40,3 @@ public sealed partial class ItemEquipment : ItemProperty {
         }
     }
 }
-
-/*
- *  This class contains all information that all equipment items have in common.
- *  Leave empty for now
- *
- */

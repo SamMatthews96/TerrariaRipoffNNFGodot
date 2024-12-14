@@ -3,16 +3,11 @@
 namespace TerrariaRipoffNNF;
 
 public enum IngredientType {
-    Wood,
-    StrongMetal,
-    PreciousMetal,
-    ConductiveMetal,
-    Stone,
+    StrongMetal, Wood, Stone,
 }
 
 [GlobalClass]
-public sealed partial class IngredientProperty : Resource {
-
+public partial class IngredientProperty : Resource {
     [Export] public IngredientType IngredientType { get; private set; }
     [Export] public float Quality { get; private set; }
 }

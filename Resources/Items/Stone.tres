@@ -1,30 +1,31 @@
 [gd_resource type="Resource" script_class="Item" load_steps=9 format=3 uid="uid://daxqeqjpn4ve1"]
 
 [ext_resource type="Texture2D" uid="uid://des01kpji7vcu" path="res://Assets/Images/Stone.png" id="1_q3xiv"]
-[ext_resource type="Script" path="res://Scripts/Resources/Item/ItemBlock.cs" id="2_qlvrw"]
+[ext_resource type="Script" path="res://Scripts/Resources/Item/ItemBlock.cs" id="2_3ucf0"]
+[ext_resource type="Script" path="res://Scripts/Resources/Item/ItemIngredient.cs" id="3_77gv7"]
 [ext_resource type="Script" path="res://Scripts/Resources/Item/IngredientProperty.cs" id="3_f07kt"]
-[ext_resource type="Script" path="res://Scripts/Resources/Item/ItemIngredient.cs" id="4_cuqab"]
 [ext_resource type="Script" path="res://Scripts/Resources/Item/Item.cs" id="5_dpu6g"]
 
 [sub_resource type="Resource" id="Resource_uqxro"]
-script = ExtResource("2_qlvrw")
+script = ExtResource("2_3ucf0")
 Weight = 1.0
 TensileStrength = 20.0
 MaxHealth = 30.0
 Texture = ExtResource("1_q3xiv")
 
-[sub_resource type="Resource" id="Resource_pd4qo"]
+[sub_resource type="Resource" id="Resource_3d0mk"]
 script = ExtResource("3_f07kt")
-IngredientType = 4
+IngredientType = 2
 Quality = 1.0
 
-[sub_resource type="Resource" id="Resource_cfdsv"]
-script = ExtResource("4_cuqab")
-_ingredientProperties = [SubResource("Resource_pd4qo")]
+[sub_resource type="Resource" id="Resource_ddt58"]
+script = ExtResource("3_77gv7")
+_ingredientProperties = [SubResource("Resource_3d0mk")]
 
 [resource]
+resource_name = "Stone"
 script = ExtResource("5_dpu6g")
 InventorySpace = 1.0
 IsStackable = true
 IconTexture = ExtResource("1_q3xiv")
-_itemProperties = [SubResource("Resource_uqxro"), SubResource("Resource_cfdsv")]
+_itemProperties = [SubResource("Resource_uqxro"), SubResource("Resource_ddt58")]
