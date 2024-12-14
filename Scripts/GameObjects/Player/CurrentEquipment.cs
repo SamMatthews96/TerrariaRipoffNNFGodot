@@ -10,13 +10,13 @@ public partial class CurrentEquipment : Node {
 
     public override void _Ready() {
         // @todo temporary
-        ItemEquipment pickaxe = ItemEquipment.New(
-            EquipmentMining.New(1, 8, 10)
-                .Build()
-        ).Build();
-
-        if (pickaxe.HasProperty<EquipmentMining>()) {
-            Pickaxe = pickaxe;
-        }
+        // ItemEquipment pickaxe = ItemEquipment.New(
+        //     ItemMining.New(1, 8, 10)
+        //         .Build()
+        // ).Build();
+        //
+        // if (pickaxe.HasProperty<ItemMining>()) {
+        //     Pickaxe = pickaxe;
+        // }
     }
 }

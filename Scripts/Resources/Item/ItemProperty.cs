@@ -6,8 +6,10 @@ namespace TerrariaRipoffNNF;
 
 [GlobalClass]
 public abstract partial class ItemProperty : Resource {
+    
+  
+    
     public abstract Dictionary ToDictionary();
-
     public static ItemProperty FromDictionary(Dictionary dictionary) {
         if (dictionary.TryGetValue("ResourcePath", out Variant resourcePath)) {
             return ResourceLoader.Load<ItemProperty>(resourcePath.ToString());

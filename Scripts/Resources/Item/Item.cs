@@ -8,11 +8,10 @@ namespace TerrariaRipoffNNF;
 
 [GlobalClass]
 public sealed partial class Item : Resource {
-    [Export] public float InventorySpace { get; private set; }
+    [Export] public float InventorySpace { get; private set; } = 0;
     [Export] public bool IsStackable { get; private set; } = true;
     [Export] public Texture2D IconTexture { get; private set; }
     [Export] private Array<ItemProperty> _itemProperties = new();
-    
 
     public T GetProperty<T>() where T : ItemProperty {
         if (TryGetProperty(out T property)) {
@@ -71,4 +70,37 @@ public sealed partial class Item : Resource {
         return newItem;
     }
 
+    public static Builder CreateFromRecipe() {
+        return new Builder();
+    }
+
+    public class Builder {
+        private readonly Item _item = new();
+
+        public Item Build() {
+            return _item;
+        }
+        
+        public Builder AddProperty(ItemProperty property) {
+            _item._itemProperties.Add(property);
+            return this;
+        }
+        
+        public Builder SetIconTexture(Texture2D iconTexture) {
+            _item.IconTexture = iconTexture;
+            return this;
+        }
+        
+        public Builder SetInventorySpace(float inventorySpace) {
+            _item.InventorySpace = inventorySpace;
+            return this;
+        }
+        
+        public Builder SetIsStackable(bool isStackable) {
+            _item.IsStackable = isStackable;
+            return this;
+        }
+        
+        // public 
+    }
 }

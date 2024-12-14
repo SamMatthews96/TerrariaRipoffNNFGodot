@@ -8,16 +8,17 @@ public partial class GatherAction : PlayerAction {
     public event Action<IntVector, float> GatherAttempted;
 
     public override void PrimaryAction(Vector2 mouseWorldPosition) {
-        if (Player.CurrentEquipment.Pickaxe is null) return;
+        // if (Player.CurrentEquipment.Pickaxe is null) return;
         
         IntVector coords = new(mouseWorldPosition / Game.BlockSize);
         if (!coords.IsInBounds()) return;
 
-        EquipmentMining equipmentMining = Player.CurrentEquipment.Pickaxe.GetProperty<EquipmentMining>();
-       
-        if (equipmentMining.Range >= IntVector.Distance(coords, Player.Coords)) {
+        // ItemMining itemMining = Player.CurrentEquipment.Pickaxe.GetProperty<ItemMining>();
+        float miningPowerTemp = 10f;
+        float miningRangeTemp = 8f;
+        if (miningRangeTemp >= IntVector.Distance(coords, Player.Coords)) {
             RpcId(Manager.HostId, nameof(HostGatherAttempted),
-                coords.ToSerialised(), equipmentMining.MiningPower);
+                coords.ToSerialised(), miningPowerTemp);
         }
     }
 

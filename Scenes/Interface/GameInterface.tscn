@@ -35,7 +35,7 @@ layout_mode = 2
 [node name="CapacityLabel" type="Label" parent="Inventory/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
-text = "0 / 100"
+text = "Capacity"
 horizontal_alignment = 1
 
 [node name="ItemIconView" type="MarginContainer" parent="Inventory/VBoxContainer"]
