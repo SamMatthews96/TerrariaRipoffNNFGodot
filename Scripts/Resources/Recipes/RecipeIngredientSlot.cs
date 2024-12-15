@@ -2,10 +2,8 @@
 using TerrariaRipoffNNF;
 
 [GlobalClass]
-public partial class RecipeIngredientProperty : Resource {
+public partial class RecipeIngredientSlot : Resource {
     [Export] public IngredientType IngredientType { get; private set; }
     [Export] public int Amount { get; private set; }
-    public Item SelectedItem { get; private set; }
-
-    // 
+    [Export] public bool Required { get; private set; }
 }

@@ -4,22 +4,34 @@ namespace TerrariaRipoffNNF;
 
 [GlobalClass]
 public sealed partial class ItemMining : ItemEquipment {
-    public float MiningSpeed { get; private set; }
+    public float Speed { get; private set; }
     public float Range { get; private set; }
-    public float MiningPower { get; private set; }
+    public float Power { get; private set; }
 
-    public static Builder New(float miningSpeed, float range, float miningPower) {
-        return new Builder(miningSpeed, range, miningPower);
+    public static Builder New() {
+        return new Builder();
     }
 
     public class Builder {
         private readonly ItemMining _itemMining = new();
 
-        public Builder(float miningSpeed, float range, float miningPower) {
+        public Builder() {
             _itemMining.Slot = EquipmentSlot.Mining;
-            _itemMining.MiningSpeed = miningSpeed;
+        }
+        
+        public Builder SetMiningSpeed(float miningSpeed) {
+            _itemMining.Speed = miningSpeed;
+            return this;
+        }
+        
+        public Builder SetRange(float range) {
             _itemMining.Range = range;
-            _itemMining.MiningPower = miningPower;
+            return this;
+        }
+        
+        public Builder SetMiningPower(float miningPower) {
+            _itemMining.Power = miningPower;
+            return this;
         }
 
         public ItemMining Build() {

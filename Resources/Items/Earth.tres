@@ -14,6 +14,7 @@ Texture = ExtResource("1_88dew")
 [resource]
 resource_name = "Earth"
 script = ExtResource("4_441l5")
+Name = "Earth"
 InventorySpace = 1.0
 IsStackable = true
 IconTexture = ExtResource("1_88dew")

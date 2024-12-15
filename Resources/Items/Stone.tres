@@ -25,6 +25,7 @@ _ingredientProperties = [SubResource("Resource_3d0mk")]
 [resource]
 resource_name = "Stone"
 script = ExtResource("5_dpu6g")
+Name = "Stone"
 InventorySpace = 1.0
 IsStackable = true
 IconTexture = ExtResource("1_q3xiv")

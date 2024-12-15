@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="RecipeMining" load_steps=2 format=3 uid="uid://cw1ec51isq4ga"]
+
+[ext_resource type="Script" path="res://Scripts/Resources/Recipes/RecipeMining.cs" id="1_hm5ny"]
+
+[resource]
+script = ExtResource("1_hm5ny")
+_speedCoefficient = 0.5
+_powerCoefficient = 10.0
+Ingredients = null

@@ -8,6 +8,7 @@ namespace TerrariaRipoffNNF;
 
 [GlobalClass]
 public sealed partial class Item : Resource {
+    [Export] public string Name { get; private set; }
     [Export] public float InventorySpace { get; private set; } = 0;
     [Export] public bool IsStackable { get; private set; } = true;
     [Export] public Texture2D IconTexture { get; private set; }
@@ -18,7 +19,7 @@ public sealed partial class Item : Resource {
             return property;
         }
 
-        throw new KeyNotFoundException($"Item does not have property of type {typeof(T)}");
+        throw new NullReferenceException($"Item does not have property of type {typeof(T)}");
     }
 
     public bool TryGetProperty<T>(out T property) where T : ItemProperty {
@@ -56,21 +57,13 @@ public sealed partial class Item : Resource {
     }
 
     public static Item FromDictionary(Dictionary dictionary) {
-        Item newItem;
         if (dictionary.TryGetValue("ResourcePath", out Variant resourcePath)) {
-            newItem = ResourceLoader.Load<Item>(resourcePath.ToString());
-        } else {
-            throw new NotImplementedException();
+            return ResourceLoader.Load<Item>(resourcePath.ToString());
         }
-
-        foreach (ItemProperty property in newItem._itemProperties) {
-            // property.
-        }
-
-        return newItem;
+        throw new NotImplementedException();
     }
 
-    public static Builder CreateFromRecipe() {
+    public static Builder New() {
         return new Builder();
     }
 
@@ -80,27 +73,32 @@ public sealed partial class Item : Resource {
         public Item Build() {
             return _item;
         }
-        
+
+        public Builder SetName(string name) {
+            _item.Name = name;
+            return this;
+        }
+
         public Builder AddProperty(ItemProperty property) {
             _item._itemProperties.Add(property);
             return this;
         }
-        
+
         public Builder SetIconTexture(Texture2D iconTexture) {
             _item.IconTexture = iconTexture;
             return this;
         }
-        
+
         public Builder SetInventorySpace(float inventorySpace) {
             _item.InventorySpace = inventorySpace;
             return this;
         }
-        
+
         public Builder SetIsStackable(bool isStackable) {
             _item.IsStackable = isStackable;
             return this;
         }
-        
+
         // public 
     }
 }
