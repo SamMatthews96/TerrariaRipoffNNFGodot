@@ -2,7 +2,7 @@
 using Godot;
 using Godot.Collections;
 
-namespace TerrariaRipoffNNF.Recipes;
+namespace TerrariaRipoffNNF;
 
 /* How will it work in the game
   Player opens crafting menu
