@@ -9,12 +9,14 @@
 script = ExtResource("2_ptkpt")
 IngredientType = 0
 Quality = 1.0
+Name = "Ferrium"
 
 [sub_resource type="Resource" id="Resource_ofl4t"]
 script = ExtResource("3_2w6dv")
 _ingredientProperties = [SubResource("Resource_akbf4")]
 
 [resource]
+resource_local_to_scene = true
 script = ExtResource("1_bsu41")
 Name = "Ferrium Ingot"
 InventorySpace = 0.0

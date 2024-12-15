@@ -1,10 +1,24 @@
-[gd_resource type="Resource" script_class="Item" load_steps=2 format=3 uid="uid://c7hb2igx46aai"]
+[gd_resource type="Resource" script_class="Item" load_steps=7 format=3 uid="uid://c7hb2igx46aai"]
 
+[ext_resource type="Texture2D" uid="uid://chqwtybfj62dl" path="res://Assets/Images/wood.png" id="1_3yew3"]
 [ext_resource type="Script" path="res://Scripts/Resources/Item/Item.cs" id="1_a12qb"]
+[ext_resource type="Script" path="res://Scripts/Resources/Item/IngredientProperty.cs" id="2_1ihsh"]
+[ext_resource type="Script" path="res://Scripts/Resources/Item/ItemIngredient.cs" id="3_w8ucw"]
+
+[sub_resource type="Resource" id="Resource_5ghiw"]
+script = ExtResource("2_1ihsh")
+IngredientType = 1
+Quality = 1.0
+Name = "Beach"
+
+[sub_resource type="Resource" id="Resource_nsa8f"]
+script = ExtResource("3_w8ucw")
+_ingredientProperties = [SubResource("Resource_5ghiw")]
 
 [resource]
 script = ExtResource("1_a12qb")
-Name = ""
-InventorySpace = 0.0
+Name = "Beach Wood"
+InventorySpace = 1.0
 IsStackable = true
-_itemProperties = []
+IconTexture = ExtResource("1_3yew3")
+_itemProperties = [SubResource("Resource_nsa8f")]

@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using Godot;
 using Godot.Collections;
 
@@ -35,6 +34,8 @@ public partial class RecipeMining : Recipe {
             default:
                 throw new InvalidEnumArgumentException("[20241215.1545.1] Unknown metal type: " + metal.Name);
         }
+
+        SuppliedIngredients = null;
 
         return Item.New()
             .SetName(newItemName)
