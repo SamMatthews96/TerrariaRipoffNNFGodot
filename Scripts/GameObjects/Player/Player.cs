@@ -8,7 +8,8 @@ public partial class Player : CharacterBody2D {
     [Export] public Inventory Inventory { get; private set; }
     [Export] public ActionController ActionController { get; private set; }
     [Export] public PickupArea PickupArea { get; private set; }
-    [Export] public CurrentEquipment CurrentEquipment { get; private set; }
+    [Export] public PlayerEquipment PlayerEquipment { get; private set; }
+    [Export] public Crafting Crafting { get; private set; }
 
     [Export] private MultiplayerSynchronizer _positionSynchronizer;
     [Export] private Camera2D _camera;

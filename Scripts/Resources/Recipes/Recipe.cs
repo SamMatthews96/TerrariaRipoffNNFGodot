@@ -1,7 +1,7 @@
 ﻿using Godot;
 using Godot.Collections;
 
-namespace TerrariaRipoffNNF.Recipes;
+namespace TerrariaRipoffNNF;
 
 [GlobalClass]
 public abstract partial class Recipe : Resource {

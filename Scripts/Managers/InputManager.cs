@@ -108,6 +108,10 @@ public partial class InputManager : Node {
             EscapePressed?.Invoke();
         }
         
+        if (Input.IsActionJustPressed(CraftMenu)) {
+            CraftMenuPressed?.Invoke();
+        }
+        
         
         
     }

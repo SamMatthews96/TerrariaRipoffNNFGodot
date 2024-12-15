@@ -24,6 +24,7 @@ public partial class ActionBar : PanelContainer {
     }
     
     private void OnPlayerActionChanged(PlayerAction.Type state) {
+        
         foreach (ActionBarButton button in _buttons) {
             if (button.State == state) {
                 button.SetFocus();

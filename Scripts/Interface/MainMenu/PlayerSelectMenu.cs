@@ -29,7 +29,7 @@ public partial class PlayerSelectMenu : Control {
     public override void _ExitTree() {
         _createPlayerButton.ButtonDown -= OnCreatePlayerButtonDown;
         _backButton.ButtonDown -= OnBackButtonDown;
-        //@todo remove all event listeners in a loop
+        //@todo Unsubscribe from events 
     }
 
     private void OnSelectPlayerButtonDown(Dictionary playerDictionary) {

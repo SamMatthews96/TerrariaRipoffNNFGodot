@@ -30,7 +30,6 @@ public partial class BuildAction : PlayerAction {
         IntVector coords = new(mouseWorldPosition / Game.BlockSize);
         if (!coords.IsInBounds()) return;
 
-        float buildSpeed = 1;
         float range = 8;
         if (_blockItem is not null && range >= IntVector.Distance(coords, Player.Coords)) {
             RpcId(Manager.HostId, nameof(BuildActionAttempt),
