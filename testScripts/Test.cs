@@ -10,10 +10,19 @@ public partial class Test : Node {
         Test3
     }
     public override void _Ready() {
-        TestEnum test;
-        test = TestEnum.Test1;
-        GD.Print(test);
-        GD.Print(test.ToString());
-        GD.Print((int)test);
+        Item res = Item.New()
+            .SetName("test")
+            .SetInventorySpace(4)
+            .AddProperty(
+                ItemMining.New()
+                    .SetRange(4)
+                    .Build()
+                )
+            .Build();
+        
+        ResourceSaver.Save(res, "res://test.tres");
+        
+        Item item = (Item)ResourceLoader.Load("res://test.tres");
+        GD.Print(item.GetProperty<ItemMining>().Range);
     } 
 }

@@ -22,11 +22,9 @@ public sealed partial class Crafting : Node {
     public event Action<CraftingStation> CraftingStationAdded;
     
     public override void _Ready() {
-        _player.MovedCell += OnPlayerMovedCell;
-        // when a crafting station button is clicked, set _selectedCraftingStation
-        
         CraftingStation handcraftingStation = new() {
             Type = CraftingStationType.Handcrafting
+            //@todo add icon
         };
         AddCraftingStation(handcraftingStation);
     }
@@ -34,10 +32,6 @@ public sealed partial class Crafting : Node {
     public override void _ExitTree() {
     }
 
-    private void OnPlayerMovedCell(Dictionary _) {
-        // @todo get local crafting stations
-        // emit an event when craftingStations change
-    }
     
     private void AddCraftingStation(CraftingStation craftingStation) {
         _availableCraftingStations[craftingStation.Type] = craftingStation;
@@ -46,6 +40,7 @@ public sealed partial class Crafting : Node {
     
 }
 
+//@todo move this to a separate file
 public partial class CraftingStation : Resource {
     [Export] public CraftingStationType Type;
     [Export] public Texture2D Icon;

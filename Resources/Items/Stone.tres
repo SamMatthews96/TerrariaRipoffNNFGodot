@@ -17,6 +17,7 @@ Texture = ExtResource("1_q3xiv")
 script = ExtResource("3_f07kt")
 IngredientType = 2
 Quality = 1.0
+Name = ""
 
 [sub_resource type="Resource" id="Resource_ddt58"]
 script = ExtResource("3_77gv7")

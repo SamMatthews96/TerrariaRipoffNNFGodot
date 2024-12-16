@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="Item" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Resources/Item/ItemMining.cs" id="1_hjeki"]
+[ext_resource type="Script" path="res://Scripts/Resources/Item/Item.cs" id="2_t6ny6"]
+
+[sub_resource type="Resource" id="Resource_3c2sj"]
+script = ExtResource("1_hjeki")
+Speed = 0.0
+Range = 4.0
+Power = 0.0
+
+[resource]
+script = ExtResource("2_t6ny6")
+Name = "test"
+InventorySpace = 4.0
+IsStackable = true
+_itemProperties = [SubResource("Resource_3c2sj")]
