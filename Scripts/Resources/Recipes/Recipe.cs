@@ -6,6 +6,7 @@ namespace TerrariaRipoffNNF;
 [GlobalClass]
 public abstract partial class Recipe : Resource {
     [Export] public Dictionary<string, RecipeIngredientSlot> Ingredients;
+    [Export] public Texture2D Icon;
     protected Dictionary<string, Item> SuppliedIngredients;
 
     protected IngredientProperty GetIngredientType(string key) {

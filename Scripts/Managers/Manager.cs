@@ -12,6 +12,8 @@ public partial class Manager : Node {
     private MainMenu _mainMenu;
 
     [Export] public PackedScenes PackedScenes { get; private set; }
+    [Export] public AllRecipes AllRecipes { get; private set; }
+    
     private ENetMultiplayerPeer _peer;
     private Game _game;
 

@@ -11,4 +11,5 @@ public partial class PackedScenes : Resource {
     [Export] public PackedScene LoadScreen { get; private set; }
     [Export] public PackedScene Game { get; private set; }
     [Export] public PackedScene SelectCraftingStationButton { get; private set; }
+    [Export] public PackedScene SelectRecipeButton { get; private set; }
 }

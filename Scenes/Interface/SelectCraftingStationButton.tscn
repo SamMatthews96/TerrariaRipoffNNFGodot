@@ -1,8 +1,0 @@
-[gd_scene load_steps=3 format=3 uid="uid://0tlymjajesh"]
-
-[ext_resource type="Texture2D" uid="uid://c1dlk5ira363n" path="res://Assets/Images/hand.png" id="1_1npws"]
-[ext_resource type="Script" path="res://Scripts/Interface/Game/Crafting/SelectCraftingStationButton.cs" id="2_5xhkp"]
-
-[node name="TextureButton" type="TextureButton"]
-texture_normal = ExtResource("1_1npws")
-script = ExtResource("2_5xhkp")

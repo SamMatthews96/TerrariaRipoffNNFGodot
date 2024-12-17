@@ -6,8 +6,8 @@ public partial class CraftingInterface : Control {
     [Export] private Button _selectCraftingStationMenuButton;
 
     [Export]
-    public AvailableCraftingStationContainer
-        AvailableCraftingStationContainer { get; private set; }
+    public CraftStationContainer
+        CraftStationContainer { get; private set; }
 
     [Export] private Control _selectedCraftingStationRecipeContainer;
     [Export] private Control _selectedRecipeContainer;
