@@ -9,6 +9,8 @@ public partial class SelectedRecipeContainer : Container {
     [Export] private Container _ingredientContainer;
     [Export] private Button _craftButton;
     [Export] private TextureRect _resultItemIcon;
+    [Export] private Control _ingredientPopupPanel;
+    
 
 
     public override void _Ready() {
@@ -33,10 +35,16 @@ public partial class SelectedRecipeContainer : Container {
                  in recipe.Ingredients) {
             RecipeIngredientSlotTexture newIngredientSlotTexture
                 = RecipeIngredientSlotTexture.Create(ingredientSlot);
+            newIngredientSlotTexture.MouseEnteredIcon += OnIngredientIconMouseEntered;
             _ingredientContainer.AddChild(newIngredientSlotTexture);
         }
         
         _resultItemIcon.Texture = recipe.ResultIcon;
         Show();
+    }
+
+    private void OnIngredientIconMouseEntered(Vector2 iconPosition, RecipeIngredientSlot ingredientSlot) {
+        _ingredientPopupPanel.GlobalPosition = iconPosition;
+        _ingredientPopupPanel.Show();
     }
 }

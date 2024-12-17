@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://javhx4rej0q4"]
+[gd_scene load_steps=22 format=3 uid="uid://javhx4rej0q4"]
 
 [ext_resource type="Script" path="res://Scripts/Interface/Game/Interface.cs" id="1_2s5nd"]
 [ext_resource type="Script" path="res://Scripts/Interface/Game/InventoryUi.cs" id="2_huspd"]
@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://dsp7h2dpxh0i6" path="res://Scenes/Interface/SelectBuildBlockButton.tscn" id="10_i1foi"]
 [ext_resource type="Script" path="res://Scripts/Interface/Game/GameMenu.cs" id="11_22hm5"]
 [ext_resource type="Script" path="res://Scripts/Interface/Game/Crafting/CraftingInterface.cs" id="12_3ates"]
+[ext_resource type="PackedScene" uid="uid://d31jlx7lau6lq" path="res://Scenes/Interface/RecipePopup.tscn" id="13_25k54"]
 [ext_resource type="Script" path="res://Scripts/Interface/Game/Crafting/CraftStationContainer.cs" id="13_emxai"]
 [ext_resource type="PackedScene" uid="uid://0tlymjajesh" path="res://Scenes/Interface/SelectCraftStationButton.tscn" id="14_mnetd"]
 [ext_resource type="Script" path="res://Scripts/Interface/Game/Crafting/SelectRecipeContainer.cs" id="15_ffrfe"]
@@ -184,6 +185,10 @@ CraftStationContainer = NodePath("HBoxContainer/SelectCraftStationContainer")
 SelectRecipeContainer = NodePath("HBoxContainer/SelectRecipeContainer")
 SelectedRecipeContainer = NodePath("HBoxContainer/SelectedRecipeContainer")
 
+[node name="RecipePopup" parent="Crafting" instance=ExtResource("13_25k54")]
+visible = false
+layout_mode = 1
+
 [node name="HBoxContainer" type="HBoxContainer" parent="Crafting"]
 layout_mode = 1
 anchors_preset = 4
@@ -272,7 +277,7 @@ columns = 4
 layout_mode = 2
 texture_normal = ExtResource("17_h2g2b")
 
-[node name="SelectedRecipeContainer" type="VBoxContainer" parent="Crafting/HBoxContainer" node_paths=PackedStringArray("_recipeNameButton", "_craftingInterface", "_ingredientContainer", "_craftButton", "_resultItemIcon")]
+[node name="SelectedRecipeContainer" type="VBoxContainer" parent="Crafting/HBoxContainer" node_paths=PackedStringArray("_recipeNameButton", "_craftingInterface", "_ingredientContainer", "_craftButton", "_resultItemIcon", "_ingredientPopupPanel")]
 layout_mode = 2
 script = ExtResource("16_m7klf")
 _recipeNameButton = NodePath("MarginContainer/SelectCraftingStationMenuButton")
@@ -280,6 +285,7 @@ _craftingInterface = NodePath("../..")
 _ingredientContainer = NodePath("PanelContainer/MarginContainer/HBoxContainer/Ingredients")
 _craftButton = NodePath("PanelContainer/MarginContainer/HBoxContainer/MarginContainer/Button")
 _resultItemIcon = NodePath("PanelContainer/MarginContainer/HBoxContainer/CenterContainer/TextureRect")
+_ingredientPopupPanel = NodePath("../../RecipePopup")
 
 [node name="MarginContainer" type="MarginContainer" parent="Crafting/HBoxContainer/SelectedRecipeContainer"]
 layout_mode = 2
