@@ -1,20 +1,24 @@
-[gd_resource type="Resource" script_class="RecipeMining" load_steps=7 format=3 uid="uid://cw1ec51isq4ga"]
+[gd_resource type="Resource" script_class="RecipeMining" load_steps=9 format=3 uid="uid://cw1ec51isq4ga"]
 
-[ext_resource type="Texture2D" uid="uid://d2ux360fa5nu1" path="res://Assets/Images/gatherButton.png" id="1_cur6o"]
 [ext_resource type="Script" path="res://Scripts/Resources/Recipes/RecipeIngredientSlot.cs" id="1_h31i5"]
 [ext_resource type="Script" path="res://Scripts/Resources/Recipes/RecipeMining.cs" id="1_hm5ny"]
+[ext_resource type="Texture2D" uid="uid://dfscdvvt4bdr6" path="res://Assets/Images/pickaxePlaceholder.png" id="1_wxnwn"]
+[ext_resource type="Texture2D" uid="uid://wrf00jfy174v" path="res://Assets/Images/woodPlaceholder.png" id="2_lo40t"]
 [ext_resource type="Texture2D" uid="uid://p4wc02lwmqop" path="res://Assets/Images/ferriumPickaxe.png" id="2_uce7j"]
+[ext_resource type="Texture2D" uid="uid://cargd8drjeywp" path="res://Assets/Images/ingotPlaceholder.png" id="4_ufoyd"]
 
 [sub_resource type="Resource" id="Resource_tdyru"]
 script = ExtResource("1_h31i5")
 IngredientType = 1
 Amount = 10
+Icon = ExtResource("2_lo40t")
 Required = true
 
 [sub_resource type="Resource" id="Resource_7rgco"]
 script = ExtResource("1_h31i5")
 IngredientType = 0
 Amount = 8
+Icon = ExtResource("4_ufoyd")
 Required = true
 
 [resource]
@@ -26,4 +30,5 @@ Ingredients = {
 "pickaxeHandle": SubResource("Resource_tdyru"),
 "pickaxeHead": SubResource("Resource_7rgco")
 }
-Icon = ExtResource("1_cur6o")
+ResultIcon = ExtResource("1_wxnwn")
+Name = "Pickaxe"

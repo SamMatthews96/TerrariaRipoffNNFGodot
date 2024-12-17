@@ -1,34 +1,45 @@
-﻿using Godot;
-using Godot.Collections;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using Godot;
 
 namespace TerrariaRipoffNNF;
 
 public partial class SelectRecipeContainer : Control {
     [Export] public CraftingInterface CraftingInterface { get; private set; }
     [Export] private Container _recipeContainer;
-    private Array _recipes = new();
+    private readonly List<SelectRecipeButton> _recipeSelectButtons = new();
+    
+    public event Action<Recipe> RecipeButtonClicked;
 
     public override void _Ready() {
+        foreach (Node node in _recipeContainer.GetChildren()) {
+            node.QueueFree();
+        }
+        Hide();
         CraftingInterface.CraftStationContainer.CraftingStationButtonClicked +=
             OnCraftingStationButtonClicked;
     }
 
     private void OnCraftingStationButtonClicked(CraftingStation craftingStation) {
-        // Change the display of Handcrafted Recipes
-        // remove all current recipes
-        // add recipes from allRecipes[craftingStation.Type)
+        _recipeSelectButtons.ForEach(button => {
+            button.RecipeButtonClicked -= OnRecipeButtonClicked;
+            button.QueueFree();
+        });
+        _recipeSelectButtons.Clear();
+        
         foreach (Recipe recipe in Manager.Instance.AllRecipes
-                     .Recipes[craftingStation.Type].Recipes) {
-            // Create Button add handlers
-
+                     .GetRecipes(craftingStation.Type)) {
             SelectRecipeButton newButton = SelectRecipeButton.Create(recipe);
-            
+            _recipeSelectButtons.Add(newButton);
+            newButton.RecipeButtonClicked += OnRecipeButtonClicked;
             _recipeContainer.AddChild(newButton);
         }
-        // .ForEach(recipe => {
-        // RecipeButton newButton = RecipeButton.Create(recipe);
-        // newButton.RecipeButtonClicked += OnRecipeButtonClicked;
-        // _recipeContainer.AddChild(newButton);
-        // });
+        
+        Show();
+    }
+
+    private void OnRecipeButtonClicked(Recipe recipe) {
+        RecipeButtonClicked?.Invoke(recipe);
     }
 }

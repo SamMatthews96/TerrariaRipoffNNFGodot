@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3 uid="uid://bawlysyg56da3"]
+
+[ext_resource type="Texture2D" uid="uid://cargd8drjeywp" path="res://Assets/Images/ingotPlaceholder.png" id="1_xp7ur"]
+[ext_resource type="Script" path="res://Scripts/Interface/Game/Crafting/RecipeIngredientSlotTexture.cs" id="2_q0tpm"]
+
+[node name="RecipeIngredientSlotTexture" type="TextureRect"]
+texture = ExtResource("1_xp7ur")
+script = ExtResource("2_q0tpm")

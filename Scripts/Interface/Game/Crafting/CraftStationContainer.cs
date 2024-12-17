@@ -13,6 +13,9 @@ public partial class CraftStationContainer : Control {
     public event Action<CraftingStation> CraftingStationButtonClicked;
 
     public override void _Ready() {
+        foreach (Node node in _craftingStationButtonContainer.GetChildren()) {
+            node.QueueFree();
+        }
         Player.BeforeLocalPlayerSpawned += OnLocalPlayerSpawned;
     }
 

@@ -9,7 +9,9 @@ public enum CraftingStationType {
     Workbench,
     Furnace,
     Anvil,
-    AlchemyTable
+    AlchemyTable,
+    Loom,
+    CookingPot,
 }
 
 public sealed partial class Crafting : Node {

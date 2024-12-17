@@ -12,7 +12,7 @@ public partial class SelectRecipeButton : TextureButton {
             Manager.Instance.PackedScenes.SelectRecipeButton
                 .Instantiate<SelectRecipeButton>();
         button._recipe = recipe;
-        button.TextureNormal = recipe.Icon;
+        button.TextureNormal = recipe.ResultIcon;
         return button;
     }
     
@@ -25,7 +25,6 @@ public partial class SelectRecipeButton : TextureButton {
     }
     
     private void OnButtonDown() {
-        GD.Print("selectRecipe");
-        // RecipeButtonClicked?.Invoke(_recipe);
+        RecipeButtonClicked?.Invoke(_recipe);
     }
 }

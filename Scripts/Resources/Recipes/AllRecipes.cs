@@ -8,7 +8,7 @@ public partial class AllRecipes : Resource {
     [Export] private Array<CraftingStationRecipes> _recipesArray;
     private Dictionary<CraftingStationType, CraftingStationRecipes> _recipes;
 
-    public Dictionary<CraftingStationType, CraftingStationRecipes> Recipes {
+    private Dictionary<CraftingStationType, CraftingStationRecipes> Recipes {
         get {
             if (_recipes is null) {
                 _recipes = new Dictionary<CraftingStationType, CraftingStationRecipes>();
@@ -19,6 +19,10 @@ public partial class AllRecipes : Resource {
 
             return _recipes;
         }
-        private set => _recipes = value;
+        set => _recipes = value;
+    }
+    
+    public Array<Recipe> GetRecipes(CraftingStationType craftingStationType) {
+        return Recipes[craftingStationType].Recipes;
     }
 }
