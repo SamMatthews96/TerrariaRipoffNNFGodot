@@ -5,7 +5,7 @@ public partial class ActiveBlock {
         private readonly ActiveBlock _activeBlock;
 
         public Builder(SavedBlock savedBlock) {
-            _activeBlock = Manager.Instance.PackedScenes.PackedBlock.Instantiate<ActiveBlock>();
+            _activeBlock = Manager.Instance.PackedScenes.ActiveBlock.Instantiate<ActiveBlock>();
             _activeBlock._savedBlockDictionary = savedBlock.Serialize();
         }
 

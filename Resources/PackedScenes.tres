@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="PackedScenes" load_steps=9 format=3 uid="uid://dllhhokx2wkse"]
+
+[ext_resource type="PackedScene" uid="uid://me8wg1m67cje" path="res://Scenes/GameObjects/ActiveBlock.tscn" id="1_b5dt8"]
+[ext_resource type="Script" path="res://Scripts/Managers/PackedScenes.cs" id="1_tombv"]
+[ext_resource type="PackedScene" uid="uid://dq4nb0kwitffr" path="res://Scenes/GameObjects/ActivePickup.tscn" id="2_b6dg8"]
+[ext_resource type="PackedScene" uid="uid://d3hhhiiydcfft" path="res://Scenes/Managers/Game.tscn" id="3_6enwa"]
+[ext_resource type="PackedScene" uid="uid://cy52ebe7eud3c" path="res://Scenes/Interface/LoadingScreen.tscn" id="4_y0gj7"]
+[ext_resource type="PackedScene" uid="uid://tbvohnqfn3cl" path="res://Scenes/Interface/MainMenu.tscn" id="5_3f4ap"]
+[ext_resource type="PackedScene" uid="uid://bx6lgpicpfal4" path="res://Scenes/GameObjects/Player.tscn" id="6_12bmn"]
+[ext_resource type="PackedScene" uid="uid://0tlymjajesh" path="res://Scenes/Interface/SelectCraftingStationButton.tscn" id="7_eocek"]
+
+[resource]
+script = ExtResource("1_tombv")
+Player = ExtResource("6_12bmn")
+ActiveBlock = ExtResource("1_b5dt8")
+ActivePickup = ExtResource("2_b6dg8")
+MainMenu = ExtResource("5_3f4ap")
+LoadScreen = ExtResource("4_y0gj7")
+Game = ExtResource("3_6enwa")
+SelectCraftingStationButton = ExtResource("7_eocek")

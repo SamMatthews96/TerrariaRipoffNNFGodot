@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Item" load_steps=4 format=3]
+[gd_resource type="Resource" script_class="Item" load_steps=4 format=3 uid="uid://cxdqhdjumw7e0"]
 
 [ext_resource type="Script" path="res://Scripts/Resources/Item/ItemMining.cs" id="1_hjeki"]
 [ext_resource type="Script" path="res://Scripts/Resources/Item/Item.cs" id="2_t6ny6"]

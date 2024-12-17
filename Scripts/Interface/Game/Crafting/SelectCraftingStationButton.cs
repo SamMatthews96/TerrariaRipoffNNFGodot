@@ -4,7 +4,7 @@ using Godot;
 namespace TerrariaRipoffNNF;
 
 public partial class SelectCraftingStationButton : TextureButton {
-    private CraftingStation _craftingStation;
+    public CraftingStation _craftingStation;
    
     public event Action<CraftingStation> CraftingStationButtonClicked;
     
@@ -13,7 +13,7 @@ public partial class SelectCraftingStationButton : TextureButton {
             Manager.Instance.PackedScenes.SelectCraftingStationButton
                 .Instantiate<SelectCraftingStationButton>();
         button._craftingStation = craftingStation;
-        button.TextureNormal = craftingStation.Icon;
+        // button.TextureNormal = craftingStation.Icon;
         return button;
     }
 

@@ -25,11 +25,9 @@ public partial class AvailableCraftingStationContainer : Control {
     }
 
     private void OnCraftingStationAdded(CraftingStation craftingStation) {
-        // create a new button for the crafting station
         SelectCraftingStationButton newButton
             = SelectCraftingStationButton.Create(craftingStation);
         newButton.CraftingStationButtonClicked += OnCraftingStationButtonClicked;
-
         _craftingStationButtonContainer.AddChild(newButton);
     }
 
@@ -41,7 +39,6 @@ public partial class AvailableCraftingStationContainer : Control {
     }
 
     private void OnCraftingStationButtonClicked(CraftingStation craftingStation) {
-        
         CraftingStationButtonClicked?.Invoke(craftingStation);
     }
 }

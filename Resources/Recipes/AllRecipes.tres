@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AllRecipes" load_steps=5 format=3 uid="uid://bxv0u74if3lg8"]
+
+[ext_resource type="Resource" uid="uid://cw1ec51isq4ga" path="res://Resources/Recipes/RecipeMining.tres" id="1_4x2r7"]
+[ext_resource type="Script" path="res://Scripts/Resources/Recipes/AllRecipes.cs" id="1_ebx5k"]
+[ext_resource type="Script" path="res://Scripts/Resources/Recipes/CraftingStationRecipes.cs" id="2_016by"]
+
+[sub_resource type="Resource" id="Resource_wftnm"]
+script = ExtResource("2_016by")
+CraftingStationType = 0
+Recipes = Array[Object]([ExtResource("1_4x2r7")])
+
+[resource]
+script = ExtResource("1_ebx5k")
+_recipesArray = Array[Object]([SubResource("Resource_wftnm")])

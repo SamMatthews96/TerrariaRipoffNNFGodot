@@ -4,16 +4,16 @@
 [ext_resource type="Script" path="res://Scripts/Resources/Recipes/RecipeMining.cs" id="1_hm5ny"]
 [ext_resource type="Texture2D" uid="uid://p4wc02lwmqop" path="res://Assets/Images/ferriumPickaxe.png" id="2_uce7j"]
 
-[sub_resource type="Resource" id="Resource_7rgco"]
-script = ExtResource("1_h31i5")
-IngredientType = 0
-Amount = 8
-Required = true
-
 [sub_resource type="Resource" id="Resource_tdyru"]
 script = ExtResource("1_h31i5")
 IngredientType = 1
 Amount = 10
+Required = true
+
+[sub_resource type="Resource" id="Resource_7rgco"]
+script = ExtResource("1_h31i5")
+IngredientType = 0
+Amount = 8
 Required = true
 
 [resource]

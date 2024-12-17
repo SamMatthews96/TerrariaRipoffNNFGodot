@@ -12,11 +12,11 @@
 [ext_resource type="PackedScene" uid="uid://dsp7h2dpxh0i6" path="res://Scenes/Interface/SelectBuildBlockButton.tscn" id="10_i1foi"]
 [ext_resource type="Script" path="res://Scripts/Interface/Game/GameMenu.cs" id="11_22hm5"]
 [ext_resource type="Script" path="res://Scripts/Interface/Game/Crafting/CraftingInterface.cs" id="12_3ates"]
-[ext_resource type="Texture2D" uid="uid://c1dlk5ira363n" path="res://Assets/Images/hand.png" id="12_t2gg4"]
 [ext_resource type="Script" path="res://Scripts/Interface/Game/Crafting/AvailableCraftingStationContainer.cs" id="13_sln1f"]
+[ext_resource type="PackedScene" uid="uid://0tlymjajesh" path="res://Scenes/Interface/SelectCraftingStationButton.tscn" id="14_3dwq0"]
 [ext_resource type="Texture2D" uid="uid://yrkfk0xlby73" path="res://Assets/Images/iron.png" id="14_arw0f"]
-[ext_resource type="Texture2D" uid="uid://chqwtybfj62dl" path="res://Assets/Images/wood.png" id="15_ec836"]
 [ext_resource type="Texture2D" uid="uid://p4wc02lwmqop" path="res://Assets/Images/ferriumPickaxe.png" id="16_3qhw4"]
+[ext_resource type="Texture2D" uid="uid://dh51pmlsc06fg" path="res://Assets/Images/log2.png" id="16_ndm5v"]
 
 [node name="GameInterface" type="CanvasLayer" node_paths=PackedStringArray("InventoryUi", "ActionBar", "BuildUi", "GameMenu")]
 script = ExtResource("1_2s5nd")
@@ -167,7 +167,7 @@ text = "Exit Game
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Crafting" type="Control" parent="." node_paths=PackedStringArray("_selectCraftingStationMenuButton", "_availableCraftingStationContainer", "_selectedCraftingStationRecipeContainer", "_selectedRecipeContainer")]
+[node name="Crafting" type="Control" parent="." node_paths=PackedStringArray("_selectCraftingStationMenuButton", "AvailableCraftingStationContainer", "_selectedCraftingStationRecipeContainer", "_selectedRecipeContainer")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -177,7 +177,7 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("12_3ates")
 _selectCraftingStationMenuButton = NodePath("HBoxContainer/AvailableCraftingStationContainer/MarginContainer/SelectCraftingStationMenuButton")
-_availableCraftingStationContainer = NodePath("HBoxContainer/AvailableCraftingStationContainer")
+AvailableCraftingStationContainer = NodePath("HBoxContainer/AvailableCraftingStationContainer")
 _selectedCraftingStationRecipeContainer = NodePath("HBoxContainer/SelectedCraftingStationRecipeContainer")
 _selectedRecipeContainer = NodePath("HBoxContainer/SelectedRecipeContainer")
 
@@ -196,6 +196,7 @@ grow_vertical = 2
 layout_mode = 2
 script = ExtResource("13_sln1f")
 _craftingStationButtonContainer = NodePath("PanelContainer/MarginContainer/VBoxContainer")
+_craftingStationButtonScene = ExtResource("14_3dwq0")
 
 [node name="MarginContainer" type="MarginContainer" parent="Crafting/HBoxContainer/AvailableCraftingStationContainer"]
 layout_mode = 2
@@ -220,10 +221,6 @@ theme_override_constants/margin_bottom = 10
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Crafting/HBoxContainer/AvailableCraftingStationContainer/PanelContainer/MarginContainer"]
 layout_mode = 2
-
-[node name="TextureButton" type="TextureButton" parent="Crafting/HBoxContainer/AvailableCraftingStationContainer/PanelContainer/MarginContainer/VBoxContainer"]
-layout_mode = 2
-texture_normal = ExtResource("12_t2gg4")
 
 [node name="SelectedCraftingStationRecipeContainer" type="VBoxContainer" parent="Crafting/HBoxContainer"]
 layout_mode = 2
@@ -317,7 +314,7 @@ texture_normal = ExtResource("14_arw0f")
 
 [node name="TextureButton2" type="TextureButton" parent="Crafting/HBoxContainer/SelectedRecipeContainer/PanelContainer/MarginContainer/HBoxContainer/Ingredients"]
 layout_mode = 2
-texture_normal = ExtResource("15_ec836")
+texture_normal = ExtResource("16_ndm5v")
 
 [node name="Button" type="Button" parent="Crafting/HBoxContainer/SelectedRecipeContainer/PanelContainer/MarginContainer/HBoxContainer"]
 custom_minimum_size = Vector2(100, 40)

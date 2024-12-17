@@ -23,12 +23,14 @@ properties/0/replication_mode = 1
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_raw6a"]
 size = Vector2(44, 93)
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("Inventory", "ActionController", "PickupArea", "_positionSynchronizer", "_camera", "_pickupArea")]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("Inventory", "ActionController", "PickupArea", "PlayerEquipment", "Crafting", "_positionSynchronizer", "_camera", "_pickupArea")]
 collision_mask = 2
 script = ExtResource("1_hx4ms")
 Inventory = NodePath("Inventory")
 ActionController = NodePath("ActionController")
 PickupArea = NodePath("PickupArea")
+PlayerEquipment = NodePath("CurrentEquipment")
+Crafting = NodePath("Crafting")
 _positionSynchronizer = NodePath("PositionSync")
 _camera = NodePath("Camera2D")
 _pickupArea = NodePath("PickupArea")
@@ -83,8 +85,9 @@ State = 1
 
 [node name="WeaponActionState" type="Node" parent="ActionController"]
 
-[node name="CurrentEquipment" type="Node" parent="."]
+[node name="CurrentEquipment" type="Node" parent="." node_paths=PackedStringArray("_player")]
 script = ExtResource("7_in65p")
+_player = NodePath("..")
 
 [node name="Crafting" type="Node" parent="." node_paths=PackedStringArray("_player")]
 script = ExtResource("9_67855")

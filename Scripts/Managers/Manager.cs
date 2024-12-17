@@ -79,7 +79,7 @@ public partial class Manager : Node {
         // Node loadScreen = PackedScenes.PackedLoadScreen.Instantiate();
         // AddChild(loadScreen);
         _mainMenu.QueueFree();
-        Game = PackedScenes.PackedGame.Instantiate<Game>();
+        Game = PackedScenes.Game.Instantiate<Game>();
         Game.Interface.GameMenu.ExitGameButtonDown += ExitGame;
         AddChild(Game);
         // delete load screen
@@ -91,7 +91,7 @@ public partial class Manager : Node {
     }
 
     private void CreateMainMenu() {
-        _mainMenu = PackedScenes.PackedMainMenu.Instantiate<MainMenu>();
+        _mainMenu = PackedScenes.MainMenu.Instantiate<MainMenu>();
         _mainMenu.SinglePlayerClickedEnterWorld += OnMainMenuSinglePlayerClickedEnterWorld;
         _mainMenu.HostClickedEnterWorld += OnMainMenuHostClickedEnterWorld;
         _mainMenu.ClientClickedEnterWorld += OnMainMenuClientClickedEnterWorld;

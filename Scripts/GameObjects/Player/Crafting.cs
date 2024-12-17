@@ -15,12 +15,12 @@ public enum CraftingStationType {
 public sealed partial class Crafting : Node {
     [Export] private Player _player;
 
-    private Dictionary<CraftingStationType, CraftingStation> _availableCraftingStations;
+    private Dictionary<CraftingStationType, CraftingStation> _availableCraftingStations = new();
     private CraftingStation _selectedCraftingStation;
-    
-   
+
+
     public event Action<CraftingStation> CraftingStationAdded;
-    
+
     public override void _Ready() {
         CraftingStation handcraftingStation = new() {
             Type = CraftingStationType.Handcrafting
@@ -28,16 +28,14 @@ public sealed partial class Crafting : Node {
         };
         AddCraftingStation(handcraftingStation);
     }
-    
-    public override void _ExitTree() {
-    }
 
-    
+    public override void _ExitTree() { }
+
+
     private void AddCraftingStation(CraftingStation craftingStation) {
         _availableCraftingStations[craftingStation.Type] = craftingStation;
         CraftingStationAdded?.Invoke(craftingStation);
     }
-    
 }
 
 //@todo move this to a separate file
