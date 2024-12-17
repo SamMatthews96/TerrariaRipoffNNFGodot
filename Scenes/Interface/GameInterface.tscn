@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://javhx4rej0q4"]
+[gd_scene load_steps=21 format=3 uid="uid://javhx4rej0q4"]
 
 [ext_resource type="Script" path="res://Scripts/Interface/Game/Interface.cs" id="1_2s5nd"]
 [ext_resource type="Script" path="res://Scripts/Interface/Game/InventoryUi.cs" id="2_huspd"]
@@ -20,7 +20,6 @@
 [ext_resource type="Texture2D" uid="uid://dfscdvvt4bdr6" path="res://Assets/Images/pickaxePlaceholder.png" id="17_h2g2b"]
 [ext_resource type="PackedScene" uid="uid://bawlysyg56da3" path="res://Scenes/Interface/RecipeIngredientSlotTexture.tscn" id="19_i6ok5"]
 [ext_resource type="Texture2D" uid="uid://wrf00jfy174v" path="res://Assets/Images/woodPlaceholder.png" id="20_ewgbm"]
-[ext_resource type="Script" path="res://Scripts/Interface/Game/Crafting/RecipeIngredientSlotTexture.cs" id="20_napob"]
 
 [node name="GameInterface" type="CanvasLayer" node_paths=PackedStringArray("InventoryUi", "ActionBar", "BuildUi", "GameMenu")]
 script = ExtResource("1_2s5nd")
@@ -312,9 +311,8 @@ columns = 3
 
 [node name="TextureRect" parent="Crafting/HBoxContainer/SelectedRecipeContainer/PanelContainer/MarginContainer/HBoxContainer/Ingredients" instance=ExtResource("19_i6ok5")]
 layout_mode = 2
-script = ExtResource("20_napob")
 
-[node name="TextureRect2" type="TextureRect" parent="Crafting/HBoxContainer/SelectedRecipeContainer/PanelContainer/MarginContainer/HBoxContainer/Ingredients"]
+[node name="TextureRect2" parent="Crafting/HBoxContainer/SelectedRecipeContainer/PanelContainer/MarginContainer/HBoxContainer/Ingredients" instance=ExtResource("19_i6ok5")]
 layout_mode = 2
 texture = ExtResource("20_ewgbm")
 

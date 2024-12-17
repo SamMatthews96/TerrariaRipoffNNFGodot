@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="RecipeStatic" load_steps=8 format=3 uid="uid://csovvvae6pyf5"]
+
+[ext_resource type="Texture2D" uid="uid://wrf00jfy174v" path="res://Assets/Images/woodPlaceholder.png" id="1_cu11s"]
+[ext_resource type="Script" path="res://Scripts/Resources/Recipes/RecipeStatic.cs" id="1_geocp"]
+[ext_resource type="Texture2D" uid="uid://da0geb6ew751" path="res://Assets/Images/torch.png" id="1_p3y05"]
+[ext_resource type="Script" path="res://Scripts/Resources/Recipes/RecipeIngredientSlot.cs" id="2_mriyg"]
+[ext_resource type="Script" path="res://Scripts/Resources/Item/Item.cs" id="2_rf8x6"]
+
+[sub_resource type="Resource" id="Resource_cefeg"]
+script = ExtResource("2_mriyg")
+IngredientType = 1
+Amount = 1
+Icon = ExtResource("1_cu11s")
+Required = true
+
+[sub_resource type="Resource" id="Resource_ux2db"]
+script = ExtResource("2_rf8x6")
+Name = "Torch"
+InventorySpace = 0.1
+IsStackable = true
+IconTexture = ExtResource("1_p3y05")
+_itemProperties = []
+
+[resource]
+script = ExtResource("1_geocp")
+_resultItem = SubResource("Resource_ux2db")
+Ingredients = {
+"wood": SubResource("Resource_cefeg")
+}
+ResultIcon = ExtResource("1_p3y05")
+Name = "Torch"
