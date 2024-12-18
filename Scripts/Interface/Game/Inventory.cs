@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
 using Godot;
 
-namespace TerrariaRipoffNNF;
+namespace TerrariaRipoffNNF.Interface;
 
-public partial class InventoryUi : Control {
+public partial class Inventory : Control {
     [Export] private Label _capacityLabel;
     [Export] private GridContainer _inventoryItemUiContainer;
     [Export] private PackedScene _inventoryItemUiScene;
 
-    private readonly List<InventoryItemUi> _inventoryItemUiList = new();
+    private readonly List<InventoryItem> _inventoryItemUiList = new();
 
     private Player _localPlayer;
 
@@ -44,14 +44,14 @@ public partial class InventoryUi : Control {
     }
 
     private void OnInventoryAddedItemStack(StackedItems stackedItems) {
-        InventoryItemUi inventoryItemUi = _inventoryItemUiScene.Instantiate<InventoryItemUi>();
+        InventoryItem inventoryItemUi = _inventoryItemUiScene.Instantiate<InventoryItem>();
         _inventoryItemUiList.Add(inventoryItemUi);
         _inventoryItemUiContainer.AddChild(inventoryItemUi);
         inventoryItemUi.Update(stackedItems);
     }
 
     private void OnInventoryRemovedItemStack(StackedItems stackedItems) {
-        InventoryItemUi inventoryItemUi = _inventoryItemUiList.Find(e =>
+        InventoryItem inventoryItemUi = _inventoryItemUiList.Find(e =>
             e.StackedItems.Item == stackedItems.Item);
         if (inventoryItemUi != null) {
             inventoryItemUi.QueueFree();
@@ -60,7 +60,7 @@ public partial class InventoryUi : Control {
     }
 
     private void OnInventoryItemStackChanged(StackedItems stackedItems) {
-        InventoryItemUi inventoryItemUi = _inventoryItemUiList.Find(e =>
+        InventoryItem inventoryItemUi = _inventoryItemUiList.Find(e =>
             e.StackedItems.Item == stackedItems.Item);
         inventoryItemUi.Update(stackedItems);
     }
@@ -70,12 +70,12 @@ public partial class InventoryUi : Control {
             $"{_localPlayer.Inventory.UsedSpace}/{_localPlayer.Inventory.MaximumSpace}";
     }
 
-    private void OnInventoryChanged(Inventory inventory) {
+    private void OnInventoryChanged(TerrariaRipoffNNF.Inventory inventory) {
         SetCapacityLabelText();
         _inventoryItemUiList.ForEach(e => e.QueueFree());
         _inventoryItemUiList.Clear();
         inventory.StackedItemsList.ForEach(e => {
-            InventoryItemUi inventoryItemUi = _inventoryItemUiScene.Instantiate<InventoryItemUi>();
+            InventoryItem inventoryItemUi = _inventoryItemUiScene.Instantiate<InventoryItem>();
             _inventoryItemUiList.Add(inventoryItemUi);
             _inventoryItemUiContainer.AddChild(inventoryItemUi);
             inventoryItemUi.Update(e);

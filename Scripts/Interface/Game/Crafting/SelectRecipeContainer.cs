@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Godot;
 
-namespace TerrariaRipoffNNF;
+namespace TerrariaRipoffNNF.Interface;
 
 public partial class SelectRecipeContainer : Control {
-    [Export] public CraftingInterface CraftingInterface { get; private set; }
+    [Export] public Main CraftingInterface { get; private set; }
     [Export] private Container _recipeContainer;
     private readonly List<SelectRecipeButton> _recipeSelectButtons = new();
     

@@ -1,11 +1,11 @@
 ﻿using Godot;
 
-namespace TerrariaRipoffNNF;
+namespace TerrariaRipoffNNF.Interface;
 
-public partial class CraftingInterface : Control {
+public partial class Main : Control {
     [Export] private Button _selectCraftingStationMenuButton;
 
-    [Export] public CraftStationContainer CraftStationContainer { get; private set; }
+    [Export] public StationContainer CraftStationContainer { get; private set; }
     [Export] public SelectRecipeContainer SelectRecipeContainer { get; private set; }
     [Export] public SelectedRecipeContainer SelectedRecipeContainer { get; private set; }
 

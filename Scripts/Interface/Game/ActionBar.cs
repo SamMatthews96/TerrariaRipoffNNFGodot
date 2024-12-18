@@ -2,7 +2,7 @@
 using Godot;
 using Godot.Collections;
 
-namespace TerrariaRipoffNNF;
+namespace TerrariaRipoffNNF.Interface;
 
 public partial class ActionBar : PanelContainer {
     [Export] private Array<ActionBarButton> _buttons;

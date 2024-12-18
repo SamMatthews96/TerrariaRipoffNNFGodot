@@ -1,7 +1,7 @@
 ﻿using System;
 using Godot;
 
-namespace TerrariaRipoffNNF;
+namespace TerrariaRipoffNNF.Interface;
 
 public partial class GameMenu : Control {
     [Export] private Button _exitGameButton;

@@ -1,17 +1,17 @@
 ﻿using System;
 using Godot;
 
-namespace TerrariaRipoffNNF;
+namespace TerrariaRipoffNNF.Interface;
 
-public partial class CraftStationButton : TextureButton {
+public partial class StationButton : TextureButton {
     private CraftingStation _craftingStation;
    
     public event Action<CraftingStation> CraftingStationButtonClicked;
     
-    public static CraftStationButton Create(CraftingStation craftingStation) {
-        CraftStationButton button =
+    public static StationButton Create(CraftingStation craftingStation) {
+        StationButton button =
             Manager.Instance.PackedScenes.SelectCraftingStationButton
-                .Instantiate<CraftStationButton>();
+                .Instantiate<StationButton>();
         button._craftingStation = craftingStation;
         // button.TextureNormal = craftingStation.Icon;
         return button;

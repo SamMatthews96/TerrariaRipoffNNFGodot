@@ -10,7 +10,7 @@ public partial class Game : Node {
     [Export] public Node BlockParent { get; private set; }
     [Export] public Node PlayerParent { get; private set; }
     [Export] public PackedScene HostManagerScene { get; private set; }
-    [Export] public Interface Interface { get; private set; }
+    [Export] public Interface.Game Interface { get; private set; }
     [Export] public InputManager InputManager { get; private set; }
     [Export] public int Width { get; private set; }
     [Export] public int Height { get; private set; }

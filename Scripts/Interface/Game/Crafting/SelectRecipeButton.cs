@@ -1,7 +1,7 @@
 ﻿using System;
 using Godot;
 
-namespace TerrariaRipoffNNF;
+namespace TerrariaRipoffNNF.Interface;
 
 public partial class SelectRecipeButton : TextureButton {
     private Recipe _recipe;

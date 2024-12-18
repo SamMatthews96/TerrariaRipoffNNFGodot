@@ -1,7 +1,7 @@
 ﻿using System;
 using Godot;
 
-namespace TerrariaRipoffNNF;
+namespace TerrariaRipoffNNF.Interface;
 
 public partial class ActionBarButton : TextureButton {
     [Export] public PlayerAction.Type State { get; private set; }

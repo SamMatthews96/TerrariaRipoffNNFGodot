@@ -1,18 +1,18 @@
 [gd_scene load_steps=21 format=3 uid="uid://javhx4rej0q4"]
 
-[ext_resource type="Script" path="res://Scripts/Interface/Game/Interface.cs" id="1_2s5nd"]
-[ext_resource type="Script" path="res://Scripts/Interface/Game/InventoryUi.cs" id="2_huspd"]
+[ext_resource type="Script" path="res://Scripts/Interface/Game/Game.cs" id="1_d56as"]
+[ext_resource type="Script" path="res://Scripts/Interface/Game/Inventory.cs" id="2_wmh4y"]
 [ext_resource type="PackedScene" uid="uid://cgk6fsvhwhj5n" path="res://Scenes/Interface/Game/InventoryItemIcon.tscn" id="3_757hy"]
 [ext_resource type="Script" path="res://Scripts/Interface/Game/ActionBar.cs" id="4_ww54d"]
 [ext_resource type="Texture2D" uid="uid://d2ux360fa5nu1" path="res://Assets/Images/gatherButton.png" id="6_32d80"]
 [ext_resource type="Script" path="res://Scripts/Interface/Game/ActionBarButton.cs" id="6_eri8v"]
 [ext_resource type="Texture2D" uid="uid://c43ihljnqox3q" path="res://Assets/Images/buildButton.png" id="7_hnsx4"]
 [ext_resource type="Texture2D" uid="uid://5s1dp1pvh1xy" path="res://Assets/Images/weaponButton.png" id="8_y013w"]
-[ext_resource type="Script" path="res://Scripts/Interface/Game/BuildUi.cs" id="9_naaai"]
+[ext_resource type="Script" path="res://Scripts/Interface/Game/Build.cs" id="9_jhyas"]
 [ext_resource type="Script" path="res://Scripts/Interface/Game/GameMenu.cs" id="11_22hm5"]
-[ext_resource type="Script" path="res://Scripts/Interface/Game/Crafting/CraftingInterface.cs" id="12_3ates"]
+[ext_resource type="Script" path="res://Scripts/Interface/Game/Crafting/Main.cs" id="11_gtii3"]
 [ext_resource type="PackedScene" uid="uid://d31jlx7lau6lq" path="res://Scenes/Interface/Game/Crafting/RecipePopup.tscn" id="12_d1pwp"]
-[ext_resource type="Script" path="res://Scripts/Interface/Game/Crafting/CraftStationContainer.cs" id="13_emxai"]
+[ext_resource type="Script" path="res://Scripts/Interface/Game/Crafting/StationContainer.cs" id="13_emxai"]
 [ext_resource type="PackedScene" uid="uid://0tlymjajesh" path="res://Scenes/Interface/Game/Crafting/SelectCraftStationButton.tscn" id="14_n2ewv"]
 [ext_resource type="Script" path="res://Scripts/Interface/Game/Crafting/SelectRecipeContainer.cs" id="15_ffrfe"]
 [ext_resource type="Texture2D" uid="uid://c1dlk5ira363n" path="res://Assets/Images/hand.png" id="15_v7gq4"]
@@ -22,7 +22,7 @@
 [ext_resource type="Texture2D" uid="uid://wrf00jfy174v" path="res://Assets/Images/woodPlaceholder.png" id="20_ewgbm"]
 
 [node name="GameInterface" type="CanvasLayer" node_paths=PackedStringArray("InventoryUi", "ActionBar", "BuildUi", "GameMenu")]
-script = ExtResource("1_2s5nd")
+script = ExtResource("1_d56as")
 InventoryUi = NodePath("Inventory")
 ActionBar = NodePath("ActionBar")
 BuildUi = NodePath("BuildBar")
@@ -34,7 +34,7 @@ offset_left = 33.0
 offset_top = 29.0
 offset_right = 243.0
 offset_bottom = 135.0
-script = ExtResource("2_huspd")
+script = ExtResource("2_wmh4y")
 _capacityLabel = NodePath("VBoxContainer/CapacityLabel")
 _inventoryItemUiContainer = NodePath("VBoxContainer/ItemIconView/InventoryItemUiContainer")
 _inventoryItemUiScene = ExtResource("3_757hy")
@@ -113,7 +113,7 @@ offset_top = -169.0
 offset_right = 306.0
 offset_bottom = -35.0
 grow_vertical = 0
-script = ExtResource("9_naaai")
+script = ExtResource("9_jhyas")
 _buttonContainer = NodePath("MarginContainer/ButtonContainer")
 
 [node name="MarginContainer" type="MarginContainer" parent="BuildBar"]
@@ -177,7 +177,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-script = ExtResource("12_3ates")
+script = ExtResource("11_gtii3")
 _selectCraftingStationMenuButton = NodePath("HBoxContainer/SelectCraftStationContainer/TitleContainer/SelectCraftingStationMenuButton")
 CraftStationContainer = NodePath("HBoxContainer/SelectCraftStationContainer")
 SelectRecipeContainer = NodePath("HBoxContainer/SelectRecipeContainer")

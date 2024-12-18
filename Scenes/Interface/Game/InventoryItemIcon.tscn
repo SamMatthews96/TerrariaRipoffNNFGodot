@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://cgk6fsvhwhj5n"]
 
 [ext_resource type="Texture2D" uid="uid://cfc1e8nv4cp1q" path="res://Assets/Images/ItemIcons/Earth.png" id="1_7mlwy"]
-[ext_resource type="Script" path="res://Scripts/Interface/Game/InventoryItemUi.cs" id="1_6026h"]
+[ext_resource type="Script" path="res://Scripts/Interface/Game/InventoryItem.cs" id="1_6026h"]
 
 [node name="InventoryItemUi" type="TextureRect" node_paths=PackedStringArray("_countLabel", "_iconTextureRect")]
 custom_minimum_size = Vector2(50, 50)

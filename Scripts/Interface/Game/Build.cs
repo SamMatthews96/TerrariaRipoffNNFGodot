@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using Godot;
 
-namespace TerrariaRipoffNNF;
+namespace TerrariaRipoffNNF.Interface;
 
-public partial class BuildUi : Container {
-    private readonly Dictionary<Item, BlockTypeButton> _blockTypeButtons = new();
+public partial class Build : Container {
+    private readonly Dictionary<string, BlockTypeButton> _blockTypeButtons = new();
     [Export] private BoxContainer _buttonContainer;
     private BlockTypeButton _selectedButton;
     private Player _localPlayer;
@@ -44,11 +44,11 @@ public partial class BuildUi : Container {
     }
 
     private void OnInventoryAddedItemStack(StackedItems stackedItems) {
-        if (!stackedItems.Item.TryGetProperty(out ItemBlock property)) return;
+        if (!stackedItems.Item.HasProperty<ItemBlock>()) return;
         BlockTypeButton button = BlockTypeButton.Create(stackedItems.Item, false);
-        button.ButtonDown += () => SelectButton(stackedItems.Item);
+        button.BuildBlockSelected += SelectButton;
         _buttonContainer.AddChild(button);
-        _blockTypeButtons.Add(stackedItems.Item, button);
+        _blockTypeButtons.Add(stackedItems.Item.Name, button);
 
         if (_selectedButton == null) {
             SelectButton(stackedItems.Item);
@@ -56,23 +56,23 @@ public partial class BuildUi : Container {
     }
 
     private void OnInventoryRemovedItemStack(StackedItems stackedItems) {
-        if (!_blockTypeButtons.TryGetValue(stackedItems.Item, out BlockTypeButton button)) {
+        if (!_blockTypeButtons.TryGetValue(stackedItems.Item.Name, out BlockTypeButton button)) {
             return;
         }
 
         if (_selectedButton == button) {
             _selectedButton = null;
         }
-
+        button.BuildBlockSelected -= SelectButton;
         button.QueueFree();
-        _blockTypeButtons.Remove(stackedItems.Item);
+        _blockTypeButtons.Remove(stackedItems.Item.Name);
     }
 
     private void SelectButton(Item item) {
         if (_selectedButton != null) {
             _selectedButton.SetUnfocus();
         }
-        _selectedButton = _blockTypeButtons[item];
+        _selectedButton = _blockTypeButtons[item.Name];
         _selectedButton.SetFocus();
         BlockTypeSelected?.Invoke(item);
     }

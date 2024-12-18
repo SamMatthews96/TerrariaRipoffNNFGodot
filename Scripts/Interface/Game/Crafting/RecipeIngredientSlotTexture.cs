@@ -1,7 +1,7 @@
 ﻿using System;
 using Godot;
 
-namespace TerrariaRipoffNNF;
+namespace TerrariaRipoffNNF.Interface;
 
 public partial class RecipeIngredientSlotTexture : TextureRect {
     private Item _selectedIngredientItem;

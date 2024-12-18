@@ -1,7 +1,7 @@
 ﻿using Godot;
-namespace TerrariaRipoffNNF;
+namespace TerrariaRipoffNNF.Interface;
 
-public partial class InventoryItemUi : TextureRect {
+public partial class InventoryItem : TextureRect {
     public StackedItems StackedItems {get; private set;}
     
     [Export] private Label _countLabel;
