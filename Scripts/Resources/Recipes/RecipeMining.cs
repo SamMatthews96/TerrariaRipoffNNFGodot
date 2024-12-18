@@ -24,11 +24,10 @@ public partial class RecipeMining : Recipe {
         IngredientProperty metal = GetIngredientType("pickaxeHead");
         IngredientProperty wood = GetIngredientType("pickaxeHandle");
 
-        string newItemName;
+        string newItemName = $"{metal.Name} Pickaxe";
         Texture2D newItemTexture;
         switch (metal.Name) {
             case "Ferrium":
-                newItemName = "Ferrium Pickaxe";
                 newItemTexture = _ferriumPickTexture;
                 break;
             default:
@@ -37,17 +36,17 @@ public partial class RecipeMining : Recipe {
 
         SuppliedIngredients = null;
 
-        return Item.New()
-            .SetName(newItemName)
-            .SetIconTexture(newItemTexture)
-            .SetInventorySpace(5f)
-            .SetIsStackable(false)
-            .AddProperty(
-                ItemMining.New()
-                    .SetMiningSpeed(wood.Quality * _speedCoefficient)
-                    .SetRange(8f)
-                    .SetMiningPower(metal.Quality * _powerCoefficient)
-                    .Build()
-            ).Build();
+        return Item.Create(
+            name: newItemName,
+            iconTexture: newItemTexture,
+            inventorySpace: 5f,
+            isStackable: false,
+            itemProperties: new Array<ItemProperty> {
+                ItemMining.Create(
+                    speed: wood.Quality * _speedCoefficient,
+                    range: 8f,
+                    power: metal.Quality * _powerCoefficient
+                )
+            });
     }
 }

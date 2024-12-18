@@ -19,7 +19,11 @@ public partial class WorldCreator : Node {
         for (int x = 0; x < worldBasicInfo.Width; x++) {
             for (int y = mid; y < worldBasicInfo.Height; y++) {
                 Item type = types[random.Next(2)];
-                SavedBlock savedBlock = SavedBlock.Builder.New(type, x, y).Build();
+                SavedBlock savedBlock = SavedBlock.Create(
+                    block: type,
+                    xPosition: x,
+                    yPosition: y
+                );
                 savedBlockArray.Add(savedBlock.Serialize());
             }
         }

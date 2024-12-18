@@ -5,7 +5,6 @@ using Godot.Collections;
 namespace TerrariaRipoffNNF;
 
 public partial class SavedBlock : Resource {
-
     public int XPosition { get; private init; }
     public int YPosition { get; private init; }
     public Item Item { get; private init; }
@@ -26,13 +25,26 @@ public partial class SavedBlock : Resource {
             int xPosition = dictionary["X"].ToString().ToInt();
             int yPosition = dictionary["Y"].ToString().ToInt();
             float currentHealth = dictionary["CurrentHealth"].ToString().ToFloat();
-            return Builder.New(block, xPosition, yPosition)
-                .WithCurrentHealth(currentHealth)
-                .Build();
+            return Create(
+                block: block,
+                xPosition: xPosition,
+                yPosition: yPosition,
+                currentHealth: currentHealth
+            );
         } catch (Exception e) {
             GD.PrintErr("error reading SavedBlock from dictionary");
             GD.PrintErr(e);
             throw new NotImplementedException();
         }
+    }
+
+    public static SavedBlock Create(Item block, int xPosition, int yPosition,
+        float currentHealth = 0) {
+        return new SavedBlock {
+            Item = block,
+            XPosition = xPosition,
+            YPosition = yPosition,
+            CurrentHealth = currentHealth == 0 ? block.GetProperty<ItemBlock>().MaxHealth : currentHealth
+        };
     }
 }

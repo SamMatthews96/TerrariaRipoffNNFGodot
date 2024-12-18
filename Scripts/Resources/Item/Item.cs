@@ -59,45 +59,19 @@ public sealed partial class Item : Resource {
         if (dictionary.TryGetValue("ResourcePath", out Variant resourcePath)) {
             return ResourceLoader.Load<Item>(resourcePath.ToString());
         }
+
         throw new NotImplementedException();
     }
 
-    public static Builder New() {
-        return new Builder();
-    }
-
-    public class Builder {
-        private readonly Item _item = new();
-
-        public Item Build() {
-            return _item;
-        }
-
-        public Builder SetName(string name) {
-            _item.Name = name;
-            return this;
-        }
-
-        public Builder AddProperty(ItemProperty property) {
-            _item._itemProperties.Add(property);
-            return this;
-        }
-
-        public Builder SetIconTexture(Texture2D iconTexture) {
-            _item.IconTexture = iconTexture;
-            return this;
-        }
-
-        public Builder SetInventorySpace(float inventorySpace) {
-            _item.InventorySpace = inventorySpace;
-            return this;
-        }
-
-        public Builder SetIsStackable(bool isStackable) {
-            _item.IsStackable = isStackable;
-            return this;
-        }
-
-        // public 
+    public static Item Create(
+        string name, Texture2D iconTexture, float inventorySpace, bool isStackable = true,
+        Array<ItemProperty> itemProperties = null) {
+        return new Item {
+            Name = name,
+            IconTexture = iconTexture,
+            InventorySpace = inventorySpace,
+            IsStackable = isStackable,
+            _itemProperties = itemProperties ?? new Array<ItemProperty>()
+        };
     }
 }
