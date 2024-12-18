@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://p4wc02lwmqop"
-path="res://.godot/imported/ferriumPickaxe.png-f67daed67e471f4b59461597393803fd.ctex"
+uid="uid://da0geb6ew751"
+path="res://.godot/imported/torch.png-8ce9b3499a0d5218ae8e5e2b730a2868.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Images/ferriumPickaxe.png"
-dest_files=["res://.godot/imported/ferriumPickaxe.png-f67daed67e471f4b59461597393803fd.ctex"]
+source_file="res://Assets/Images/ItemIcons/torch.png"
+dest_files=["res://.godot/imported/torch.png-8ce9b3499a0d5218ae8e5e2b730a2868.ctex"]
 
 [params]
 

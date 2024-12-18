@@ -4,13 +4,13 @@
 [ext_resource type="Script" path="res://Scripts/Managers/PackedScenes.cs" id="1_tombv"]
 [ext_resource type="PackedScene" uid="uid://dq4nb0kwitffr" path="res://Scenes/GameObjects/ActivePickup.tscn" id="2_b6dg8"]
 [ext_resource type="PackedScene" uid="uid://d3hhhiiydcfft" path="res://Scenes/Managers/Game.tscn" id="3_6enwa"]
-[ext_resource type="PackedScene" uid="uid://dsp7h2dpxh0i6" path="res://Scenes/Interface/SelectBuildBlockButton.tscn" id="3_10dmv"]
+[ext_resource type="PackedScene" uid="uid://dsp7h2dpxh0i6" path="res://Scenes/Interface/Game/SelectBuildBlockButton.tscn" id="3_10dmv"]
 [ext_resource type="PackedScene" uid="uid://cy52ebe7eud3c" path="res://Scenes/Interface/LoadingScreen.tscn" id="4_y0gj7"]
-[ext_resource type="PackedScene" uid="uid://tbvohnqfn3cl" path="res://Scenes/Interface/MainMenu.tscn" id="5_3f4ap"]
+[ext_resource type="PackedScene" uid="uid://tbvohnqfn3cl" path="res://Scenes/Interface/MainMenu/MainMenu.tscn" id="5_3f4ap"]
 [ext_resource type="PackedScene" uid="uid://bx6lgpicpfal4" path="res://Scenes/GameObjects/Player.tscn" id="6_12bmn"]
-[ext_resource type="PackedScene" uid="uid://bawlysyg56da3" path="res://Scenes/Interface/RecipeIngredientSlotTexture.tscn" id="7_6ykcs"]
-[ext_resource type="PackedScene" uid="uid://0tlymjajesh" path="res://Scenes/Interface/SelectCraftStationButton.tscn" id="7_eocek"]
-[ext_resource type="PackedScene" uid="uid://dgm8a81v4g6g3" path="res://Scenes/Interface/SelectRecipeButton.tscn" id="8_bwf4d"]
+[ext_resource type="PackedScene" uid="uid://bawlysyg56da3" path="res://Scenes/Interface/Game/Crafting/RecipeIngredientSlotTexture.tscn" id="7_6ykcs"]
+[ext_resource type="PackedScene" uid="uid://0tlymjajesh" path="res://Scenes/Interface/Game/Crafting/SelectCraftStationButton.tscn" id="7_eocek"]
+[ext_resource type="PackedScene" uid="uid://dgm8a81v4g6g3" path="res://Scenes/Interface/Game/Crafting/SelectRecipeButton.tscn" id="8_bwf4d"]
 
 [resource]
 script = ExtResource("1_tombv")

@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://d31jlx7lau6lq"]
 
-[ext_resource type="Texture2D" uid="uid://chqwtybfj62dl" path="res://Assets/Images/wood.png" id="1_u243g"]
+[ext_resource type="Texture2D" uid="uid://chqwtybfj62dl" path="res://Assets/Images/ItemIcons/wood.png" id="1_81roq"]
 
 [node name="RecipePopup" type="Control"]
 z_index = 10
@@ -42,7 +42,7 @@ columns = 3
 
 [node name="TextureButton" type="TextureButton" parent="PanelContainer/MarginContainer/GridContainer"]
 layout_mode = 2
-texture_normal = ExtResource("1_u243g")
+texture_normal = ExtResource("1_81roq")
 
 [node name="PanelContainer" type="PanelContainer" parent="PanelContainer/MarginContainer/GridContainer/TextureButton"]
 layout_mode = 0
@@ -58,7 +58,7 @@ horizontal_alignment = 1
 
 [node name="TextureButton2" type="TextureButton" parent="PanelContainer/MarginContainer/GridContainer"]
 layout_mode = 2
-texture_normal = ExtResource("1_u243g")
+texture_normal = ExtResource("1_81roq")
 
 [node name="PanelContainer" type="PanelContainer" parent="PanelContainer/MarginContainer/GridContainer/TextureButton2"]
 layout_mode = 0
@@ -74,7 +74,7 @@ horizontal_alignment = 1
 
 [node name="TextureButton3" type="TextureButton" parent="PanelContainer/MarginContainer/GridContainer"]
 layout_mode = 2
-texture_normal = ExtResource("1_u243g")
+texture_normal = ExtResource("1_81roq")
 
 [node name="PanelContainer" type="PanelContainer" parent="PanelContainer/MarginContainer/GridContainer/TextureButton3"]
 layout_mode = 0
@@ -90,7 +90,7 @@ horizontal_alignment = 1
 
 [node name="TextureButton4" type="TextureButton" parent="PanelContainer/MarginContainer/GridContainer"]
 layout_mode = 2
-texture_normal = ExtResource("1_u243g")
+texture_normal = ExtResource("1_81roq")
 
 [node name="PanelContainer" type="PanelContainer" parent="PanelContainer/MarginContainer/GridContainer/TextureButton4"]
 layout_mode = 0

@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Item" load_steps=5 format=3 uid="uid://cpty2vp0h2w83"]
 
-[ext_resource type="Texture2D" uid="uid://cfc1e8nv4cp1q" path="res://Assets/Images/Earth.png" id="1_88dew"]
+[ext_resource type="Texture2D" uid="uid://cfc1e8nv4cp1q" path="res://Assets/Images/ItemIcons/Earth.png" id="1_88dew"]
 [ext_resource type="Script" path="res://Scripts/Resources/Item/ItemBlock.cs" id="2_rokht"]
 [ext_resource type="Script" path="res://Scripts/Resources/Item/Item.cs" id="4_441l5"]
 

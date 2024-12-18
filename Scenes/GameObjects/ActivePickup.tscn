@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://dq4nb0kwitffr"]
 
 [ext_resource type="Script" path="res://Scripts/GameObjects/ActivePickup.cs" id="1_1lot0"]
-[ext_resource type="Texture2D" uid="uid://cfc1e8nv4cp1q" path="res://Assets/Images/Earth.png" id="2_v4c4q"]
+[ext_resource type="Texture2D" uid="uid://cfc1e8nv4cp1q" path="res://Assets/Images/ItemIcons/Earth.png" id="2_v4c4q"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hbjta"]
 

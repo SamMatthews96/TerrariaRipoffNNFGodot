@@ -4,7 +4,7 @@
 [ext_resource type="Script" path="res://Scripts/Resources/Recipes/RecipeMining.cs" id="1_hm5ny"]
 [ext_resource type="Texture2D" uid="uid://dfscdvvt4bdr6" path="res://Assets/Images/pickaxePlaceholder.png" id="1_wxnwn"]
 [ext_resource type="Texture2D" uid="uid://wrf00jfy174v" path="res://Assets/Images/woodPlaceholder.png" id="2_lo40t"]
-[ext_resource type="Texture2D" uid="uid://p4wc02lwmqop" path="res://Assets/Images/ferriumPickaxe.png" id="2_uce7j"]
+[ext_resource type="Texture2D" uid="uid://p4wc02lwmqop" path="res://Assets/Images/ItemIcons/ferriumPickaxe.png" id="2_uce7j"]
 [ext_resource type="Texture2D" uid="uid://cargd8drjeywp" path="res://Assets/Images/ingotPlaceholder.png" id="4_ufoyd"]
 
 [sub_resource type="Resource" id="Resource_tdyru"]

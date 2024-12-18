@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://Scripts/Interface/Game/Interface.cs" id="1_2s5nd"]
 [ext_resource type="Script" path="res://Scripts/Interface/Game/InventoryUi.cs" id="2_huspd"]
-[ext_resource type="PackedScene" uid="uid://cgk6fsvhwhj5n" path="res://Scenes/Interface/InventoryItemUi.tscn" id="3_qvdv0"]
+[ext_resource type="PackedScene" uid="uid://cgk6fsvhwhj5n" path="res://Scenes/Interface/Game/InventoryItemIcon.tscn" id="3_757hy"]
 [ext_resource type="Script" path="res://Scripts/Interface/Game/ActionBar.cs" id="4_ww54d"]
 [ext_resource type="Texture2D" uid="uid://d2ux360fa5nu1" path="res://Assets/Images/gatherButton.png" id="6_32d80"]
 [ext_resource type="Script" path="res://Scripts/Interface/Game/ActionBarButton.cs" id="6_eri8v"]
@@ -11,14 +11,14 @@
 [ext_resource type="Script" path="res://Scripts/Interface/Game/BuildUi.cs" id="9_naaai"]
 [ext_resource type="Script" path="res://Scripts/Interface/Game/GameMenu.cs" id="11_22hm5"]
 [ext_resource type="Script" path="res://Scripts/Interface/Game/Crafting/CraftingInterface.cs" id="12_3ates"]
-[ext_resource type="PackedScene" uid="uid://d31jlx7lau6lq" path="res://Scenes/Interface/RecipePopup.tscn" id="13_25k54"]
+[ext_resource type="PackedScene" uid="uid://d31jlx7lau6lq" path="res://Scenes/Interface/Game/Crafting/RecipePopup.tscn" id="12_d1pwp"]
 [ext_resource type="Script" path="res://Scripts/Interface/Game/Crafting/CraftStationContainer.cs" id="13_emxai"]
-[ext_resource type="PackedScene" uid="uid://0tlymjajesh" path="res://Scenes/Interface/SelectCraftStationButton.tscn" id="14_mnetd"]
+[ext_resource type="PackedScene" uid="uid://0tlymjajesh" path="res://Scenes/Interface/Game/Crafting/SelectCraftStationButton.tscn" id="14_n2ewv"]
 [ext_resource type="Script" path="res://Scripts/Interface/Game/Crafting/SelectRecipeContainer.cs" id="15_ffrfe"]
 [ext_resource type="Texture2D" uid="uid://c1dlk5ira363n" path="res://Assets/Images/hand.png" id="15_v7gq4"]
 [ext_resource type="Script" path="res://Scripts/Interface/Game/Crafting/SelectedRecipeContainer.cs" id="16_m7klf"]
 [ext_resource type="Texture2D" uid="uid://dfscdvvt4bdr6" path="res://Assets/Images/pickaxePlaceholder.png" id="17_h2g2b"]
-[ext_resource type="PackedScene" uid="uid://bawlysyg56da3" path="res://Scenes/Interface/RecipeIngredientSlotTexture.tscn" id="19_i6ok5"]
+[ext_resource type="PackedScene" uid="uid://bawlysyg56da3" path="res://Scenes/Interface/Game/Crafting/RecipeIngredientSlotTexture.tscn" id="19_bhfsu"]
 [ext_resource type="Texture2D" uid="uid://wrf00jfy174v" path="res://Assets/Images/woodPlaceholder.png" id="20_ewgbm"]
 
 [node name="GameInterface" type="CanvasLayer" node_paths=PackedStringArray("InventoryUi", "ActionBar", "BuildUi", "GameMenu")]
@@ -37,7 +37,7 @@ offset_bottom = 135.0
 script = ExtResource("2_huspd")
 _capacityLabel = NodePath("VBoxContainer/CapacityLabel")
 _inventoryItemUiContainer = NodePath("VBoxContainer/ItemIconView/InventoryItemUiContainer")
-_inventoryItemUiScene = ExtResource("3_qvdv0")
+_inventoryItemUiScene = ExtResource("3_757hy")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Inventory"]
 layout_mode = 2
@@ -183,7 +183,7 @@ CraftStationContainer = NodePath("HBoxContainer/SelectCraftStationContainer")
 SelectRecipeContainer = NodePath("HBoxContainer/SelectRecipeContainer")
 SelectedRecipeContainer = NodePath("HBoxContainer/SelectedRecipeContainer")
 
-[node name="RecipePopup" parent="Crafting" instance=ExtResource("13_25k54")]
+[node name="RecipePopup" parent="Crafting" instance=ExtResource("12_d1pwp")]
 visible = false
 layout_mode = 1
 
@@ -203,7 +203,7 @@ mouse_filter = 2
 layout_mode = 2
 script = ExtResource("13_emxai")
 _craftingStationButtonContainer = NodePath("ListContainer/MarginContainer/VBoxContainer")
-_craftingStationButtonScene = ExtResource("14_mnetd")
+_craftingStationButtonScene = ExtResource("14_n2ewv")
 
 [node name="TitleContainer" type="MarginContainer" parent="Crafting/HBoxContainer/SelectCraftStationContainer"]
 layout_mode = 2
@@ -313,10 +313,10 @@ layout_mode = 2
 layout_mode = 2
 columns = 3
 
-[node name="TextureRect" parent="Crafting/HBoxContainer/SelectedRecipeContainer/PanelContainer/MarginContainer/HBoxContainer/Ingredients" instance=ExtResource("19_i6ok5")]
+[node name="TextureRect" parent="Crafting/HBoxContainer/SelectedRecipeContainer/PanelContainer/MarginContainer/HBoxContainer/Ingredients" instance=ExtResource("19_bhfsu")]
 layout_mode = 2
 
-[node name="TextureRect2" parent="Crafting/HBoxContainer/SelectedRecipeContainer/PanelContainer/MarginContainer/HBoxContainer/Ingredients" instance=ExtResource("19_i6ok5")]
+[node name="TextureRect2" parent="Crafting/HBoxContainer/SelectedRecipeContainer/PanelContainer/MarginContainer/HBoxContainer/Ingredients" instance=ExtResource("19_bhfsu")]
 layout_mode = 2
 texture = ExtResource("20_ewgbm")
 

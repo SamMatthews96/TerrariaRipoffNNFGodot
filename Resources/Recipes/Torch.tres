@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://wrf00jfy174v" path="res://Assets/Images/woodPlaceholder.png" id="1_cu11s"]
 [ext_resource type="Script" path="res://Scripts/Resources/Recipes/RecipeStatic.cs" id="1_geocp"]
-[ext_resource type="Texture2D" uid="uid://da0geb6ew751" path="res://Assets/Images/torch.png" id="1_p3y05"]
+[ext_resource type="Texture2D" uid="uid://da0geb6ew751" path="res://Assets/Images/ItemIcons/torch.png" id="1_p3y05"]
 [ext_resource type="Script" path="res://Scripts/Resources/Recipes/RecipeIngredientSlot.cs" id="2_mriyg"]
 [ext_resource type="Script" path="res://Scripts/Resources/Item/Item.cs" id="2_rf8x6"]
 

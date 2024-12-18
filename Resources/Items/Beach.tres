@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Item" load_steps=7 format=3 uid="uid://c7hb2igx46aai"]
 
-[ext_resource type="Texture2D" uid="uid://chqwtybfj62dl" path="res://Assets/Images/wood.png" id="1_3yew3"]
+[ext_resource type="Texture2D" uid="uid://chqwtybfj62dl" path="res://Assets/Images/ItemIcons/wood.png" id="1_3yew3"]
 [ext_resource type="Script" path="res://Scripts/Resources/Item/Item.cs" id="1_a12qb"]
 [ext_resource type="Script" path="res://Scripts/Resources/Item/IngredientProperty.cs" id="2_1ihsh"]
 [ext_resource type="Script" path="res://Scripts/Resources/Item/ItemIngredient.cs" id="3_w8ucw"]

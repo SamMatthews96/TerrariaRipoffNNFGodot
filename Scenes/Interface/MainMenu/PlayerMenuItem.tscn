@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://cgxj5nohkfa6v"]
 
-[ext_resource type="Script" path="res://Scripts/Interface/MainMenu/PlayerListItem.cs" id="1_n4qjh"]
+[ext_resource type="Script" path="res://Scripts/Interface/MainMenu/PlayerListItem.cs" id="1_2fmy1"]
 
 [node name="PlayerListItem" type="VBoxContainer" node_paths=PackedStringArray("_playerNameLabel", "_enterPlayerButton", "_deletePlayerButton")]
 anchors_preset = 15
@@ -10,7 +10,7 @@ offset_right = -1645.0
 offset_bottom = -1027.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_n4qjh")
+script = ExtResource("1_2fmy1")
 _playerNameLabel = NodePath("PlayerNameLabel")
 _enterPlayerButton = NodePath("HBoxContainer/SelectPlayerButton")
 _deletePlayerButton = NodePath("HBoxContainer/DeletePlayerButton")

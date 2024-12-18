@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://buekj451osmbs"]
 
-[ext_resource type="Script" path="res://Scripts/Interface/MainMenu/WorldListItem.cs" id="1_cuqe0"]
+[ext_resource type="Script" path="res://Scripts/Interface/MainMenu/WorldListItem.cs" id="1_h03r4"]
 
 [node name="WorldListItem" type="VBoxContainer" node_paths=PackedStringArray("_worldNameLabel", "_enterWorldButton", "_deleteWorldButton")]
 anchors_preset = 15
@@ -10,7 +10,7 @@ offset_right = -1645.0
 offset_bottom = -1027.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_cuqe0")
+script = ExtResource("1_h03r4")
 _worldNameLabel = NodePath("WorldNameLabel")
 _enterWorldButton = NodePath("HBoxContainer/SelectWorldButton")
 _deleteWorldButton = NodePath("HBoxContainer/DeleteWorldButton")
