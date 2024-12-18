@@ -2,14 +2,14 @@
 namespace TerrariaRipoffNNF;
 
 public partial class InventoryItemUi : TextureRect {
-    private StackedItems _inventoryItems;
+    public StackedItems StackedItems {get; private set;}
     
     [Export] private Label _countLabel;
     [Export] private TextureRect _iconTextureRect;
 
     public void Update(StackedItems stackedItems) {
-        _inventoryItems = stackedItems;
-        _countLabel.Text = _inventoryItems.Count.ToString();
-        _iconTextureRect.Texture = _inventoryItems.Item.IconTexture;
+        StackedItems = stackedItems;
+        _countLabel.Text = StackedItems.Count.ToString();
+        _iconTextureRect.Texture = StackedItems.Item.IconTexture;
     }
 }

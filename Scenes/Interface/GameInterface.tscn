@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://javhx4rej0q4"]
+[gd_scene load_steps=21 format=3 uid="uid://javhx4rej0q4"]
 
 [ext_resource type="Script" path="res://Scripts/Interface/Game/Interface.cs" id="1_2s5nd"]
 [ext_resource type="Script" path="res://Scripts/Interface/Game/InventoryUi.cs" id="2_huspd"]
@@ -9,7 +9,6 @@
 [ext_resource type="Texture2D" uid="uid://c43ihljnqox3q" path="res://Assets/Images/buildButton.png" id="7_hnsx4"]
 [ext_resource type="Texture2D" uid="uid://5s1dp1pvh1xy" path="res://Assets/Images/weaponButton.png" id="8_y013w"]
 [ext_resource type="Script" path="res://Scripts/Interface/Game/BuildUi.cs" id="9_naaai"]
-[ext_resource type="PackedScene" uid="uid://dsp7h2dpxh0i6" path="res://Scenes/Interface/SelectBuildBlockButton.tscn" id="10_i1foi"]
 [ext_resource type="Script" path="res://Scripts/Interface/Game/GameMenu.cs" id="11_22hm5"]
 [ext_resource type="Script" path="res://Scripts/Interface/Game/Crafting/CraftingInterface.cs" id="12_3ates"]
 [ext_resource type="PackedScene" uid="uid://d31jlx7lau6lq" path="res://Scenes/Interface/RecipePopup.tscn" id="13_25k54"]
@@ -115,7 +114,6 @@ offset_right = 306.0
 offset_bottom = -35.0
 grow_vertical = 0
 script = ExtResource("9_naaai")
-_packedButton = ExtResource("10_i1foi")
 _buttonContainer = NodePath("MarginContainer/ButtonContainer")
 
 [node name="MarginContainer" type="MarginContainer" parent="BuildBar"]

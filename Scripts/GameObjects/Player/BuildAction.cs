@@ -13,13 +13,13 @@ public partial class BuildAction : PlayerAction {
     public override void _Ready() {
         if (!Player.IsLocalPlayer) return;
         Manager.Instance.Game.Interface.BuildUi.BlockTypeSelected += OnBuildBlockTypeSelected;
-        Player.Inventory.InventoryChanged += OnInventoryChanged;
+        Player.Inventory.RemovedItemStack += OnInventoryRemovedItemStack;
     }
 
     public override void _ExitTree() {
         if (!Player.IsLocalPlayer) return;
         Manager.Instance.Game.Interface.BuildUi.BlockTypeSelected -= OnBuildBlockTypeSelected;
-        Player.Inventory.InventoryChanged -= OnInventoryChanged;
+        Player.Inventory.RemovedItemStack -= OnInventoryRemovedItemStack;
     }
 
     private void OnBuildBlockTypeSelected(Item item) {
@@ -48,9 +48,10 @@ public partial class BuildAction : PlayerAction {
 
     public override void EndPrimaryAction(Vector2 mouseWorldPosition) { }
 
-    private void OnInventoryChanged(Inventory inventory) {
-        if (inventory.StackedItemsList.Exists(stack =>
-                stack.Item.HasProperty<ItemBlock>())) return;
-        _blockItem = null;
+    private void OnInventoryRemovedItemStack(StackedItems stackedItems) {
+        if (_blockItem == stackedItems.Item) {
+            _blockItem = null;
+        }
     }
+    
 }

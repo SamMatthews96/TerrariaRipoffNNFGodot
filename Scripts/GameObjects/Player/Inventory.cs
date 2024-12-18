@@ -14,7 +14,9 @@ public partial class Inventory : Node {
     public List<StackedItems> StackedItemsList =>
         _inventoryItemsList.ConvertAll(inventoryItems => inventoryItems.ToStackedItems());
 
-    public event Action<Inventory> InventoryChanged;
+    public event Action<StackedItems> ItemStackChangedSize;
+    public event Action<StackedItems> AddedItemStack;
+    public event Action<StackedItems> RemovedItemStack;
     public event Action<ActivePickup> PickedUpItem;
 
     [Export] private Player _player;
@@ -26,8 +28,6 @@ public partial class Inventory : Node {
             _player.PickupArea.TouchedItem += OnCollidedWithPickup;
             _player.ActionController.BlockPlaced += OnBlockPlaced;
         }
-        
-        
     }
 
     public override void _ExitTree() {
@@ -64,11 +64,11 @@ public partial class Inventory : Node {
 
         if (index == -1) {
             _inventoryItemsList.Add(inventoryItemsToAdd);
+            AddedItemStack?.Invoke(inventoryItemsToAdd);
         } else {
             _inventoryItemsList[index] += inventoryItemsToAdd;
+            ItemStackChangedSize?.Invoke(_inventoryItemsList[index].ToStackedItems());
         }
-
-        InventoryChanged?.Invoke(this);
     }
 
     [Rpc(CallLocal = true)]
@@ -79,7 +79,7 @@ public partial class Inventory : Node {
 
         int index = _inventoryItemsList.FindIndex(inventoryItems =>
             inventoryItems.Item == inventoryItemsToRemove.Item);
-        
+
         if (index == -1) {
             throw new Exception("[20240815.0934.1] Inventory item not found");
         }
@@ -88,14 +88,14 @@ public partial class Inventory : Node {
 
         switch (_inventoryItemsList[index].Count) {
             case > 0:
+                ItemStackChangedSize?.Invoke(_inventoryItemsList[index].ToStackedItems());
                 break;
             case 0:
                 _inventoryItemsList.RemoveAt(index);
+                RemovedItemStack?.Invoke(inventoryItemsToRemove);
                 break;
             case < 0:
                 throw new Exception("[20240815.0934.1] Inventory space went negative");
         }
-
-        InventoryChanged?.Invoke(this);
     }
 }

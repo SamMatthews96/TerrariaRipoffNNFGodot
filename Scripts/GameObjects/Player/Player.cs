@@ -34,6 +34,8 @@ public partial class Player : CharacterBody2D {
     public static event Action<Player> BeforeLocalPlayerSpawned;
     public event Action<Dictionary> MovedCell;
 
+    public event Action BeforePlayerLeaveScene;
+
     #region Creation
 
     public override void _EnterTree() {
@@ -56,6 +58,7 @@ public partial class Player : CharacterBody2D {
             Manager.Instance.Game.InputManager.HorizontalInputChanged -= OnHorizontalInputChanged;
             Manager.Instance.Game.InputManager.JumpPressed -= OnJumpPressed;
         }
+        BeforePlayerLeaveScene?.Invoke();
     }
 
     private void InitializeLocalPlayer() {

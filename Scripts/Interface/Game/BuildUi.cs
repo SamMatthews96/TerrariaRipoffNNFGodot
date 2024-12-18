@@ -5,10 +5,10 @@ using Godot;
 namespace TerrariaRipoffNNF;
 
 public partial class BuildUi : Container {
-    private readonly List<BlockTypeButton> _blockTypeButtons = new();
-    [Export] private PackedScene _packedButton;
+    private readonly Dictionary<Item, BlockTypeButton> _blockTypeButtons = new();
     [Export] private BoxContainer _buttonContainer;
-    private ItemBlock _selectedItemBlock;
+    private BlockTypeButton _selectedButton;
+    private Player _localPlayer;
 
     public event Action<Item> BlockTypeSelected;
 
@@ -29,46 +29,51 @@ public partial class BuildUi : Container {
     }
 
     private void OnBeforeLocalPlayerSpawned(Player player) {
-        player.ActionController.ActionChanged += OnPlayerActionChanged;
-        player.Inventory.InventoryChanged += OnInventoryChanged;
+        _localPlayer = player;
+        _localPlayer.ActionController.ActionChanged += OnPlayerActionChanged;
+        _localPlayer.Inventory.AddedItemStack += OnInventoryAddedItemStack;
+        _localPlayer.Inventory.RemovedItemStack += OnInventoryRemovedItemStack;
+        _localPlayer.BeforePlayerLeaveScene += OnBeforeLocalPlayerLeaveScene;
     }
 
-    private void OnInventoryChanged(Inventory inventory) {
-        _blockTypeButtons.ForEach(button => button.QueueFree());
-        _blockTypeButtons.Clear();
+    private void OnBeforeLocalPlayerLeaveScene() {
+        _localPlayer.ActionController.ActionChanged -= OnPlayerActionChanged;
+        _localPlayer.Inventory.AddedItemStack -= OnInventoryAddedItemStack;
+        _localPlayer.Inventory.RemovedItemStack -= OnInventoryRemovedItemStack;
+        _localPlayer.BeforePlayerLeaveScene -= OnBeforeLocalPlayerLeaveScene;
+    }
 
-        bool isSelectedBlockFound = false;
-        inventory.StackedItemsList.ForEach(stack => {
-            if (!stack.Item.TryGetProperty(out ItemBlock property)) return;
-            if (property == _selectedItemBlock) {
-                isSelectedBlockFound = true;
-            }
+    private void OnInventoryAddedItemStack(StackedItems stackedItems) {
+        if (!stackedItems.Item.TryGetProperty(out ItemBlock property)) return;
+        BlockTypeButton button = BlockTypeButton.Create(stackedItems.Item, false);
+        button.ButtonDown += () => SelectButton(stackedItems.Item);
+        _buttonContainer.AddChild(button);
+        _blockTypeButtons.Add(stackedItems.Item, button);
 
-            BlockTypeButton button =
-                BlockTypeButton.Create(stack.Item, isFocused: property == _selectedItemBlock);
-            button.ButtonDown += () => SelectButton(button);
-            _buttonContainer.AddChild(button);
-            _blockTypeButtons.Add(button);
-        });
-
-        if (!isSelectedBlockFound) {
-            _selectedItemBlock = null;
-        }
-
-        if (_blockTypeButtons.Count > 0 && _selectedItemBlock == null) {
-            SelectButton(_blockTypeButtons[0]);
+        if (_selectedButton == null) {
+            SelectButton(stackedItems.Item);
         }
     }
 
-    private void SelectButton(BlockTypeButton button) {
-        _blockTypeButtons.ForEach(blockTypeButton => {
-            if (blockTypeButton == button) {
-                _selectedItemBlock = blockTypeButton.BlockItem.GetProperty<ItemBlock>();
-                blockTypeButton.SetFocus();
-            } else {
-                blockTypeButton.SetDefocus();
-            }
-        });
-        BlockTypeSelected?.Invoke(button.BlockItem);
+    private void OnInventoryRemovedItemStack(StackedItems stackedItems) {
+        if (!_blockTypeButtons.TryGetValue(stackedItems.Item, out BlockTypeButton button)) {
+            return;
+        }
+
+        if (_selectedButton == button) {
+            _selectedButton = null;
+        }
+
+        button.QueueFree();
+        _blockTypeButtons.Remove(stackedItems.Item);
+    }
+
+    private void SelectButton(Item item) {
+        if (_selectedButton != null) {
+            _selectedButton.SetUnfocus();
+        }
+        _selectedButton = _blockTypeButtons[item];
+        _selectedButton.SetFocus();
+        BlockTypeSelected?.Invoke(item);
     }
 }

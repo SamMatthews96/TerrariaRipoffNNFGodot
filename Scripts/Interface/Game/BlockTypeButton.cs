@@ -9,7 +9,7 @@ public partial class BlockTypeButton : TextureButton {
         Modulate = new Color(1, 1, 1);
     }
 
-    public void SetDefocus() {
+    public void SetUnfocus() {
         Modulate = new Color(1, 1, 1, 0.5f);
     }
 
@@ -21,7 +21,7 @@ public partial class BlockTypeButton : TextureButton {
         if (isFocused) {
             newButton.SetFocus();
         } else {
-            newButton.SetDefocus();
+            newButton.SetUnfocus();
         }
 
         return newButton;
