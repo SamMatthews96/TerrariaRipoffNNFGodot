@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Godot;
 
 namespace TerrariaRipoffNNF;
@@ -5,5 +6,6 @@ namespace TerrariaRipoffNNF;
 public partial class Test : Node {
     
     public override void _Ready() {
+        
     } 
 }

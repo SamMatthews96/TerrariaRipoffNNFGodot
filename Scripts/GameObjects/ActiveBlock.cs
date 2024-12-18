@@ -16,4 +16,12 @@ public partial class ActiveBlock : StaticBody2D {
             SavedBlock.YPosition * Game.BlockSize);
         _sprite.Texture = SavedBlock.Item.GetProperty<ItemBlock>().Texture;
     }
+    
+    public static ActiveBlock Create(SavedBlock savedBlock) {
+        ActiveBlock activeBlock = Manager.Instance.PackedScenes.ActiveBlock.Instantiate<ActiveBlock>();
+        activeBlock._savedBlockDictionary = savedBlock.Serialize();
+        
+        Manager.Instance.Game.BlockParent.AddChild(activeBlock, true);
+        return activeBlock;
+    }
 }
