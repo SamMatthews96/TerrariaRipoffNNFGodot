@@ -21,15 +21,11 @@ public partial class SavedBlock : Resource {
 
     public static SavedBlock FromDict(Dictionary dictionary) {
         try {
-            Item block = Item.FromDictionary(dictionary);
-            int xPosition = dictionary["X"].ToString().ToInt();
-            int yPosition = dictionary["Y"].ToString().ToInt();
-            float currentHealth = dictionary["CurrentHealth"].ToString().ToFloat();
             return Create(
-                block: block,
-                xPosition: xPosition,
-                yPosition: yPosition,
-                currentHealth: currentHealth
+                block: Item.FromDictionary(dictionary),
+                xPosition: dictionary["X"].ToString().ToInt(),
+                yPosition: dictionary["Y"].ToString().ToInt(),
+                currentHealth: dictionary["CurrentHealth"].ToString().ToFloat()
             );
         } catch (Exception e) {
             GD.PrintErr("error reading SavedBlock from dictionary");
@@ -38,13 +34,15 @@ public partial class SavedBlock : Resource {
         }
     }
 
-    public static SavedBlock Create(Item block, int xPosition, int yPosition,
-        float currentHealth = 0) {
+    public static SavedBlock Create(
+        Item block, int xPosition, int yPosition, float currentHealth = 0) {
         return new SavedBlock {
             Item = block,
             XPosition = xPosition,
             YPosition = yPosition,
-            CurrentHealth = currentHealth == 0 ? block.GetProperty<ItemBlock>().MaxHealth : currentHealth
+            CurrentHealth = currentHealth == 0
+                ? block.GetProperty<ItemBlock>().MaxHealth
+                : currentHealth
         };
     }
 }

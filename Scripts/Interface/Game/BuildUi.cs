@@ -27,7 +27,7 @@ public partial class BuildUi : Container {
             Hide();
         }
     }
-    
+
     private void OnBeforeLocalPlayerSpawned(Player player) {
         player.ActionController.ActionChanged += OnPlayerActionChanged;
         player.Inventory.InventoryChanged += OnInventoryChanged;
@@ -45,11 +45,9 @@ public partial class BuildUi : Container {
             }
 
             BlockTypeButton button =
-                BlockTypeButton.New(_buttonContainer, _packedButton, stack.Item)
-                    .WithFocus(property == _selectedItemBlock)
-                    .Build();
+                BlockTypeButton.Create(stack.Item, isFocused: property == _selectedItemBlock);
             button.ButtonDown += () => SelectButton(button);
-
+            _buttonContainer.AddChild(button);
             _blockTypeButtons.Add(button);
         });
 
