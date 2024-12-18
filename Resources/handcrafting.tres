@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="CraftingStation" load_steps=3 format=3 uid="uid://3tvo765qovuy"]
 
-[ext_resource type="Script" path="res://Scripts/Interface/Game/Crafting/CraftingStation.cs" id="1_feova"]
+[ext_resource type="Script" path="res://Scripts/Resources/CraftingStation.cs" id="1_feova"]
 [ext_resource type="Texture2D" uid="uid://c1dlk5ira363n" path="res://Assets/Images/hand.png" id="1_n12x4"]
 
 [resource]
