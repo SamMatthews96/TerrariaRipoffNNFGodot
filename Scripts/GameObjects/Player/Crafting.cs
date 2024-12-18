@@ -16,6 +16,7 @@ public enum CraftingStationType {
 
 public sealed partial class Crafting : Node {
     [Export] private Player _player;
+    [Export] private CraftingStation _handcrafting;
 
     private Dictionary<CraftingStationType, CraftingStation> _availableCraftingStations = new();
     private CraftingStation _selectedCraftingStation;
@@ -24,11 +25,7 @@ public sealed partial class Crafting : Node {
     public event Action<CraftingStation> CraftingStationAdded;
 
     public override void _Ready() {
-        CraftingStation handcraftingStation = new() {
-            Type = CraftingStationType.Handcrafting
-            //@todo add icon
-        };
-        AddCraftingStation(handcraftingStation);
+        AddCraftingStation(_handcrafting);
     }
 
     public override void _ExitTree() { }
@@ -38,10 +35,4 @@ public sealed partial class Crafting : Node {
         _availableCraftingStations[craftingStation.Type] = craftingStation;
         CraftingStationAdded?.Invoke(craftingStation);
     }
-}
-
-//@todo move this to a separate file
-public partial class CraftingStation : Resource {
-    [Export] public CraftingStationType Type;
-    [Export] public Texture2D Icon;
 }
