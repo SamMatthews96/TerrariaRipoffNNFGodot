@@ -48,6 +48,7 @@ public partial class Inventory : Control {
         _inventoryItemUiList.Add(inventoryItemUi);
         _inventoryItemUiContainer.AddChild(inventoryItemUi);
         inventoryItemUi.Update(stackedItems);
+        SetCapacityLabelText();
     }
 
     private void OnInventoryRemovedItemStack(StackedItems stackedItems) {
@@ -57,12 +58,14 @@ public partial class Inventory : Control {
             inventoryItemUi.QueueFree();
             _inventoryItemUiList.Remove(inventoryItemUi);
         }
+        SetCapacityLabelText();
     }
 
     private void OnInventoryItemStackChanged(StackedItems stackedItems) {
         InventoryItem inventoryItemUi = _inventoryItemUiList.Find(e =>
             e.StackedItems.Item == stackedItems.Item);
         inventoryItemUi.Update(stackedItems);
+        SetCapacityLabelText();
     }
 
     private void SetCapacityLabelText() {
