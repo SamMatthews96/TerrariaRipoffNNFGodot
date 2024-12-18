@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Godot;
 
 namespace TerrariaRipoffNNF.Interface;
@@ -12,6 +13,9 @@ public partial class Inventory : Control {
 
     private Player _localPlayer;
 
+    public event Action<Control, Item> MouseEnteredItemIcon;
+    public event Action MouseLeftItemIcon;
+    
     private void OnInputManagerToggleInventoryPressed() {
         Visible = !Visible;
     }
@@ -48,13 +52,25 @@ public partial class Inventory : Control {
         _inventoryItemUiList.Add(inventoryItemUi);
         _inventoryItemUiContainer.AddChild(inventoryItemUi);
         inventoryItemUi.Update(stackedItems);
+        inventoryItemUi.MouseEnteredItem += OnInventoryMouseEnteredItem;
+        inventoryItemUi.MouseLeftItem += OnInventoryMouseLeftItem;
         SetCapacityLabelText();
+    }
+    
+    private void OnInventoryMouseEnteredItem(Control node, Item item) {
+        MouseEnteredItemIcon?.Invoke(node, item);
+    }
+
+    private void OnInventoryMouseLeftItem() {
+        MouseLeftItemIcon?.Invoke();
     }
 
     private void OnInventoryRemovedItemStack(StackedItems stackedItems) {
         InventoryItem inventoryItemUi = _inventoryItemUiList.Find(e =>
             e.StackedItems.Item == stackedItems.Item);
         if (inventoryItemUi != null) {
+            inventoryItemUi.MouseEnteredItem -= OnInventoryMouseEnteredItem;
+            inventoryItemUi.MouseLeftItem -= OnInventoryMouseLeftItem;
             inventoryItemUi.QueueFree();
             _inventoryItemUiList.Remove(inventoryItemUi);
         }

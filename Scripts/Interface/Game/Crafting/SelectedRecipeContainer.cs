@@ -46,5 +46,6 @@ public partial class SelectedRecipeContainer : Container {
     private void OnIngredientIconMouseEntered(Vector2 iconPosition, RecipeIngredientSlot ingredientSlot) {
         _ingredientPopupPanel.GlobalPosition = iconPosition;
         _ingredientPopupPanel.Show();
+        //@todo move this logic into the popup panel
     }
 }
