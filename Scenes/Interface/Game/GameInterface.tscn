@@ -184,9 +184,10 @@ CraftStationContainer = NodePath("HBoxContainer/SelectCraftStationContainer")
 SelectRecipeContainer = NodePath("HBoxContainer/SelectRecipeContainer")
 SelectedRecipeContainer = NodePath("HBoxContainer/SelectedRecipeContainer")
 
-[node name="RecipePopup" parent="Crafting" instance=ExtResource("12_d1pwp")]
+[node name="SelectIngredientPopup" parent="Crafting" node_paths=PackedStringArray("_selectedRecipeContainer") instance=ExtResource("12_d1pwp")]
 visible = false
 layout_mode = 1
+_selectedRecipeContainer = NodePath("../HBoxContainer/SelectedRecipeContainer")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Crafting"]
 layout_mode = 1
@@ -284,7 +285,7 @@ _craftingInterface = NodePath("../..")
 _ingredientContainer = NodePath("PanelContainer/MarginContainer/HBoxContainer/Ingredients")
 _craftButton = NodePath("PanelContainer/MarginContainer/HBoxContainer/MarginContainer/Button")
 _resultItemIcon = NodePath("PanelContainer/MarginContainer/HBoxContainer/CenterContainer/TextureRect")
-_ingredientPopupPanel = NodePath("../../RecipePopup")
+_ingredientPopupPanel = NodePath("../../SelectIngredientPopup")
 
 [node name="MarginContainer" type="MarginContainer" parent="Crafting/HBoxContainer/SelectedRecipeContainer"]
 layout_mode = 2

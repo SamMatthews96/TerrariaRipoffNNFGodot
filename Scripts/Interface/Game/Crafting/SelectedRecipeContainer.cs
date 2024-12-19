@@ -1,4 +1,5 @@
-﻿using Godot;
+﻿using System;
+using Godot;
 
 namespace TerrariaRipoffNNF.Interface;
 
@@ -10,9 +11,10 @@ public partial class SelectedRecipeContainer : Container {
     [Export] private Button _craftButton;
     [Export] private TextureRect _resultItemIcon;
     [Export] private Control _ingredientPopupPanel;
+
+    public event Action<Control, IngredientType> IngredientIconMouseEntered;
+    public event Action IngredientIconMouseLeft;
     
-
-
     public override void _Ready() {
         Hide();
         _craftingInterface.SelectRecipeContainer.RecipeButtonClicked += OnRecipeButtonClicked;
@@ -36,16 +38,19 @@ public partial class SelectedRecipeContainer : Container {
             RecipeIngredientSlotTexture newIngredientSlotTexture
                 = RecipeIngredientSlotTexture.Create(ingredientSlot);
             newIngredientSlotTexture.MouseEnteredIcon += OnIngredientIconMouseEntered;
+            newIngredientSlotTexture.MouseLeftIcon += OnIngredientIconMouseLeft;
             _ingredientContainer.AddChild(newIngredientSlotTexture);
         }
-        
+
         _resultItemIcon.Texture = recipe.ResultIcon;
         Show();
     }
 
-    private void OnIngredientIconMouseEntered(Vector2 iconPosition, RecipeIngredientSlot ingredientSlot) {
-        _ingredientPopupPanel.GlobalPosition = iconPosition;
-        _ingredientPopupPanel.Show();
-        //@todo move this logic into the popup panel
+    private void OnIngredientIconMouseEntered(Control node, IngredientType ingredientType) {
+        IngredientIconMouseEntered?.Invoke(node, ingredientType);
+    }
+    
+    private void OnIngredientIconMouseLeft() {
+        IngredientIconMouseLeft?.Invoke();
     }
 }

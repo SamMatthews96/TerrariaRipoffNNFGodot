@@ -1,105 +1,32 @@
 [gd_scene load_steps=2 format=3 uid="uid://d31jlx7lau6lq"]
 
-[ext_resource type="Texture2D" uid="uid://chqwtybfj62dl" path="res://Assets/Images/ItemIcons/wood.png" id="1_81roq"]
+[ext_resource type="Script" path="res://Scripts/Interface/Game/Crafting/SelectIngredientPopup.cs" id="1_l8lqj"]
 
-[node name="RecipePopup" type="Control"]
+[node name="SelectIngredientPopup" type="PanelContainer" node_paths=PackedStringArray("_iconContainer")]
 z_index = 10
-layout_mode = 3
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
+offset_left = -30.0
+offset_top = -56.0
+offset_right = 30.0
 grow_horizontal = 2
 grow_vertical = 0
-size_flags_vertical = 8
+size_flags_horizontal = 4
+size_flags_vertical = 4
+script = ExtResource("1_l8lqj")
+_iconContainer = NodePath("MarginContainer/GridContainer")
 
-[node name="PanelContainer" type="PanelContainer" parent="."]
-layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -206.0
-offset_top = -295.0
-offset_right = 206.0
-offset_bottom = -15.0
-grow_horizontal = 2
-grow_vertical = 0
-
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="GridContainer" type="GridContainer" parent="PanelContainer/MarginContainer"]
+[node name="GridContainer" type="GridContainer" parent="MarginContainer"]
 layout_mode = 2
 size_flags_vertical = 8
 columns = 3
-
-[node name="TextureButton" type="TextureButton" parent="PanelContainer/MarginContainer/GridContainer"]
-layout_mode = 2
-texture_normal = ExtResource("1_81roq")
-
-[node name="PanelContainer" type="PanelContainer" parent="PanelContainer/MarginContainer/GridContainer/TextureButton"]
-layout_mode = 0
-offset_left = 2.0
-offset_top = 2.0
-offset_right = 42.0
-offset_bottom = 42.0
-
-[node name="Label" type="Label" parent="PanelContainer/MarginContainer/GridContainer/TextureButton/PanelContainer"]
-layout_mode = 2
-text = "X"
-horizontal_alignment = 1
-
-[node name="TextureButton2" type="TextureButton" parent="PanelContainer/MarginContainer/GridContainer"]
-layout_mode = 2
-texture_normal = ExtResource("1_81roq")
-
-[node name="PanelContainer" type="PanelContainer" parent="PanelContainer/MarginContainer/GridContainer/TextureButton2"]
-layout_mode = 0
-offset_left = 2.0
-offset_top = 2.0
-offset_right = 42.0
-offset_bottom = 42.0
-
-[node name="Label" type="Label" parent="PanelContainer/MarginContainer/GridContainer/TextureButton2/PanelContainer"]
-layout_mode = 2
-text = "X"
-horizontal_alignment = 1
-
-[node name="TextureButton3" type="TextureButton" parent="PanelContainer/MarginContainer/GridContainer"]
-layout_mode = 2
-texture_normal = ExtResource("1_81roq")
-
-[node name="PanelContainer" type="PanelContainer" parent="PanelContainer/MarginContainer/GridContainer/TextureButton3"]
-layout_mode = 0
-offset_left = 2.0
-offset_top = 2.0
-offset_right = 42.0
-offset_bottom = 42.0
-
-[node name="Label" type="Label" parent="PanelContainer/MarginContainer/GridContainer/TextureButton3/PanelContainer"]
-layout_mode = 2
-text = "X"
-horizontal_alignment = 1
-
-[node name="TextureButton4" type="TextureButton" parent="PanelContainer/MarginContainer/GridContainer"]
-layout_mode = 2
-texture_normal = ExtResource("1_81roq")
-
-[node name="PanelContainer" type="PanelContainer" parent="PanelContainer/MarginContainer/GridContainer/TextureButton4"]
-layout_mode = 0
-offset_left = 2.0
-offset_top = 2.0
-offset_right = 42.0
-offset_bottom = 42.0
-
-[node name="Label" type="Label" parent="PanelContainer/MarginContainer/GridContainer/TextureButton4/PanelContainer"]
-layout_mode = 2
-text = "X"
-horizontal_alignment = 1

@@ -23,6 +23,4 @@ public class InventoryItems : StackedItems {
         
         return new InventoryItems(a.Item, a.Count - b.Count);
     }
-    
-    
 }

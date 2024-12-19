@@ -6,9 +6,11 @@ namespace TerrariaRipoffNNF.Interface;
 public partial class RecipeIngredientSlotTexture : TextureRect {
     private Item _selectedIngredientItem;
     private RecipeIngredientSlot _ingredient;
-    
-    public event Action<Vector2, RecipeIngredientSlot> MouseEnteredIcon;
-    
+
+    public event Action<Control, IngredientType> MouseEnteredIcon;
+    public event Action MouseLeftIcon;
+
+
     public static RecipeIngredientSlotTexture Create(RecipeIngredientSlot ingredient) {
         RecipeIngredientSlotTexture newTexture =
             Manager.Instance.PackedScenes.RecipeIngredientSlotTexture
@@ -20,14 +22,19 @@ public partial class RecipeIngredientSlotTexture : TextureRect {
 
     public override void _Ready() {
         MouseEntered += OnMouseEntered;
-        MouseExited += () => {
-            // _ingredientPopupPanel.Hide();
-        };
-
+        MouseExited += OnMouseExited;
+    }
+    
+    public override void _ExitTree() {
+        MouseEntered -= OnMouseEntered;
+        MouseExited -= OnMouseExited;
     }
 
     private void OnMouseEntered() {
-        MouseEnteredIcon?.Invoke(GlobalPosition + new Vector2(Size.X / 2, 0), _ingredient);
+        MouseEnteredIcon?.Invoke(this, _ingredient.IngredientType);
     }
-}       
-        
+
+    private void OnMouseExited() {
+        MouseLeftIcon?.Invoke();
+    }
+}
