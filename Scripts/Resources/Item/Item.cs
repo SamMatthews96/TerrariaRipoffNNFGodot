@@ -55,6 +55,15 @@ public sealed partial class Item : Resource {
         return serialized;
     }
 
+    public Dictionary<string, Dictionary> GetTooltipAttributes() {
+        Dictionary<string, Dictionary> newDictionary = new();
+        foreach (ItemProperty itemProperty in _itemProperties) {
+            newDictionary.Add(itemProperty.PropertyType.ToString(), itemProperty.GetTooltipAttributes());
+        }
+
+        return newDictionary;
+    }
+
     public static Item FromDictionary(Dictionary dictionary) {
         if (dictionary.TryGetValue("ResourcePath", out Variant resourcePath)) {
             return ResourceLoader.Load<Item>(resourcePath.ToString());

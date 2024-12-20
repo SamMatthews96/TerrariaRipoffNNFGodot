@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Godot;
 using Godot.Collections;
 
@@ -6,8 +7,19 @@ namespace TerrariaRipoffNNF;
 
 [GlobalClass]
 public partial class ItemIngredient : ItemProperty {
+    public override PropertyType PropertyType => PropertyType.Ingredient;
     public override Dictionary ToDictionary() {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
+    }
+
+    public override Dictionary GetTooltipAttributes() {
+        Dictionary newDictionary = new();
+        foreach (IngredientProperty ingredientProperty in _ingredientProperties) {
+            newDictionary.Add(ingredientProperty.IngredientType.ToString(),
+                ingredientProperty.Quality);
+        }
+
+        return newDictionary;
     }
 
     [Export] private Array<IngredientProperty> _ingredientProperties = new();

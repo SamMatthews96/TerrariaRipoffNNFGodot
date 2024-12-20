@@ -1,9 +1,11 @@
 ﻿using Godot;
+using Godot.Collections;
 
 namespace TerrariaRipoffNNF;
 
 [GlobalClass]
 public sealed partial class ItemMining : ItemEquipment {
+    public override PropertyType PropertyType => PropertyType.Mining;
     [Export] public float Speed { get; private set; }
     [Export] public float Range { get; private set; }
     [Export] public float Power { get; private set; }
@@ -14,5 +16,13 @@ public sealed partial class ItemMining : ItemEquipment {
             Range = range,
             Power = power
         };
+    }
+
+    public override Dictionary GetTooltipAttributes() {
+        Dictionary tooltipAttributes = new();
+        tooltipAttributes.Add("Speed", Speed);
+        tooltipAttributes.Add("Range", Range);
+        tooltipAttributes.Add("Power", Power);
+        return tooltipAttributes;
     }
 }
