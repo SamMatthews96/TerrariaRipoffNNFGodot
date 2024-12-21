@@ -30,6 +30,7 @@ BuildUi = NodePath("BuildBar")
 GameMenu = NodePath("GameMenu")
 
 [node name="Inventory" type="PanelContainer" parent="." node_paths=PackedStringArray("_capacityLabel", "_inventoryItemUiContainer")]
+visible = false
 offset_left = 33.0
 offset_top = 29.0
 offset_right = 243.0

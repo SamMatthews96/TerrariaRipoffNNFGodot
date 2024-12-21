@@ -88,16 +88,4 @@ public partial class Inventory : Control {
         _capacityLabel.Text =
             $"{_localPlayer.Inventory.UsedSpace}/{_localPlayer.Inventory.MaximumSpace}";
     }
-
-    private void OnInventoryChanged(TerrariaRipoffNNF.Inventory inventory) {
-        SetCapacityLabelText();
-        _inventoryItemUiList.ForEach(e => e.QueueFree());
-        _inventoryItemUiList.Clear();
-        inventory.StackedItemsList.ForEach(e => {
-            InventoryItem inventoryItemUi = _inventoryItemUiScene.Instantiate<InventoryItem>();
-            _inventoryItemUiList.Add(inventoryItemUi);
-            _inventoryItemUiContainer.AddChild(inventoryItemUi);
-            inventoryItemUi.Update(e);
-        });
-    }
 }

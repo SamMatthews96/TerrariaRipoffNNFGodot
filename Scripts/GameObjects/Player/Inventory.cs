@@ -21,12 +21,18 @@ public partial class Inventory : Node {
 
     [Export] private Player _player;
 
+
     public override void _Ready() {
         _inventoryItemsList = new List<InventoryItems>();
 
         if (Manager.Instance.Game.IsHost) {
             _player.PickupArea.TouchedItem += OnCollidedWithPickup;
             _player.ActionController.BlockPlaced += OnBlockPlaced;
+            
+            //@todo remove placeholder wood
+            Item tempWood = ResourceLoader.Load<Item>("res://Resources/Items/wood1.tres");
+            InventoryItems inventoryItems = new(tempWood, 10);
+            Rpc(nameof(ClientAddItems), inventoryItems.Serialize());
         }
     }
 

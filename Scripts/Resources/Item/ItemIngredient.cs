@@ -8,6 +8,8 @@ namespace TerrariaRipoffNNF;
 [GlobalClass]
 public partial class ItemIngredient : ItemProperty {
     public override PropertyType PropertyType => PropertyType.Ingredient;
+    [Export] private Array<IngredientProperty> _ingredientProperties = new();
+
     public override Dictionary ToDictionary() {
         throw new NotImplementedException();
     }
@@ -22,9 +24,12 @@ public partial class ItemIngredient : ItemProperty {
         return newDictionary;
     }
 
-    [Export] private Array<IngredientProperty> _ingredientProperties = new();
-
     public IngredientProperty GetProperty(IngredientType ingredientType) {
         return _ingredientProperties.First(property => property.IngredientType == ingredientType);
+    }
+
+    public bool HasProperty(IngredientType ingredientType) {
+        return _ingredientProperties.Any(ingredientProperty =>
+            ingredientProperty.IngredientType == ingredientType);
     }
 }

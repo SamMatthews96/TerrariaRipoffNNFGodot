@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="PackedScenes" load_steps=13 format=3 uid="uid://dllhhokx2wkse"]
+[gd_resource type="Resource" script_class="PackedScenes" load_steps=14 format=3 uid="uid://dllhhokx2wkse"]
 
 [ext_resource type="PackedScene" uid="uid://me8wg1m67cje" path="res://Scenes/GameObjects/ActiveBlock.tscn" id="1_b5dt8"]
 [ext_resource type="Script" path="res://Scripts/Managers/PackedScenes.cs" id="1_tombv"]
@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://bawlysyg56da3" path="res://Scenes/Interface/Game/Crafting/RecipeIngredientSlotTexture.tscn" id="7_6ykcs"]
 [ext_resource type="PackedScene" uid="uid://0tlymjajesh" path="res://Scenes/Interface/Game/Crafting/SelectCraftStationButton.tscn" id="7_eocek"]
 [ext_resource type="PackedScene" uid="uid://dgm8a81v4g6g3" path="res://Scenes/Interface/Game/Crafting/SelectRecipeButton.tscn" id="8_bwf4d"]
+[ext_resource type="PackedScene" uid="uid://d3mhbs8it3b2f" path="res://Scenes/Interface/Game/Crafting/SelectIngredientButton.tscn" id="11_tftwe"]
 
 [resource]
 script = ExtResource("1_tombv")
@@ -26,3 +27,4 @@ SelectRecipeButton = ExtResource("8_bwf4d")
 RecipeIngredientSlotTexture = ExtResource("7_6ykcs")
 BlockTypeButton = ExtResource("3_10dmv")
 ItemTooltipPropertyGroup = ExtResource("5_8fovs")
+SelectIngredientButton = ExtResource("11_tftwe")
