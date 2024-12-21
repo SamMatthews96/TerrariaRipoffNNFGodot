@@ -10,7 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://5s1dp1pvh1xy" path="res://Assets/Images/weaponButton.png" id="8_y013w"]
 [ext_resource type="Script" path="res://Scripts/Interface/Game/Build.cs" id="9_jhyas"]
 [ext_resource type="Script" path="res://Scripts/Interface/Game/GameMenu.cs" id="11_22hm5"]
-[ext_resource type="Script" path="res://Scripts/Interface/Game/Crafting/Main.cs" id="11_gtii3"]
+[ext_resource type="Script" path="res://Scripts/Interface/Game/Crafting/Crafting.cs" id="11_gtii3"]
 [ext_resource type="PackedScene" uid="uid://d31jlx7lau6lq" path="res://Scenes/Interface/Game/Crafting/RecipePopup.tscn" id="12_d1pwp"]
 [ext_resource type="Script" path="res://Scripts/Interface/Game/Crafting/StationContainer.cs" id="13_emxai"]
 [ext_resource type="PackedScene" uid="uid://0tlymjajesh" path="res://Scenes/Interface/Game/Crafting/SelectCraftStationButton.tscn" id="14_n2ewv"]
@@ -30,7 +30,6 @@ BuildUi = NodePath("BuildBar")
 GameMenu = NodePath("GameMenu")
 
 [node name="Inventory" type="PanelContainer" parent="." node_paths=PackedStringArray("_capacityLabel", "_inventoryItemUiContainer")]
-visible = false
 offset_left = 33.0
 offset_top = 29.0
 offset_right = 243.0
@@ -341,7 +340,4 @@ layout_mode = 2
 texture = ExtResource("17_h2g2b")
 
 [node name="ItemTooltip" parent="." node_paths=PackedStringArray("_inventory") instance=ExtResource("21_luabj")]
-custom_minimum_size = Vector2(0, 0)
-offset_right = -1920.0
-offset_bottom = -1080.0
 _inventory = NodePath("../Inventory")

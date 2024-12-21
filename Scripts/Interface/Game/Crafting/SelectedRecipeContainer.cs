@@ -6,7 +6,7 @@ namespace TerrariaRipoffNNF.Interface;
 public partial class SelectedRecipeContainer : Container {
     private Recipe _selectedRecipe;
     [Export] private Button _recipeNameButton;
-    [Export] private Main _craftingInterface;
+    [Export] private Crafting _craftingInterface;
     [Export] private Container _ingredientContainer;
     [Export] private Button _craftButton;
     [Export] private TextureRect _resultItemIcon;

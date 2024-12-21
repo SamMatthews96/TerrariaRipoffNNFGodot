@@ -1,0 +1,35 @@
+[gd_scene load_steps=2 format=3 uid="uid://cvaxo0scr3abv"]
+
+[ext_resource type="Script" path="res://Scripts/Interface/Game/ItemPropertyTooltipGroup.cs" id="1_i7c2i"]
+
+[node name="ItemPropertyTooltipGroup" type="VBoxContainer" node_paths=PackedStringArray("_propertyLabelContainer", "_titleLabel")]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+script = ExtResource("1_i7c2i")
+_propertyLabelContainer = NodePath("MarginContainer/VBoxContainer")
+_titleLabel = NodePath("TitleLabel")
+
+[node name="TitleLabel" type="Label" parent="."]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Block"
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Speed: 4"
+
+[node name="Label2" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Power: 10"

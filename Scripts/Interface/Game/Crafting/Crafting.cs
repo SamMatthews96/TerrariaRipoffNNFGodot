@@ -2,7 +2,7 @@
 
 namespace TerrariaRipoffNNF.Interface;
 
-public partial class Main : Control {
+public partial class Crafting : Control {
     [Export] private Button _selectCraftingStationMenuButton;
 
     [Export] public StationContainer CraftStationContainer { get; private set; }

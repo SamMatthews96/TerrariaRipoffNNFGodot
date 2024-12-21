@@ -5,7 +5,7 @@ using Godot;
 namespace TerrariaRipoffNNF.Interface;
 
 public partial class SelectRecipeContainer : Control {
-    [Export] public Main CraftingInterface { get; private set; }
+    [Export] public Crafting CraftingInterface { get; private set; }
     [Export] private Container _recipeContainer;
     private readonly List<SelectRecipeButton> _recipeSelectButtons = new();
     

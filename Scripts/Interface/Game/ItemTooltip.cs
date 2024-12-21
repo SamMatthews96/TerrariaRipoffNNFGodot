@@ -1,16 +1,18 @@
-﻿using System.Globalization;
+﻿using System.Collections.Generic;
+using System.Globalization;
 using Godot;
+using Godot.Collections;
 
 namespace TerrariaRipoffNNF.Interface;
 
 public partial class ItemTooltip : Control {
     [Export] private Inventory _inventory;
-    [Export] private Control _labelContainer;
+    [Export] private Control _propertyContainer;
 
     [Export] private Label _nameLabel;
     [Export] private Label _inventorySpaceLabel;
 
-    [Export] private PackedScene _packedLabel;
+    private readonly List<Control> _itemPropertyLabelGroups = new();
 
     public override void _Ready() {
         Hide();
@@ -22,12 +24,23 @@ public partial class ItemTooltip : Control {
         _nameLabel.Text = item.Name;
         _inventorySpaceLabel.Text =
             $"Space: {item.InventorySpace.ToString(CultureInfo.InvariantCulture)}";
-        // @todo create labels to show stats
-        item.GetTooltipAttributes();
+        foreach ((string propertyName, Dictionary itemProperty) in item.GetTooltipAttributes()) {
+            ItemPropertyTooltipGroup newGroup =
+                ItemPropertyTooltipGroup.Create(propertyName, itemProperty);
+            _propertyContainer.AddChild(newGroup);
+            _itemPropertyLabelGroups.Add(newGroup);
+        }
+
+        GlobalPosition = node.GlobalPosition + node.Size;
         Show();
     }
 
     private void OnInterfaceMouseEnteredItemMouseExited() {
+        foreach (Control label in _itemPropertyLabelGroups) {
+            label.QueueFree();
+        }
+
+        _itemPropertyLabelGroups.Clear();
         Hide();
     }
 }
