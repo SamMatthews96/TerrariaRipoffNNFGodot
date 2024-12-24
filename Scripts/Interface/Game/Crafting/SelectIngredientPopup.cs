@@ -5,7 +5,7 @@ namespace TerrariaRipoffNNF.Interface;
 
 public partial class SelectIngredientPopup : Control {
     [Export] private Container _iconContainer;
-    [Export] private SelectedRecipeContainer _selectedRecipeContainer;
+    [Export] private SelectIngredientsContainer _selectIngredientsContainer;
     
     private List<SelectIngredientButton> _ingredientButtons = new();
     private Player _player;
@@ -16,8 +16,8 @@ public partial class SelectIngredientPopup : Control {
             child.QueueFree();
         }
 
-        _selectedRecipeContainer.IngredientIconMouseEntered += OnIngredientIconMouseEntered;
-        _selectedRecipeContainer.IngredientIconMouseLeft += OnIngredientIconMouseLeft;
+        _selectIngredientsContainer.IngredientIconMouseEntered += OnIngredientIconMouseEntered;
+        _selectIngredientsContainer.IngredientIconMouseLeft += OnIngredientIconMouseLeft;
         
         Player.BeforeLocalPlayerSpawned += OnLocalPlayerSpawned;
     }

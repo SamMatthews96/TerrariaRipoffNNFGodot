@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://bawlysyg56da3"]
 
 [ext_resource type="Texture2D" uid="uid://cargd8drjeywp" path="res://Assets/Images/ingotPlaceholder.png" id="1_1ng8f"]
-[ext_resource type="Script" path="res://Scripts/Interface/Game/Crafting/RecipeIngredientSlotTexture.cs" id="2_npnb2"]
+[ext_resource type="Script" path="res://Scripts/Interface/Game/Crafting/SelectIngredientMouseover.cs" id="2_npnb2"]
 
 [node name="RecipeIngredientSlotTexture" type="TextureRect"]
 anchors_preset = 5

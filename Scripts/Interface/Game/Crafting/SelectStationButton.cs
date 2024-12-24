@@ -3,15 +3,15 @@ using Godot;
 
 namespace TerrariaRipoffNNF.Interface;
 
-public partial class StationButton : TextureButton {
+public partial class SelectStationButton : TextureButton {
     private CraftingStation _craftingStation;
    
     public event Action<CraftingStation> CraftingStationButtonClicked;
     
-    public static StationButton Create(CraftingStation craftingStation) {
-        StationButton button =
+    public static SelectStationButton Create(CraftingStation craftingStation) {
+        SelectStationButton button =
             Manager.Instance.PackedScenes.SelectCraftingStationButton
-                .Instantiate<StationButton>();
+                .Instantiate<SelectStationButton>();
         button._craftingStation = craftingStation;
         // button.TextureNormal = craftingStation.Icon;
         return button;

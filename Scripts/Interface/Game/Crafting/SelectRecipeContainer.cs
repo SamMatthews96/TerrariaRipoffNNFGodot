@@ -16,11 +16,11 @@ public partial class SelectRecipeContainer : Control {
             node.QueueFree();
         }
         Hide();
-        CraftingInterface.CraftStationContainer.CraftingStationButtonClicked +=
-            OnCraftingStationButtonClicked;
+        CraftingInterface.CraftSelectStationContainer.CraftingStationButtonClicked +=
+            OnCraftingSelectStationButtonClicked;
     }
 
-    private void OnCraftingStationButtonClicked(CraftingStation craftingStation) {
+    private void OnCraftingSelectStationButtonClicked(CraftingStation craftingStation) {
         _recipeSelectButtons.ForEach(button => {
             button.RecipeButtonClicked -= OnRecipeButtonClicked;
             button.QueueFree();

@@ -14,6 +14,15 @@ public enum CraftingStationType {
     CookingPot,
 }
 
+/*  What should this class be responsible for?
+    Crafting items
+        knowing what recipe is selected
+        knowing what ingredients are selected
+        determining if an item can be crafted
+        updating the inventory // or sending the events to inventory at least
+        
+ */
+
 public sealed partial class Crafting : Node {
     [Export] private Player _player;
     [Export] private CraftingStation _handcrafting;

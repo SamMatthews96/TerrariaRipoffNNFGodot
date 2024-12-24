@@ -5,9 +5,9 @@ namespace TerrariaRipoffNNF.Interface;
 public partial class Crafting : Control {
     [Export] private Button _selectCraftingStationMenuButton;
 
-    [Export] public StationContainer CraftStationContainer { get; private set; }
+    [Export] public SelectStationContainer CraftSelectStationContainer { get; private set; }
     [Export] public SelectRecipeContainer SelectRecipeContainer { get; private set; }
-    [Export] public SelectedRecipeContainer SelectedRecipeContainer { get; private set; }
+    [Export] public SelectIngredientsContainer SelectIngredientsContainer { get; private set; }
 
     public override void _Ready() {
         Hide();

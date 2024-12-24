@@ -29,7 +29,7 @@ project/assembly_name="TerrariaRipoffNNF"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/gdUnit4/plugin.cfg")
+enabled=PackedStringArray()
 
 [input]
 
