@@ -18,5 +18,6 @@ public partial class PackedScenes : Resource {
     [Export] public PackedScene BlockTypeButton { get; private set; }
     [Export] public PackedScene ItemTooltipPropertyGroup { get; private set; }
     [Export] public PackedScene SelectIngredientButton { get; private set; }
+
     
 }

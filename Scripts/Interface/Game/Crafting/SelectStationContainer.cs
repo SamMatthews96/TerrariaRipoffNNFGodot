@@ -6,9 +6,8 @@ namespace TerrariaRipoffNNF.Interface;
 
 public partial class SelectStationContainer : Control {
     [Export] private Container _craftingStationButtonContainer;
-    [Export] private PackedScene _craftingStationButtonScene;
 
-    private Dictionary<CraftingStationType, SelectStationButton> _craftingStationButtons;
+    private Dictionary<CraftingStationType, SelectStationButton> _craftingStationButtons = new();
 
     public event Action<CraftingStation> CraftingStationButtonClicked;
 

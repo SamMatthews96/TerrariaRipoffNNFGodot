@@ -5,9 +5,9 @@ namespace TerrariaRipoffNNF.Interface;
 
 public partial class SelectIngredientMouseover : TextureRect {
     private Item _selectedIngredientItem;
-    private RecipeIngredientSlot _ingredient;
+    private RecipeIngredientSlot _recipeIngredientSlot;
 
-    public event Action<Control, IngredientType> MouseEnteredIcon;
+    public event Action<Control, RecipeIngredientSlot> MouseEnteredIcon;
     public event Action MouseLeftIcon;
 
 
@@ -15,7 +15,7 @@ public partial class SelectIngredientMouseover : TextureRect {
         SelectIngredientMouseover newTexture =
             Manager.Instance.PackedScenes.RecipeIngredientSlotTexture
                 .Instantiate<SelectIngredientMouseover>();
-        newTexture._ingredient = ingredient;
+        newTexture._recipeIngredientSlot = ingredient;
         newTexture.Texture = ingredient.Icon;
         return newTexture;
     }
@@ -31,7 +31,7 @@ public partial class SelectIngredientMouseover : TextureRect {
     }
 
     private void OnMouseEntered() {
-        MouseEnteredIcon?.Invoke(this, _ingredient.IngredientType);
+        MouseEnteredIcon?.Invoke(this, _recipeIngredientSlot);
     }
 
     private void OnMouseExited() {

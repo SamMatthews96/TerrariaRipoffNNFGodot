@@ -8,7 +8,7 @@ namespace TerrariaRipoffNNF;
 public partial class RecipeStatic : Recipe {
     [Export] private Item _resultItem;
     
-    public override Item Build(Dictionary<string, Item> suppliedIngredients) {
-        return _resultItem;
+    public override StackedItems Build(Dictionary<string, Item> suppliedIngredients) {
+        return new StackedItems(_resultItem);
     }
 }

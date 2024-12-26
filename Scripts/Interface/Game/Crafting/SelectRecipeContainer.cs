@@ -6,13 +6,13 @@ namespace TerrariaRipoffNNF.Interface;
 
 public partial class SelectRecipeContainer : Control {
     [Export] public Crafting CraftingInterface { get; private set; }
-    [Export] private Container _recipeContainer;
+    [Export] private Container _selectRecipeButtonContainer;
     private readonly List<SelectRecipeButton> _recipeSelectButtons = new();
     
     public event Action<Recipe> RecipeButtonClicked;
 
     public override void _Ready() {
-        foreach (Node node in _recipeContainer.GetChildren()) {
+        foreach (Node node in _selectRecipeButtonContainer.GetChildren()) {
             node.QueueFree();
         }
         Hide();
@@ -32,7 +32,7 @@ public partial class SelectRecipeContainer : Control {
             SelectRecipeButton newButton = SelectRecipeButton.Create(recipe);
             _recipeSelectButtons.Add(newButton);
             newButton.RecipeButtonClicked += OnRecipeButtonClicked;
-            _recipeContainer.AddChild(newButton);
+            _selectRecipeButtonContainer.AddChild(newButton);
         }
         
         Show();
