@@ -13,7 +13,7 @@ public partial class SelectIngredientMouseover : TextureRect {
 
     public static SelectIngredientMouseover Create(RecipeIngredientSlot ingredient) {
         SelectIngredientMouseover newTexture =
-            Manager.Instance.PackedScenes.RecipeIngredientSlotTexture
+            Data.PackedScenes.RecipeIngredientSlotTexture
                 .Instantiate<SelectIngredientMouseover>();
         newTexture._recipeIngredientSlot = ingredient;
         newTexture.Texture = ingredient.Icon;

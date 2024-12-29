@@ -7,14 +7,14 @@ public partial class SelectIngredientButton : TextureButton {
     private Item _item;
     public static SelectIngredientButton Create(Item item) {
         SelectIngredientButton selectIngredientButton =
-            Manager.Instance.PackedScenes.SelectIngredientButton
+            Data.PackedScenes.SelectIngredientButton
                 .Instantiate<SelectIngredientButton>();
         selectIngredientButton.TextureNormal = item.IconTexture;
         selectIngredientButton._item = item;
         return selectIngredientButton;
     }
     
-    public event Action<Item> IngredientSelected;
+    public event Action<Item> IngredientButtonClicked;
 
     public override void _Ready() {
         ButtonDown += OnButtonDown;
@@ -25,6 +25,6 @@ public partial class SelectIngredientButton : TextureButton {
     }
     
     private void OnButtonDown() {
-        IngredientSelected?.Invoke(_item);
+        IngredientButtonClicked?.Invoke(_item);
     }
 }

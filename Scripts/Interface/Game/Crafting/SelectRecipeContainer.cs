@@ -27,7 +27,7 @@ public partial class SelectRecipeContainer : Control {
         });
         _recipeSelectButtons.Clear();
         
-        foreach (Recipe recipe in Manager.Instance.AllRecipes
+        foreach (Recipe recipe in Data.AllRecipes
                      .GetRecipes(craftingStation.Type)) {
             SelectRecipeButton newButton = SelectRecipeButton.Create(recipe);
             _recipeSelectButtons.Add(newButton);

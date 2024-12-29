@@ -8,8 +8,8 @@ public partial class SelectRecipeButton : TextureButton {
     public event Action<Recipe> RecipeButtonClicked;
     
     public static SelectRecipeButton Create(Recipe recipe) {
-        SelectRecipeButton button =
-            Manager.Instance.PackedScenes.SelectRecipeButton
+        SelectRecipeButton button = 
+            Data.PackedScenes.SelectRecipeButton
                 .Instantiate<SelectRecipeButton>();
         button._recipe = recipe;
         button.TextureNormal = recipe.ResultIcon;

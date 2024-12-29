@@ -10,7 +10,7 @@ public partial class SelectStationButton : TextureButton {
     
     public static SelectStationButton Create(CraftingStation craftingStation) {
         SelectStationButton button =
-            Manager.Instance.PackedScenes.SelectCraftingStationButton
+            Data.PackedScenes.SelectCraftingStationButton
                 .Instantiate<SelectStationButton>();
         button._craftingStation = craftingStation;
         // button.TextureNormal = craftingStation.Icon;

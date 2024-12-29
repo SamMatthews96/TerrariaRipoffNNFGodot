@@ -1,10 +1,11 @@
-﻿using Godot;
-using TerrariaRipoffNNF.Interface;
+﻿using System;
+using Godot;
 
 namespace TerrariaRipoffNNF;
 
 [GlobalClass]
 public partial class PackedScenes : Resource {
+    
     
     [Export] public PackedScene Player { get; private set; }
     [Export] public PackedScene ActiveBlock { get; private set; }
@@ -18,6 +19,4 @@ public partial class PackedScenes : Resource {
     [Export] public PackedScene BlockTypeButton { get; private set; }
     [Export] public PackedScene ItemTooltipPropertyGroup { get; private set; }
     [Export] public PackedScene SelectIngredientButton { get; private set; }
-
-    
 }

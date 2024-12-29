@@ -12,9 +12,6 @@ public partial class Manager : Node {
     [Export] private string _address = "127.0.0.1";
     private MainMenu _mainMenu;
 
-    [Export] public PackedScenes PackedScenes { get; private set; }
-    [Export] public AllRecipes AllRecipes { get; private set; }
-    
     private ENetMultiplayerPeer _peer;
     private Game _game;
 
@@ -82,7 +79,7 @@ public partial class Manager : Node {
         // Node loadScreen = PackedScenes.PackedLoadScreen.Instantiate();
         // AddChild(loadScreen);
         _mainMenu.QueueFree();
-        Game = PackedScenes.Game.Instantiate<Game>();
+        Game = Data.PackedScenes.Game.Instantiate<Game>();
         Game.Interface.GameMenu.ExitGameButtonDown += ExitGame;
         AddChild(Game);
         // delete load screen
@@ -94,7 +91,7 @@ public partial class Manager : Node {
     }
 
     private void CreateMainMenu() {
-        _mainMenu = PackedScenes.MainMenu.Instantiate<MainMenu>();
+        _mainMenu = Data.PackedScenes.MainMenu.Instantiate<MainMenu>();
         _mainMenu.SinglePlayerClickedEnterWorld += OnMainMenuSinglePlayerClickedEnterWorld;
         _mainMenu.HostClickedEnterWorld += OnMainMenuHostClickedEnterWorld;
         _mainMenu.ClientClickedEnterWorld += OnMainMenuClientClickedEnterWorld;

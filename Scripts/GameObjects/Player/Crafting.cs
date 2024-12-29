@@ -14,11 +14,6 @@ public enum CraftingStationType {
     CookingPot,
 }
 
-/*  What should this class be responsible for?
-    Crafting items
-        When an ingredient is changed
-
- */
 
 public sealed partial class Crafting : Node {
     [Export] private Player _player;
@@ -32,25 +27,25 @@ public sealed partial class Crafting : Node {
 
     public event Action<CraftingStation> CraftingStationAdded;
     public event Action<CraftingStation> CraftingStationRemoved;
+    // public event Action<Godot.Collections.Dictionary<> SelectedIngredientsChanged;
     public event Action<StackedItems, List<StackedItems>> ItemCrafted;
 
     public override void _Ready() {
         AddCraftingStation(_handcrafting);
-        Manager.Instance.Game.Interface.CraftingInterface.SelectRecipeContainer.RecipeButtonClicked +=
-            OnRecipeButtonClicked;
-        Manager.Instance.Game.Interface.CraftingInterface.SelectIngredientsContainer.IngredientSelected +=
-            OnIngredientSelected;
-        Manager.Instance.Game.Interface.CraftingInterface.SelectIngredientsContainer.CraftButtonPressed +=
-            OnCraftButtonPressed;
+        Interface.Crafting craftingInterface = Manager.Instance.Game.Interface.CraftingInterface;
+        craftingInterface.SelectRecipeContainer.RecipeButtonClicked += OnRecipeButtonClicked;
+        craftingInterface.SelectIngredientsContainer.IngredientButtonClicked += OnIngredientButtonClicked;
+        craftingInterface.SelectIngredientsContainer.CraftButtonPressed += OnCraftButtonPressed;
     }
 
     private void OnCraftButtonPressed() {
         StackedItems newItems = _selectedRecipe.Build(_selectedIngredients);
+        if (newItems is null) return;
         ItemCrafted?.Invoke(newItems, GetTotalSelectedIngredients());
     }
 
-    private void OnIngredientSelected(string key, Item item) {
-        _selectedIngredients[key] = item;
+    private void OnIngredientButtonClicked(Item item, RecipeIngredientSlot ingredientSlot) {
+        _selectedIngredients[ingredientSlot.RecipeSlot] = item;
     }
 
     private List<StackedItems> GetTotalSelectedIngredients() {

@@ -15,10 +15,14 @@ run/main_scene="res://Scenes/Managers/Manager.tscn"
 config/features=PackedStringArray("4.3", "C#", "Forward Plus")
 config/icon="res://Assets/Images/icon.svg"
 
+[autoload]
+
+Data="*res://Scenes/Managers/Data.tscn"
+
 [display]
 
-window/size/viewport_width=1920
-window/size/viewport_height=1080
+window/size/viewport_width=1690
+window/size/viewport_height=685
 window/size/initial_position_type=2
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"

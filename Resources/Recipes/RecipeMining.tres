@@ -7,18 +7,20 @@
 [ext_resource type="Texture2D" uid="uid://p4wc02lwmqop" path="res://Assets/Images/ItemIcons/ferriumPickaxe.png" id="2_uce7j"]
 [ext_resource type="Texture2D" uid="uid://cargd8drjeywp" path="res://Assets/Images/ingotPlaceholder.png" id="4_ufoyd"]
 
-[sub_resource type="Resource" id="Resource_tdyru"]
+[sub_resource type="Resource" id="Resource_8n431"]
 script = ExtResource("1_h31i5")
-IngredientType = 1
-Amount = 10
-Icon = ExtResource("2_lo40t")
-Required = true
-
-[sub_resource type="Resource" id="Resource_7rgco"]
-script = ExtResource("1_h31i5")
+RecipeSlot = "pickaxeHead"
 IngredientType = 0
 Amount = 8
 Icon = ExtResource("4_ufoyd")
+Required = true
+
+[sub_resource type="Resource" id="Resource_jr4ke"]
+script = ExtResource("1_h31i5")
+RecipeSlot = "pickaxeHandle"
+IngredientType = 1
+Amount = 10
+Icon = ExtResource("2_lo40t")
 Required = true
 
 [resource]
@@ -26,9 +28,6 @@ script = ExtResource("1_hm5ny")
 _ferriumPickTexture = ExtResource("2_uce7j")
 _speedCoefficient = 0.5
 _powerCoefficient = 10.0
-Ingredients = {
-"pickaxeHandle": SubResource("Resource_tdyru"),
-"pickaxeHead": SubResource("Resource_7rgco")
-}
+_ingredientSlotArray = Array[Object]([SubResource("Resource_8n431"), SubResource("Resource_jr4ke")])
 ResultIcon = ExtResource("1_wxnwn")
 Name = "Pickaxe"

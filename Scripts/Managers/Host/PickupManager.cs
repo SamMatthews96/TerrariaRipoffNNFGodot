@@ -43,7 +43,7 @@ public partial class PickupManager : Node {
         _savedPickups[coords.X, coords.Y] ??= new List<SavedPickup>();
         _savedPickups[coords.X, coords.Y].Add(savedPickup);
 
-        ActivePickup activePickup = Manager.Instance.PackedScenes.ActivePickup.Instantiate<ActivePickup>();
+        ActivePickup activePickup = Data.PackedScenes.ActivePickup.Instantiate<ActivePickup>();
         activePickup.Initialize(savedPickup);
         _activePickups[coords.X, coords.Y] ??= new List<ActivePickup>();
         _activePickups[coords.X, coords.Y].Add(activePickup);

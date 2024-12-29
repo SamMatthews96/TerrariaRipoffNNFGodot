@@ -9,10 +9,13 @@ public partial class SelectIngredientsContainer : Container {
     [Export] private Container _ingredientContainer;
     [Export] private Button _craftButton;
     [Export] private TextureRect _resultItemIcon;
+    [Export] private SelectIngredientPopup _ingredientPopup;
+    
+    private Recipe _selectedRecipe;
 
     public event Action<Control, RecipeIngredientSlot> IngredientIconMouseEntered;
     public event Action IngredientIconMouseLeft;
-    public event Action<string, Item> IngredientSelected;
+    public event Action<Item, RecipeIngredientSlot> IngredientButtonClicked;
     public event Action CraftButtonPressed;
 
     public override void _Ready() {
@@ -22,8 +25,14 @@ public partial class SelectIngredientsContainer : Container {
             node.QueueFree();
         }
 
+        _ingredientPopup.IngredientButtonClicked += OnIngredientButtonClicked;
         _craftButton.ButtonDown += OnCraftButtonDown;
     }
+
+    private void OnIngredientButtonClicked(Item selectedIngredient, RecipeIngredientSlot ingredientSlot) {
+        IngredientButtonClicked?.Invoke(selectedIngredient, ingredientSlot);
+    }
+
 
     private void OnCraftButtonDown() {
         CraftButtonPressed?.Invoke();
@@ -34,6 +43,7 @@ public partial class SelectIngredientsContainer : Container {
     }
 
     private void OnRecipeButtonClicked(Recipe recipe) {
+        _selectedRecipe = recipe;
         _recipeNameButton.Text = recipe.Name;
         foreach (Node node in _ingredientContainer.GetChildren()) {
             node.QueueFree();

@@ -17,7 +17,7 @@ public partial class BlockTypeButton : TextureButton {
     }
 
     public static BlockTypeButton Create(Item item, bool isFocused) {
-        BlockTypeButton newButton = Manager.Instance.PackedScenes
+        BlockTypeButton newButton = Data.PackedScenes
             .BlockTypeButton.Instantiate<BlockTypeButton>();
         newButton.TextureNormal = item.IconTexture;
         newButton.BlockItem = item;

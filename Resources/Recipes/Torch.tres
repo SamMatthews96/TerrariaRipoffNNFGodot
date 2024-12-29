@@ -6,8 +6,9 @@
 [ext_resource type="Script" path="res://Scripts/Resources/Recipes/RecipeIngredientSlot.cs" id="2_mriyg"]
 [ext_resource type="Script" path="res://Scripts/Resources/Item/Item.cs" id="2_rf8x6"]
 
-[sub_resource type="Resource" id="Resource_cefeg"]
+[sub_resource type="Resource" id="Resource_xbvts"]
 script = ExtResource("2_mriyg")
+RecipeSlot = "handle"
 IngredientType = 1
 Amount = 1
 Icon = ExtResource("1_cu11s")
@@ -24,8 +25,6 @@ _itemProperties = []
 [resource]
 script = ExtResource("1_geocp")
 _resultItem = SubResource("Resource_ux2db")
-Ingredients = {
-"wood": SubResource("Resource_cefeg")
-}
+_ingredientSlotArray = Array[Object]([SubResource("Resource_xbvts")])
 ResultIcon = ExtResource("1_p3y05")
 Name = "Torch"
