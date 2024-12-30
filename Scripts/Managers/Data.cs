@@ -10,7 +10,6 @@ public partial class Data : Node {
     [Export] private AllRecipes _allRecipes;
 
     public override void _Ready() {
-        GD.Print("data");
         PackedScenes = _packedScenes;
         AllRecipes = _allRecipes;
     }

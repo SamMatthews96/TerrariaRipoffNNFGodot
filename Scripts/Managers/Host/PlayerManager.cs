@@ -30,10 +30,8 @@ public partial class PlayerManager : Node {
         BeforePlayerSpawned?.Invoke(playerInfo);
 
         Vector2 spawnPosition = DefaultSpawnPosition * Game.BlockSize;
-        Player player = Player.New()
-            .WithPeerId(peerId)
-            .WithSpawnPosition(spawnPosition)
-            .Build();
+        Player player = Player.Create(peerId, spawnPosition);
+        Manager.Instance.Game.PlayerParent.AddChild(player, true);
 
         PlayerSpawned?.Invoke(player);
     }

@@ -5,6 +5,14 @@ using Godot.Collections;
 namespace TerrariaRipoffNNF;
 
 public partial class Player : CharacterBody2D {
+    public static Player Create(int peerId, Vector2 spawnPosition) {
+        Player player = Data.PackedScenes.Player.Instantiate<Player>();
+        player.Name = peerId.ToString();
+
+        player._spawnPosition = spawnPosition;
+        return player;
+    }
+
     [Export] public Inventory Inventory { get; private set; }
     [Export] public ActionController ActionController { get; private set; }
     [Export] public PickupArea PickupArea { get; private set; }
@@ -58,6 +66,7 @@ public partial class Player : CharacterBody2D {
             Manager.Instance.Game.InputManager.HorizontalInputChanged -= OnHorizontalInputChanged;
             Manager.Instance.Game.InputManager.JumpPressed -= OnJumpPressed;
         }
+
         BeforePlayerLeaveScene?.Invoke();
     }
 
@@ -66,7 +75,7 @@ public partial class Player : CharacterBody2D {
         Manager.Instance.Game.InputManager.HorizontalInputChanged += OnHorizontalInputChanged;
         Manager.Instance.Game.InputManager.JumpPressed += OnJumpPressed;
     }
-    
+
     private void OnHorizontalInputChanged(int newInput) {
         _horizontalInput = newInput;
     }
@@ -81,7 +90,8 @@ public partial class Player : CharacterBody2D {
         _xVelocity = _speed * _horizontalInput;
         if (_isFalling) {
             _yVelocity += (float)delta * _gravityCoefficient;
-        } else {
+        }
+        else {
             _yVelocity = Math.Min(0, _yVelocity);
         }
 

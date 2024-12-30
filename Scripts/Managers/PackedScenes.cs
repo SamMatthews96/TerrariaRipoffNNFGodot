@@ -1,12 +1,9 @@
-﻿using System;
-using Godot;
+﻿using Godot;
 
 namespace TerrariaRipoffNNF;
 
 [GlobalClass]
 public partial class PackedScenes : Resource {
-    
-    
     [Export] public PackedScene Player { get; private set; }
     [Export] public PackedScene ActiveBlock { get; private set; }
     [Export] public PackedScene ActivePickup { get; private set; }

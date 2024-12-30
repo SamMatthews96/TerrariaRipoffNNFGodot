@@ -1,7 +1,6 @@
 ﻿using System;
 using Godot;
 using Godot.Collections;
-using TerrariaRipoffNNF.Interface;
 
 namespace TerrariaRipoffNNF;
 
@@ -75,14 +74,10 @@ public partial class Manager : Node {
     }
 
     private void CreateNewGame() {
-        // spawn load screen
-        // Node loadScreen = PackedScenes.PackedLoadScreen.Instantiate();
-        // AddChild(loadScreen);
         _mainMenu.QueueFree();
         Game = Data.PackedScenes.Game.Instantiate<Game>();
         Game.Interface.GameMenu.ExitGameButtonDown += ExitGame;
         AddChild(Game);
-        // delete load screen
     }
 
     private void ExitGame() {

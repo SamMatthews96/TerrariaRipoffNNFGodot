@@ -5,6 +5,10 @@ using Godot.Collections;
 namespace TerrariaRipoffNNF;
 
 public partial class Game : Node {
+    public static Game Create() {
+        return new Game();
+    }
+    
     public const int BlockSize = 32;
     [Export] public Region Region { get; private set; }
     [Export] public Node BlockParent { get; private set; }
