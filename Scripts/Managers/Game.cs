@@ -5,10 +5,7 @@ using Godot.Collections;
 namespace TerrariaRipoffNNF;
 
 public partial class Game : Node {
-    public static Game Create() {
-        return new Game();
-    }
-    
+
     public const int BlockSize = 32;
     [Export] public Region Region { get; private set; }
     [Export] public Node BlockParent { get; private set; }
@@ -19,6 +16,9 @@ public partial class Game : Node {
     [Export] public int Width { get; private set; }
     [Export] public int Height { get; private set; }
 
+    public event Action<Dictionary> LaunchedGameAsHost;
+    
+    public Vector2 DefaultSpawnPosition { get; private set; }
     private Host _host;
 
     public Host Host {
@@ -28,24 +28,33 @@ public partial class Game : Node {
 
     public bool IsHost => Multiplayer.GetUniqueId() == Manager.HostId;
 
-    public event Action<Dictionary> LaunchedGameAsHost;
-    public event Action<Dictionary, int> PlayerConnected;
-
     public override void _Ready() {
-        Manager.Instance.LaunchedGameAsHost += OnManagerLaunchedGameAsHost;
         Manager.Instance.JoinedGame += OnManagerJoinedGame;
+        Manager.Instance.LaunchedGameAsHost += OnManagerLaunchedGameAsHost;
+    }
+
+    public override void _ExitTree() {
+        Manager.Instance.JoinedGame -= OnManagerJoinedGame;
+        Manager.Instance.LaunchedGameAsHost -= OnManagerLaunchedGameAsHost;
+    }
+
+    public static Game Create() {
+        Game game = Data.PackedScenes.Game.Instantiate<Game>();
+        return game;
     }
     
-    public override void _ExitTree() {
-        Manager.Instance.LaunchedGameAsHost -= OnManagerLaunchedGameAsHost;
-        Manager.Instance.JoinedGame -= OnManagerJoinedGame;
-    }
-
+    
+    
     private void OnManagerLaunchedGameAsHost(Dictionary world) {
         Width = (int)world["Width"];
         Height = (int)world["Height"];
         Host = HostManagerScene.Instantiate<Host>();
         AddChild(Host);
+
+        DefaultSpawnPosition = new Vector2(
+            (float)world["DefaultSpawnPosition"].AsGodotArray()[0].AsDouble(),
+            (float)world["DefaultSpawnPosition"].AsGodotArray()[1].AsDouble());
+        
         LaunchedGameAsHost?.Invoke(world);
     }
 
@@ -56,6 +65,7 @@ public partial class Game : Node {
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void ServerHandleNewClient(Dictionary playerDictionary, int peerId) {
-        PlayerConnected?.Invoke(playerDictionary, peerId);
+        Player player = Player.Create(peerId, playerDictionary);
+        PlayerParent.AddChild(player, true);
     }
 }

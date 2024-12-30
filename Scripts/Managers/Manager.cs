@@ -75,7 +75,7 @@ public partial class Manager : Node {
 
     private void CreateNewGame() {
         _mainMenu.QueueFree();
-        Game = Data.PackedScenes.Game.Instantiate<Game>();
+        Game = Game.Create();
         Game.Interface.GameMenu.ExitGameButtonDown += ExitGame;
         AddChild(Game);
     }

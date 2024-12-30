@@ -39,8 +39,8 @@ public partial class BlockManager : Node {
             _savedBlocks[savedBlock.XPosition, savedBlock.YPosition] = savedBlock;
         }
 
-        Manager.Instance.Game.Host.PlayerManager.BeforePlayerSpawned += OnPlayerManagerBeforePlayerSpawned;
-        Manager.Instance.Game.Host.PlayerManager.PlayerSpawned += OnPlayerManagerPlayerSpawned;
+        Player.BeforePlayerSpawned += OnPlayerManagerBeforePlayerSpawned;
+        Player.PlayerSpawned += OnPlayerManagerPlayerSpawned;
     }
 
     private void OnPlayerManagerPlayerSpawned(Player player) {
@@ -50,7 +50,7 @@ public partial class BlockManager : Node {
     }
 
     private void OnPlayerManagerBeforePlayerSpawned(Dictionary playerInfo) {
-        IntVector spawnPosition = new(Manager.Instance.Game.Host.PlayerManager.DefaultSpawnPosition);
+        IntVector spawnPosition = new(Manager.Instance.Game.DefaultSpawnPosition);
         List<IntVector> region = Manager.Instance.Game.Region.GetRegion(
             spawnPosition, BlockSpawnDistance);
 

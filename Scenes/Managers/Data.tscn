@@ -1,0 +1,10 @@
+[gd_scene load_steps=4 format=3 uid="uid://c7dpe04jscc5f"]
+
+[ext_resource type="Script" path="res://Scripts/Managers/Data.cs" id="1_f38oj"]
+[ext_resource type="Resource" uid="uid://dllhhokx2wkse" path="res://Resources/PackedScenes.tres" id="2_4ri16"]
+[ext_resource type="Resource" uid="uid://bxv0u74if3lg8" path="res://Resources/Recipes/AllRecipes.tres" id="3_im3m0"]
+
+[node name="Data" type="Node"]
+script = ExtResource("1_f38oj")
+_packedScenes = ExtResource("2_4ri16")
+_allRecipes = ExtResource("3_im3m0")

@@ -5,11 +5,13 @@ using Godot.Collections;
 namespace TerrariaRipoffNNF;
 
 public partial class Player : CharacterBody2D {
-    public static Player Create(int peerId, Vector2 spawnPosition) {
+    public static Player Create(int peerId , Dictionary playerData) {
+        BeforePlayerSpawned?.Invoke(playerData);
         Player player = Data.PackedScenes.Player.Instantiate<Player>();
         player.Name = peerId.ToString();
 
-        player._spawnPosition = spawnPosition;
+        player._spawnPosition = Manager.Instance.Game.DefaultSpawnPosition;
+        PlayerSpawned?.Invoke(player);
         return player;
     }
 
@@ -39,7 +41,10 @@ public partial class Player : CharacterBody2D {
     private int PeerId => Name.ToString().ToInt();
     public bool IsLocalPlayer => Multiplayer.GetUniqueId() == PeerId;
 
+    public static event Action<Dictionary> BeforePlayerSpawned;
+    
     public static event Action<Player> BeforeLocalPlayerSpawned;
+    public static event Action<Player> PlayerSpawned;
     public event Action<Dictionary> MovedCell;
 
     public event Action BeforePlayerLeaveScene;

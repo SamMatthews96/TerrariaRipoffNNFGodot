@@ -13,12 +13,12 @@ public partial class PickupManager : Node {
         _activePickups = new List<ActivePickup>[
             Manager.Instance.Game.Width, Manager.Instance.Game.Height];
         Manager.Instance.Game.Host.BlockManager.BlockDestroyed += OnBlockManagerBlockDestroyed;
-        Manager.Instance.Game.Host.PlayerManager.PlayerSpawned += OnPlayerManagerPlayerSpawned;
+        Player.PlayerSpawned += OnPlayerManagerPlayerSpawned;
     }
 
     public override void _ExitTree() {
         Manager.Instance.Game.Host.BlockManager.BlockDestroyed -= OnBlockManagerBlockDestroyed;
-        Manager.Instance.Game.Host.PlayerManager.PlayerSpawned -= OnPlayerManagerPlayerSpawned;
+        Player.PlayerSpawned -= OnPlayerManagerPlayerSpawned;
     }
 
     private void OnPlayerManagerPlayerSpawned(Player player) {
