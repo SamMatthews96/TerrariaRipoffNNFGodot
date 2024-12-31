@@ -16,8 +16,6 @@ public partial class Game : Node {
     [Export] public int Width { get; private set; }
     [Export] public int Height { get; private set; }
 
-    public event Action<Dictionary> LaunchedGameAsHost;
-    
     public Vector2 DefaultSpawnPosition { get; private set; }
     private Host _host;
 
@@ -55,7 +53,6 @@ public partial class Game : Node {
             (float)world["DefaultSpawnPosition"].AsGodotArray()[0].AsDouble(),
             (float)world["DefaultSpawnPosition"].AsGodotArray()[1].AsDouble());
         
-        LaunchedGameAsHost?.Invoke(world);
     }
 
     private void OnManagerJoinedGame(Dictionary playerInfo) {

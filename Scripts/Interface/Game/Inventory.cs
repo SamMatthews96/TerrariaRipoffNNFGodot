@@ -40,7 +40,7 @@ public partial class Inventory : Control {
         _localPlayer.BeforePlayerLeaveScene += OnBeforeLocalPlayerLeaveScene;
     }
 
-    private void OnBeforeLocalPlayerLeaveScene() {
+    private void OnBeforeLocalPlayerLeaveScene(Player player) {
         _localPlayer.Inventory.AddedItemStack -= OnInventoryAddedItemStack;
         _localPlayer.Inventory.RemovedItemStack -= OnInventoryRemovedItemStack;
         _localPlayer.Inventory.ItemStackChangedSize -= OnInventoryItemStackChanged;

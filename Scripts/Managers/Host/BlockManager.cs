@@ -19,12 +19,11 @@ public partial class BlockManager : Node {
     public event Action<SavedBlock> BlockDestroyed;
 
     public override void _Ready() {
-        Manager.Instance.Game.LaunchedGameAsHost += OnGameLaunchedAsHost;
+        Manager.Instance.LaunchedGameAsHost += OnGameLaunchedAsHost;
     }
 
     public override void _ExitTree() {
-        Manager.Instance.Game.LaunchedGameAsHost -= OnGameLaunchedAsHost;
-        //@todo Unsubscribe from player events
+        Manager.Instance.LaunchedGameAsHost -= OnGameLaunchedAsHost;
     }
 
     private void OnGameLaunchedAsHost(Dictionary worldDictionary) {
@@ -47,6 +46,14 @@ public partial class BlockManager : Node {
         player.MovedCell += OnLocalPlayerMoved;
         player.ActionController.GatherAttempted += OnPlayerGatherAction;
         player.ActionController.BlockPlaced += OnPlayerBuildAction;
+        player.BeforePlayerLeaveScene += OnBeforePlayerLeaveScene;
+    }
+
+    private void OnBeforePlayerLeaveScene(Player player) {
+        player.MovedCell -= OnLocalPlayerMoved;
+        player.ActionController.GatherAttempted -= OnPlayerGatherAction;
+        player.ActionController.BlockPlaced -= OnPlayerBuildAction;
+        player.BeforePlayerLeaveScene -= OnBeforePlayerLeaveScene;
     }
 
     private void OnPlayerManagerBeforePlayerSpawned(Dictionary playerInfo) {

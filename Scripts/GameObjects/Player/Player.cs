@@ -47,7 +47,7 @@ public partial class Player : CharacterBody2D {
     public static event Action<Player> PlayerSpawned;
     public event Action<Dictionary> MovedCell;
 
-    public event Action BeforePlayerLeaveScene;
+    public event Action<Player> BeforePlayerLeaveScene;
 
     #region Creation
 
@@ -72,7 +72,7 @@ public partial class Player : CharacterBody2D {
             Manager.Instance.Game.InputManager.JumpPressed -= OnJumpPressed;
         }
 
-        BeforePlayerLeaveScene?.Invoke();
+        BeforePlayerLeaveScene?.Invoke(this);
     }
 
     private void InitializeLocalPlayer() {

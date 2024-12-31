@@ -37,6 +37,8 @@ public partial class Manager : Node {
     }
 
     private void OnMainMenuSinglePlayerClickedEnterWorld(Dictionary world, Dictionary playerInfo) {
+        // why does the button press pass this information
+        // and should the ui have these properties
         CreateNewGame();
         LaunchedGameAsHost?.Invoke(world);
         JoinedGame?.Invoke(playerInfo);
