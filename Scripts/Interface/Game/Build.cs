@@ -8,7 +8,6 @@ public partial class Build : Container {
     private readonly Dictionary<string, BlockTypeButton> _blockTypeButtons = new();
     [Export] private BoxContainer _buttonContainer;
     private BlockTypeButton _selectedButton;
-    private Player _localPlayer;
 
     public event Action<Item> BlockTypeSelected;
 
@@ -29,18 +28,17 @@ public partial class Build : Container {
     }
 
     private void OnBeforeLocalPlayerSpawned(Player player) {
-        _localPlayer = player;
-        _localPlayer.ActionController.ActionChanged += OnPlayerActionChanged;
-        _localPlayer.Inventory.AddedItemStack += OnInventoryAddedItemStack;
-        _localPlayer.Inventory.RemovedItemStack += OnInventoryRemovedItemStack;
-        _localPlayer.BeforePlayerLeaveScene += OnBeforeLocalPlayerLeaveScene;
+        player.ActionController.ActionChanged += OnPlayerActionChanged;
+        player.Inventory.AddedItemStack += OnInventoryAddedItemStack;
+        player.Inventory.RemovedItemStack += OnInventoryRemovedItemStack;
+        player.BeforePlayerLeaveScene += OnBeforeLocalPlayerLeaveScene;
     }
 
-    private void OnBeforeLocalPlayerLeaveScene() {
-        _localPlayer.ActionController.ActionChanged -= OnPlayerActionChanged;
-        _localPlayer.Inventory.AddedItemStack -= OnInventoryAddedItemStack;
-        _localPlayer.Inventory.RemovedItemStack -= OnInventoryRemovedItemStack;
-        _localPlayer.BeforePlayerLeaveScene -= OnBeforeLocalPlayerLeaveScene;
+    private void OnBeforeLocalPlayerLeaveScene(Player player) {
+        player.ActionController.ActionChanged -= OnPlayerActionChanged;
+        player.Inventory.AddedItemStack -= OnInventoryAddedItemStack;
+        player.Inventory.RemovedItemStack -= OnInventoryRemovedItemStack;
+        player.BeforePlayerLeaveScene -= OnBeforeLocalPlayerLeaveScene;
     }
 
     private void OnInventoryAddedItemStack(StackedItems stackedItems) {

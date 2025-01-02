@@ -4,6 +4,7 @@ using Godot.Collections;
 
 namespace TerrariaRipoffNNF;
 
+// @todo rename to SceneManager, to clarify what this class should be responsible for
 public partial class Manager : Node {
     public const int HostId = 1;
 
@@ -39,6 +40,8 @@ public partial class Manager : Node {
     private void OnMainMenuSinglePlayerClickedEnterWorld(Dictionary world, Dictionary playerInfo) {
         // why does the button press pass this information
         // and should the ui have these properties
+        
+        //Create single player
         CreateNewGame();
         LaunchedGameAsHost?.Invoke(world);
         JoinedGame?.Invoke(playerInfo);
@@ -57,6 +60,15 @@ public partial class Manager : Node {
         CreateNewGame();
         LaunchedGameAsHost?.Invoke(world);
         JoinedGame?.Invoke(playerInfo);
+        /*  @todo Create Game for all 3 modes,
+            If its single player, 
+            Game.CreateAsSingle(world)
+                
+                
+            If host
+            Game.CreateAsHost(world) 
+            
+         */
     }
 
     private void OnMainMenuClientClickedEnterWorld(string ip, Dictionary playerInfo) {

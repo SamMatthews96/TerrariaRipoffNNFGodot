@@ -18,6 +18,9 @@ public partial class Game : Node {
 
     public Vector2 DefaultSpawnPosition { get; private set; }
     private Host _host;
+    
+    private MultiplayerHost _multiplayerHost;
+    private MultiplayerClient _multiplayerClient;
 
     public Host Host {
         get => _host ?? throw new Exception("[20241205.2011.1] Host not instantiated");
@@ -29,6 +32,11 @@ public partial class Game : Node {
     public override void _Ready() {
         Manager.Instance.JoinedGame += OnManagerJoinedGame;
         Manager.Instance.LaunchedGameAsHost += OnManagerLaunchedGameAsHost;
+        // _multiplayerClient.ConnectedToServer += OnConnectedToServer;
+    }
+
+    private void OnConnectedToServer() {
+        throw new NotImplementedException();
     }
 
     public override void _ExitTree() {
@@ -38,6 +46,26 @@ public partial class Game : Node {
 
     public static Game Create() {
         Game game = Data.PackedScenes.Game.Instantiate<Game>();
+        return game;
+    }
+
+    public static Game CreateAsSinglePlayer() {
+        Game game = Data.PackedScenes.Game.Instantiate<Game>();
+        return game;
+    }
+
+    public static Game CreateAsHost() {
+        // worldData will be passed into this function
+        Game game = Data.PackedScenes.Game.Instantiate<Game>();
+        game._multiplayerHost = new MultiplayerHost();
+        game.AddChild(game._multiplayerHost);
+        return game;
+    }
+
+    public static Game CreateAsClient() {
+        Game game = Data.PackedScenes.Game.Instantiate<Game>();
+        game._multiplayerClient = new MultiplayerClient();
+        game.AddChild(game._multiplayerClient);
         return game;
     }
     
