@@ -17,7 +17,7 @@ public partial class GatherAction : PlayerAction {
         float miningPowerTemp = 10f;
         float miningRangeTemp = 8f;
         if (miningRangeTemp >= IntVector.Distance(coords, Player.Coords)) {
-            RpcId(Manager.HostId, nameof(HostGatherAttempted),
+            RpcId(SceneManager.HostId, nameof(HostGatherAttempted),
                 coords.ToSerialised(), miningPowerTemp);
         }
     }

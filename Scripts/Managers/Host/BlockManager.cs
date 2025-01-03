@@ -19,20 +19,20 @@ public partial class BlockManager : Node {
     public event Action<SavedBlock> BlockDestroyed;
 
     public override void _Ready() {
-        Manager.Instance.LaunchedGameAsHost += OnGameLaunchedAsHost;
+        SceneManager.Instance.Game.WorldCreated += OnGameWorldCreated;
     }
 
     public override void _ExitTree() {
-        Manager.Instance.LaunchedGameAsHost -= OnGameLaunchedAsHost;
+        SceneManager.Instance.Game.WorldCreated -= OnGameWorldCreated;
     }
 
-    private void OnGameLaunchedAsHost(Dictionary worldDictionary) {
+    private void OnGameWorldCreated(Dictionary worldData) {
         _savedBlocks = new SavedBlock[
-            Manager.Instance.Game.Width, Manager.Instance.Game.Height];
+            SceneManager.Instance.Game.Width, SceneManager.Instance.Game.Height];
         _activeBlocks = new ActiveBlock[
-            Manager.Instance.Game.Width, Manager.Instance.Game.Height];
+            SceneManager.Instance.Game.Width, SceneManager.Instance.Game.Height];
 
-        Array savedBlockArray = worldDictionary["SavedBlocks"].AsGodotArray();
+        Array savedBlockArray = worldData["SavedBlocks"].AsGodotArray();
         foreach (Dictionary savedBlockDict in savedBlockArray) {
             SavedBlock savedBlock = SavedBlock.FromDict(savedBlockDict);
             _savedBlocks[savedBlock.XPosition, savedBlock.YPosition] = savedBlock;
@@ -57,8 +57,8 @@ public partial class BlockManager : Node {
     }
 
     private void OnPlayerManagerBeforePlayerSpawned(Dictionary playerInfo) {
-        IntVector spawnPosition = new(Manager.Instance.Game.DefaultSpawnPosition);
-        List<IntVector> region = Manager.Instance.Game.Region.GetRegion(
+        IntVector spawnPosition = new(SceneManager.Instance.Game.DefaultSpawnPosition);
+        List<IntVector> region = SceneManager.Instance.Game.Region.GetRegion(
             spawnPosition, BlockSpawnDistance);
 
         SpawnBlocksInRegion(region);
@@ -109,7 +109,7 @@ public partial class BlockManager : Node {
         IntVector newCoordinates = new(
             (int)positionChange["X"], (int)positionChange["Y"]);
 
-        List<IntVector> newRegion = Manager.Instance.Game.Region.GetRegionDelta(
+        List<IntVector> newRegion = SceneManager.Instance.Game.Region.GetRegionDelta(
             newCoordinates, oldCoordinates, BlockSpawnDistance);
 
         SpawnBlocksInRegion(newRegion);

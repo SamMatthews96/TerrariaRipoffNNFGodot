@@ -12,7 +12,7 @@ public partial class Crafting : Control {
     public override void _Ready() {
         Hide();
         Player.BeforeLocalPlayerSpawned += OnLocalPlayerSpawned;
-        Manager.Instance.Game.InputManager.CraftMenuPressed += OnCraftMenuPressed;
+        SceneManager.Instance.Game.InputManager.CraftMenuPressed += OnCraftMenuPressed;
     }
 
     public override void _ExitTree() {

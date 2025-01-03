@@ -40,7 +40,7 @@ public readonly struct IntVector {
     }
 
     public bool IsInBounds() {
-        return X >= 0 && X < Manager.Instance.Game.Width && Y >= 0 && Y < Manager.Instance.Game.Height;
+        return X >= 0 && X < SceneManager.Instance.Game.Width && Y >= 0 && Y < SceneManager.Instance.Game.Height;
     }
 
     public static IntVector operator -(IntVector a, IntVector b) {

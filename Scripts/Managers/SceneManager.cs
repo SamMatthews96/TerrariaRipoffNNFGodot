@@ -4,8 +4,7 @@ using Godot.Collections;
 
 namespace TerrariaRipoffNNF;
 
-// @todo rename to SceneManager, to clarify what this class should be responsible for
-public partial class Manager : Node {
+public partial class SceneManager : Node {
     public const int HostId = 1;
 
     [Export] private int _port = 8910;
@@ -15,15 +14,12 @@ public partial class Manager : Node {
     private ENetMultiplayerPeer _peer;
     private Game _game;
 
-    public event Action<Dictionary> LaunchedGameAsHost;
-    public event Action<Dictionary> JoinedGame;
-
     public Game Game {
         get => _game ?? throw new Exception("[20241205.2000.8] Game not instantiated");
         private set => _game = value;
     }
 
-    public static Manager Instance { get; private set; }
+    public static SceneManager Instance { get; private set; }
 
     public override void _EnterTree() {
         if (Instance is not null) {
@@ -37,14 +33,13 @@ public partial class Manager : Node {
         CreateMainMenu();
     }
 
-    private void OnMainMenuSinglePlayerClickedEnterWorld(Dictionary world, Dictionary playerInfo) {
-        // why does the button press pass this information
-        // and should the ui have these properties
-        
-        //Create single player
-        CreateNewGame();
-        LaunchedGameAsHost?.Invoke(world);
-        JoinedGame?.Invoke(playerInfo);
+    private void OnMainMenuSinglePlayerClickedEnterWorld(Dictionary worldData, Dictionary playerData) {
+        _mainMenu.QueueFree();
+        // create as single player
+        Game = Game.Create();
+        AddChild(Game);
+        Game.InitAsSinglePlayer(worldData, playerData);
+        _game.Interface.GameMenu.ExitGameButtonDown += ExitGame;
     }
 
     private void OnMainMenuHostClickedEnterWorld(Dictionary world, Dictionary playerInfo) {
@@ -57,24 +52,12 @@ public partial class Manager : Node {
         _peer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
         Multiplayer.MultiplayerPeer = _peer;
 
-        CreateNewGame();
-        LaunchedGameAsHost?.Invoke(world);
-        JoinedGame?.Invoke(playerInfo);
-        /*  @todo Create Game for all 3 modes,
-            If its single player, 
-            Game.CreateAsSingle(world)
-                
-                
-            If host
-            Game.CreateAsHost(world) 
-            
-         */
+        // CreateNewGame();
     }
 
     private void OnMainMenuClientClickedEnterWorld(string ip, Dictionary playerInfo) {
         Multiplayer.ConnectedToServer += () => {
-            CreateNewGame();
-            JoinedGame?.Invoke(playerInfo);
+            // CreateNewGame();
         };
 
         _peer = new ENetMultiplayerPeer();
@@ -85,13 +68,6 @@ public partial class Manager : Node {
 
         _peer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
         Multiplayer.MultiplayerPeer = _peer;
-    }
-
-    private void CreateNewGame() {
-        _mainMenu.QueueFree();
-        Game = Game.Create();
-        Game.Interface.GameMenu.ExitGameButtonDown += ExitGame;
-        AddChild(Game);
     }
 
     private void ExitGame() {

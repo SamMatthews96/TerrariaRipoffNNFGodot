@@ -10,7 +10,7 @@ public partial class Player : CharacterBody2D {
         Player player = Data.PackedScenes.Player.Instantiate<Player>();
         player.Name = peerId.ToString();
 
-        player._spawnPosition = Manager.Instance.Game.DefaultSpawnPosition;
+        player._spawnPosition = SceneManager.Instance.Game.DefaultSpawnPosition;
         PlayerSpawned?.Invoke(player);
         return player;
     }
@@ -68,8 +68,8 @@ public partial class Player : CharacterBody2D {
 
     public override void _ExitTree() {
         if (IsLocalPlayer) {
-            Manager.Instance.Game.InputManager.HorizontalInputChanged -= OnHorizontalInputChanged;
-            Manager.Instance.Game.InputManager.JumpPressed -= OnJumpPressed;
+            SceneManager.Instance.Game.InputManager.HorizontalInputChanged -= OnHorizontalInputChanged;
+            SceneManager.Instance.Game.InputManager.JumpPressed -= OnJumpPressed;
         }
 
         BeforePlayerLeaveScene?.Invoke(this);
@@ -77,8 +77,8 @@ public partial class Player : CharacterBody2D {
 
     private void InitializeLocalPlayer() {
         _camera.Enabled = true;
-        Manager.Instance.Game.InputManager.HorizontalInputChanged += OnHorizontalInputChanged;
-        Manager.Instance.Game.InputManager.JumpPressed += OnJumpPressed;
+        SceneManager.Instance.Game.InputManager.HorizontalInputChanged += OnHorizontalInputChanged;
+        SceneManager.Instance.Game.InputManager.JumpPressed += OnJumpPressed;
     }
 
     private void OnHorizontalInputChanged(int newInput) {
@@ -110,7 +110,7 @@ public partial class Player : CharacterBody2D {
             { "PreviousX", _previousCoords.X },
             { "PreviousY", _previousCoords.Y }
         };
-        RpcId(Manager.HostId, nameof(ServerMovedCell), positionChange);
+        RpcId(SceneManager.HostId, nameof(ServerMovedCell), positionChange);
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]

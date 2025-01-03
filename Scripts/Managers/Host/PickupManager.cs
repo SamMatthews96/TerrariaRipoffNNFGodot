@@ -9,15 +9,15 @@ public partial class PickupManager : Node {
     
     public override void _Ready() {
         _savedPickups = new List<SavedPickup>[
-            Manager.Instance.Game.Width, Manager.Instance.Game.Height];
+            SceneManager.Instance.Game.Width, SceneManager.Instance.Game.Height];
         _activePickups = new List<ActivePickup>[
-            Manager.Instance.Game.Width, Manager.Instance.Game.Height];
-        Manager.Instance.Game.Host.BlockManager.BlockDestroyed += OnBlockManagerBlockDestroyed;
+            SceneManager.Instance.Game.Width, SceneManager.Instance.Game.Height];
+        SceneManager.Instance.Game.WorldManager.BlockManager.BlockDestroyed += OnBlockManagerBlockDestroyed;
         Player.PlayerSpawned += OnPlayerManagerPlayerSpawned;
     }
 
     public override void _ExitTree() {
-        Manager.Instance.Game.Host.BlockManager.BlockDestroyed -= OnBlockManagerBlockDestroyed;
+        SceneManager.Instance.Game.WorldManager.BlockManager.BlockDestroyed -= OnBlockManagerBlockDestroyed;
         Player.PlayerSpawned -= OnPlayerManagerPlayerSpawned;
     }
 
@@ -49,7 +49,7 @@ public partial class PickupManager : Node {
         _activePickups[coords.X, coords.Y].Add(activePickup);
         activePickup.MovedCell += OnPickupMovedCell;
 
-        Manager.Instance.Game.BlockParent.AddChild(activePickup, true);
+        SceneManager.Instance.Game.BlockParent.AddChild(activePickup, true);
     }
 
     private void OnPickupMovedCell(ActivePickup activePickup, Dictionary positionChange) {

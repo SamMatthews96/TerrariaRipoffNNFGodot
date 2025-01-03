@@ -25,7 +25,7 @@ public partial class Inventory : Node {
     public override void _Ready() {
         _inventoryItemsList = new List<InventoryItems>();
 
-        if (Manager.Instance.Game.IsHost) {
+        if (SceneManager.Instance.Game.IsHost) {
             _player.PickupArea.TouchedItem += OnCollidedWithPickup;
             _player.ActionController.BlockPlaced += OnBlockPlaced;
             
@@ -37,7 +37,7 @@ public partial class Inventory : Node {
     }
 
     public override void _ExitTree() {
-        if (Manager.Instance.Game.IsHost) {
+        if (SceneManager.Instance.Game.IsHost) {
             _player.PickupArea.TouchedItem -= OnCollidedWithPickup;
             _player.ActionController.BlockPlaced -= OnBlockPlaced;
         }

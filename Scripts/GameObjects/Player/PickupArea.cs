@@ -7,13 +7,13 @@ public partial class PickupArea : Area2D {
     public event Action<ActivePickup> TouchedItem;
 
     public override void _Ready() {
-        if (!Manager.Instance.Game.IsHost) return;
+        if (!SceneManager.Instance.Game.IsHost) return;
 
         BodyEntered += OnCollidedWithPickup;
     }
 
     public override void _ExitTree() {
-        if (!Manager.Instance.Game.IsHost) return;
+        if (!SceneManager.Instance.Game.IsHost) return;
 
         BodyEntered -= OnCollidedWithPickup;
     }

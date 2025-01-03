@@ -16,15 +16,15 @@ public partial class ActionController : Node {
 
     public override void _Ready() {
         if (_player.IsLocalPlayer) {
-            Manager.Instance.Game.InputManager.LeftMouseUp += OnInputManagerLeftMouseUp;
-            Manager.Instance.Game.InputManager.LeftMouseDown += OnInputManagerLeftMouseDown;
-            Manager.Instance.Game.Interface.ActionBar.ButtonClicked += EquipAction;
-            Manager.Instance.Game.InputManager.PlayerActionModeChanged += EquipAction;
+            SceneManager.Instance.Game.InputManager.LeftMouseUp += OnInputManagerLeftMouseUp;
+            SceneManager.Instance.Game.InputManager.LeftMouseDown += OnInputManagerLeftMouseDown;
+            SceneManager.Instance.Game.Interface.ActionBar.ButtonClicked += EquipAction;
+            SceneManager.Instance.Game.InputManager.PlayerActionModeChanged += EquipAction;
 
             EquipAction(PlayerAction.Type.Gather);
         }
 
-        if (Manager.Instance.Game.IsHost) {
+        if (SceneManager.Instance.Game.IsHost) {
             _gatherAction.GatherAttempted += OnGatherAttempted;
             _buildAction.BlockPlaced += OnBlockPlaced;
         }
@@ -32,13 +32,13 @@ public partial class ActionController : Node {
 
     public override void _ExitTree() {
         if (_player.IsLocalPlayer) {
-            Manager.Instance.Game.InputManager.LeftMouseUp -= OnInputManagerLeftMouseUp;
-            Manager.Instance.Game.InputManager.LeftMouseDown -= OnInputManagerLeftMouseDown;
-            Manager.Instance.Game.Interface.ActionBar.ButtonClicked -= EquipAction;
-            Manager.Instance.Game.InputManager.PlayerActionModeChanged -= EquipAction;
+            SceneManager.Instance.Game.InputManager.LeftMouseUp -= OnInputManagerLeftMouseUp;
+            SceneManager.Instance.Game.InputManager.LeftMouseDown -= OnInputManagerLeftMouseDown;
+            SceneManager.Instance.Game.Interface.ActionBar.ButtonClicked -= EquipAction;
+            SceneManager.Instance.Game.InputManager.PlayerActionModeChanged -= EquipAction;
         }
 
-        if (Manager.Instance.Game.IsHost) {
+        if (SceneManager.Instance.Game.IsHost) {
             _gatherAction.GatherAttempted -= OnGatherAttempted;
             _buildAction.BlockPlaced -= OnBlockPlaced;
         }

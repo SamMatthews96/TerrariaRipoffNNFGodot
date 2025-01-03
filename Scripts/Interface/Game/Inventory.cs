@@ -22,12 +22,12 @@ public partial class Inventory : Control {
 
     public override void _Ready() {
         Visible = false;
-        Manager.Instance.Game.InputManager.ToggleInventoryPressed += OnInputManagerToggleInventoryPressed;
+        SceneManager.Instance.Game.InputManager.ToggleInventoryPressed += OnInputManagerToggleInventoryPressed;
         Player.BeforeLocalPlayerSpawned += OnBeforeLocalPlayerSpawned;
     }
 
     public override void _ExitTree() {
-        Manager.Instance.Game.InputManager.ToggleInventoryPressed -= OnInputManagerToggleInventoryPressed;
+        SceneManager.Instance.Game.InputManager.ToggleInventoryPressed -= OnInputManagerToggleInventoryPressed;
         Player.BeforeLocalPlayerSpawned -= OnBeforeLocalPlayerSpawned;
     }
 

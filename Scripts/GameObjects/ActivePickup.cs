@@ -31,7 +31,7 @@ public partial class ActivePickup : RigidBody2D {
     }
 
     public override void _PhysicsProcess(double delta) {
-        if (!Manager.Instance.Game.IsHost) return;
+        if (!SceneManager.Instance.Game.IsHost) return;
 
         if (_previousCoords != Coords) {
             Dictionary positionChange = new() {

@@ -2,7 +2,7 @@
 
 namespace TerrariaRipoffNNF;
 
-public partial class Host : Node {
+public partial class WorldManager : Node {
     [Export] public BlockManager BlockManager { get; private set; }
     [Export] public PickupManager PickupManager { get; private set; }
 

@@ -5,92 +5,72 @@ using Godot.Collections;
 namespace TerrariaRipoffNNF;
 
 public partial class Game : Node {
-
     public const int BlockSize = 32;
-    [Export] public Region Region { get; private set; }
+
+
+    //@todo might be able to remove:
     [Export] public Node BlockParent { get; private set; }
     [Export] public Node PlayerParent { get; private set; }
     [Export] public PackedScene HostManagerScene { get; private set; }
+
+    [Export] public Region Region { get; private set; }
     [Export] public Interface.Game Interface { get; private set; }
     [Export] public InputManager InputManager { get; private set; }
     [Export] public int Width { get; private set; }
     [Export] public int Height { get; private set; }
 
     public Vector2 DefaultSpawnPosition { get; private set; }
-    private Host _host;
-    
+    private WorldManager _worldManager;
+
     private MultiplayerHost _multiplayerHost;
     private MultiplayerClient _multiplayerClient;
 
-    public Host Host {
-        get => _host ?? throw new Exception("[20241205.2011.1] Host not instantiated");
-        private set => _host = value;
+    public WorldManager WorldManager {
+        get => _worldManager ?? throw new Exception("[20241205.2011.1] Host not instantiated");
+        private set => _worldManager = value;
     }
 
-    public bool IsHost => Multiplayer.GetUniqueId() == Manager.HostId;
+    public bool IsHost => Multiplayer.GetUniqueId() == SceneManager.HostId;
 
-    public override void _Ready() {
-        Manager.Instance.JoinedGame += OnManagerJoinedGame;
-        Manager.Instance.LaunchedGameAsHost += OnManagerLaunchedGameAsHost;
-        // _multiplayerClient.ConnectedToServer += OnConnectedToServer;
-    }
+    public event Action<Dictionary> WorldCreated;
 
-    private void OnConnectedToServer() {
-        throw new NotImplementedException();
-    }
-
-    public override void _ExitTree() {
-        Manager.Instance.JoinedGame -= OnManagerJoinedGame;
-        Manager.Instance.LaunchedGameAsHost -= OnManagerLaunchedGameAsHost;
-    }
-
+    
     public static Game Create() {
-        Game game = Data.PackedScenes.Game.Instantiate<Game>();
-        return game;
+        return Data.PackedScenes.Game.Instantiate<Game>();
     }
 
-    public static Game CreateAsSinglePlayer() {
-        Game game = Data.PackedScenes.Game.Instantiate<Game>();
-        return game;
+    private bool _initialized;
+    public void InitAsSinglePlayer(Dictionary worldData, Dictionary playerData) {
+        if (_initialized) {
+            throw new Exception("[20241205.2011.2] Game already initialized");
+        }
+        CreateWorld(worldData);
+        CreatePlayer(playerData);
+        _initialized = true;
     }
+    
 
-    public static Game CreateAsHost() {
-        // worldData will be passed into this function
-        Game game = Data.PackedScenes.Game.Instantiate<Game>();
-        game._multiplayerHost = new MultiplayerHost();
-        game.AddChild(game._multiplayerHost);
-        return game;
-    }
-
-    public static Game CreateAsClient() {
-        Game game = Data.PackedScenes.Game.Instantiate<Game>();
-        game._multiplayerClient = new MultiplayerClient();
-        game.AddChild(game._multiplayerClient);
-        return game;
-    }
-    
-    
-    
-    private void OnManagerLaunchedGameAsHost(Dictionary world) {
-        Width = (int)world["Width"];
-        Height = (int)world["Height"];
-        Host = HostManagerScene.Instantiate<Host>();
-        AddChild(Host);
+    private void CreateWorld(Dictionary worldData) {
+        Width = (int)worldData["Width"];
+        Height = (int)worldData["Height"];
+        WorldManager = HostManagerScene.Instantiate<WorldManager>();
+        AddChild(WorldManager);
 
         DefaultSpawnPosition = new Vector2(
-            (float)world["DefaultSpawnPosition"].AsGodotArray()[0].AsDouble(),
-            (float)world["DefaultSpawnPosition"].AsGodotArray()[1].AsDouble());
-        
+            (float)worldData["DefaultSpawnPosition"].AsGodotArray()[0].AsDouble(),
+            (float)worldData["DefaultSpawnPosition"].AsGodotArray()[1].AsDouble());
+        WorldCreated?.Invoke(worldData);
     }
 
-    private void OnManagerJoinedGame(Dictionary playerInfo) {
-        RpcId(Manager.HostId, nameof(ServerHandleNewClient),
-            playerInfo, Multiplayer.GetUniqueId());
+    private void CreatePlayer(Dictionary playerData) {
+        RpcId(SceneManager.HostId, nameof(ServerHandleNewClient),
+            playerData, Multiplayer.GetUniqueId());
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void ServerHandleNewClient(Dictionary playerDictionary, int peerId) {
         Player player = Player.Create(peerId, playerDictionary);
+        //@todo do we need PlayerParent?
         PlayerParent.AddChild(player, true);
     }
 }

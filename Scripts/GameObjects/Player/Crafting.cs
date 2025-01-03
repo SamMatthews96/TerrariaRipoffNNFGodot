@@ -32,7 +32,7 @@ public sealed partial class Crafting : Node {
 
     public override void _Ready() {
         AddCraftingStation(_handcrafting);
-        Interface.Crafting craftingInterface = Manager.Instance.Game.Interface.CraftingInterface;
+        Interface.Crafting craftingInterface = SceneManager.Instance.Game.Interface.CraftingInterface;
         craftingInterface.SelectRecipeContainer.RecipeButtonClicked += OnRecipeButtonClicked;
         craftingInterface.SelectIngredientsContainer.IngredientButtonClicked += OnIngredientButtonClicked;
         craftingInterface.SelectIngredientsContainer.CraftButtonPressed += OnCraftButtonPressed;

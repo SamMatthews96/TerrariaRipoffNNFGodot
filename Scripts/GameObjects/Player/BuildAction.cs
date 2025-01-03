@@ -12,13 +12,13 @@ public partial class BuildAction : PlayerAction {
 
     public override void _Ready() {
         if (!Player.IsLocalPlayer) return;
-        Manager.Instance.Game.Interface.BuildUi.BlockTypeSelected += OnBuildBlockTypeSelected;
+        SceneManager.Instance.Game.Interface.BuildUi.BlockTypeSelected += OnBuildBlockTypeSelected;
         Player.Inventory.RemovedItemStack += OnInventoryRemovedItemStack;
     }
 
     public override void _ExitTree() {
         if (!Player.IsLocalPlayer) return;
-        Manager.Instance.Game.Interface.BuildUi.BlockTypeSelected -= OnBuildBlockTypeSelected;
+        SceneManager.Instance.Game.Interface.BuildUi.BlockTypeSelected -= OnBuildBlockTypeSelected;
         Player.Inventory.RemovedItemStack -= OnInventoryRemovedItemStack;
     }
 
@@ -32,7 +32,7 @@ public partial class BuildAction : PlayerAction {
 
         float range = 8;
         if (_blockItem is not null && range >= IntVector.Distance(coords, Player.Coords)) {
-            RpcId(Manager.HostId, nameof(BuildActionAttempt),
+            RpcId(SceneManager.HostId, nameof(BuildActionAttempt),
                 coords.ToSerialised(), _blockItem.ToDictionary());
         }
     }
@@ -42,7 +42,7 @@ public partial class BuildAction : PlayerAction {
         IntVector coords = new(intVectorArray);
         Item blockItem = Item.FromDictionary(blockTypeDict);
 
-        if (Manager.Instance.Game.Host.BlockManager.IsCellOccupied(coords)) return;
+        if (SceneManager.Instance.Game.WorldManager.BlockManager.IsCellOccupied(coords)) return;
         BlockPlaced?.Invoke(blockItem, coords);
     }
 

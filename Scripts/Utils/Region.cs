@@ -9,9 +9,9 @@ public partial class Region : Node {
         List<IntVector> regionDelta = new();
 
         int xStart = Math.Max(0, center.X - distanceToEdge);
-        int xEnd = Math.Min(Manager.Instance.Game.Width - 1, center.X + distanceToEdge);
+        int xEnd = Math.Min(SceneManager.Instance.Game.Width - 1, center.X + distanceToEdge);
         int yStart = Math.Max(0, center.Y - distanceToEdge);
-        int yEnd = Math.Min(Manager.Instance.Game.Height - 1, center.Y + distanceToEdge);
+        int yEnd = Math.Min(SceneManager.Instance.Game.Height - 1, center.Y + distanceToEdge);
 
         for (int x = xStart; x < xEnd; x++) {
             for (int y = yStart; y < yEnd; y++) {
@@ -26,9 +26,9 @@ public partial class Region : Node {
         List<IntVector> regionDelta = new();
 
         int xStart = Math.Max(0, includeCenter.X - distanceToEdge);
-        int xEnd = Math.Min(Manager.Instance.Game.Width - 1, includeCenter.X + distanceToEdge);
+        int xEnd = Math.Min(SceneManager.Instance.Game.Width - 1, includeCenter.X + distanceToEdge);
         int yStart = Math.Max(0, includeCenter.Y - distanceToEdge);
-        int yEnd = Math.Min(Manager.Instance.Game.Height - 1, includeCenter.Y + distanceToEdge);
+        int yEnd = Math.Min(SceneManager.Instance.Game.Height - 1, includeCenter.Y + distanceToEdge);
 
         for (int x = xStart; x < xEnd; x++) {
             for (int y = yStart; y < yEnd; y++) {
