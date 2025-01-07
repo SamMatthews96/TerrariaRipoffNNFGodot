@@ -33,12 +33,13 @@ public partial class Game : Node {
 
     public event Action<Dictionary> WorldCreated;
 
-    public static Game CreateSinglePlayer(Dictionary worldData, Dictionary playerData) {
+    public static Game CreateAsSinglePlayer(Dictionary worldData, Dictionary playerData) {
         Game game = Data.PackedScenes.Game.Instantiate<Game>();
         game._worldData = worldData;
         game._playerData = playerData;
         return game;
     }
+    
 
     public override void _Ready() {
         if (_worldData is not null) {

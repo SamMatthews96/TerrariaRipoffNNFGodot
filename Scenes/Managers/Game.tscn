@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://d3hhhiiydcfft"]
 
 [ext_resource type="Script" path="res://Scripts/Managers/Game.cs" id="1_6kfdr"]
-[ext_resource type="Script" path="res://Scripts/Utils/Region.cs" id="3_8fqtf"]
+[ext_resource type="Script" path="res://Scripts/Managers/Region.cs" id="3_8fqtf"]
 [ext_resource type="Script" path="res://Scripts/Managers/InputManager.cs" id="4_lvxpj"]
 [ext_resource type="PackedScene" uid="uid://javhx4rej0q4" path="res://Scenes/Interface/Game/GameInterface.tscn" id="5_mn7lu"]
 
