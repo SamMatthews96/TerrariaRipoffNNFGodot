@@ -30,8 +30,8 @@ public partial class SceneManager : Node {
 
     private void OnMainMenuSinglePlayerClickedEnterWorld(Dictionary worldData, Dictionary playerData) {
         _mainMenu.QueueFree();
-        Game game = Game.CreateSinglePlayer(worldData, playerData);
-        AddChild(game);
+        _game = Game.CreateSinglePlayer(worldData, playerData);
+        AddChild(_game);
         
         _game.Interface.GameMenu.ExitGameButtonDown += ExitGame;
     }

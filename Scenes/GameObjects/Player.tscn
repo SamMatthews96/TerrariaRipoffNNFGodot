@@ -24,7 +24,7 @@ properties/0/replication_mode = 1
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_raw6a"]
 size = Vector2(44, 93)
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("Inventory", "ActionController", "PickupArea", "PlayerEquipment", "Crafting", "_positionSynchronizer", "_camera", "_pickupArea")]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("Inventory", "ActionController", "PickupArea", "PlayerEquipment", "Crafting", "_positionSynchronizer", "_camera")]
 collision_mask = 2
 script = ExtResource("1_hx4ms")
 Inventory = NodePath("Inventory")
@@ -34,7 +34,6 @@ PlayerEquipment = NodePath("CurrentEquipment")
 Crafting = NodePath("Crafting")
 _positionSynchronizer = NodePath("PositionSync")
 _camera = NodePath("Camera2D")
-_pickupArea = NodePath("PickupArea")
 
 [node name="PlayerInfoSync" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_8kinl")
@@ -57,9 +56,10 @@ enabled = false
 position_smoothing_enabled = true
 position_smoothing_speed = 25.0
 
-[node name="PickupArea" type="Area2D" parent="."]
+[node name="PickupArea" type="Area2D" parent="." node_paths=PackedStringArray("_player")]
 collision_mask = 4
 script = ExtResource("3_tkkq4")
+_player = NodePath("..")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PickupArea"]
 position = Vector2(0, -46.5)
