@@ -23,19 +23,29 @@ public sealed partial class Crafting : Node {
     private Recipe _selectedRecipe;
 
     private Godot.Collections.Dictionary<string, Item> _selectedIngredients = new();
-
+    private Game _game;
 
     public event Action<CraftingStation> CraftingStationAdded;
     public event Action<CraftingStation> CraftingStationRemoved;
     // public event Action<Godot.Collections.Dictionary<> SelectedIngredientsChanged;
     public event Action<StackedItems, List<StackedItems>> ItemCrafted;
 
-    public override void _Ready() {
+    public void InitAsLocal(Game game) {
+        _game = game;
         AddCraftingStation(_handcrafting);
-        Interface.Crafting craftingInterface = SceneManager.Instance.Game.Interface.CraftingInterface;
+        Interface.Crafting craftingInterface = _game.Interface.CraftingInterface;
         craftingInterface.SelectRecipeContainer.RecipeButtonClicked += OnRecipeButtonClicked;
         craftingInterface.SelectIngredientsContainer.IngredientButtonClicked += OnIngredientButtonClicked;
         craftingInterface.SelectIngredientsContainer.CraftButtonPressed += OnCraftButtonPressed;
+        TreeExiting += OnTreeExitingLocal;
+    }
+
+    private void OnTreeExitingLocal() {
+        Interface.Crafting craftingInterface = _game.Interface.CraftingInterface;
+        craftingInterface.SelectRecipeContainer.RecipeButtonClicked -= OnRecipeButtonClicked;
+        craftingInterface.SelectIngredientsContainer.IngredientButtonClicked -= OnIngredientButtonClicked;
+        craftingInterface.SelectIngredientsContainer.CraftButtonPressed -= OnCraftButtonPressed;
+        TreeExiting -= OnTreeExitingLocal;
     }
 
     private void OnCraftButtonPressed() {

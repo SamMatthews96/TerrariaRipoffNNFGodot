@@ -49,9 +49,6 @@ public partial class PlayerSelectMenu : Control {
     }
     
     private void AddSelectPlayerButton(Dictionary playerDictionary) {
-        // @todo add delete player
-        // when a player list item is deleted, unsubscribe the events
-        // make new select button a static method of PlayerListItem
         PlayerListItem playerListItem = _packedPlayerSelectButton.Instantiate<PlayerListItem>();
         playerListItem.Initialize(playerDictionary);
         playerListItem.SelectPlayerButtonDown += OnSelectPlayerButtonDown;

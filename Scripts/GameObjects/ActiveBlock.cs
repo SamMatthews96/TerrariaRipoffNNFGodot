@@ -21,7 +21,6 @@ public partial class ActiveBlock : StaticBody2D {
         ActiveBlock activeBlock = Data.PackedScenes.ActiveBlock.Instantiate<ActiveBlock>();
         activeBlock._savedBlockDictionary = savedBlock.Serialize();
         
-        SceneManager.Instance.Game.BlockParent.AddChild(activeBlock, true);
         return activeBlock;
     }
 }

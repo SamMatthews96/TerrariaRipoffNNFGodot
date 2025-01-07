@@ -1,27 +1,36 @@
+using System;
 using System.Collections.Generic;
 using Godot;
 using Godot.Collections;
+
 namespace TerrariaRipoffNNF;
 
 public partial class PickupManager : Node {
+    private Game _game;
     private List<SavedPickup>[,] _savedPickups;
     private List<ActivePickup>[,] _activePickups;
-    
+
+    public void SetGame(Game game) {
+        if (_game is not null) {
+            throw new Exception("[20250104.0012.1] Game already set");
+        }
+
+        _game = game;
+        _game.WorldManager.BlockManager.BlockDestroyed += OnBlockManagerBlockDestroyed;
+    }
+
     public override void _Ready() {
-        _savedPickups = new List<SavedPickup>[
-            SceneManager.Instance.Game.Width, SceneManager.Instance.Game.Height];
-        _activePickups = new List<ActivePickup>[
-            SceneManager.Instance.Game.Width, SceneManager.Instance.Game.Height];
-        SceneManager.Instance.Game.WorldManager.BlockManager.BlockDestroyed += OnBlockManagerBlockDestroyed;
-        Player.PlayerSpawned += OnPlayerManagerPlayerSpawned;
+        _savedPickups = new List<SavedPickup>[_game.Width, _game.Height];
+        _activePickups = new List<ActivePickup>[_game.Width, _game.Height];
+        Player.PlayerSpawned += OnPlayerSpawned;
     }
 
     public override void _ExitTree() {
-        SceneManager.Instance.Game.WorldManager.BlockManager.BlockDestroyed -= OnBlockManagerBlockDestroyed;
-        Player.PlayerSpawned -= OnPlayerManagerPlayerSpawned;
+        _game.WorldManager.BlockManager.BlockDestroyed -= OnBlockManagerBlockDestroyed;
+        Player.PlayerSpawned -= OnPlayerSpawned;
     }
 
-    private void OnPlayerManagerPlayerSpawned(Player player) {
+    private void OnPlayerSpawned(Player player) {
         player.Inventory.PickedUpItem += OnPlayerPickedUpItem;
     }
 
@@ -49,7 +58,7 @@ public partial class PickupManager : Node {
         _activePickups[coords.X, coords.Y].Add(activePickup);
         activePickup.MovedCell += OnPickupMovedCell;
 
-        SceneManager.Instance.Game.BlockParent.AddChild(activePickup, true);
+        _game.BlockParent.AddChild(activePickup, true);
     }
 
     private void OnPickupMovedCell(ActivePickup activePickup, Dictionary positionChange) {

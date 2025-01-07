@@ -4,6 +4,7 @@ using Godot;
 namespace TerrariaRipoffNNF.Interface;
 
 public partial class GameMenu : Control {
+    [Export] private Game _gameInterface;
     [Export] private Button _exitGameButton;
 
     public event Action ExitGameButtonDown;
@@ -11,12 +12,12 @@ public partial class GameMenu : Control {
     public override void _Ready() {
         Hide();
         _exitGameButton.ButtonDown += OnExitGameButtonDown;
-        SceneManager.Instance.Game.InputManager.EscapePressed += OnEscapePressed;
+        _gameInterface.GameManager.InputManager.EscapePressed += OnEscapePressed;
     }
 
     public override void _ExitTree() {
         _exitGameButton.ButtonDown -= OnExitGameButtonDown;
-        SceneManager.Instance.Game.InputManager.EscapePressed -= OnEscapePressed;
+        _gameInterface.GameManager.InputManager.EscapePressed -= OnEscapePressed;
     }
 
     private void OnExitGameButtonDown() {

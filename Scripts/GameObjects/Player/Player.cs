@@ -5,15 +5,20 @@ using Godot.Collections;
 namespace TerrariaRipoffNNF;
 
 public partial class Player : CharacterBody2D {
-    public static Player Create(int peerId , Dictionary playerData) {
+    public static Player Create(int peerId, Dictionary playerData) {
         BeforePlayerSpawned?.Invoke(playerData);
         Player player = Data.PackedScenes.Player.Instantiate<Player>();
         player.Name = peerId.ToString();
-
-        player._spawnPosition = SceneManager.Instance.Game.DefaultSpawnPosition;
         PlayerSpawned?.Invoke(player);
         return player;
     }
+
+    public void InitAsHost() {
+        Inventory.InitAsHost();
+        PickupArea.InitAsHost();
+    }
+
+    private Game _game;
 
     [Export] public Inventory Inventory { get; private set; }
     [Export] public ActionController ActionController { get; private set; }
@@ -23,7 +28,6 @@ public partial class Player : CharacterBody2D {
 
     [Export] private MultiplayerSynchronizer _positionSynchronizer;
     [Export] private Camera2D _camera;
-    [Export] private Area2D _pickupArea;
     [Export] private float _speed = 300f;
     [Export] private float _gravityCoefficient = 1600;
     [Export] private float _jumpStrength = 800;
@@ -42,7 +46,7 @@ public partial class Player : CharacterBody2D {
     public bool IsLocalPlayer => Multiplayer.GetUniqueId() == PeerId;
 
     public static event Action<Dictionary> BeforePlayerSpawned;
-    
+
     public static event Action<Player> BeforeLocalPlayerSpawned;
     public static event Action<Player> PlayerSpawned;
     public event Action<Dictionary> MovedCell;
@@ -54,31 +58,35 @@ public partial class Player : CharacterBody2D {
     public override void _EnterTree() {
         _positionSynchronizer.SetMultiplayerAuthority(PeerId);
         if (IsLocalPlayer) {
+            _camera.Enabled = true;
             BeforeLocalPlayerSpawned?.Invoke(this);
         }
     }
 
     public override void _Ready() {
         Position = _spawnPosition;
-
-        if (IsLocalPlayer) {
-            InitializeLocalPlayer();
-        }
     }
 
     public override void _ExitTree() {
-        if (IsLocalPlayer) {
-            SceneManager.Instance.Game.InputManager.HorizontalInputChanged -= OnHorizontalInputChanged;
-            SceneManager.Instance.Game.InputManager.JumpPressed -= OnJumpPressed;
-        }
-
         BeforePlayerLeaveScene?.Invoke(this);
     }
 
-    private void InitializeLocalPlayer() {
-        _camera.Enabled = true;
-        SceneManager.Instance.Game.InputManager.HorizontalInputChanged += OnHorizontalInputChanged;
-        SceneManager.Instance.Game.InputManager.JumpPressed += OnJumpPressed;
+    public void InitAsLocal(Game game) {
+        if (_game is not null) {
+            throw new Exception("[20250104.0137.1] Game already set");
+        }
+
+        _game = game;
+        _game.InputManager.HorizontalInputChanged += OnHorizontalInputChanged;
+        _game.InputManager.JumpPressed += OnJumpPressed;
+        TreeExiting += OnTreeExitingGame;
+        
+    }
+
+    private void OnTreeExitingGame() {
+        _game.InputManager.HorizontalInputChanged -= OnHorizontalInputChanged;
+        _game.InputManager.JumpPressed -= OnJumpPressed;
+        TreeExiting -= OnTreeExitingGame;
     }
 
     private void OnHorizontalInputChanged(int newInput) {
@@ -88,15 +96,14 @@ public partial class Player : CharacterBody2D {
     #endregion
 
     public override void _PhysicsProcess(double delta) {
-        if (Multiplayer.GetUniqueId() != PeerId) return;
+        if (!IsLocalPlayer) return;
 
         _previousCoords = Coords;
         _isFalling = !TestMove(Transform, new Vector2(0, 0.1f));
         _xVelocity = _speed * _horizontalInput;
         if (_isFalling) {
             _yVelocity += (float)delta * _gravityCoefficient;
-        }
-        else {
+        } else {
             _yVelocity = Math.Min(0, _yVelocity);
         }
 

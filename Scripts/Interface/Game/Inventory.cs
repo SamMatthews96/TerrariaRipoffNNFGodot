@@ -5,6 +5,7 @@ using Godot;
 namespace TerrariaRipoffNNF.Interface;
 
 public partial class Inventory : Control {
+    [Export] private Game _gameInterface;
     [Export] private Label _capacityLabel;
     [Export] private GridContainer _inventoryItemUiContainer;
     [Export] private PackedScene _inventoryItemUiScene;
@@ -22,12 +23,12 @@ public partial class Inventory : Control {
 
     public override void _Ready() {
         Visible = false;
-        SceneManager.Instance.Game.InputManager.ToggleInventoryPressed += OnInputManagerToggleInventoryPressed;
+        _gameInterface.GameManager.InputManager.ToggleInventoryPressed += OnInputManagerToggleInventoryPressed;
         Player.BeforeLocalPlayerSpawned += OnBeforeLocalPlayerSpawned;
     }
 
     public override void _ExitTree() {
-        SceneManager.Instance.Game.InputManager.ToggleInventoryPressed -= OnInputManagerToggleInventoryPressed;
+        _gameInterface.GameManager.InputManager.ToggleInventoryPressed -= OnInputManagerToggleInventoryPressed;
         Player.BeforeLocalPlayerSpawned -= OnBeforeLocalPlayerSpawned;
     }
 

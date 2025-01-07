@@ -4,20 +4,20 @@ using Godot;
 namespace TerrariaRipoffNNF;
 
 public partial class PickupArea : Area2D {
+    [Export] private Player _player;
+    
     public event Action<ActivePickup> TouchedItem;
 
-    public override void _Ready() {
-        if (!SceneManager.Instance.Game.IsHost) return;
-
+    public void InitAsHost() {
         BodyEntered += OnCollidedWithPickup;
+        TreeExiting += OnHostTreeExiting;
     }
 
-    public override void _ExitTree() {
-        if (!SceneManager.Instance.Game.IsHost) return;
-
+    private void OnHostTreeExiting() {
         BodyEntered -= OnCollidedWithPickup;
+        TreeExiting -= OnHostTreeExiting;
     }
-
+    
     private void OnCollidedWithPickup(Node2D node) {
         if (node is ActivePickup activePickup) {
             TouchedItem?.Invoke(activePickup);

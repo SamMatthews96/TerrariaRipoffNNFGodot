@@ -7,13 +7,16 @@ namespace TerrariaRipoffNNF;
 public partial class GatherAction : PlayerAction {
     public event Action<IntVector, float> GatherAttempted;
 
+    private Game _game;
+    
+    public void InitAsLocal(Game game) {
+        _game = game;
+    }
+    
     public override void PrimaryAction(Vector2 mouseWorldPosition) {
-        // if (Player.CurrentEquipment.Pickaxe is null) return;
-        
         IntVector coords = new(mouseWorldPosition / Game.BlockSize);
-        if (!coords.IsInBounds()) return;
+        if (!_game.IsInBounds(coords)) return;
 
-        // ItemMining itemMining = Player.CurrentEquipment.Pickaxe.GetProperty<ItemMining>();
         float miningPowerTemp = 10f;
         float miningRangeTemp = 8f;
         if (miningRangeTemp >= IntVector.Distance(coords, Player.Coords)) {

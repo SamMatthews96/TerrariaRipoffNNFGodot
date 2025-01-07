@@ -6,12 +6,11 @@ namespace TerrariaRipoffNNF;
 
 public partial class Game : Node {
     public const int BlockSize = 32;
+    private Dictionary _worldData;
+    private Dictionary _playerData;
 
-
-    //@todo might be able to remove:
     [Export] public Node BlockParent { get; private set; }
     [Export] public Node PlayerParent { get; private set; }
-    [Export] public PackedScene HostManagerScene { get; private set; }
 
     [Export] public Region Region { get; private set; }
     [Export] public Interface.Game Interface { get; private set; }
@@ -34,43 +33,54 @@ public partial class Game : Node {
 
     public event Action<Dictionary> WorldCreated;
 
-    
-    public static Game Create() {
-        return Data.PackedScenes.Game.Instantiate<Game>();
+    public static Game CreateSinglePlayer(Dictionary worldData, Dictionary playerData) {
+        Game game = Data.PackedScenes.Game.Instantiate<Game>();
+        game._worldData = worldData;
+        game._playerData = playerData;
+        return game;
     }
 
-    private bool _initialized;
-    public void InitAsSinglePlayer(Dictionary worldData, Dictionary playerData) {
-        if (_initialized) {
-            throw new Exception("[20241205.2011.2] Game already initialized");
+    public override void _Ready() {
+        if (_worldData is not null) {
+            CreateWorld();
         }
-        CreateWorld(worldData);
-        CreatePlayer(playerData);
-        _initialized = true;
-    }
-    
 
-    private void CreateWorld(Dictionary worldData) {
-        Width = (int)worldData["Width"];
-        Height = (int)worldData["Height"];
-        WorldManager = HostManagerScene.Instantiate<WorldManager>();
+        RpcId(SceneManager.HostId, nameof(HostCreatePlayer),
+            _playerData, Multiplayer.GetUniqueId());
+        // _worldData = null;
+        // _playerData = null;
+        
+        Player.BeforeLocalPlayerSpawned += OnLocalPlayerSpawned;
+    }
+
+    private void OnLocalPlayerSpawned(Player player) {
+        player.InitAsLocal(this);
+    }
+
+    private void CreateWorld() {
+        Width = (int)_worldData["Width"];
+        Height = (int)_worldData["Height"];
+        WorldManager = WorldManager.Create();
+        WorldManager.SetGame(this);
         AddChild(WorldManager);
 
         DefaultSpawnPosition = new Vector2(
-            (float)worldData["DefaultSpawnPosition"].AsGodotArray()[0].AsDouble(),
-            (float)worldData["DefaultSpawnPosition"].AsGodotArray()[1].AsDouble());
-        WorldCreated?.Invoke(worldData);
-    }
-
-    private void CreatePlayer(Dictionary playerData) {
-        RpcId(SceneManager.HostId, nameof(ServerHandleNewClient),
-            playerData, Multiplayer.GetUniqueId());
+            (float)_worldData["DefaultSpawnPosition"].AsGodotArray()[0].AsDouble(),
+            (float)_worldData["DefaultSpawnPosition"].AsGodotArray()[1].AsDouble());
+        WorldCreated?.Invoke(_worldData);
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    private void ServerHandleNewClient(Dictionary playerDictionary, int peerId) {
+    private void HostCreatePlayer(Dictionary playerDictionary, int peerId) {
         Player player = Player.Create(peerId, playerDictionary);
-        //@todo do we need PlayerParent?
+        player.InitAsHost();
         PlayerParent.AddChild(player, true);
     }
+
+
+    public bool IsInBounds(IntVector intVector) {
+        return intVector.X >= 0 && intVector.X < Width && intVector.Y >= 0 && intVector.Y < Height;
+    }
+
+
 }

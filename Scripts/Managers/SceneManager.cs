@@ -14,11 +14,6 @@ public partial class SceneManager : Node {
     private ENetMultiplayerPeer _peer;
     private Game _game;
 
-    public Game Game {
-        get => _game ?? throw new Exception("[20241205.2000.8] Game not instantiated");
-        private set => _game = value;
-    }
-
     public static SceneManager Instance { get; private set; }
 
     public override void _EnterTree() {
@@ -35,10 +30,9 @@ public partial class SceneManager : Node {
 
     private void OnMainMenuSinglePlayerClickedEnterWorld(Dictionary worldData, Dictionary playerData) {
         _mainMenu.QueueFree();
-        // create as single player
-        Game = Game.Create();
-        AddChild(Game);
-        Game.InitAsSinglePlayer(worldData, playerData);
+        Game game = Game.CreateSinglePlayer(worldData, playerData);
+        AddChild(game);
+        
         _game.Interface.GameMenu.ExitGameButtonDown += ExitGame;
     }
 
@@ -71,7 +65,6 @@ public partial class SceneManager : Node {
     }
 
     private void ExitGame() {
-        Game.QueueFree();
         CreateMainMenu();
     }
 

@@ -3,6 +3,7 @@
 namespace TerrariaRipoffNNF.Interface;
 
 public partial class Crafting : Control {
+    [Export] private Game _gameInterface;
     [Export] private Button _selectCraftingStationMenuButton;
 
     [Export] public SelectStationContainer CraftSelectStationContainer { get; private set; }
@@ -12,7 +13,7 @@ public partial class Crafting : Control {
     public override void _Ready() {
         Hide();
         Player.BeforeLocalPlayerSpawned += OnLocalPlayerSpawned;
-        SceneManager.Instance.Game.InputManager.CraftMenuPressed += OnCraftMenuPressed;
+        _gameInterface.GameManager.InputManager.CraftMenuPressed += OnCraftMenuPressed;
     }
 
     public override void _ExitTree() {

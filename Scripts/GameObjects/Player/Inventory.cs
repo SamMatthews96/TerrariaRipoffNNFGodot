@@ -9,7 +9,7 @@ public partial class Inventory : Node {
     public float MaximumSpace { get; private set; } = 50;
     public float UsedSpace { get; private set; }
 
-    private List<InventoryItems> _inventoryItemsList;
+    private List<InventoryItems> _inventoryItemsList = new();
 
     public List<StackedItems> StackedItemsList =>
         _inventoryItemsList.ConvertAll(inventoryItems => inventoryItems.ToStackedItems());
@@ -21,29 +21,19 @@ public partial class Inventory : Node {
 
     [Export] private Player _player;
 
-
-    public override void _Ready() {
-        _inventoryItemsList = new List<InventoryItems>();
-
-        if (SceneManager.Instance.Game.IsHost) {
-            _player.PickupArea.TouchedItem += OnCollidedWithPickup;
-            _player.ActionController.BlockPlaced += OnBlockPlaced;
-            
-            //@todo remove placeholder wood
-            Item tempWood = ResourceLoader.Load<Item>("res://Resources/Items/wood1.tres");
-            InventoryItems inventoryItems = new(tempWood, 10);
-            Rpc(nameof(ClientAddItems), inventoryItems.Serialize());
-        }
+    public void InitAsHost() {
+        _player.PickupArea.TouchedItem += OnHostCollidedWithPickup;
+        _player.ActionController.BlockPlaced += OnBlockPlaced;
+        TreeExiting += OnHostTreeExiting;
     }
 
-    public override void _ExitTree() {
-        if (SceneManager.Instance.Game.IsHost) {
-            _player.PickupArea.TouchedItem -= OnCollidedWithPickup;
-            _player.ActionController.BlockPlaced -= OnBlockPlaced;
-        }
+    private void OnHostTreeExiting() {
+        _player.PickupArea.TouchedItem -= OnHostCollidedWithPickup;
+        _player.ActionController.BlockPlaced -= OnBlockPlaced;
+        TreeExiting -= OnHostTreeExiting;
     }
 
-    private void OnCollidedWithPickup(ActivePickup activePickup) {
+    private void OnHostCollidedWithPickup(ActivePickup activePickup) {
         if (activePickup.SavedPickup.InventoryItems.TotalSpace > MaximumSpace - UsedSpace) {
             return;
         }

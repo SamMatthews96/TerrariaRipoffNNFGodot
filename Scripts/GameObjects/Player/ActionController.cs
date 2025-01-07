@@ -10,38 +10,42 @@ public partial class ActionController : Node {
     [Export] private GatherAction _gatherAction;
     [Export] private BuildAction _buildAction;
 
+    private Game _game;
     public event Action<PlayerAction.Type> ActionChanged;
     public event Action<IntVector, float> GatherAttempted;
     public event Action<Item, IntVector> BlockPlaced;
 
-    public override void _Ready() {
-        if (_player.IsLocalPlayer) {
-            SceneManager.Instance.Game.InputManager.LeftMouseUp += OnInputManagerLeftMouseUp;
-            SceneManager.Instance.Game.InputManager.LeftMouseDown += OnInputManagerLeftMouseDown;
-            SceneManager.Instance.Game.Interface.ActionBar.ButtonClicked += EquipAction;
-            SceneManager.Instance.Game.InputManager.PlayerActionModeChanged += EquipAction;
-
-            EquipAction(PlayerAction.Type.Gather);
-        }
-
-        if (SceneManager.Instance.Game.IsHost) {
-            _gatherAction.GatherAttempted += OnGatherAttempted;
-            _buildAction.BlockPlaced += OnBlockPlaced;
-        }
+    public void InitAsLocal(Game game) {
+        _game = game;
+        _game.InputManager.LeftMouseUp += OnInputManagerLeftMouseUp;
+        _game.InputManager.LeftMouseDown += OnInputManagerLeftMouseDown;
+        _game.Interface.ActionBar.ButtonClicked += EquipAction;
+        _game.InputManager.PlayerActionModeChanged += EquipAction;
+        TreeExiting += OnTreeExitingLocal;
+        EquipAction(PlayerAction.Type.Gather);
+        
+        _buildAction.InitAsLocal(game);
+        _gatherAction.InitAsLocal(game);
     }
 
-    public override void _ExitTree() {
-        if (_player.IsLocalPlayer) {
-            SceneManager.Instance.Game.InputManager.LeftMouseUp -= OnInputManagerLeftMouseUp;
-            SceneManager.Instance.Game.InputManager.LeftMouseDown -= OnInputManagerLeftMouseDown;
-            SceneManager.Instance.Game.Interface.ActionBar.ButtonClicked -= EquipAction;
-            SceneManager.Instance.Game.InputManager.PlayerActionModeChanged -= EquipAction;
-        }
+    private void OnTreeExitingLocal() {
+        _game.InputManager.LeftMouseUp -= OnInputManagerLeftMouseUp;
+        _game.InputManager.LeftMouseDown -= OnInputManagerLeftMouseDown;
+        _game.Interface.ActionBar.ButtonClicked -= EquipAction;
+        _game.InputManager.PlayerActionModeChanged -= EquipAction;
+        TreeExiting -= OnTreeExitingLocal;
+    }
 
-        if (SceneManager.Instance.Game.IsHost) {
-            _gatherAction.GatherAttempted -= OnGatherAttempted;
-            _buildAction.BlockPlaced -= OnBlockPlaced;
-        }
+    public void InitAsHost() {
+        _gatherAction.GatherAttempted += OnGatherAttempted;
+        _buildAction.BlockPlaced += OnBlockPlaced;
+        TreeExiting += OnTreeExitingHost;
+    }
+
+    private void OnTreeExitingHost() {
+        _gatherAction.GatherAttempted -= OnGatherAttempted;
+        _buildAction.BlockPlaced -= OnBlockPlaced;
+        TreeExiting -= OnTreeExitingHost;
     }
 
     private void OnInputManagerLeftMouseUp(Vector2 mouseWorldPosition) {

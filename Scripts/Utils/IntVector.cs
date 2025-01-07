@@ -39,10 +39,6 @@ public readonly struct IntVector {
         }
     }
 
-    public bool IsInBounds() {
-        return X >= 0 && X < SceneManager.Instance.Game.Width && Y >= 0 && Y < SceneManager.Instance.Game.Height;
-    }
-
     public static IntVector operator -(IntVector a, IntVector b) {
         return new IntVector(a.X - b.X, a.Y - b.Y);
     }

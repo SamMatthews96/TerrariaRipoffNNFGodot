@@ -19,11 +19,11 @@ script = ExtResource("1_6kfdr")
 BlockParent = NodePath("BlockParent")
 PlayerParent = NodePath("PlayerParent")
 HostManagerScene = ExtResource("2_miuiv")
-Region = NodePath("RegionHelper")
+Region = NodePath("Region")
 Interface = NodePath("Interface")
 InputManager = NodePath("InputManager")
 
-[node name="RegionHelper" type="Node" parent="."]
+[node name="Region" type="Node" parent="."]
 script = ExtResource("3_8fqtf")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]

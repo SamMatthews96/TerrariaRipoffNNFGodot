@@ -9,6 +9,9 @@ namespace TerrariaRipoffNNF;
 public partial class BlockManager : Node {
     public const int BlockSpawnDistance = 20;
 
+    [Export] private WorldManager _worldManager;
+    private Game _game;
+
     private SavedBlock[,] _savedBlocks;
     private ActiveBlock[,] _activeBlocks;
 
@@ -18,19 +21,23 @@ public partial class BlockManager : Node {
 
     public event Action<SavedBlock> BlockDestroyed;
 
-    public override void _Ready() {
-        SceneManager.Instance.Game.WorldCreated += OnGameWorldCreated;
+    public void SetGame(Game game) {
+        if (_game is not null) {
+            throw new Exception("[20250103.1823.1] Game already set");
+        }
+
+        _game = game;
+        _game.WorldCreated += OnGameWorldCreated;
     }
 
+
     public override void _ExitTree() {
-        SceneManager.Instance.Game.WorldCreated -= OnGameWorldCreated;
+        _game.WorldCreated -= OnGameWorldCreated;
     }
 
     private void OnGameWorldCreated(Dictionary worldData) {
-        _savedBlocks = new SavedBlock[
-            SceneManager.Instance.Game.Width, SceneManager.Instance.Game.Height];
-        _activeBlocks = new ActiveBlock[
-            SceneManager.Instance.Game.Width, SceneManager.Instance.Game.Height];
+        _savedBlocks = new SavedBlock[_game.Width, _game.Height];
+        _activeBlocks = new ActiveBlock[_game.Width, _game.Height];
 
         Array savedBlockArray = worldData["SavedBlocks"].AsGodotArray();
         foreach (Dictionary savedBlockDict in savedBlockArray) {
@@ -57,8 +64,8 @@ public partial class BlockManager : Node {
     }
 
     private void OnPlayerManagerBeforePlayerSpawned(Dictionary playerInfo) {
-        IntVector spawnPosition = new(SceneManager.Instance.Game.DefaultSpawnPosition);
-        List<IntVector> region = SceneManager.Instance.Game.Region.GetRegion(
+        IntVector spawnPosition = new(_game.DefaultSpawnPosition);
+        List<IntVector> region = _game.Region.GetRegion(
             spawnPosition, BlockSpawnDistance);
 
         SpawnBlocksInRegion(region);
@@ -78,6 +85,8 @@ public partial class BlockManager : Node {
         }
 
         ActiveBlock activeBlock = ActiveBlock.Create(savedBlock);
+
+        _game.BlockParent.AddChild(activeBlock, true);
         _activeBlocks[savedBlock.XPosition, savedBlock.YPosition] = activeBlock;
     }
 
@@ -109,7 +118,7 @@ public partial class BlockManager : Node {
         IntVector newCoordinates = new(
             (int)positionChange["X"], (int)positionChange["Y"]);
 
-        List<IntVector> newRegion = SceneManager.Instance.Game.Region.GetRegionDelta(
+        List<IntVector> newRegion = _game.Region.GetRegionDelta(
             newCoordinates, oldCoordinates, BlockSpawnDistance);
 
         SpawnBlocksInRegion(newRegion);
