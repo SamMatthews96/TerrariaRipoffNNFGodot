@@ -13,11 +13,6 @@ public partial class Player : CharacterBody2D {
         return player;
     }
 
-    public void InitAsHost() {
-        Inventory.InitAsHost();
-        PickupArea.InitAsHost();
-    }
-
     private Game _game;
 
     [Export] public Inventory Inventory { get; private set; }
@@ -71,6 +66,12 @@ public partial class Player : CharacterBody2D {
         BeforePlayerLeaveScene?.Invoke(this);
     }
 
+    public void InitAsHost() {
+        Inventory.InitAsHost();
+        PickupArea.InitAsHost();
+        ActionController.InitAsHost();
+    }
+
     public void InitAsLocal(Game game) {
         if (_game is not null) {
             throw new Exception("[20250104.0137.1] Game already set");
@@ -80,7 +81,8 @@ public partial class Player : CharacterBody2D {
         _game.InputManager.HorizontalInputChanged += OnHorizontalInputChanged;
         _game.InputManager.JumpPressed += OnJumpPressed;
         TreeExiting += OnTreeExitingGame;
-        
+
+        ActionController.InitAsLocal(game);
     }
 
     private void OnTreeExitingGame() {

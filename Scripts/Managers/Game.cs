@@ -45,12 +45,12 @@ public partial class Game : Node {
             CreateWorld();
         }
 
+        Player.BeforeLocalPlayerSpawned += OnLocalPlayerSpawned;
+        
         RpcId(SceneManager.HostId, nameof(HostCreatePlayer),
             _playerData, Multiplayer.GetUniqueId());
         // _worldData = null;
         // _playerData = null;
-        
-        Player.BeforeLocalPlayerSpawned += OnLocalPlayerSpawned;
     }
 
     private void OnLocalPlayerSpawned(Player player) {
@@ -81,6 +81,4 @@ public partial class Game : Node {
     public bool IsInBounds(IntVector intVector) {
         return intVector.X >= 0 && intVector.X < Width && intVector.Y >= 0 && intVector.Y < Height;
     }
-
-
 }
