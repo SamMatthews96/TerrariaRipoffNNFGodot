@@ -6,8 +6,6 @@ namespace TerrariaRipoffNNF;
 
 public partial class Game : Node {
     public const int BlockSize = 32;
-    private Dictionary _worldData;
-    private Dictionary _playerData;
 
     [Export] public Node BlockParent { get; private set; }
     [Export] public Node PlayerParent { get; private set; }
@@ -33,48 +31,59 @@ public partial class Game : Node {
 
     public event Action<Dictionary> WorldCreated;
 
-    public static Game CreateAsSinglePlayer(Dictionary worldData, Dictionary playerData) {
-        Game game = Data.PackedScenes.Game.Instantiate<Game>();
-        game._worldData = worldData;
-        game._playerData = playerData;
-        return game;
+    public static Game Create() {
+        return Data.PackedScenes.Game.Instantiate<Game>();
     }
-    
 
     public override void _Ready() {
-        if (_worldData is not null) {
-            CreateWorld();
-        }
-
         Player.BeforeLocalPlayerSpawned += OnLocalPlayerSpawned;
-        
-        RpcId(SceneManager.HostId, nameof(HostCreatePlayer),
-            _playerData, Multiplayer.GetUniqueId());
-        // _worldData = null;
-        // _playerData = null;
     }
+
+    public void InitAsSinglePlayer(Dictionary worldData, Dictionary playerData) {
+        CreateWorld(worldData);
+        HostCreatePlayer(playerData, SceneManager.HostId);
+    }
+
+    public void InitAsHost(Dictionary worldData, Dictionary playerData) {
+        _multiplayerHost = new MultiplayerHost();
+        AddChild(_multiplayerHost);
+
+        CreateWorld(worldData);
+        HostCreatePlayer(playerData, SceneManager.HostId);
+    }
+
+    public void InitAsClient(Dictionary playerData) {
+        _multiplayerClient = new MultiplayerClient();
+        AddChild(_multiplayerClient);
+
+        Multiplayer.ConnectedToServer += () => {
+            RpcId(SceneManager.HostId, nameof(HostCreatePlayer),
+                playerData, Multiplayer.GetUniqueId());
+        };
+    }
+
 
     private void OnLocalPlayerSpawned(Player player) {
         player.InitAsLocal(this);
     }
 
-    private void CreateWorld() {
-        Width = (int)_worldData["Width"];
-        Height = (int)_worldData["Height"];
+    private void CreateWorld(Dictionary worldData) {
+        Width = (int)worldData["Width"];
+        Height = (int)worldData["Height"];
         WorldManager = WorldManager.Create();
         WorldManager.SetGame(this);
         AddChild(WorldManager);
 
         DefaultSpawnPosition = new Vector2(
-            (float)_worldData["DefaultSpawnPosition"].AsGodotArray()[0].AsDouble(),
-            (float)_worldData["DefaultSpawnPosition"].AsGodotArray()[1].AsDouble());
-        WorldCreated?.Invoke(_worldData);
+            (float)worldData["DefaultSpawnPosition"].AsGodotArray()[0].AsDouble(),
+            (float)worldData["DefaultSpawnPosition"].AsGodotArray()[1].AsDouble());
+        WorldCreated?.Invoke(worldData);
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void HostCreatePlayer(Dictionary playerDictionary, int peerId) {
         Player player = Player.Create(peerId, playerDictionary);
-        player.InitAsHost();
+        player.InitAsHost(this);
         PlayerParent.AddChild(player, true);
     }
 

@@ -66,10 +66,10 @@ public partial class Player : CharacterBody2D {
         BeforePlayerLeaveScene?.Invoke(this);
     }
 
-    public void InitAsHost() {
+    public void InitAsHost(Game game) {
         Inventory.InitAsHost();
         PickupArea.InitAsHost();
-        ActionController.InitAsHost();
+        ActionController.InitAsHost(game);
     }
 
     public void InitAsLocal(Game game) {

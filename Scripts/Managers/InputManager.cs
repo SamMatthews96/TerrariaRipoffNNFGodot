@@ -29,11 +29,7 @@ public partial class InputManager : Node {
     public event Action<PlayerAction.Type> PlayerActionModeChanged;
     public event Action EscapePressed;
     public event Action CraftMenuPressed;
-
-    public override void _Process(double delta) {
-        // Vector2 mousePosition = GetViewport().GetMousePosition();
-    }
-
+    
     public override void _UnhandledInput(InputEvent e) {
         switch (e) {
             case InputEventMouseButton:

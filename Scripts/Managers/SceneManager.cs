@@ -29,43 +29,51 @@ public partial class SceneManager : Node {
     }
 
     private void OnMainMenuSinglePlayerClickedEnterWorld(Dictionary worldData, Dictionary playerData) {
+        CreateGame();
+        _game.InitAsSinglePlayer(worldData, playerData);
+    }
+
+    private void CreateGame() {
         _mainMenu.QueueFree();
-        _game = Game.CreateAsSinglePlayer(worldData, playerData);
+        _game = Game.Create();
         AddChild(_game);
-        
         _game.Interface.GameMenu.ExitGameButtonDown += ExitGame;
     }
 
     private void OnMainMenuHostClickedEnterWorld(Dictionary world, Dictionary playerInfo) {
-        _peer = new ENetMultiplayerPeer();
-        Error error = _peer.CreateServer(_port);
-        if (error != Error.Ok) {
-            throw new Exception("error cannot host! [20240808.1336.1] :" + error);
-        }
+        // _peer = new ENetMultiplayerPeer();
+        // Error error = _peer.CreateServer(_port);
+        // if (error != Error.Ok) {
+        //     throw new Exception("error cannot host! [20240808.1336.1] :" + error);
+        // }
+        //
+        // _peer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
+        // Multiplayer.MultiplayerPeer = _peer;
 
-        _peer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
-        Multiplayer.MultiplayerPeer = _peer;
-
-        // CreateNewGame();
+        CreateGame();
+        _game.InitAsHost(world, playerInfo);
     }
 
     private void OnMainMenuClientClickedEnterWorld(string ip, Dictionary playerInfo) {
-        Multiplayer.ConnectedToServer += () => {
-            // CreateNewGame();
-        };
-
-        _peer = new ENetMultiplayerPeer();
-        Error error = _peer.CreateClient(ip, _port);
-        if (error != Error.Ok) {
-            throw new Exception("error cannot join! [20240808.1337.1] :" + error);
-        }
-
-        _peer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
-        Multiplayer.MultiplayerPeer = _peer;
+        // Multiplayer.ConnectedToServer += () => {
+        //     // CreateNewGame();
+        // };
+        //
+        // _peer = new ENetMultiplayerPeer();
+        // Error error = _peer.CreateClient(ip, _port);
+        // if (error != Error.Ok) {
+        //     throw new Exception("error cannot join! [20240808.1337.1] :" + error);
+        // }
+        //
+        // _peer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
+        // Multiplayer.MultiplayerPeer = _peer;
+        CreateGame();
+        _game.InitAsClient(playerInfo);
     }
 
     private void ExitGame() {
         CreateMainMenu();
+        _game.Interface.GameMenu.ExitGameButtonDown -= ExitGame;
     }
 
     private void CreateMainMenu() {

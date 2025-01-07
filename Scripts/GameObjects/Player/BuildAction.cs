@@ -18,6 +18,10 @@ public partial class BuildAction : PlayerAction {
         TreeExiting += OnTreeExitingLocal;
     }
 
+    public void InitAsHost(Game game) {
+        _game = game;
+    }
+
     private void OnTreeExitingLocal() {
         _game.Interface.BuildUi.BlockTypeSelected -= OnBuildBlockTypeSelected;
         Player.Inventory.RemovedItemStack -= OnInventoryRemovedItemStack;

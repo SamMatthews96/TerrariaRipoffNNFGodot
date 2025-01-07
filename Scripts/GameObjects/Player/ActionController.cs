@@ -36,7 +36,10 @@ public partial class ActionController : Node {
         TreeExiting -= OnTreeExitingLocal;
     }
 
-    public void InitAsHost() {
+    public void InitAsHost(Game game) {
+        _game = game;
+        // _gatherAction.InitAsHost(game);
+        _buildAction.InitAsHost(game);
         _gatherAction.GatherAttempted += OnGatherAttempted;
         _buildAction.BlockPlaced += OnBlockPlaced;
         TreeExiting += OnTreeExitingHost;
