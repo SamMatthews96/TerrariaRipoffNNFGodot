@@ -11,12 +11,12 @@ public partial class SelectIngredientPopup : Control {
     [Export] private PanelContainer _panelContainer;
 
     private RecipeIngredientSlot _ingredientSlot;
-    private List<SelectIngredientButton> _ingredientButtons = new();
+    private readonly List<SelectIngredientButton> _ingredientButtons = new();
     private Player _player;
     private bool _isMouseOverPopup;
     private bool _isMouseOverIngredientMouseover;
 
-    public event Action<Item, RecipeIngredientSlot> IngredientButtonClicked;
+    public event Action<Item, RecipeIngredientSlot> SelectIngredientButtonClicked;
 
     public override void _Ready() {
         Hide();
@@ -53,10 +53,10 @@ public partial class SelectIngredientPopup : Control {
     }
 
     private void OnIngredientIconMouseEntered(Control node, RecipeIngredientSlot ingredientSlot) {
-        int addedMargin = 200;
+        int addedMargin = 20;
         _isMouseOverIngredientMouseover = true;
         _ingredientSlot = ingredientSlot;
-        Position = node.GlobalPosition + new Vector2(0, -Size.Y -addedMargin );
+        Position = node.GlobalPosition + new Vector2(0, -Size.Y - addedMargin);
         OnMouseoverUpdated();
     }
 
@@ -70,11 +70,8 @@ public partial class SelectIngredientPopup : Control {
 
         if (isMouseOver) {
             _hideTimer.Stop();
-            if (!Visible) {
-                OpenPopup();
-            }
-        }
-        else {
+            OpenPopup();
+        } else {
             if (Visible) {
                 _hideTimer.Start();
             }
@@ -106,7 +103,7 @@ public partial class SelectIngredientPopup : Control {
         _isMouseOverIngredientMouseover = false;
         _isMouseOverPopup = false;
         _hideTimer.Stop();
-        IngredientButtonClicked?.Invoke(item, _ingredientSlot);
+        SelectIngredientButtonClicked?.Invoke(item, _ingredientSlot);
         Hide();
     }
 }

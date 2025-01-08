@@ -1,5 +1,6 @@
 ﻿using System;
 using Godot;
+using Godot.Collections;
 
 namespace TerrariaRipoffNNF.Interface;
 
@@ -10,12 +11,14 @@ public partial class SelectIngredientsContainer : Container {
     [Export] private Button _craftButton;
     [Export] private TextureRect _resultItemIcon;
     [Export] private SelectIngredientPopup _ingredientPopup;
-    
+
+    private Dictionary<string, SelectIngredientMouseover> _selectIngredientMouseovers = new();
+
     private Recipe _selectedRecipe;
+    private Player _player;
 
     public event Action<Control, RecipeIngredientSlot> IngredientIconMouseEntered;
     public event Action IngredientIconMouseLeft;
-    public event Action<Item, RecipeIngredientSlot> IngredientButtonClicked;
     public event Action CraftButtonPressed;
 
     public override void _Ready() {
@@ -25,12 +28,24 @@ public partial class SelectIngredientsContainer : Container {
             node.QueueFree();
         }
 
-        _ingredientPopup.IngredientButtonClicked += OnIngredientButtonClicked;
+        _ingredientPopup.SelectIngredientButtonClicked += OnSelectIngredientButtonClicked;
         _craftButton.ButtonDown += OnCraftButtonDown;
+        Player.BeforeLocalPlayerSpawned += OnLocalPlayerSpawned;
     }
 
-    private void OnIngredientButtonClicked(Item selectedIngredient, RecipeIngredientSlot ingredientSlot) {
-        IngredientButtonClicked?.Invoke(selectedIngredient, ingredientSlot);
+    private void OnLocalPlayerSpawned(Player player) {
+        _player = player;
+        _player.Crafting.SelectedIngredientsChanged += OnSelectedIngredientsChanged;
+    }
+
+    private void OnSelectedIngredientsChanged(StackedItems newItems) {
+        _resultItemIcon.Texture = newItems is null
+            ? _selectedRecipe.ResultIcon
+            : newItems.Item.IconTexture;
+    }
+
+    private void OnSelectIngredientButtonClicked(Item selectedIngredient, RecipeIngredientSlot ingredientSlot) {
+        _selectIngredientMouseovers[ingredientSlot.RecipeSlot].Texture = selectedIngredient.IconTexture;
     }
 
 
@@ -49,9 +64,12 @@ public partial class SelectIngredientsContainer : Container {
             node.QueueFree();
         }
 
+        _selectIngredientMouseovers.Clear();
+
         foreach (RecipeIngredientSlot ingredientSlot in recipe.IngredientSlots.Values) {
             SelectIngredientMouseover newIngredientMouseover
                 = SelectIngredientMouseover.Create(ingredientSlot);
+            _selectIngredientMouseovers.Add(ingredientSlot.RecipeSlot, newIngredientMouseover);
             newIngredientMouseover.MouseEnteredIcon += OnIngredientIconMouseEntered;
             newIngredientMouseover.MouseLeftIcon += OnIngredientIconMouseLeft;
             _ingredientContainer.AddChild(newIngredientMouseover);

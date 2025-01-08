@@ -11,12 +11,14 @@ public partial class PickupManager : Node {
     private List<ActivePickup>[,] _activePickups;
 
     public void SetGame(Game game) {
-        if (_game is not null) {
-            throw new Exception("[20250104.0012.1] Game already set");
-        }
-
         _game = game;
         _game.WorldManager.BlockManager.BlockDestroyed += OnBlockManagerBlockDestroyed;
+        TreeExiting += OnTreeExiting;
+    }
+
+    private void OnTreeExiting() {
+        _game.WorldManager.BlockManager.BlockDestroyed -= OnBlockManagerBlockDestroyed;
+        TreeExiting -= OnTreeExiting;
     }
 
     public override void _Ready() {

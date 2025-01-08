@@ -14,7 +14,6 @@ public enum CraftingStationType {
     CookingPot,
 }
 
-
 public sealed partial class Crafting : Node {
     [Export] private Player _player;
     [Export] private CraftingStation _handcrafting;
@@ -27,7 +26,7 @@ public sealed partial class Crafting : Node {
 
     public event Action<CraftingStation> CraftingStationAdded;
     public event Action<CraftingStation> CraftingStationRemoved;
-    // public event Action<Godot.Collections.Dictionary<> SelectedIngredientsChanged;
+    public event Action<StackedItems> SelectedIngredientsChanged;
     public event Action<StackedItems, List<StackedItems>> ItemCrafted;
 
     public void InitAsLocal(Game game) {
@@ -35,7 +34,7 @@ public sealed partial class Crafting : Node {
         AddCraftingStation(_handcrafting);
         Interface.Crafting craftingInterface = _game.Interface.CraftingInterface;
         craftingInterface.SelectRecipeContainer.RecipeButtonClicked += OnRecipeButtonClicked;
-        craftingInterface.SelectIngredientsContainer.IngredientButtonClicked += OnIngredientButtonClicked;
+        craftingInterface.SelectIngredientPopup.SelectIngredientButtonClicked += OnSelectIngredientButtonClicked;
         craftingInterface.SelectIngredientsContainer.CraftButtonPressed += OnCraftButtonPressed;
         TreeExiting += OnTreeExitingLocal;
     }
@@ -43,7 +42,7 @@ public sealed partial class Crafting : Node {
     private void OnTreeExitingLocal() {
         Interface.Crafting craftingInterface = _game.Interface.CraftingInterface;
         craftingInterface.SelectRecipeContainer.RecipeButtonClicked -= OnRecipeButtonClicked;
-        craftingInterface.SelectIngredientsContainer.IngredientButtonClicked -= OnIngredientButtonClicked;
+        craftingInterface.SelectIngredientPopup.SelectIngredientButtonClicked -= OnSelectIngredientButtonClicked;
         craftingInterface.SelectIngredientsContainer.CraftButtonPressed -= OnCraftButtonPressed;
         TreeExiting -= OnTreeExitingLocal;
     }
@@ -54,8 +53,10 @@ public sealed partial class Crafting : Node {
         ItemCrafted?.Invoke(newItems, GetTotalSelectedIngredients());
     }
 
-    private void OnIngredientButtonClicked(Item item, RecipeIngredientSlot ingredientSlot) {
+    private void OnSelectIngredientButtonClicked(Item item, RecipeIngredientSlot ingredientSlot) {
         _selectedIngredients[ingredientSlot.RecipeSlot] = item;
+        StackedItems newItems = _selectedRecipe.Build(_selectedIngredients);
+        SelectedIngredientsChanged?.Invoke(newItems);
     }
 
     private List<StackedItems> GetTotalSelectedIngredients() {
@@ -74,7 +75,6 @@ public sealed partial class Crafting : Node {
         _selectedIngredients.Clear();
     }
 
-    public override void _ExitTree() { }
 
 
     private void AddCraftingStation(CraftingStation craftingStation) {

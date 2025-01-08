@@ -39,6 +39,7 @@ public sealed partial class Item : Resource {
     public Dictionary ToDictionary() {
         Dictionary serialized = new();
         if (ResourcePath == "") {
+            serialized.Add("Name", Name);
             serialized.Add("InventorySpace", InventorySpace);
             serialized.Add("IsStackable", IsStackable);
             serialized.Add("IconTexture", IconTexture.ResourcePath);
@@ -69,7 +70,19 @@ public sealed partial class Item : Resource {
             return ResourceLoader.Load<Item>(resourcePath.ToString());
         }
 
-        throw new NotImplementedException();
+        Array<ItemProperty> itemProperties = new();
+
+        foreach (Dictionary serializedProperty in dictionary["ItemProperties"].AsGodotArray()) {
+            itemProperties.Add(ItemProperty.FromDictionary(serializedProperty));
+        }
+
+        return Create(
+            dictionary["Name"].ToString(),
+            ResourceLoader.Load<Texture2D>(dictionary["IconTexture"].ToString()),
+            (float)dictionary["InventorySpace"],
+            (bool)dictionary["IsStackable"],
+            itemProperties
+        );
     }
 
     public static Item Create(

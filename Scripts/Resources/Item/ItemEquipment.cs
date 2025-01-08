@@ -14,8 +14,4 @@ public enum EquipmentSlot {
 [GlobalClass]
 public abstract partial class ItemEquipment : ItemProperty {
     public EquipmentSlot Slot { get; protected set; }
-
-    public override Dictionary ToDictionary() {
-        throw new NotImplementedException();
-    }
 }

@@ -27,8 +27,6 @@ public partial class Game : Node {
         private set => _worldManager = value;
     }
 
-    public bool IsHost => Multiplayer.GetUniqueId() == SceneManager.HostId;
-
     public event Action<Dictionary> WorldCreated;
 
     public static Game Create() {
@@ -62,7 +60,6 @@ public partial class Game : Node {
         };
     }
 
-
     private void OnLocalPlayerSpawned(Player player) {
         player.InitAsLocal(this);
     }
@@ -71,7 +68,8 @@ public partial class Game : Node {
         Width = (int)worldData["Width"];
         Height = (int)worldData["Height"];
         WorldManager = WorldManager.Create();
-        WorldManager.SetGame(this);
+        WorldManager.PickupManager.SetGame(this);
+        WorldManager.BlockManager.SetGame(this);
         AddChild(WorldManager);
 
         DefaultSpawnPosition = new Vector2(

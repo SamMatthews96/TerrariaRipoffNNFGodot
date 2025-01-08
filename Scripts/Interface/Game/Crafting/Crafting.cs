@@ -9,22 +9,12 @@ public partial class Crafting : Control {
     [Export] public SelectStationContainer CraftSelectStationContainer { get; private set; }
     [Export] public SelectRecipeContainer SelectRecipeContainer { get; private set; }
     [Export] public SelectIngredientsContainer SelectIngredientsContainer { get; private set; }
+    [Export] public SelectIngredientPopup SelectIngredientPopup { get; private set; }
 
     public override void _Ready() {
         Hide();
-        Player.BeforeLocalPlayerSpawned += OnLocalPlayerSpawned;
         _gameInterface.GameManager.InputManager.CraftMenuPressed += OnCraftMenuPressed;
     }
-
-    public override void _ExitTree() {
-        Player.BeforeLocalPlayerSpawned -= OnLocalPlayerSpawned;
-    }
-
-    private void OnLocalPlayerSpawned(Player player) {
-        player.Crafting.CraftingStationAdded += OnCraftingStationAdded;
-    }
-
-    private void OnCraftingStationAdded(CraftingStation craftingStation) { }
 
     private void OnCraftMenuPressed() {
         if (Visible) {

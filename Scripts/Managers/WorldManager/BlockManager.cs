@@ -22,17 +22,14 @@ public partial class BlockManager : Node {
     public event Action<SavedBlock> BlockDestroyed;
 
     public void SetGame(Game game) {
-        if (_game is not null) {
-            throw new Exception("[20250103.1823.1] Game already set");
-        }
-
         _game = game;
         _game.WorldCreated += OnGameWorldCreated;
+        TreeExiting += OnTreeExiting;
     }
 
-
-    public override void _ExitTree() {
+    private void OnTreeExiting() {
         _game.WorldCreated -= OnGameWorldCreated;
+        TreeExiting -= OnTreeExiting;
     }
 
     private void OnGameWorldCreated(Dictionary worldData) {
