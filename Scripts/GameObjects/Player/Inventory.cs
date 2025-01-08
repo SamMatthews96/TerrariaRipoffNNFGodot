@@ -11,15 +11,15 @@ public partial class Inventory : Node {
 
     public List<StackedItems> StackedItemsList =>
         _inventoryItemsList.ConvertAll(inventoryItems => inventoryItems.ToStackedItems());
-    
+
     public bool IsContainingStackedItems(StackedItems stackedItems) {
         foreach (StackedItems inventoryStackedItems in StackedItemsList) {
             if (inventoryStackedItems.Item == stackedItems.Item) {
                 return inventoryStackedItems.Count >= stackedItems.Count;
             }
         }
-        return false;
 
+        return false;
     }
 
     public event Action<StackedItems> ItemStackChangedSize;
@@ -42,7 +42,7 @@ public partial class Inventory : Node {
         _player.ActionController.BlockPlaced -= OnBlockPlaced;
         TreeExiting -= OnHostTreeExiting;
     }
-    
+
 
     public override void _Ready() {
         //@todo remove placeholder items
@@ -52,7 +52,7 @@ public partial class Inventory : Node {
         Item tempWood = ResourceLoader.Load<Item>("res://Resources/Items/wood1.tres");
         InventoryItems woodItems = new(tempWood, 10);
         ClientAddItems(woodItems.Serialize());
-        
+
         _player.Crafting.ItemCrafted += OnItemCrafted;
     }
 

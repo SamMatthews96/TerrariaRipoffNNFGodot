@@ -61,7 +61,7 @@ public partial class BlockManager : Node {
     }
 
     private void OnPlayerManagerBeforePlayerSpawned(Dictionary playerInfo) {
-        IntVector spawnPosition = new(_game.DefaultSpawnPosition);
+        IntVector spawnPosition = _game.DefaultSpawnPosition;
         List<IntVector> region = _game.Region.GetRegion(
             spawnPosition, BlockSpawnDistance);
 

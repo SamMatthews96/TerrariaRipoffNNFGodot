@@ -5,15 +5,17 @@ using Godot.Collections;
 namespace TerrariaRipoffNNF;
 
 public partial class Player : CharacterBody2D {
-    public static Player Create(int peerId, Dictionary playerData) {
+    public static Player Create(int peerId, Dictionary playerData, IntVector spawnPosition) {
         BeforePlayerSpawned?.Invoke(playerData);
         Player player = Data.PackedScenes.Player.Instantiate<Player>();
         player.Name = peerId.ToString();
+        player._spawnPosition = new Vector2(
+            spawnPosition.X * Game.BlockSize,
+            spawnPosition.Y * Game.BlockSize
+        );
         PlayerSpawned?.Invoke(player);
         return player;
     }
-
-    private Game _game;
 
     [Export] public Inventory Inventory { get; private set; }
     [Export] public ActionController ActionController { get; private set; }
@@ -28,6 +30,7 @@ public partial class Player : CharacterBody2D {
     [Export] private float _jumpStrength = 800;
     [Export] private Vector2 _spawnPosition;
 
+    private Game _game;
     private int _horizontalInput;
     private bool _isFalling;
     private float _xVelocity;

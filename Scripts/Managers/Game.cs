@@ -16,7 +16,7 @@ public partial class Game : Node {
     [Export] public int Width { get; private set; }
     [Export] public int Height { get; private set; }
 
-    public Vector2 DefaultSpawnPosition { get; private set; }
+    public IntVector DefaultSpawnPosition { get; private set; }
     private WorldManager _worldManager;
 
     private MultiplayerHost _multiplayerHost;
@@ -72,15 +72,15 @@ public partial class Game : Node {
         WorldManager.BlockManager.SetGame(this);
         AddChild(WorldManager);
 
-        DefaultSpawnPosition = new Vector2(
-            (float)worldData["DefaultSpawnPosition"].AsGodotArray()[0].AsDouble(),
-            (float)worldData["DefaultSpawnPosition"].AsGodotArray()[1].AsDouble());
+        DefaultSpawnPosition = new IntVector(
+            worldData["DefaultSpawnPosition"].AsGodotArray()[0].AsInt32(),
+            worldData["DefaultSpawnPosition"].AsGodotArray()[1].AsInt32());
         WorldCreated?.Invoke(worldData);
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void HostCreatePlayer(Dictionary playerDictionary, int peerId) {
-        Player player = Player.Create(peerId, playerDictionary);
+        Player player = Player.Create(peerId, playerDictionary, DefaultSpawnPosition);
         player.InitAsHost(this);
         PlayerParent.AddChild(player, true);
     }
