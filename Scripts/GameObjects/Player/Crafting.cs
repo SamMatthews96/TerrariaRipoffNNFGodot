@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
 
 namespace TerrariaRipoffNNF;
@@ -50,6 +51,10 @@ public sealed partial class Crafting : Node {
     private void OnCraftButtonPressed() {
         StackedItems newItems = _selectedRecipe.Build(_selectedIngredients);
         if (newItems is null) return;
+        List<StackedItems> totalIngredients = GetTotalSelectedIngredients();
+        if (totalIngredients.Any(
+                stackedItems => !_player.Inventory.IsContainingStackedItems(stackedItems))) return;
+
         ItemCrafted?.Invoke(newItems, GetTotalSelectedIngredients());
     }
 
@@ -74,7 +79,6 @@ public sealed partial class Crafting : Node {
         _selectedRecipe = recipe;
         _selectedIngredients.Clear();
     }
-
 
 
     private void AddCraftingStation(CraftingStation craftingStation) {

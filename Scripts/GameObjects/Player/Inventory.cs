@@ -11,6 +11,16 @@ public partial class Inventory : Node {
 
     public List<StackedItems> StackedItemsList =>
         _inventoryItemsList.ConvertAll(inventoryItems => inventoryItems.ToStackedItems());
+    
+    public bool IsContainingStackedItems(StackedItems stackedItems) {
+        foreach (StackedItems inventoryStackedItems in StackedItemsList) {
+            if (inventoryStackedItems.Item == stackedItems.Item) {
+                return inventoryStackedItems.Count >= stackedItems.Count;
+            }
+        }
+        return false;
+
+    }
 
     public event Action<StackedItems> ItemStackChangedSize;
     public event Action<StackedItems> AddedItemStack;

@@ -8,22 +8,23 @@ custom_minimum_size = Vector2(50, 50)
 texture = ExtResource("1_7mlwy")
 expand_mode = 2
 script = ExtResource("1_6026h")
-_countLabel = NodePath("CountLabel")
+_countLabel = NodePath("PanelContainer/CountLabel")
 _iconTextureRect = NodePath(".")
 
-[node name="CountLabel" type="Label" parent="."]
+[node name="PanelContainer" type="PanelContainer" parent="."]
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -52.32
+offset_left = -10.0
 offset_top = -23.0
-offset_right = -3.32
 grow_horizontal = 0
 grow_vertical = 0
-text = "100
-"
+
+[node name="CountLabel" type="Label" parent="PanelContainer"]
+layout_mode = 2
+text = "1"
 horizontal_alignment = 2
 vertical_alignment = 2
