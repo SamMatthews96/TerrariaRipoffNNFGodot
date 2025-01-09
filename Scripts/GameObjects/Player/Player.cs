@@ -49,8 +49,6 @@ public partial class Player : CharacterBody2D {
 
     public event Action<Player> BeforePlayerLeaveScene;
 
-    #region Creation
-
     public override void _EnterTree() {
         _positionSynchronizer.SetMultiplayerAuthority(PeerId);
         if (IsLocalPlayer) {
@@ -97,7 +95,11 @@ public partial class Player : CharacterBody2D {
         _horizontalInput = newInput;
     }
 
-    #endregion
+    private void OnJumpPressed() {
+        if (_isFalling) return;
+        _isFalling = true;
+        _yVelocity = -_jumpStrength;
+    }
 
     public override void _PhysicsProcess(double delta) {
         if (!IsLocalPlayer) return;
@@ -127,11 +129,5 @@ public partial class Player : CharacterBody2D {
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void ServerMovedCell(Dictionary positionChange) {
         MovedCell?.Invoke(positionChange);
-    }
-
-    private void OnJumpPressed() {
-        if (_isFalling) return;
-        _isFalling = true;
-        _yVelocity = -_jumpStrength;
     }
 }

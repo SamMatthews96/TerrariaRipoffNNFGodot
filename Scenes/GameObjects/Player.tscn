@@ -75,9 +75,14 @@ _player = NodePath("..")
 _gatherAction = NodePath("GatherActionState")
 _buildAction = NodePath("BuildActionState")
 
-[node name="GatherActionState" type="Node" parent="ActionController" node_paths=PackedStringArray("Player")]
+[node name="GatherActionState" type="Node" parent="ActionController" node_paths=PackedStringArray("_player", "_gatherCooldown", "Player")]
 script = ExtResource("5_l1f4o")
+_player = NodePath("../..")
+_gatherCooldown = NodePath("GatherCooldown")
 Player = NodePath("../..")
+
+[node name="GatherCooldown" type="Timer" parent="ActionController/GatherActionState"]
+wait_time = 0.5
 
 [node name="BuildActionState" type="Node" parent="ActionController" node_paths=PackedStringArray("Player")]
 script = ExtResource("6_qab18")
