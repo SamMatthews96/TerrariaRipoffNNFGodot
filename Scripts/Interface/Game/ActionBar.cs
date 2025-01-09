@@ -16,10 +16,10 @@ public partial class ActionBar : PanelContainer {
             };
         }
         
-        Player.BeforeLocalPlayerSpawned += OnBeforeLocalPlayerSpawned;
+        Player.LocalPlayerSpawned += OnLocalPlayerSpawned;
     }
     
-    private void OnBeforeLocalPlayerSpawned(Player player) {
+    private void OnLocalPlayerSpawned(Player player) {
         player.ActionController.ActionChanged += OnPlayerActionChanged;
     }
     
@@ -35,6 +35,6 @@ public partial class ActionBar : PanelContainer {
     }
     
     public override void _ExitTree() {
-        Player.BeforeLocalPlayerSpawned -= OnBeforeLocalPlayerSpawned;
+        Player.LocalPlayerSpawned -= OnLocalPlayerSpawned;
     }
 }

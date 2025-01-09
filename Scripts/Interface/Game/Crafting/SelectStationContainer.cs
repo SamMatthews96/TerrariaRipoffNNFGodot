@@ -15,11 +15,11 @@ public partial class SelectStationContainer : Control {
         foreach (Node node in _craftingStationButtonContainer.GetChildren()) {
             node.QueueFree();
         }
-        Player.BeforeLocalPlayerSpawned += OnLocalPlayerSpawned;
+        Player.LocalPlayerSpawned += OnLocalPlayerSpawned;
     }
 
     public override void _ExitTree() {
-        Player.BeforeLocalPlayerSpawned -= OnLocalPlayerSpawned;
+        Player.LocalPlayerSpawned -= OnLocalPlayerSpawned;
     }
 
     private void OnLocalPlayerSpawned(Player player) {

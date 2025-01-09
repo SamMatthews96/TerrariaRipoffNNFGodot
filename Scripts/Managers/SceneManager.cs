@@ -11,8 +11,8 @@ public partial class SceneManager : Node {
     [Export] private string _address = "127.0.0.1";
     private MainMenu _mainMenu;
 
-    private ENetMultiplayerPeer _peer;
     private Game _game;
+    private Node _loadingScreen;
 
     public override void _Ready() {
         CreateMainMenu();
@@ -21,18 +21,28 @@ public partial class SceneManager : Node {
     private void OnMainMenuSinglePlayerClickedEnterWorld(Dictionary worldData, Dictionary playerData) {
         CreateGame();
         _game.InitAsSinglePlayer(worldData, playerData);
+        _game.WorldManager.BlockManager.WorldLoaded += OnWorldLoaded;
     }
 
     private void CreateGame() {
         _mainMenu.QueueFree();
+        _loadingScreen = Data.PackedScenes.LoadingScreen.Instantiate();
+        AddChild(_loadingScreen);
         _game = Game.Create();
         AddChild(_game);
+        
         _game.Interface.GameMenu.ExitGameButtonDown += ExitGame;
     }
 
     private void OnMainMenuHostClickedEnterWorld(Dictionary world, Dictionary playerInfo) {
         CreateGame();
         _game.InitAsHost(world, playerInfo);
+        _game.WorldManager.BlockManager.WorldLoaded += OnWorldLoaded;
+    }
+
+    private void OnWorldLoaded() {
+        _loadingScreen.QueueFree();
+        _loadingScreen = null;
     }
 
     private void OnMainMenuClientClickedEnterWorld(string ip, Dictionary playerInfo) {
@@ -43,6 +53,7 @@ public partial class SceneManager : Node {
     private void ExitGame() {
         CreateMainMenu();
         _game.Interface.GameMenu.ExitGameButtonDown -= ExitGame;
+        _game.QueueFree();
     }
 
     private void CreateMainMenu() {

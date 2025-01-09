@@ -30,7 +30,7 @@ public partial class SelectIngredientsContainer : Container {
 
         _ingredientPopup.SelectIngredientButtonClicked += OnSelectIngredientButtonClicked;
         _craftButton.ButtonDown += OnCraftButtonDown;
-        Player.BeforeLocalPlayerSpawned += OnLocalPlayerSpawned;
+        Player.LocalPlayerSpawned += OnLocalPlayerSpawned;
     }
 
     private void OnLocalPlayerSpawned(Player player) {

@@ -27,7 +27,7 @@ public partial class SelectIngredientPopup : Control {
         _selectIngredientsContainer.IngredientIconMouseEntered += OnIngredientIconMouseEntered;
         _selectIngredientsContainer.IngredientIconMouseLeft += OnIngredientIconMouseLeft;
 
-        Player.BeforeLocalPlayerSpawned += OnLocalPlayerSpawned;
+        Player.LocalPlayerSpawned += OnLocalPlayerSpawned;
 
         _hideTimer.Timeout += OnHideTimerTimeout;
         _panelContainer.MouseEntered += OnMouseEntered;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Godot;
 using Godot.Collections;
 using Array = Godot.Collections.Array;
@@ -19,20 +20,19 @@ public partial class BlockManager : Node {
         return _savedBlocks[coords.X, coords.Y] is not null;
     }
 
+    public event Action WorldLoaded;
     public event Action<SavedBlock> BlockDestroyed;
 
-    public void SetGame(Game game) {
+    public void SetGame(Game game, Dictionary worldData) {
         _game = game;
-        _game.WorldCreated += OnGameWorldCreated;
-        TreeExiting += OnTreeExiting;
+        Player.PlayerSpawned += OnPlayerManagerPlayerSpawned;
+        Task task = Task.Run(() => HostCreateWorld(worldData));
+        task.GetAwaiter().OnCompleted(() => {
+            WorldLoaded?.Invoke();
+        });
     }
 
-    private void OnTreeExiting() {
-        _game.WorldCreated -= OnGameWorldCreated;
-        TreeExiting -= OnTreeExiting;
-    }
-
-    private void OnGameWorldCreated(Dictionary worldData) {
+    private void HostCreateWorld(Dictionary worldData) {
         _savedBlocks = new SavedBlock[_game.Width, _game.Height];
         _activeBlocks = new ActiveBlock[_game.Width, _game.Height];
 
@@ -41,8 +41,6 @@ public partial class BlockManager : Node {
             SavedBlock savedBlock = SavedBlock.FromDict(savedBlockDict);
             _savedBlocks[savedBlock.XPosition, savedBlock.YPosition] = savedBlock;
         }
-
-        Player.PlayerSpawned += OnPlayerManagerPlayerSpawned;
     }
 
     private void OnPlayerManagerPlayerSpawned(Player player) {

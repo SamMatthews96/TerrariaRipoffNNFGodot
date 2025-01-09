@@ -24,15 +24,15 @@ public partial class Inventory : Control {
     public override void _Ready() {
         Visible = false;
         _gameInterface.GameManager.InputManager.ToggleInventoryPressed += OnInputManagerToggleInventoryPressed;
-        Player.BeforeLocalPlayerSpawned += OnBeforeLocalPlayerSpawned;
+        Player.LocalPlayerSpawned += OnLocalPlayerSpawned;
     }
 
     public override void _ExitTree() {
         _gameInterface.GameManager.InputManager.ToggleInventoryPressed -= OnInputManagerToggleInventoryPressed;
-        Player.BeforeLocalPlayerSpawned -= OnBeforeLocalPlayerSpawned;
+        Player.LocalPlayerSpawned -= OnLocalPlayerSpawned;
     }
 
-    private void OnBeforeLocalPlayerSpawned(Player player) {
+    private void OnLocalPlayerSpawned(Player player) {
         _localPlayer = player;
         SetCapacityLabelText();
         _localPlayer.Inventory.AddedItemStack += OnInventoryAddedItemStack;

@@ -16,30 +16,34 @@ public partial class Game : Node {
     [Export] public int Width { get; private set; }
     [Export] public int Height { get; private set; }
 
+    public event Action GameLoaded;
+
     public IntVector DefaultSpawnPosition { get; private set; }
     private WorldManager _worldManager;
 
     private MultiplayerHost _multiplayerHost;
     private MultiplayerClient _multiplayerClient;
 
+    private Dictionary _playerData;
+
     public WorldManager WorldManager {
         get => _worldManager ?? throw new Exception("[20241205.2011.1] Host not instantiated");
         private set => _worldManager = value;
     }
 
-    public event Action<Dictionary> WorldCreated;
 
     public static Game Create() {
         return Data.PackedScenes.Game.Instantiate<Game>();
     }
 
     public override void _Ready() {
-        Player.BeforeLocalPlayerSpawned += OnLocalPlayerSpawned;
+        Player.LocalPlayerSpawned += OnLocalPlayerSpawned;
     }
 
     public void InitAsSinglePlayer(Dictionary worldData, Dictionary playerData) {
         CreateWorld(worldData);
-        HostCreatePlayer(playerData, SceneManager.HostId);
+        _playerData = playerData;
+        WorldManager.BlockManager.WorldLoaded += OnWorldLoaded;
     }
 
     public void InitAsHost(Dictionary worldData, Dictionary playerData) {
@@ -47,7 +51,14 @@ public partial class Game : Node {
         AddChild(_multiplayerHost);
 
         CreateWorld(worldData);
-        HostCreatePlayer(playerData, SceneManager.HostId);
+        _playerData = playerData;
+        WorldManager.BlockManager.WorldLoaded += OnWorldLoaded;
+    }
+
+    private void OnWorldLoaded() {
+        HostCreatePlayer(_playerData, SceneManager.HostId);
+        _playerData = null;
+        GameLoaded?.Invoke();
     }
 
     public void InitAsClient(Dictionary playerData) {
@@ -69,13 +80,12 @@ public partial class Game : Node {
         Height = (int)worldData["Height"];
         WorldManager = WorldManager.Create();
         WorldManager.PickupManager.SetGame(this);
-        WorldManager.BlockManager.SetGame(this);
+        WorldManager.BlockManager.SetGame(this, worldData);
         AddChild(WorldManager);
 
         DefaultSpawnPosition = new IntVector(
             worldData["DefaultSpawnPosition"].AsGodotArray()[0].AsInt32(),
             worldData["DefaultSpawnPosition"].AsGodotArray()[1].AsInt32());
-        WorldCreated?.Invoke(worldData);
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
@@ -84,7 +94,6 @@ public partial class Game : Node {
         player.InitAsHost(this);
         PlayerParent.AddChild(player, true);
     }
-
 
     public bool IsInBounds(IntVector intVector) {
         return intVector.X >= 0 && intVector.X < Width && intVector.Y >= 0 && intVector.Y < Height;

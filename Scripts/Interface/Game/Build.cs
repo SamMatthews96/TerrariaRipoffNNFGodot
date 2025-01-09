@@ -12,11 +12,11 @@ public partial class Build : Container {
     public event Action<Item> BlockTypeSelected;
 
     public override void _Ready() {
-        Player.BeforeLocalPlayerSpawned += OnBeforeLocalPlayerSpawned;
+        Player.LocalPlayerSpawned += OnLocalPlayerSpawned;
     }
 
     public override void _ExitTree() {
-        Player.BeforeLocalPlayerSpawned -= OnBeforeLocalPlayerSpawned;
+        Player.LocalPlayerSpawned -= OnLocalPlayerSpawned;
     }
 
     private void OnPlayerActionChanged(PlayerAction.Type type) {
@@ -27,7 +27,7 @@ public partial class Build : Container {
         }
     }
 
-    private void OnBeforeLocalPlayerSpawned(Player player) {
+    private void OnLocalPlayerSpawned(Player player) {
         player.ActionController.ActionChanged += OnPlayerActionChanged;
         player.Inventory.AddedItemStack += OnInventoryAddedItemStack;
         player.Inventory.RemovedItemStack += OnInventoryRemovedItemStack;

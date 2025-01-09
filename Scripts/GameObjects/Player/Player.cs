@@ -43,7 +43,7 @@ public partial class Player : CharacterBody2D {
     public bool IsLocalPlayer => Multiplayer.GetUniqueId() == PeerId;
 
 
-    public static event Action<Player> BeforeLocalPlayerSpawned;
+    public static event Action<Player> LocalPlayerSpawned;
     public static event Action<Player> PlayerSpawned;
     public event Action<Dictionary> MovedCell;
 
@@ -55,7 +55,7 @@ public partial class Player : CharacterBody2D {
         _positionSynchronizer.SetMultiplayerAuthority(PeerId);
         if (IsLocalPlayer) {
             _camera.Enabled = true;
-            BeforeLocalPlayerSpawned?.Invoke(this);
+            LocalPlayerSpawned?.Invoke(this);
         }
     }
 
