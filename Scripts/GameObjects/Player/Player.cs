@@ -6,7 +6,6 @@ namespace TerrariaRipoffNNF;
 
 public partial class Player : CharacterBody2D {
     public static Player Create(int peerId, Dictionary playerData, IntVector spawnPosition) {
-        BeforePlayerSpawned?.Invoke(playerData);
         Player player = Data.PackedScenes.Player.Instantiate<Player>();
         player.Name = peerId.ToString();
         player._spawnPosition = new Vector2(
@@ -43,7 +42,6 @@ public partial class Player : CharacterBody2D {
     private int PeerId => Name.ToString().ToInt();
     public bool IsLocalPlayer => Multiplayer.GetUniqueId() == PeerId;
 
-    public static event Action<Dictionary> BeforePlayerSpawned;
 
     public static event Action<Player> BeforeLocalPlayerSpawned;
     public static event Action<Player> PlayerSpawned;

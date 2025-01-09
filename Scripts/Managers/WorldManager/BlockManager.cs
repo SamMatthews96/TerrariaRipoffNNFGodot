@@ -42,11 +42,15 @@ public partial class BlockManager : Node {
             _savedBlocks[savedBlock.XPosition, savedBlock.YPosition] = savedBlock;
         }
 
-        Player.BeforePlayerSpawned += OnPlayerManagerBeforePlayerSpawned;
         Player.PlayerSpawned += OnPlayerManagerPlayerSpawned;
     }
 
     private void OnPlayerManagerPlayerSpawned(Player player) {
+        IntVector spawnPosition = _game.DefaultSpawnPosition;
+        List<IntVector> region = _game.Region.GetRegion(
+            spawnPosition, BlockSpawnDistance);
+
+        SpawnBlocksInRegion(region);
         player.MovedCell += OnLocalPlayerMoved;
         player.ActionController.GatherAttempted += OnPlayerGatherAction;
         player.ActionController.BlockPlaced += OnPlayerBuildAction;
@@ -58,14 +62,6 @@ public partial class BlockManager : Node {
         player.ActionController.GatherAttempted -= OnPlayerGatherAction;
         player.ActionController.BlockPlaced -= OnPlayerBuildAction;
         player.BeforePlayerLeaveScene -= OnBeforePlayerLeaveScene;
-    }
-
-    private void OnPlayerManagerBeforePlayerSpawned(Dictionary playerInfo) {
-        IntVector spawnPosition = _game.DefaultSpawnPosition;
-        List<IntVector> region = _game.Region.GetRegion(
-            spawnPosition, BlockSpawnDistance);
-
-        SpawnBlocksInRegion(region);
     }
 
     private void SpawnBlocksInRegion(List<IntVector> region) {
