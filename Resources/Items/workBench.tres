@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="Item" load_steps=6 format=3 uid="uid://csoxejfob2omc"]
+
+[ext_resource type="Texture2D" uid="uid://cyllurh0pjf8q" path="res://Assets/Images/ItemIcons/bench.png" id="1_hjd5x"]
+[ext_resource type="Script" path="res://Scripts/Resources/Item/Item.cs" id="1_jpemg"]
+[ext_resource type="Texture2D" uid="uid://c4xxd5bays5fi" path="res://Assets/Images/placedBench.png" id="2_q61y7"]
+[ext_resource type="Script" path="res://Scripts/Resources/Item/ItemPlaceable.cs" id="3_bwj0b"]
+
+[sub_resource type="Resource" id="Resource_v18bm"]
+script = ExtResource("3_bwj0b")
+Width = 2
+Height = 1
+Texture = ExtResource("2_q61y7")
+
+[resource]
+script = ExtResource("1_jpemg")
+Name = "Work Bench"
+InventorySpace = 8.0
+IsStackable = false
+IconTexture = ExtResource("1_hjd5x")
+_itemProperties = [SubResource("Resource_v18bm")]
