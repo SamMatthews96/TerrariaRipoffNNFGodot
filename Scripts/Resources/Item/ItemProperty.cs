@@ -7,7 +7,8 @@ namespace TerrariaRipoffNNF;
 public enum PropertyType {
     Mining,
     Block,
-    Ingredient
+    Ingredient,
+    Placeable
 }
 
 [GlobalClass]
