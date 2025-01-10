@@ -5,7 +5,6 @@ namespace TerrariaRipoffNNF;
 
 [GlobalClass]
 public partial class ItemBlock : ItemProperty {
-    public override PropertyType PropertyType => PropertyType.Block;
     [Export] public float Weight { get; private set; }
     [Export] public float TensileStrength { get; private set; }
     [Export] public float MaxHealth { get; private set; }
@@ -19,6 +18,7 @@ public partial class ItemBlock : ItemProperty {
 
     public override Dictionary GetTooltipAttributes() {
         Dictionary tooltipAttributes = new();
+        tooltipAttributes.Add("PropertyName", "Block");
         tooltipAttributes.Add("Weight", Weight);
         tooltipAttributes.Add("Tensile Strength", TensileStrength);
         tooltipAttributes.Add("Health", MaxHealth);

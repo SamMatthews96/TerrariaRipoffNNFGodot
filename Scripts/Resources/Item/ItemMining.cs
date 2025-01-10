@@ -5,7 +5,6 @@ namespace TerrariaRipoffNNF;
 
 [GlobalClass]
 public sealed partial class ItemMining : ItemEquipment {
-    public override PropertyType PropertyType => PropertyType.Mining;
     [Export] public float Speed { get; private set; }
     [Export] public float Range { get; private set; }
     [Export] public float Power { get; private set; }
@@ -28,7 +27,7 @@ public sealed partial class ItemMining : ItemEquipment {
 
     public override Dictionary ToDictionary() {
         Dictionary serialized = new();
-        serialized.Add("PropertyType", PropertyType.ToString());
+        serialized.Add("PropertyType", nameof(ItemMining));
         serialized.Add("Speed", Speed);
         serialized.Add("Range", Range);
         serialized.Add("Power", Power);
@@ -37,6 +36,7 @@ public sealed partial class ItemMining : ItemEquipment {
 
     public override Dictionary GetTooltipAttributes() {
         Dictionary tooltipAttributes = new();
+        tooltipAttributes.Add("PropertyName", "Mining");
         tooltipAttributes.Add("Speed", Speed);
         tooltipAttributes.Add("Range", Range);
         tooltipAttributes.Add("Power", Power);

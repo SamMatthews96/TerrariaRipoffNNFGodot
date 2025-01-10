@@ -60,7 +60,8 @@ public sealed partial class Item : Resource {
     public Godot.Collections.Dictionary<string, Dictionary> GetTooltipAttributes() {
         Godot.Collections.Dictionary<string, Dictionary> newDictionary = new();
         foreach (ItemProperty itemProperty in _itemProperties) {
-            newDictionary.Add(itemProperty.PropertyType.ToString(), itemProperty.GetTooltipAttributes());
+            Dictionary tooltipAttributes = itemProperty.GetTooltipAttributes();
+            newDictionary.Add(tooltipAttributes["PropertyName"].ToString(), tooltipAttributes);
         }
 
         return newDictionary;

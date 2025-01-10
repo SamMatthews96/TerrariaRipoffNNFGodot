@@ -4,16 +4,8 @@ using Godot.Collections;
 
 namespace TerrariaRipoffNNF;
 
-public enum PropertyType {
-    Mining,
-    Block,
-    Ingredient,
-    Placeable
-}
-
 [GlobalClass]
 public abstract partial class ItemProperty : Resource {
-    public abstract PropertyType PropertyType { get; }
     public abstract Dictionary ToDictionary();
     public abstract Dictionary GetTooltipAttributes();
 
@@ -23,7 +15,7 @@ public abstract partial class ItemProperty : Resource {
         }
 
         return dictionary["PropertyType"].ToString() switch {
-            "Mining" => ItemMining.FromDictionary(dictionary),
+            nameof(ItemMining) => ItemMining.FromDictionary(dictionary),
             _ => throw new NotImplementedException()
         };
     }

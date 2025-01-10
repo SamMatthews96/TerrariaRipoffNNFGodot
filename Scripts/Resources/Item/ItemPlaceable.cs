@@ -1,15 +1,22 @@
-﻿using Godot.Collections;
+﻿using System.ComponentModel.DataAnnotations;
+using Godot;
+using Godot.Collections;
 
 namespace TerrariaRipoffNNF;
 
+[GlobalClass]
 public partial class ItemPlaceable : ItemProperty {
-    public override PropertyType PropertyType => PropertyType.Placeable;
+    [Export] public int Width { get; private set; }
+    [Export] public int Height { get; private set; }
+    [Export] public Texture2D Texture { get; private set; }
 
     public override Dictionary ToDictionary() {
-        throw new System.NotImplementedException();
+        Dictionary serialized = new();
+        serialized.Add("ResourcePath", ResourcePath);
+        return serialized;
     }
 
     public override Dictionary GetTooltipAttributes() {
-        throw new System.NotImplementedException();
+        return new Dictionary();
     }
 }

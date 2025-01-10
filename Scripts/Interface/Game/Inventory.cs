@@ -87,6 +87,6 @@ public partial class Inventory : Control {
 
     private void SetCapacityLabelText() {
         _capacityLabel.Text =
-            $"{_localPlayer.Inventory.UsedSpace}/{_localPlayer.Inventory.MaximumSpace}";
+            $"{Math.Round(_localPlayer.Inventory.UsedSpace,2)}/{_localPlayer.Inventory.MaximumSpace}";
     }
 }
