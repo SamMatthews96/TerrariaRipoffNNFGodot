@@ -55,7 +55,7 @@ public partial class BuildAction : PlayerAction {
         }
 
         if (blockItem.TryGetProperty(out ItemPlaceable placeable)) {
-            if (_game.WorldManager.PlaceableManager
+            if (!_game.WorldManager.PlaceableManager
                 .AreCellsOccupied(coords, placeable.Width, placeable.Height)) {
                 PlaceablePlaced?.Invoke(blockItem, coords);
             }

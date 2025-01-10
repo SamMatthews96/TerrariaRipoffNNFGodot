@@ -20,18 +20,12 @@ public partial class SavedBlock : Resource {
     }
 
     public static SavedBlock FromDict(Dictionary dictionary) {
-        try {
-            return Create(
-                block: Item.FromDictionary(dictionary),
-                xPosition: dictionary["X"].ToString().ToInt(),
-                yPosition: dictionary["Y"].ToString().ToInt(),
-                currentHealth: dictionary["CurrentHealth"].ToString().ToFloat()
-            );
-        } catch (Exception e) {
-            GD.PrintErr("error reading SavedBlock from dictionary");
-            GD.PrintErr(e);
-            throw new NotImplementedException();
-        }
+        return Create(
+            block: Item.FromDictionary(dictionary),
+            xPosition: dictionary["X"].ToString().ToInt(),
+            yPosition: dictionary["Y"].ToString().ToInt(),
+            currentHealth: dictionary["CurrentHealth"].ToString().ToFloat()
+        );
     }
 
     public static SavedBlock Create(
