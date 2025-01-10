@@ -5,12 +5,13 @@ using Godot.Collections;
 namespace TerrariaRipoffNNF;
 
 public partial class Player : CharacterBody2D {
-    public static Player Create(int peerId, Dictionary playerData, IntVector spawnPosition) {
+    public static Player Create(int peerId, Dictionary playerData, IntVector spawnCoords) {
         Player player = Data.PackedScenes.Player.Instantiate<Player>();
         player.Name = peerId.ToString();
-        player._spawnPosition = new Vector2(
-            spawnPosition.X * Game.BlockSize,
-            spawnPosition.Y * Game.BlockSize
+        player.SpawnCoords = spawnCoords;
+        player.SpawnPosition = new Vector2(
+            spawnCoords.X * Game.BlockSize,
+            spawnCoords.Y * Game.BlockSize
         );
         PlayerSpawned?.Invoke(player);
         return player;
@@ -27,7 +28,9 @@ public partial class Player : CharacterBody2D {
     [Export] private float _speed = 300f;
     [Export] private float _gravityCoefficient = 1600;
     [Export] private float _jumpStrength = 800;
-    [Export] private Vector2 _spawnPosition;
+    public Vector2 SpawnPosition { get; private set; }
+    public IntVector SpawnCoords { get; private set; }
+    
 
     private Game _game;
     private int _horizontalInput;
@@ -58,7 +61,7 @@ public partial class Player : CharacterBody2D {
     }
 
     public override void _Ready() {
-        Position = _spawnPosition;
+        Position = SpawnPosition;
     }
 
     public override void _ExitTree() {

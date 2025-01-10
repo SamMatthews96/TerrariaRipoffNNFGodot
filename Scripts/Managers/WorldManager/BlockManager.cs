@@ -44,9 +44,8 @@ public partial class BlockManager : Node {
     }
 
     private void OnPlayerManagerPlayerSpawned(Player player) {
-        IntVector spawnPosition = _game.DefaultSpawnPosition;
         List<IntVector> region = _game.Region.GetRegion(
-            spawnPosition, BlockSpawnDistance);
+            player.SpawnCoords, BlockSpawnDistance);
 
         SpawnBlocksInRegion(region);
         player.MovedCell += OnLocalPlayerMoved;

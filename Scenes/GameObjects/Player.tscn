@@ -83,6 +83,7 @@ Player = NodePath("../..")
 
 [node name="GatherCooldown" type="Timer" parent="ActionController/GatherActionState"]
 wait_time = 0.5
+one_shot = true
 
 [node name="BuildActionState" type="Node" parent="ActionController" node_paths=PackedStringArray("Player")]
 script = ExtResource("6_qab18")
