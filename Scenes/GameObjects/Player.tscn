@@ -69,11 +69,11 @@ shape = SubResource("RectangleShape2D_raw6a")
 script = ExtResource("3_81ck4")
 _player = NodePath("..")
 
-[node name="ActionController" type="Node" parent="." node_paths=PackedStringArray("_player", "_gatherAction", "_buildAction")]
+[node name="ActionController" type="Node" parent="." node_paths=PackedStringArray("_player", "GatherAction", "BuildAction")]
 script = ExtResource("4_00ysa")
 _player = NodePath("..")
-_gatherAction = NodePath("GatherActionState")
-_buildAction = NodePath("BuildActionState")
+GatherAction = NodePath("GatherActionState")
+BuildAction = NodePath("BuildActionState")
 
 [node name="GatherActionState" type="Node" parent="ActionController" node_paths=PackedStringArray("_player", "_gatherCooldown", "Player")]
 script = ExtResource("5_l1f4o")

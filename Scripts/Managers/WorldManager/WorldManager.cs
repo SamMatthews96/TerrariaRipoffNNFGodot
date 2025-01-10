@@ -10,5 +10,6 @@ public partial class WorldManager : Node {
     
     [Export] public BlockManager BlockManager { get; private set; }
     [Export] public PickupManager PickupManager { get; private set; }
+    [Export] public PlaceableManager PlaceableManager { get; private set; }
 
 }

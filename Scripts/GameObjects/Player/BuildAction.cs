@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Godot;
 using Godot.Collections;
 using Array = Godot.Collections.Array;
@@ -7,13 +8,14 @@ namespace TerrariaRipoffNNF;
 
 public partial class BuildAction : PlayerAction {
     public event Action<Item, IntVector> BlockPlaced;
+    public event Action<Item, IntVector> PlaceablePlaced;
 
     private Item _blockItem;
     private Game _game;
 
     public void InitAsLocal(Game game) {
         _game = game;
-        _game.Interface.BuildUi.BlockTypeSelected += OnBuildBlockTypeSelected;
+        _game.Interface.BuildUi.BuildButtonSelected += OnBuildTypeSelected;
         Player.Inventory.RemovedItemStack += OnInventoryRemovedItemStack;
         TreeExiting += OnTreeExitingLocal;
     }
@@ -23,12 +25,12 @@ public partial class BuildAction : PlayerAction {
     }
 
     private void OnTreeExitingLocal() {
-        _game.Interface.BuildUi.BlockTypeSelected -= OnBuildBlockTypeSelected;
+        _game.Interface.BuildUi.BuildButtonSelected -= OnBuildTypeSelected;
         Player.Inventory.RemovedItemStack -= OnInventoryRemovedItemStack;
         TreeExiting -= OnTreeExitingLocal;
     }
 
-    private void OnBuildBlockTypeSelected(Item item) {
+    private void OnBuildTypeSelected(Item item) {
         _blockItem = item;
     }
 
@@ -44,12 +46,20 @@ public partial class BuildAction : PlayerAction {
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    private void BuildActionAttempt(Array intVectorArray, Dictionary blockTypeDict) {
+    private void BuildActionAttempt(Array intVectorArray, Dictionary itemData) {
         IntVector coords = new(intVectorArray);
-        Item blockItem = Item.FromDictionary(blockTypeDict);
+        Item blockItem = Item.FromDictionary(itemData);
+        if (blockItem.HasProperty<ItemBlock>()) {
+            if (_game.WorldManager.BlockManager.IsCellOccupied(coords)) return;
+            BlockPlaced?.Invoke(blockItem, coords);
+        }
 
-        if (_game.WorldManager.BlockManager.IsCellOccupied(coords)) return;
-        BlockPlaced?.Invoke(blockItem, coords);
+        if (blockItem.TryGetProperty(out ItemPlaceable placeable)) {
+            if (_game.WorldManager.PlaceableManager
+                .AreCellsOccupied(coords, placeable.Width, placeable.Height)) {
+                PlaceablePlaced?.Invoke(blockItem, coords);
+            }
+        }
     }
 
     public override void EndPrimaryAction(Vector2 mouseWorldPosition) { }

@@ -81,6 +81,7 @@ public partial class Game : Node {
         WorldManager = WorldManager.Create();
         WorldManager.PickupManager.SetGame(this);
         WorldManager.BlockManager.SetGame(this, worldData);
+        WorldManager.PlaceableManager.SetGame(this, worldData);
         AddChild(WorldManager);
 
         DefaultSpawnPosition = new IntVector(

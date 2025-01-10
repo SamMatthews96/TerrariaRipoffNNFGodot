@@ -4,7 +4,7 @@
 [ext_resource type="Script" path="res://Scripts/Managers/PackedScenes.cs" id="1_tombv"]
 [ext_resource type="PackedScene" uid="uid://dq4nb0kwitffr" path="res://Scenes/GameObjects/ActivePickup.tscn" id="2_b6dg8"]
 [ext_resource type="PackedScene" uid="uid://d3hhhiiydcfft" path="res://Scenes/Managers/Game.tscn" id="3_6enwa"]
-[ext_resource type="PackedScene" uid="uid://dsp7h2dpxh0i6" path="res://Scenes/Interface/Game/SelectBuildBlockButton.tscn" id="3_10dmv"]
+[ext_resource type="PackedScene" uid="uid://dsp7h2dpxh0i6" path="res://Scenes/Interface/Game/BlockTypeButton.tscn" id="3_10dmv"]
 [ext_resource type="PackedScene" uid="uid://cy52ebe7eud3c" path="res://Scenes/Interface/LoadingScreen.tscn" id="4_y0gj7"]
 [ext_resource type="PackedScene" uid="uid://tbvohnqfn3cl" path="res://Scenes/Interface/MainMenu/MainMenu.tscn" id="5_3f4ap"]
 [ext_resource type="PackedScene" uid="uid://cvaxo0scr3abv" path="res://Scenes/Interface/Game/ItemPropertyTooltipGroup.tscn" id="5_8fovs"]

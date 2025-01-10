@@ -11,22 +11,16 @@ public partial class RecipeMining : Recipe {
     [Export] private float _powerCoefficient = 10f;
 
     public override StackedItems Build(Dictionary<string, Item> suppliedIngredients) {
-
         IngredientProperty metal = GetIngredientType("pickaxeHead", suppliedIngredients);
         IngredientProperty wood = GetIngredientType("pickaxeHandle", suppliedIngredients);
-        if (metal is null || wood is null) {
-            return null;
-        }
+        if (metal is null || wood is null) return null;
 
         string newItemName = $"{metal.Name} Pickaxe";
-        Texture2D newItemTexture;
-        switch (metal.Name) {
-            case "Ferrium":
-                newItemTexture = _ferriumPickTexture;
-                break;
-            default:
-                throw new InvalidEnumArgumentException("[20241215.1545.1] Unknown metal type: " + metal.Name);
-        }
+        Texture2D newItemTexture = metal.Name switch {
+            "Ferrium" => _ferriumPickTexture,
+            _ => throw new InvalidEnumArgumentException(
+                "[20241215.1545.1] Unknown metal type: " + metal.Name)
+        };
 
         Item newPickaxe = Item.Create(
             name: newItemName,

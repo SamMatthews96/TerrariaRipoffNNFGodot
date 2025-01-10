@@ -33,13 +33,13 @@ public partial class Inventory : Node {
 
     public void InitAsHost() {
         _player.PickupArea.TouchedItem += OnHostCollidedWithPickup;
-        _player.ActionController.BlockPlaced += OnBlockPlaced;
+        _player.ActionController.BuildAction.BlockPlaced += OnBlockPlaced;
         TreeExiting += OnHostTreeExiting;
     }
 
     private void OnHostTreeExiting() {
         _player.PickupArea.TouchedItem -= OnHostCollidedWithPickup;
-        _player.ActionController.BlockPlaced -= OnBlockPlaced;
+        _player.ActionController.BuildAction.BlockPlaced -= OnBlockPlaced;
         TreeExiting -= OnHostTreeExiting;
     }
 

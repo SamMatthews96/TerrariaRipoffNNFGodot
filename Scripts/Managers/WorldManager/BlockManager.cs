@@ -49,15 +49,15 @@ public partial class BlockManager : Node {
 
         SpawnBlocksInRegion(region);
         player.MovedCell += OnLocalPlayerMoved;
-        player.ActionController.GatherAttempted += OnPlayerGatherAction;
-        player.ActionController.BlockPlaced += OnPlayerBuildAction;
+        player.ActionController.GatherAction.GatherAttempted += OnPlayerGatherAction;
+        player.ActionController.BuildAction.BlockPlaced += OnPlayerBuildAction;
         player.BeforePlayerLeaveScene += OnBeforePlayerLeaveScene;
     }
 
     private void OnBeforePlayerLeaveScene(Player player) {
         player.MovedCell -= OnLocalPlayerMoved;
-        player.ActionController.GatherAttempted -= OnPlayerGatherAction;
-        player.ActionController.BlockPlaced -= OnPlayerBuildAction;
+        player.ActionController.GatherAction.GatherAttempted -= OnPlayerGatherAction;
+        player.ActionController.BuildAction.BlockPlaced -= OnPlayerBuildAction;
         player.BeforePlayerLeaveScene -= OnBeforePlayerLeaveScene;
     }
 

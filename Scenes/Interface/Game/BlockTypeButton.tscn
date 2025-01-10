@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3 uid="uid://dsp7h2dpxh0i6"]
+
+[ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://Assets/Images/icon.svg" id="1_u6s3x"]
+[ext_resource type="Script" path="res://Scripts/Interface/Game/BlockTypeButton.cs" id="2_3fhfk"]
+
+[node name="BlockTypeButton" type="TextureButton"]
+texture_normal = ExtResource("1_u6s3x")
+script = ExtResource("2_3fhfk")
