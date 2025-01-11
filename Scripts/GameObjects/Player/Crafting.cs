@@ -34,10 +34,32 @@ public sealed partial class Crafting : Node {
         _game = game;
         AddCraftingStation(_handcrafting);
         Interface.Crafting craftingInterface = _game.Interface.CraftingInterface;
+        ActivePlaceable.ActivePlaceableSpawned += OnActivePlaceableSpawned;
         craftingInterface.SelectRecipeContainer.RecipeButtonClicked += OnRecipeButtonClicked;
         craftingInterface.SelectIngredientPopup.SelectIngredientButtonClicked += OnSelectIngredientButtonClicked;
         craftingInterface.SelectIngredientsContainer.CraftButtonPressed += OnCraftButtonPressed;
         TreeExiting += OnTreeExitingLocal;
+
+        // this class should listen for nearby crafting stations being placed/deleted,
+        // and for the player moving into/away from them,
+    }
+
+    private void OnActivePlaceableSpawned(ActivePlaceable activePlaceable) {
+        ItemPlaceable itemPlaceable =
+            activePlaceable.SavedPlaceable.Item.GetProperty<ItemPlaceable>();
+        if (!itemPlaceable.TryGetProperty(out PlaceableCrafting placeableCrafting)) return;
+
+        CraftingStationType craftingStationType = placeableCrafting.CraftingStation.Type;
+        if (_availableCraftingStations.ContainsKey(craftingStationType)) return;
+        AddCraftingStation(placeableCrafting.CraftingStation);
+        activePlaceable.ActivePlaceableDespawned += OnActivePlaceableDespawned;
+    }
+
+    private void OnActivePlaceableDespawned(ActivePlaceable activePlaceable) {
+        activePlaceable.ActivePlaceableDespawned -= OnActivePlaceableDespawned;
+        CraftingStation craftingStation = activePlaceable.SavedPlaceable.Item
+            .GetProperty<ItemPlaceable>().GetProperty<PlaceableCrafting>().CraftingStation;
+        RemoveCraftingStation(craftingStation);
     }
 
     private void OnTreeExitingLocal() {
@@ -84,5 +106,10 @@ public sealed partial class Crafting : Node {
     private void AddCraftingStation(CraftingStation craftingStation) {
         _availableCraftingStations[craftingStation.Type] = craftingStation;
         CraftingStationAdded?.Invoke(craftingStation);
+    }
+
+    private void RemoveCraftingStation(CraftingStation craftingStation) {
+        _availableCraftingStations.Remove(craftingStation.Type);
+        CraftingStationRemoved?.Invoke(craftingStation);
     }
 }

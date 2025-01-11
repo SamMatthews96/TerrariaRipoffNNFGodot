@@ -13,7 +13,7 @@ public partial class SelectStationButton : TextureButton {
             Data.PackedScenes.SelectCraftingStationButton
                 .Instantiate<SelectStationButton>();
         button._craftingStation = craftingStation;
-        // button.TextureNormal = craftingStation.Icon;
+        button.TextureNormal = craftingStation.Icon;
         return button;
     }
 

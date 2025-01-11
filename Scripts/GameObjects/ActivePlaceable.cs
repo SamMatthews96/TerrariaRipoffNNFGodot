@@ -1,4 +1,5 @@
-﻿using Godot;
+﻿using System;
+using Godot;
 using Godot.Collections;
 
 namespace TerrariaRipoffNNF;
@@ -7,6 +8,9 @@ public partial class ActivePlaceable : Node2D {
     public SavedPlaceable SavedPlaceable { get; private set; }
     [Export] private Dictionary _savedPlaceableDictionary;
     [Export] private Sprite2D _sprite;
+   
+    public static event Action<ActivePlaceable> ActivePlaceableSpawned;
+    public event Action<ActivePlaceable> ActivePlaceableDespawned;
     
     public override void _Ready() {
         SavedPlaceable = SavedPlaceable.FromDict(_savedPlaceableDictionary);
@@ -20,8 +24,13 @@ public partial class ActivePlaceable : Node2D {
         _sprite.Position = new Vector2(
             offset * (itemPlaceable.Width - 1),
             offset * (itemPlaceable.Height - 1));
+        ActivePlaceableSpawned?.Invoke(this);
     }
-    
+
+    public override void _ExitTree() {
+        ActivePlaceableDespawned?.Invoke(this);
+    }
+
     public static ActivePlaceable Create(SavedPlaceable savedPlaceable) {
         ActivePlaceable activePlaceable = Data.PackedScenes.ActivePlaceable.Instantiate<ActivePlaceable>();
         activePlaceable._savedPlaceableDictionary = savedPlaceable.Serialize();
