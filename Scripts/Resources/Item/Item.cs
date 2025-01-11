@@ -69,7 +69,7 @@ public sealed partial class Item : Resource {
 
     public static Item FromDictionary(Dictionary dictionary) {
         if (dictionary.TryGetValue("ResourcePath", out Variant resourcePath)) {
-            return ResourceLoader.Load<Item>(resourcePath.ToString());
+            return Data.LoadResource<Item>(resourcePath.ToString());
         }
 
         Array<ItemProperty> itemProperties = new();
