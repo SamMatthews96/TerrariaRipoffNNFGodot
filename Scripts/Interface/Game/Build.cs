@@ -42,14 +42,14 @@ public partial class Build : Container {
         player.ActionController.ActionChanged += OnPlayerActionChanged;
         player.Inventory.AddedItemStack += OnInventoryAddedItemStack;
         player.Inventory.RemovedItemStack += OnInventoryRemovedItemStack;
-        player.BeforePlayerLeaveScene += OnBeforeLocalPlayerLeaveScene;
+        player.PlayerDespawned += OnLocalPlayerDespawned;
     }
 
-    private void OnBeforeLocalPlayerLeaveScene(Player player) {
+    private void OnLocalPlayerDespawned(Player player) {
         player.ActionController.ActionChanged -= OnPlayerActionChanged;
         player.Inventory.AddedItemStack -= OnInventoryAddedItemStack;
         player.Inventory.RemovedItemStack -= OnInventoryRemovedItemStack;
-        player.BeforePlayerLeaveScene -= OnBeforeLocalPlayerLeaveScene;
+        player.PlayerDespawned -= OnLocalPlayerDespawned;
     }
 
     private void OnInventoryAddedItemStack(StackedItems stackedItems) {

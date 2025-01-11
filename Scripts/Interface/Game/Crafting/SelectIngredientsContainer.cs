@@ -23,14 +23,21 @@ public partial class SelectIngredientsContainer : Container {
 
     public override void _Ready() {
         Hide();
-        _craftingInterface.SelectRecipeContainer.RecipeButtonClicked += OnRecipeButtonClicked;
         foreach (Node node in _ingredientContainer.GetChildren()) {
             node.QueueFree();
         }
 
+        _craftingInterface.SelectRecipeContainer.RecipeButtonClicked += OnRecipeButtonClicked;
         _ingredientPopup.SelectIngredientButtonClicked += OnSelectIngredientButtonClicked;
         _craftButton.ButtonDown += OnCraftButtonDown;
         Player.LocalPlayerSpawned += OnLocalPlayerSpawned;
+    }
+
+    public override void _ExitTree() {
+        _craftingInterface.SelectRecipeContainer.RecipeButtonClicked -= OnRecipeButtonClicked;
+        _ingredientPopup.SelectIngredientButtonClicked -= OnSelectIngredientButtonClicked;
+        _craftButton.ButtonDown -= OnCraftButtonDown;
+        Player.LocalPlayerSpawned -= OnLocalPlayerSpawned;
     }
 
     private void OnLocalPlayerSpawned(Player player) {
@@ -51,10 +58,6 @@ public partial class SelectIngredientsContainer : Container {
 
     private void OnCraftButtonDown() {
         CraftButtonPressed?.Invoke();
-    }
-
-    public override void _ExitTree() {
-        _craftingInterface.SelectRecipeContainer.RecipeButtonClicked -= OnRecipeButtonClicked;
     }
 
     private void OnRecipeButtonClicked(Recipe recipe) {

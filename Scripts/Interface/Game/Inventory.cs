@@ -38,14 +38,14 @@ public partial class Inventory : Control {
         _localPlayer.Inventory.AddedItemStack += OnInventoryAddedItemStack;
         _localPlayer.Inventory.RemovedItemStack += OnInventoryRemovedItemStack;
         _localPlayer.Inventory.ItemStackChangedSize += OnInventoryItemStackChanged;
-        _localPlayer.BeforePlayerLeaveScene += OnBeforeLocalPlayerLeaveScene;
+        _localPlayer.PlayerDespawned += OnLocalPlayerDespawned;
     }
 
-    private void OnBeforeLocalPlayerLeaveScene(Player player) {
+    private void OnLocalPlayerDespawned(Player player) {
         _localPlayer.Inventory.AddedItemStack -= OnInventoryAddedItemStack;
         _localPlayer.Inventory.RemovedItemStack -= OnInventoryRemovedItemStack;
         _localPlayer.Inventory.ItemStackChangedSize -= OnInventoryItemStackChanged;
-        _localPlayer.BeforePlayerLeaveScene -= OnBeforeLocalPlayerLeaveScene;
+        _localPlayer.PlayerDespawned -= OnLocalPlayerDespawned;
     }
 
     private void OnInventoryAddedItemStack(StackedItems stackedItems) {

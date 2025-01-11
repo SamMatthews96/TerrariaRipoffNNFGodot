@@ -39,11 +39,21 @@ public partial class Game : Node {
     public override void _Ready() {
         Player.LocalPlayerSpawned += OnLocalPlayerSpawned;
     }
+    
+    public override void _ExitTree() {
+        Player.LocalPlayerSpawned -= OnLocalPlayerSpawned;
+    }
 
     public void InitAsSinglePlayer(Dictionary worldData, Dictionary playerData) {
         CreateWorld(worldData);
         _playerData = playerData;
         WorldManager.BlockManager.WorldLoaded += OnWorldLoaded;
+        TreeExiting += OnExitingSinglePlayer;
+    }
+
+    private void OnExitingSinglePlayer() {
+        WorldManager.BlockManager.WorldLoaded -= OnWorldLoaded;
+        TreeExiting -= OnExitingSinglePlayer;
     }
 
     public void InitAsHost(Dictionary worldData, Dictionary playerData) {
@@ -53,6 +63,12 @@ public partial class Game : Node {
         CreateWorld(worldData);
         _playerData = playerData;
         WorldManager.BlockManager.WorldLoaded += OnWorldLoaded;
+        TreeExiting += OnExitingHost;
+    }
+
+    private void OnExitingHost() {
+        WorldManager.BlockManager.WorldLoaded -= OnWorldLoaded;
+        TreeExiting -= OnExitingHost;
     }
 
     private void OnWorldLoaded() {
@@ -91,7 +107,7 @@ public partial class Game : Node {
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void HostCreatePlayer(Dictionary playerDictionary, int peerId) {
-        Player player = Player.Create(peerId, playerDictionary, DefaultSpawnPosition);
+        Player player = Player.Create(peerId, DefaultSpawnPosition, this);
         player.InitAsHost(this);
         PlayerParent.AddChild(player, true);
     }

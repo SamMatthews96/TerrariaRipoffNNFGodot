@@ -24,12 +24,17 @@ public partial class BlockManager : Node {
     public event Action<SavedBlock> BlockDestroyed;
 
     public void SetGame(Game game, Dictionary worldData) {
+        if (_game is not null) throw new Exception("[20240814.2208.1] Game already set");
         _game = game;
         Player.PlayerSpawned += OnPlayerManagerPlayerSpawned;
         Task task = Task.Run(() => HostCreateWorld(worldData));
-        task.GetAwaiter().OnCompleted(() => {
-            WorldLoaded?.Invoke();
-        });
+        task.GetAwaiter().OnCompleted(() => { WorldLoaded?.Invoke(); });
+        TreeExiting += OnExiting;
+    }
+
+    private void OnExiting() {
+        Player.PlayerSpawned -= OnPlayerManagerPlayerSpawned;
+        TreeExiting -= OnExiting;
     }
 
     private void HostCreateWorld(Dictionary worldData) {
@@ -46,19 +51,19 @@ public partial class BlockManager : Node {
     private void OnPlayerManagerPlayerSpawned(Player player) {
         List<IntVector> region = _game.Region.GetRegion(
             player.SpawnCoords, BlockSpawnDistance);
-
+        
         SpawnBlocksInRegion(region);
         player.MovedCell += OnLocalPlayerMoved;
         player.ActionController.GatherAction.GatherAttempted += OnPlayerGatherAction;
         player.ActionController.BuildAction.BlockPlaced += OnPlayerBuildAction;
-        player.BeforePlayerLeaveScene += OnBeforePlayerLeaveScene;
+        player.PlayerDespawned += OnPlayerDespawned;
     }
 
-    private void OnBeforePlayerLeaveScene(Player player) {
+    private void OnPlayerDespawned(Player player) {
         player.MovedCell -= OnLocalPlayerMoved;
         player.ActionController.GatherAction.GatherAttempted -= OnPlayerGatherAction;
         player.ActionController.BuildAction.BlockPlaced -= OnPlayerBuildAction;
-        player.BeforePlayerLeaveScene -= OnBeforePlayerLeaveScene;
+        player.PlayerDespawned -= OnPlayerDespawned;
     }
 
     private void SpawnBlocksInRegion(List<IntVector> region) {
@@ -107,7 +112,7 @@ public partial class BlockManager : Node {
             (int)positionChange["PreviousX"], (int)positionChange["PreviousY"]);
         IntVector newCoordinates = new(
             (int)positionChange["X"], (int)positionChange["Y"]);
-
+        
         List<IntVector> newRegion = _game.Region.GetRegionDelta(
             newCoordinates, oldCoordinates, BlockSpawnDistance);
 

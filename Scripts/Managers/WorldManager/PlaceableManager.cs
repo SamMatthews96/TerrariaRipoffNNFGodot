@@ -16,6 +16,12 @@ public partial class PlaceableManager : Node {
         Player.PlayerSpawned += OnPlayerManagerPlayerSpawned;
         _savedPlaceableCells = new SavedPlaceable[_game.Width, _game.Height];
         _activePlaceableCells = new ActivePlaceable[_game.Width, _game.Height];
+        TreeExiting += OnExiting;
+    }
+
+    private void OnExiting() {
+        Player.PlayerSpawned -= OnPlayerManagerPlayerSpawned;
+        TreeExiting -= OnExiting;
     }
 
     public bool AreCellsOccupied(IntVector coords, int width, int height) {

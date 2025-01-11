@@ -19,7 +19,7 @@ public partial class ActivePickup : RigidBody2D {
 
     public event Action<ActivePickup, Dictionary> MovedCell;
 
-    private bool _isHost => Multiplayer.GetUniqueId() == SceneManager.HostId;
+    private bool IsHost => Multiplayer.GetUniqueId() == SceneManager.HostId;
     
     public void Initialize(SavedPickup savedPickup) {
         SavedPickup = savedPickup;
@@ -34,7 +34,7 @@ public partial class ActivePickup : RigidBody2D {
     }
 
     public override void _PhysicsProcess(double delta) {
-        if (!_isHost) return;
+        if (!IsHost) return;
 
         if (_previousCoords != Coords) {
             Dictionary positionChange = new() {

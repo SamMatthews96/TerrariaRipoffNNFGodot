@@ -5,7 +5,7 @@ using Godot.Collections;
 namespace TerrariaRipoffNNF;
 
 public partial class Player : CharacterBody2D {
-    public static Player Create(int peerId, Dictionary playerData, IntVector spawnCoords) {
+    public static Player Create(int peerId, IntVector spawnCoords, Game game) {
         Player player = Data.PackedScenes.Player.Instantiate<Player>();
         player.Name = peerId.ToString();
         player.SpawnCoords = spawnCoords;
@@ -50,7 +50,7 @@ public partial class Player : CharacterBody2D {
     public static event Action<Player> PlayerSpawned;
     public event Action<Dictionary> MovedCell;
 
-    public event Action<Player> BeforePlayerLeaveScene;
+    public event Action<Player> PlayerDespawned;
 
     public override void _EnterTree() {
         _positionSynchronizer.SetMultiplayerAuthority(PeerId);
@@ -65,7 +65,7 @@ public partial class Player : CharacterBody2D {
     }
 
     public override void _ExitTree() {
-        BeforePlayerLeaveScene?.Invoke(this);
+        PlayerDespawned?.Invoke(this);
     }
 
     public void InitAsHost(Game game) {
