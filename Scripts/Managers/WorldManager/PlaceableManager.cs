@@ -13,9 +13,9 @@ public partial class PlaceableManager : Node {
 
     public void SetGame(Game game, Dictionary worldData) {
         _game = game;
-        Player.PlayerSpawned += OnPlayerManagerPlayerSpawned;
         _savedPlaceableCells = new SavedPlaceable[_game.Width, _game.Height];
         _activePlaceableCells = new ActivePlaceable[_game.Width, _game.Height];
+        Player.PlayerSpawned += OnPlayerManagerPlayerSpawned;
         TreeExiting += OnExiting;
     }
 

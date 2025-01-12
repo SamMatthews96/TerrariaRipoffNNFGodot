@@ -5,11 +5,9 @@ namespace TerrariaRipoffNNF;
 
 public partial class PlayerEquipment : Node {
     [Export] private Player _player;
-    // how items should be equipped
-    // for now, just right click inventory items
 
     public ItemMining Pickaxe { get; private set; }
-    
+
 
     public override void _Ready() {
         _player.Inventory.EquipItemClicked += OnEquipItemClicked;
@@ -19,11 +17,15 @@ public partial class PlayerEquipment : Node {
         ItemEquipment itemEquipment = item.GetProperty<ItemEquipment>();
         switch (itemEquipment.Slot) {
             case EquipmentSlot.Mining:
-                ItemMining itemMining = item.GetProperty<ItemMining>();
-                Pickaxe = itemMining;
+                Pickaxe = item.GetProperty<ItemMining>();
                 break;
             default:
                 throw new NotImplementedException();
         }
+        // _player.Inventory.RemovedItemStack += OnEquippedItemRemoved;
+    }
+
+    private void OnEquippedItemRemoved(StackedItems obj) {
+        //@todo
     }
 }

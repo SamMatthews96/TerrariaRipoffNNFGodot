@@ -10,6 +10,7 @@ script = ExtResource("3_5qm1n")
 Width = 1
 Height = 1
 Texture = ExtResource("2_alun3")
+_placeableProperties = []
 
 [resource]
 script = ExtResource("2_c7kwk")

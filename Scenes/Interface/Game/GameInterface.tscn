@@ -31,7 +31,6 @@ GameMenu = NodePath("GameMenu")
 CraftingInterface = NodePath("Crafting")
 
 [node name="Inventory" type="PanelContainer" parent="." node_paths=PackedStringArray("_gameInterface", "_capacityLabel", "_inventoryItemUiContainer")]
-visible = false
 offset_left = 33.0
 offset_top = 29.0
 offset_right = 243.0
@@ -195,7 +194,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="Crafting" type="Control" parent="." node_paths=PackedStringArray("_gameInterface", "_selectCraftingStationMenuButton", "CraftSelectStationContainer", "SelectRecipeContainer", "SelectIngredientsContainer", "SelectIngredientPopup")]
-visible = false
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

@@ -37,16 +37,14 @@ public partial class GatherAction : PlayerAction {
     }
 
     private void AttemptGather() {
-        _gatherCooldown.Start();
         IntVector coords = new(_player.GetGlobalMousePosition() / Game.BlockSize);
         if (!_game.IsInBounds(coords)) return;
 
         if (_player.PlayerEquipment.Pickaxe == null) return;
-        if (_player.PlayerEquipment.Pickaxe.Range >= IntVector.Distance(coords, Player.Coords)) {
-            RpcId(SceneManager.HostId, nameof(HostGatherAttempted),
-                coords.ToSerialised(), _player.PlayerEquipment.Pickaxe.Power);
-            _gatherCooldown.Start();
-        }
+        if (_player.PlayerEquipment.Pickaxe.Range < IntVector.Distance(coords, Player.Coords)) return;
+        RpcId(SceneManager.HostId, nameof(HostGatherAttempted),
+            coords.ToSerialised(), _player.PlayerEquipment.Pickaxe.Power);
+        _gatherCooldown.Start();
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
