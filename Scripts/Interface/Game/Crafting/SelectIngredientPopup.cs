@@ -4,11 +4,9 @@ using Godot;
 
 namespace TerrariaRipoffNNF.Interface;
 
-public partial class SelectIngredientPopup : Control {
+public partial class SelectIngredientPopup : PopupPanel {
     [Export] private Container _iconContainer;
-    [Export] private SelectIngredientsContainer _selectIngredientsContainer;
     [Export] private Timer _hideTimer;
-    [Export] private PanelContainer _panelContainer;
 
     private RecipeIngredientSlot _ingredientSlot;
     private readonly List<SelectIngredientButton> _ingredientButtons = new();
@@ -16,22 +14,34 @@ public partial class SelectIngredientPopup : Control {
     private bool _isMouseOverPopup;
     private bool _isMouseOverIngredientMouseover;
 
+    private SelectIngredientsContainer _selectIngredientsContainer;
+
+    [Export] private SelectIngredientsContainer SelectIngredientsContainer {
+        get => _selectIngredientsContainer;
+        set {
+            if (_selectIngredientsContainer is not null) {
+                throw new Exception("SelectIngredientsContainer already set");
+            }
+
+            _selectIngredientsContainer = value;
+            _selectIngredientsContainer.IngredientIconMouseEntered += OnIngredientIconMouseEntered;
+            _selectIngredientsContainer.IngredientIconMouseLeft += OnIngredientIconMouseLeft;
+
+            TreeExiting += () => {
+                _selectIngredientsContainer.IngredientIconMouseEntered -= OnIngredientIconMouseEntered;
+                _selectIngredientsContainer.IngredientIconMouseLeft -= OnIngredientIconMouseLeft;
+            };
+        }
+    }
+
     public event Action<Item, RecipeIngredientSlot> SelectIngredientButtonClicked;
 
     public override void _Ready() {
-        Hide();
-        foreach (Node child in _iconContainer.GetChildren()) {
-            child.QueueFree();
-        }
-
-        _selectIngredientsContainer.IngredientIconMouseEntered += OnIngredientIconMouseEntered;
-        _selectIngredientsContainer.IngredientIconMouseLeft += OnIngredientIconMouseLeft;
-
         Player.LocalPlayerSpawned += OnLocalPlayerSpawned;
 
         _hideTimer.Timeout += OnHideTimerTimeout;
-        _panelContainer.MouseEntered += OnMouseEntered;
-        _panelContainer.MouseExited += OnMouseExited;
+        MouseEntered += OnMouseEntered;
+        MouseExited += OnMouseExited;
     }
 
     private void OnHideTimerTimeout() {
@@ -39,6 +49,10 @@ public partial class SelectIngredientPopup : Control {
     }
 
     private void OnLocalPlayerSpawned(Player player) {
+        foreach (Node child in _iconContainer.GetChildren()) {
+            child.QueueFree();
+        }
+
         _player = player;
     }
 
@@ -48,15 +62,18 @@ public partial class SelectIngredientPopup : Control {
     }
 
     private void OnMouseEntered() {
+        
         _isMouseOverPopup = true;
         OnMouseoverUpdated();
     }
 
     private void OnIngredientIconMouseEntered(Control node, RecipeIngredientSlot ingredientSlot) {
-        int addedMargin = 20;
         _isMouseOverIngredientMouseover = true;
         _ingredientSlot = ingredientSlot;
-        Position = node.GlobalPosition + new Vector2(0, -Size.Y - addedMargin);
+        Position = new Vector2I {
+            X = (int)node.GlobalPosition.X,
+            Y = (int)(node.GlobalPosition.Y + node.Size.Y)
+        };
         OnMouseoverUpdated();
     }
 
@@ -86,7 +103,7 @@ public partial class SelectIngredientPopup : Control {
 
         _ingredientButtons.Clear();
 
-        _player.Inventory.StackedItemsList.ForEach(stackedItems => {
+        _player?.Inventory.StackedItemsList.ForEach(stackedItems => {
             if (!stackedItems.Item.TryGetProperty(out ItemIngredient itemIngredient)) return;
             if (!itemIngredient.HasProperty(_ingredientSlot.IngredientType)) return;
             SelectIngredientButton newButton = SelectIngredientButton.Create(stackedItems.Item);
