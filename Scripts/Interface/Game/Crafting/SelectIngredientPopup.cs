@@ -4,9 +4,10 @@ using Godot;
 
 namespace TerrariaRipoffNNF.Interface;
 
-public partial class SelectIngredientPopup : PopupPanel {
-    [Export] private Container _iconContainer;
+public partial class SelectIngredientPopup : Window {
+    [Export] private Container _buttonContainer;
     [Export] private Timer _hideTimer;
+    [Export] private PanelContainer _panelContainer;
 
     private RecipeIngredientSlot _ingredientSlot;
     private readonly List<SelectIngredientButton> _ingredientButtons = new();
@@ -49,7 +50,7 @@ public partial class SelectIngredientPopup : PopupPanel {
     }
 
     private void OnLocalPlayerSpawned(Player player) {
-        foreach (Node child in _iconContainer.GetChildren()) {
+        foreach (Node child in _buttonContainer.GetChildren()) {
             child.QueueFree();
         }
 
@@ -62,7 +63,6 @@ public partial class SelectIngredientPopup : PopupPanel {
     }
 
     private void OnMouseEntered() {
-        
         _isMouseOverPopup = true;
         OnMouseoverUpdated();
     }
@@ -72,7 +72,7 @@ public partial class SelectIngredientPopup : PopupPanel {
         _ingredientSlot = ingredientSlot;
         Position = new Vector2I {
             X = (int)node.GlobalPosition.X,
-            Y = (int)(node.GlobalPosition.Y + node.Size.Y)
+            Y = (int)(node.GlobalPosition.Y + node.Size.Y - 10)
         };
         OnMouseoverUpdated();
     }
@@ -108,11 +108,16 @@ public partial class SelectIngredientPopup : PopupPanel {
             if (!itemIngredient.HasProperty(_ingredientSlot.IngredientType)) return;
             SelectIngredientButton newButton = SelectIngredientButton.Create(stackedItems.Item);
             _ingredientButtons.Add(newButton);
-            _iconContainer.AddChild(newButton);
+            _buttonContainer.AddChild(newButton);
             newButton.IngredientButtonClicked += OnIngredientButtonClicked;
         });
 
+        Size = new Vector2I {
+            X = (int)_panelContainer.Size.X,
+            Y = (int)_panelContainer.Size.Y
+        };
         Show();
+
         _hideTimer.Stop();
     }
 

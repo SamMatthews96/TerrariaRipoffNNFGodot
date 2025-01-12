@@ -3,31 +3,35 @@
 [ext_resource type="Script" path="res://Scripts/Interface/Game/Crafting/SelectIngredientPopup.cs" id="1_l8lqj"]
 [ext_resource type="PackedScene" uid="uid://d3mhbs8it3b2f" path="res://Scenes/Interface/Game/Crafting/SelectIngredientButton.tscn" id="2_8s0fp"]
 
-[node name="SelectIngredientPopup" type="PopupPanel" node_paths=PackedStringArray("_iconContainer", "_hideTimer")]
-size = Vector2i(156, 156)
-visible = true
+[node name="SelectIngredientPopup" type="Window" node_paths=PackedStringArray("_buttonContainer", "_hideTimer", "_panelContainer")]
+title = "Here"
+size = Vector2i(506, 486)
+unresizable = true
+borderless = true
 script = ExtResource("1_l8lqj")
-_iconContainer = NodePath("MarginContainer/GridContainer")
+_buttonContainer = NodePath("PanelContainer/MarginContainer/GridContainer")
 _hideTimer = NodePath("HideTimer")
+_panelContainer = NodePath("PanelContainer")
 
 [node name="HideTimer" type="Timer" parent="."]
 wait_time = 0.2
 one_shot = true
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
-offset_left = 4.0
-offset_top = 4.0
-offset_right = 152.0
-offset_bottom = 152.0
+[node name="PanelContainer" type="PanelContainer" parent="."]
+offset_right = 148.0
+offset_bottom = 148.0
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="GridContainer" type="GridContainer" parent="MarginContainer"]
+[node name="GridContainer" type="GridContainer" parent="PanelContainer/MarginContainer"]
 layout_mode = 2
 size_flags_vertical = 8
 columns = 3
 
-[node name="SelectIngredientButton" parent="MarginContainer/GridContainer" instance=ExtResource("2_8s0fp")]
+[node name="SelectIngredientButton" parent="PanelContainer/MarginContainer/GridContainer" instance=ExtResource("2_8s0fp")]
 layout_mode = 2
