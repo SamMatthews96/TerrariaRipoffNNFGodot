@@ -9,7 +9,7 @@ namespace TerrariaRipoffNNF;
 [GlobalClass]
 public sealed partial class Item : Resource {
     [Export] public string Name { get; private set; }
-    [Export] public float InventorySpace { get; private set; } = 0;
+    [Export] public float InventorySpace { get; private set; }
     [Export] public bool IsStackable { get; private set; } = true;
     [Export] public Texture2D IconTexture { get; private set; }
     [Export] private Array<ItemProperty> _itemProperties = new();

@@ -2,22 +2,28 @@
 using Godot;
 namespace TerrariaRipoffNNF.Interface;
 
-public partial class InventoryItem : TextureRect {
+public partial class InventoryItem : Control {
     public StackedItems StackedItems {get; private set;}
     
     [Export] private Label _countLabel;
-    [Export] private TextureRect _iconTextureRect;
+    [Export] private TextureButton _iconTextureButton;
 
-    public event Action<TextureRect, Item> MouseEnteredItem;
-    public event Action MouseLeftItem; 
-
+    public event Action<InventoryItem> MouseEnteredItem;
+    public event Action MouseLeftItem;
+    public event Action<StackedItems> ItemActionClicked;
+    
     public override void _Ready() {
         MouseEntered += OnMouseEntered;
         MouseExited += OnMouseLeft;
+        _iconTextureButton.ButtonDown += OnRightClick;
+    }
+
+    private void OnRightClick() {
+        ItemActionClicked?.Invoke(StackedItems);
     }
 
     private void OnMouseEntered() {
-        MouseEnteredItem?.Invoke(this, StackedItems.Item);
+        MouseEnteredItem?.Invoke(this);
     }
 
     private void OnMouseLeft() {
@@ -27,7 +33,7 @@ public partial class InventoryItem : TextureRect {
     public void Update(StackedItems stackedItems) {
         StackedItems = stackedItems;
         _countLabel.Text = StackedItems.Count.ToString();
-        _iconTextureRect.Texture = StackedItems.Item.IconTexture;
+        _iconTextureButton.TextureNormal = StackedItems.Item.IconTexture;
     }
     
     

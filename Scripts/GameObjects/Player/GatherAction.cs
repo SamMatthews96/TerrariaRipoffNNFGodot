@@ -41,11 +41,10 @@ public partial class GatherAction : PlayerAction {
         IntVector coords = new(_player.GetGlobalMousePosition() / Game.BlockSize);
         if (!_game.IsInBounds(coords)) return;
 
-        float miningPowerTemp = 10f;
-        float miningRangeTemp = 8f;
-        if (miningRangeTemp >= IntVector.Distance(coords, Player.Coords)) {
+        if (_player.PlayerEquipment.Pickaxe == null) return;
+        if (_player.PlayerEquipment.Pickaxe.Range >= IntVector.Distance(coords, Player.Coords)) {
             RpcId(SceneManager.HostId, nameof(HostGatherAttempted),
-                coords.ToSerialised(), miningPowerTemp);
+                coords.ToSerialised(), _player.PlayerEquipment.Pickaxe.Power);
             _gatherCooldown.Start();
         }
     }

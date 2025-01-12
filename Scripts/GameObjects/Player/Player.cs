@@ -86,6 +86,7 @@ public partial class Player : CharacterBody2D {
 
         ActionController.InitAsLocal(game);
         Crafting.InitAsLocal(game);
+        Inventory.InitAsLocal(game);
     }
 
     private void OnTreeExitingGame() {

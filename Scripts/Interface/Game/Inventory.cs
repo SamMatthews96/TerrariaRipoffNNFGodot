@@ -14,8 +14,9 @@ public partial class Inventory : Control {
 
     private Player _localPlayer;
 
-    public event Action<Control, Item> MouseEnteredItemIcon;
+    public event Action<InventoryItem> MouseEnteredItemIcon;
     public event Action MouseLeftItemIcon;
+    public event Action<StackedItems> ItemActionClicked;
     
     private void OnInputManagerToggleInventoryPressed() {
         Visible = !Visible;
@@ -50,6 +51,7 @@ public partial class Inventory : Control {
 
     private void OnInventoryAddedItemStack(StackedItems stackedItems) {
         InventoryItem inventoryItemUi = _inventoryItemUiScene.Instantiate<InventoryItem>();
+        inventoryItemUi.ItemActionClicked += OnItemActionClicked;
         _inventoryItemUiList.Add(inventoryItemUi);
         _inventoryItemUiContainer.AddChild(inventoryItemUi);
         inventoryItemUi.Update(stackedItems);
@@ -57,9 +59,13 @@ public partial class Inventory : Control {
         inventoryItemUi.MouseLeftItem += OnInventoryMouseLeftItem;
         SetCapacityLabelText();
     }
-    
-    private void OnInventoryMouseEnteredItem(Control node, Item item) {
-        MouseEnteredItemIcon?.Invoke(node, item);
+
+    private void OnItemActionClicked(StackedItems stackedItems) {
+        ItemActionClicked?.Invoke(stackedItems);
+    }
+
+    private void OnInventoryMouseEnteredItem(InventoryItem item) {
+        MouseEnteredItemIcon?.Invoke(item);
     }
 
     private void OnInventoryMouseLeftItem() {

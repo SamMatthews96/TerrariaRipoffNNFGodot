@@ -27,20 +27,40 @@ public partial class Inventory : Node {
     public event Action<StackedItems> RemovedItemStack;
     public event Action<ActivePickup> PickedUpItem;
 
-    [Export] private Player _player;
+    public event Action<Item> EquipItemClicked;
 
+    [Export] private Player _player;
+    private Game _game;
     private readonly List<InventoryItems> _inventoryItemsList = new();
 
     public void InitAsHost() {
         _player.PickupArea.TouchedItem += OnHostCollidedWithPickup;
         _player.ActionController.BuildAction.BlockPlaced += OnBlockPlaced;
-        TreeExiting += OnHostTreeExiting;
+        TreeExiting += DestructAsHost;
     }
 
-    private void OnHostTreeExiting() {
+    public void InitAsLocal(Game game) {
+        _game = game;
+        _game.Interface.InventoryUi.ItemActionClicked += OnItemActionClicked;
+        TreeExiting += DestructAsLocal;
+    }
+    
+    private void DestructAsLocal() {
+        _game.Interface.InventoryUi.ItemActionClicked -= OnItemActionClicked;
+        TreeExiting -= DestructAsLocal;
+    }
+
+    private void OnItemActionClicked(StackedItems stackedItems) {
+        // might need to find the StackedItems in the inventory
+        if (stackedItems.Item.HasProperty<ItemEquipment>()) {
+            EquipItemClicked?.Invoke(stackedItems.Item);
+        }
+    }
+
+    private void DestructAsHost() {
         _player.PickupArea.TouchedItem -= OnHostCollidedWithPickup;
         _player.ActionController.BuildAction.BlockPlaced -= OnBlockPlaced;
-        TreeExiting -= OnHostTreeExiting;
+        TreeExiting -= DestructAsHost;
     }
 
 
@@ -50,7 +70,7 @@ public partial class Inventory : Node {
         InventoryItems metalItems = new(tempMetal, 10);
         ClientAddItems(metalItems.Serialize());
         Item tempWood = ResourceLoader.Load<Item>("res://Resources/Items/wood1.tres");
-        InventoryItems woodItems = new(tempWood, 10);
+        InventoryItems woodItems = new(tempWood, 20);
         ClientAddItems(woodItems.Serialize());
 
         _player.Crafting.ItemCrafted += OnItemCrafted;

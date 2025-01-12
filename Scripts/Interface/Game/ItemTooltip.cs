@@ -20,7 +20,8 @@ public partial class ItemTooltip : Control {
         _inventory.MouseLeftItemIcon += OnInterfaceMouseEnteredItemMouseExited;
     }
 
-    private void OnInterfaceMouseEnteredItemMouseEntered(Control node, Item item) {
+    private void OnInterfaceMouseEnteredItemMouseEntered(InventoryItem inventoryItem) {
+        Item item = inventoryItem.StackedItems.Item;
         _nameLabel.Text = item.Name;
         _inventorySpaceLabel.Text =
             $"Space: {item.InventorySpace.ToString(CultureInfo.InvariantCulture)}";
@@ -31,7 +32,7 @@ public partial class ItemTooltip : Control {
             _itemPropertyLabelGroups.Add(newGroup);
         }
 
-        GlobalPosition = node.GlobalPosition + node.Size;
+        GlobalPosition = inventoryItem.GlobalPosition + inventoryItem.Size;
         Show();
     }
 
