@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Godot;
 using Godot.Collections;
+using Array = Godot.Collections.Array;
 
 namespace TerrariaRipoffNNF;
 
@@ -36,43 +37,36 @@ public partial class Inventory : Node {
     public void InitAsHost() {
         _player.PickupArea.TouchedItem += OnHostCollidedWithPickup;
         _player.ActionController.BuildAction.BlockPlaced += OnBlockPlaced;
-        TreeExiting += DestructAsHost;
+        TreeExiting += () => {
+            _player.PickupArea.TouchedItem -= OnHostCollidedWithPickup;
+            _player.ActionController.BuildAction.BlockPlaced -= OnBlockPlaced;
+        };
     }
 
-    public void InitAsLocal(Game game) {
+    public void InitAsLocal(Game game, Dictionary playerData) {
         _game = game;
         _game.Interface.InventoryUi.ItemActionClicked += OnItemActionClicked;
-        TreeExiting += DestructAsLocal;
-    }
-    
-    private void DestructAsLocal() {
-        _game.Interface.InventoryUi.ItemActionClicked -= OnItemActionClicked;
-        TreeExiting -= DestructAsLocal;
+
+        TreeExiting += () => { _game.Interface.InventoryUi.ItemActionClicked -= OnItemActionClicked; };
+
+        if (!playerData.TryGetValue("Inventory", out Variant inventory)) return;
+        if (!inventory.AsGodotDictionary<string,Array>().TryGetValue(
+            "InventoryItemsList", out Array inventoryItems)) return;
+        
+        foreach (Dictionary savedItem in inventoryItems) {
+            ClientAddItems(savedItem);
+            // Rpc(nameof(ClientAddItems), savedItem);
+        }
+        
     }
 
     private void OnItemActionClicked(StackedItems stackedItems) {
-        // might need to find the StackedItems in the inventory
         if (stackedItems.Item.HasProperty<ItemEquipment>()) {
             EquipItemClicked?.Invoke(stackedItems.Item);
         }
     }
 
-    private void DestructAsHost() {
-        _player.PickupArea.TouchedItem -= OnHostCollidedWithPickup;
-        _player.ActionController.BuildAction.BlockPlaced -= OnBlockPlaced;
-        TreeExiting -= DestructAsHost;
-    }
-
-
     public override void _Ready() {
-        //@todo remove placeholder items
-        Item tempMetal = ResourceLoader.Load<Item>("res://Resources/Items/Ferrium.tres");
-        InventoryItems metalItems = new(tempMetal, 10);
-        ClientAddItems(metalItems.Serialize());
-        Item tempWood = ResourceLoader.Load<Item>("res://Resources/Items/wood1.tres");
-        InventoryItems woodItems = new(tempWood, 20);
-        ClientAddItems(woodItems.Serialize());
-
         _player.Crafting.ItemCrafted += OnItemCrafted;
     }
 
@@ -143,5 +137,19 @@ public partial class Inventory : Node {
             case < 0:
                 throw new Exception("[20240815.0934.1] Inventory space went negative");
         }
+    }
+
+    public Dictionary Serialize() {
+        Array itemsArray = new();
+        foreach (InventoryItems inventoryItems in _inventoryItemsList) {
+            itemsArray.Add(inventoryItems.Serialize());
+        }
+
+        Dictionary inventoryDict = new() {
+            // { "MaximumSpace", MaximumSpace },
+            // { "UsedSpace", UsedSpace },
+            { "InventoryItemsList", itemsArray }
+        };
+        return inventoryDict;
     }
 }

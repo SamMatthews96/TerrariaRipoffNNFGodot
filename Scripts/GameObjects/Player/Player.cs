@@ -5,7 +5,7 @@ using Godot.Collections;
 namespace TerrariaRipoffNNF;
 
 public partial class Player : CharacterBody2D {
-    public static Player Create(int peerId, IntVector spawnCoords, Game game) {
+    public static Player Create(int peerId, IntVector spawnCoords) {
         Player player = Data.PackedScenes.Player.Instantiate<Player>();
         player.Name = peerId.ToString();
         player.SpawnCoords = spawnCoords;
@@ -30,13 +30,14 @@ public partial class Player : CharacterBody2D {
     [Export] private float _jumpStrength = 800;
     public Vector2 SpawnPosition { get; private set; }
     public IntVector SpawnCoords { get; private set; }
-    
+
 
     private Game _game;
     private int _horizontalInput;
     private bool _isFalling;
     private float _xVelocity;
     private float _yVelocity;
+    private string _characterName;
 
     private IntVector _previousCoords;
 
@@ -74,7 +75,7 @@ public partial class Player : CharacterBody2D {
         ActionController.InitAsHost(game);
     }
 
-    public void InitAsLocal(Game game) {
+    public void InitAsLocal(Game game, Dictionary playerData) {
         if (_game is not null) {
             throw new Exception("[20250104.0137.1] Game already set");
         }
@@ -82,17 +83,18 @@ public partial class Player : CharacterBody2D {
         _game = game;
         _game.InputManager.HorizontalInputChanged += OnHorizontalInputChanged;
         _game.InputManager.JumpPressed += OnJumpPressed;
-        TreeExiting += OnTreeExitingGame;
+
+        _characterName = playerData["Name"].ToString();
 
         ActionController.InitAsLocal(game);
         Crafting.InitAsLocal(game);
-        Inventory.InitAsLocal(game);
-    }
+        Inventory.InitAsLocal(game, playerData);
 
-    private void OnTreeExitingGame() {
-        _game.InputManager.HorizontalInputChanged -= OnHorizontalInputChanged;
-        _game.InputManager.JumpPressed -= OnJumpPressed;
-        TreeExiting -= OnTreeExitingGame;
+        TreeExiting += () => {
+            _game.InputManager.HorizontalInputChanged -= OnHorizontalInputChanged;
+            _game.InputManager.JumpPressed -= OnJumpPressed;
+            SavePlayerData();
+        };
     }
 
     private void OnHorizontalInputChanged(int newInput) {
@@ -133,5 +135,13 @@ public partial class Player : CharacterBody2D {
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void ServerMovedCell(Dictionary positionChange) {
         MovedCell?.Invoke(positionChange);
+    }
+
+    private void SavePlayerData() {
+        Dictionary playerData = new() {
+            {"Name", _characterName},
+            { "Inventory", Inventory.Serialize() },
+        };
+        FileManager.SavePlayer(playerData);
     }
 }

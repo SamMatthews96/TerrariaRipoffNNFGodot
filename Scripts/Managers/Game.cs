@@ -39,7 +39,7 @@ public partial class Game : Node {
     public override void _Ready() {
         Player.LocalPlayerSpawned += OnLocalPlayerSpawned;
     }
-    
+
     public override void _ExitTree() {
         Player.LocalPlayerSpawned -= OnLocalPlayerSpawned;
     }
@@ -48,12 +48,7 @@ public partial class Game : Node {
         CreateWorld(worldData);
         _playerData = playerData;
         WorldManager.BlockManager.WorldLoaded += OnWorldLoaded;
-        TreeExiting += OnExitingSinglePlayer;
-    }
-
-    private void OnExitingSinglePlayer() {
-        WorldManager.BlockManager.WorldLoaded -= OnWorldLoaded;
-        TreeExiting -= OnExitingSinglePlayer;
+        TreeExiting += () => { WorldManager.BlockManager.WorldLoaded -= OnWorldLoaded; };
     }
 
     public void InitAsHost(Dictionary worldData, Dictionary playerData) {
@@ -63,32 +58,28 @@ public partial class Game : Node {
         CreateWorld(worldData);
         _playerData = playerData;
         WorldManager.BlockManager.WorldLoaded += OnWorldLoaded;
-        TreeExiting += OnExitingHost;
-    }
-
-    private void OnExitingHost() {
-        WorldManager.BlockManager.WorldLoaded -= OnWorldLoaded;
-        TreeExiting -= OnExitingHost;
+        TreeExiting += () => { WorldManager.BlockManager.WorldLoaded -= OnWorldLoaded; };
     }
 
     private void OnWorldLoaded() {
-        HostCreatePlayer(_playerData, SceneManager.HostId);
+        HostCreatePlayer(SceneManager.HostId);
         _playerData = null;
         GameLoaded?.Invoke();
     }
 
     public void InitAsClient(Dictionary playerData) {
+        _playerData = playerData;
         _multiplayerClient = new MultiplayerClient();
         AddChild(_multiplayerClient);
 
         Multiplayer.ConnectedToServer += () => {
-            RpcId(SceneManager.HostId, nameof(HostCreatePlayer),
-                playerData, Multiplayer.GetUniqueId());
+            RpcId(SceneManager.HostId, nameof(HostCreatePlayer), Multiplayer.GetUniqueId());
         };
     }
 
     private void OnLocalPlayerSpawned(Player player) {
-        player.InitAsLocal(this);
+        player.InitAsLocal(this, _playerData);
+        _playerData = null;
     }
 
     private void CreateWorld(Dictionary worldData) {
@@ -106,8 +97,8 @@ public partial class Game : Node {
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    private void HostCreatePlayer(Dictionary playerDictionary, int peerId) {
-        Player player = Player.Create(peerId, DefaultSpawnPosition, this);
+    private void HostCreatePlayer(int peerId) {
+        Player player = Player.Create(peerId, DefaultSpawnPosition);
         player.InitAsHost(this);
         PlayerParent.AddChild(player, true);
     }

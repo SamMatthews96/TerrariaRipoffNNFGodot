@@ -39,10 +39,16 @@ public partial class SelectIngredientPopup : Window {
 
     public override void _Ready() {
         Player.LocalPlayerSpawned += OnLocalPlayerSpawned;
-
         _hideTimer.Timeout += OnHideTimerTimeout;
         MouseEntered += OnMouseEntered;
         MouseExited += OnMouseExited;
+
+        TreeExiting += () => {
+            Player.LocalPlayerSpawned -= OnLocalPlayerSpawned;
+            _hideTimer.Timeout -= OnHideTimerTimeout;
+            MouseEntered -= OnMouseEntered;
+            MouseExited -= OnMouseExited;
+        };
     }
 
     private void OnHideTimerTimeout() {
