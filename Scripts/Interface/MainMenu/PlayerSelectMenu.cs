@@ -7,7 +7,7 @@ namespace TerrariaRipoffNNF;
 public partial class PlayerSelectMenu : Control {
     [Export] private MainMenu _mainMenu;
     [Export] private Button _createPlayerButton;
-    [Export] private Button _backButton; 
+    [Export] private Button _backButton;
     [Export] private Control _playerListContainer;
     [Export] private TextEdit _playerNameTextEdit;
     [Export] private PackedScene _packedPlayerSelectButton;

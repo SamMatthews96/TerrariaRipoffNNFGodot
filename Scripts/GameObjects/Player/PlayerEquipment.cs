@@ -26,6 +26,6 @@ public partial class PlayerEquipment : Node {
     }
 
     private void OnEquippedItemRemoved(StackedItems obj) {
-        //@todo
+        //@todo if the pickaxe is remove from inventory, it should be unequipped
     }
 }

@@ -18,7 +18,7 @@ Required = true
 [sub_resource type="Resource" id="Resource_jr4ke"]
 script = ExtResource("1_h31i5")
 RecipeSlot = "pickaxeHandle"
-IngredientType = 1
+IngredientType = 2
 Amount = 10
 Icon = ExtResource("2_lo40t")
 Required = true

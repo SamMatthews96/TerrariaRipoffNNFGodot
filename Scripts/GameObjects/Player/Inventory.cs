@@ -55,9 +55,7 @@ public partial class Inventory : Node {
         
         foreach (Dictionary savedItem in inventoryItems) {
             ClientAddItems(savedItem);
-            // Rpc(nameof(ClientAddItems), savedItem);
         }
-        
     }
 
     private void OnItemActionClicked(StackedItems stackedItems) {
@@ -93,7 +91,7 @@ public partial class Inventory : Node {
         Rpc(nameof(ClientRemoveItems), inventoryItemsDictionary);
     }
 
-    [Rpc(CallLocal = true)]
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void ClientAddItems(Dictionary inventoryItemsDictionary) {
         InventoryItems inventoryItemsToAdd =
             StackedItems.Deserialize(inventoryItemsDictionary);
@@ -111,7 +109,7 @@ public partial class Inventory : Node {
         }
     }
 
-    [Rpc(CallLocal = true)]
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void ClientRemoveItems(Dictionary inventoryItemsDictionary) {
         InventoryItems inventoryItemsToRemove =
             StackedItems.Deserialize(inventoryItemsDictionary);

@@ -8,17 +8,18 @@ namespace TerrariaRipoffNNF;
 public partial class WorldCreator : Node {
     [Export] private Item _stone;
     [Export] private Item _earth;
+    [Export] private Item _ferriumOre;
 
     public void CreateWorld(WorldBasicInfo worldBasicInfo) {
         int mid = 7;
 
-        Item[] types = { _stone, _earth };
+        Item[] types = { _stone, _earth, _ferriumOre };
         Random random = new();
 
         Array savedBlockArray = new();
         for (int x = 0; x < worldBasicInfo.Width; x++) {
             for (int y = mid; y < worldBasicInfo.Height; y++) {
-                Item type = types[random.Next(2)];
+                Item type = types[random.Next(3)];
                 SavedBlock savedBlock = SavedBlock.Create(
                     block: type,
                     xPosition: x,

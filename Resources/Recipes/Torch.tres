@@ -9,7 +9,7 @@
 [sub_resource type="Resource" id="Resource_ao5ht"]
 script = ExtResource("3_wtxoa")
 RecipeSlot = "wood"
-IngredientType = 1
+IngredientType = 2
 Amount = 1
 Icon = ExtResource("2_50321")
 Required = true
