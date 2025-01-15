@@ -8,6 +8,8 @@ public partial class PlayerEquipment : Node {
 
     public ItemMining Pickaxe { get; private set; }
 
+    public event Action<Item> ItemEquipped;
+
 
     public override void _Ready() {
         _player.Inventory.EquipItemClicked += OnEquipItemClicked;
@@ -23,6 +25,7 @@ public partial class PlayerEquipment : Node {
                 throw new NotImplementedException();
         }
         // _player.Inventory.RemovedItemStack += OnEquippedItemRemoved;
+        ItemEquipped?.Invoke(item);
     }
 
     private void OnEquippedItemRemoved(StackedItems obj) {

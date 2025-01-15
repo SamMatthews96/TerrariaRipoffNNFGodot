@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://bra215bfannx6"]
+
+[ext_resource type="Texture2D" uid="uid://dl14k1w1s3s5m" path="res://testScripts/testParchment.tres" id="1_5p2gb"]
+
+[node name="TestNoise" type="Node2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_5p2gb")
