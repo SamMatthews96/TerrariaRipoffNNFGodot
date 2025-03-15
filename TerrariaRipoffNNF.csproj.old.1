@@ -1,0 +1,22 @@
+<Project Sdk="Godot.NET.Sdk/4.3.0">
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+    <LangVersion>11.0</LangVersion>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="NUnit" Version="3.13.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Resources\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Remove="Scripts\**" />
+    <EmbeddedResource Remove="Resources\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <!--Required for GdUnit4-->
+    <PackageReference Include="gdUnit4.api" Version="4.2.0-rc*" />
+  </ItemGroup>
+</Project>
