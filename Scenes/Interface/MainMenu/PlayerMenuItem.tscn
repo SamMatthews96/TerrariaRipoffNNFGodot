@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://cgxj5nohkfa6v"]
 
-[ext_resource type="Script" path="res://Scripts/Interface/MainMenu/PlayerListItem.cs" id="1_2fmy1"]
+[ext_resource type="Script" uid="uid://iplgeo68igyp" path="res://Scripts/Interface/MainMenu/PlayerListItem.cs" id="1_2fmy1"]
 
 [node name="PlayerListItem" type="VBoxContainer" node_paths=PackedStringArray("_playerNameLabel", "_enterPlayerButton", "_deletePlayerButton")]
 anchors_preset = 15

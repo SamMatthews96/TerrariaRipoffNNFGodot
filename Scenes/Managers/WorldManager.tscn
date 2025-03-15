@@ -1,9 +1,9 @@
 [gd_scene load_steps=5 format=3 uid="uid://cvfy8a4lwu7a2"]
 
-[ext_resource type="Script" path="res://Scripts/Managers/WorldManager/WorldManager.cs" id="1_876df"]
-[ext_resource type="Script" path="res://Scripts/Managers/WorldManager/BlockManager.cs" id="2_tfpyn"]
-[ext_resource type="Script" path="res://Scripts/Managers/WorldManager/PickupManager.cs" id="3_wl2sa"]
-[ext_resource type="Script" path="res://Scripts/Managers/WorldManager/PlaceableManager.cs" id="4_cvmi5"]
+[ext_resource type="Script" uid="uid://bqie5bl6vacy4" path="res://Scripts/Managers/WorldManager/WorldManager.cs" id="1_876df"]
+[ext_resource type="Script" uid="uid://bjuoetsvxxwc2" path="res://Scripts/Managers/WorldManager/BlockManager.cs" id="2_tfpyn"]
+[ext_resource type="Script" uid="uid://ckbfyvkeuibkj" path="res://Scripts/Managers/WorldManager/PickupManager.cs" id="3_wl2sa"]
+[ext_resource type="Script" uid="uid://2ojxcsm7716g" path="res://Scripts/Managers/WorldManager/PlaceableManager.cs" id="4_cvmi5"]
 
 [node name="WorldManager" type="Node" node_paths=PackedStringArray("BlockManager", "PickupManager", "PlaceableManager")]
 script = ExtResource("1_876df")

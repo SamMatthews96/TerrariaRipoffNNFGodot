@@ -1,11 +1,13 @@
-[gd_resource type="Resource" script_class="Item" load_steps=10 format=3 uid="uid://csoxejfob2omc"]
+[gd_resource type="Resource" script_class="Item" load_steps=12 format=3 uid="uid://csoxejfob2omc"]
 
 [ext_resource type="Texture2D" uid="uid://cyllurh0pjf8q" path="res://Assets/Images/ItemIcons/bench.png" id="1_hjd5x"]
-[ext_resource type="Script" path="res://Scripts/Resources/Item/Item.cs" id="1_jpemg"]
+[ext_resource type="Script" uid="uid://bavg183x82165" path="res://Scripts/Resources/Item/Item.cs" id="1_jpemg"]
+[ext_resource type="Script" uid="uid://jsfs7spy0f5g" path="res://Scripts/Resources/Item/ItemProperty.cs" id="2_34epe"]
 [ext_resource type="Texture2D" uid="uid://c4xxd5bays5fi" path="res://Assets/Images/placedBench.png" id="2_q61y7"]
-[ext_resource type="Script" path="res://Scripts/Resources/Item/ItemPlaceable.cs" id="3_bwj0b"]
-[ext_resource type="Script" path="res://Scripts/Resources/CraftingStation.cs" id="3_f2kls"]
-[ext_resource type="Script" path="res://Scripts/Resources/Item/PlaceableCrafting.cs" id="3_gmeys"]
+[ext_resource type="Script" uid="uid://ctwdtjjrpbdwg" path="res://Scripts/Resources/Item/ItemPlaceable.cs" id="3_bwj0b"]
+[ext_resource type="Script" uid="uid://dsma6rw4bm7vo" path="res://Scripts/Resources/CraftingStation.cs" id="3_f2kls"]
+[ext_resource type="Script" uid="uid://dhjoiuyd5dxxa" path="res://Scripts/Resources/Item/PlaceableCrafting.cs" id="3_gmeys"]
+[ext_resource type="Script" uid="uid://bewtx2cg224pu" path="res://Scripts/Resources/Item/PlaceableProperty.cs" id="4_bxasl"]
 
 [sub_resource type="Resource" id="Resource_u8o1s"]
 script = ExtResource("3_f2kls")
@@ -21,7 +23,7 @@ script = ExtResource("3_bwj0b")
 Width = 2
 Height = 1
 Texture = ExtResource("2_q61y7")
-_placeableProperties = [SubResource("Resource_b567f")]
+_placeableProperties = Array[ExtResource("4_bxasl")]([SubResource("Resource_b567f")])
 
 [resource]
 script = ExtResource("1_jpemg")
@@ -29,4 +31,4 @@ Name = "Work Bench"
 InventorySpace = 8.0
 IsStackable = false
 IconTexture = ExtResource("1_hjd5x")
-_itemProperties = [SubResource("Resource_v18bm")]
+_itemProperties = Array[ExtResource("2_34epe")]([SubResource("Resource_v18bm")])

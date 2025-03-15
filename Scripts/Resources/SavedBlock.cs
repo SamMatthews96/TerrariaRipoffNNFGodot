@@ -22,8 +22,8 @@ public partial class SavedBlock : Resource {
     public static SavedBlock FromDict(Dictionary dictionary) {
         return Create(
             block: Item.FromDictionary(dictionary),
-            xPosition: dictionary["X"].ToString().ToInt(),
-            yPosition: dictionary["Y"].ToString().ToInt(),
+            xPosition: (int)Math.Round( dictionary["X"].ToString().ToFloat()),
+            yPosition: (int)Math.Round( dictionary["Y"].ToString().ToFloat()),
             currentHealth: dictionary["CurrentHealth"].ToString().ToFloat()
         );
     }

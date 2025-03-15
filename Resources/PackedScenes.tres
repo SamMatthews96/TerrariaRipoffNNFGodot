@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="PackedScenes" load_steps=16 format=3 uid="uid://dllhhokx2wkse"]
 
 [ext_resource type="PackedScene" uid="uid://me8wg1m67cje" path="res://Scenes/GameObjects/ActiveBlock.tscn" id="1_b5dt8"]
-[ext_resource type="Script" path="res://Scripts/Managers/PackedScenes.cs" id="1_tombv"]
+[ext_resource type="Script" uid="uid://btjjbewbkdhw8" path="res://Scripts/Managers/PackedScenes.cs" id="1_tombv"]
 [ext_resource type="PackedScene" uid="uid://dq4nb0kwitffr" path="res://Scenes/GameObjects/ActivePickup.tscn" id="2_b6dg8"]
 [ext_resource type="PackedScene" uid="uid://d3hhhiiydcfft" path="res://Scenes/Managers/Game.tscn" id="3_6enwa"]
 [ext_resource type="PackedScene" uid="uid://dycjeg4ul2skk" path="res://Scenes/GameObjects/ActivePlaceable.tscn" id="3_bkvth"]

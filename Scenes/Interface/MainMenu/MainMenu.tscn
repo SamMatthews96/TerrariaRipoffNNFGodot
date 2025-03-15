@@ -1,12 +1,12 @@
 [gd_scene load_steps=9 format=3 uid="uid://tbvohnqfn3cl"]
 
-[ext_resource type="Script" path="res://Scripts/Interface/MainMenu/MainMenu.cs" id="1_tso7g"]
+[ext_resource type="Script" uid="uid://kbxs8fup33e" path="res://Scripts/Interface/MainMenu/MainMenu.cs" id="1_tso7g"]
 [ext_resource type="PackedScene" uid="uid://buekj451osmbs" path="res://Scenes/Interface/MainMenu/WorldMenuItem.tscn" id="2_5m7q5"]
-[ext_resource type="Script" path="res://Scripts/Interface/MainMenu/SelectGameTypeMenu.cs" id="3_xna4i"]
-[ext_resource type="Script" path="res://Scripts/Interface/MainMenu/WorldMenu.cs" id="4_vxgly"]
-[ext_resource type="Script" path="res://Scripts/Interface/MainMenu/MultiplayerMenu.cs" id="5_lsepk"]
+[ext_resource type="Script" uid="uid://bqehbx3a2bp8c" path="res://Scripts/Interface/MainMenu/SelectGameTypeMenu.cs" id="3_xna4i"]
+[ext_resource type="Script" uid="uid://cjuuqa6lruj37" path="res://Scripts/Interface/MainMenu/WorldMenu.cs" id="4_vxgly"]
+[ext_resource type="Script" uid="uid://xmgh3e66kr67" path="res://Scripts/Interface/MainMenu/MultiplayerMenu.cs" id="5_lsepk"]
 [ext_resource type="PackedScene" uid="uid://bmavfj78dtk17" path="res://Scenes/Managers/WorldCreator.tscn" id="6_vhlka"]
-[ext_resource type="Script" path="res://Scripts/Interface/MainMenu/PlayerSelectMenu.cs" id="7_n0wde"]
+[ext_resource type="Script" uid="uid://c1u7i4af6ieen" path="res://Scripts/Interface/MainMenu/PlayerSelectMenu.cs" id="7_n0wde"]
 [ext_resource type="PackedScene" uid="uid://cgxj5nohkfa6v" path="res://Scenes/Interface/MainMenu/PlayerMenuItem.tscn" id="8_vv6pa"]
 
 [node name="MainMenuScene" type="Control" node_paths=PackedStringArray("_selectGameTypeMenu", "_multiplayerMenu", "_worldMenu", "_playerSelectMenu")]

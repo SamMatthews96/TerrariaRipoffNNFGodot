@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://dycjeg4ul2skk"]
 
 [ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://Assets/Images/icon.svg" id="1_g3021"]
-[ext_resource type="Script" path="res://Scripts/GameObjects/ActivePlaceable.cs" id="1_pc7el"]
+[ext_resource type="Script" uid="uid://wc1acbqpabc1" path="res://Scripts/GameObjects/ActivePlaceable.cs" id="1_pc7el"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_asvkq"]
 properties/0/path = NodePath(".:position")

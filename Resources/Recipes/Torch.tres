@@ -1,9 +1,9 @@
 [gd_resource type="Resource" script_class="RecipeStatic" load_steps=7 format=3 uid="uid://csovvvae6pyf5"]
 
-[ext_resource type="Script" path="res://Scripts/Resources/Recipes/RecipeStatic.cs" id="1_geocp"]
+[ext_resource type="Script" uid="uid://deyl3xec1tb8u" path="res://Scripts/Resources/Recipes/RecipeStatic.cs" id="1_geocp"]
 [ext_resource type="Texture2D" uid="uid://da0geb6ew751" path="res://Assets/Images/ItemIcons/torch.png" id="1_p3y05"]
 [ext_resource type="Texture2D" uid="uid://wrf00jfy174v" path="res://Assets/Images/woodPlaceholder.png" id="2_50321"]
-[ext_resource type="Script" path="res://Scripts/Resources/Recipes/RecipeIngredientSlot.cs" id="3_wtxoa"]
+[ext_resource type="Script" uid="uid://fn1nx4h2shbl" path="res://Scripts/Resources/Recipes/RecipeIngredientSlot.cs" id="3_wtxoa"]
 [ext_resource type="Resource" uid="uid://rcb4xtc6rcik" path="res://Resources/Items/torch.tres" id="4_n1qly"]
 
 [sub_resource type="Resource" id="Resource_ao5ht"]

@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://buekj451osmbs"]
 
-[ext_resource type="Script" path="res://Scripts/Interface/MainMenu/WorldListItem.cs" id="1_h03r4"]
+[ext_resource type="Script" uid="uid://b2e28p7aamnnv" path="res://Scripts/Interface/MainMenu/WorldListItem.cs" id="1_h03r4"]
 
 [node name="WorldListItem" type="VBoxContainer" node_paths=PackedStringArray("_worldNameLabel", "_enterWorldButton", "_deleteWorldButton")]
 anchors_preset = 15

@@ -29,7 +29,7 @@ public partial class WorldBasicInfo : Resource {
     public static WorldBasicInfo FromDict(Dictionary dictionary) {
         return new WorldBasicInfo(
             dictionary["Name"].ToString(),
-            dictionary["Width"].ToString().ToInt(),
-            dictionary["Height"].ToString().ToInt());
+            (int)Math.Round(dictionary["Width"].ToString().ToFloat()),
+            (int)Math.Round(dictionary["Height"].ToString().ToFloat()));
     }
 }

@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://cvaxo0scr3abv"]
 
-[ext_resource type="Script" path="res://Scripts/Interface/Game/ItemPropertyTooltipGroup.cs" id="1_i7c2i"]
+[ext_resource type="Script" uid="uid://cvv3dgsyjh2ae" path="res://Scripts/Interface/Game/ItemPropertyTooltipGroup.cs" id="1_i7c2i"]
 
 [node name="ItemPropertyTooltipGroup" type="VBoxContainer" node_paths=PackedStringArray("_propertyLabelContainer", "_titleLabel")]
 anchors_preset = 15

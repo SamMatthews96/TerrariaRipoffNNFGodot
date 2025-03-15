@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://cy52ebe7eud3c"]
 
-[ext_resource type="Script" path="res://Scripts/Interface/LoadingScreen.cs" id="1_2d5mq"]
+[ext_resource type="Script" uid="uid://2py1dy3q71tm" path="res://Scripts/Interface/LoadingScreen.cs" id="1_2d5mq"]
 [ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://Assets/Images/icon.svg" id="2_rx5y7"]
 
 [node name="LoadingScreen" type="Control" node_paths=PackedStringArray("_loadingSprite")]

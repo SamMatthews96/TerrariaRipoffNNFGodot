@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://d31jlx7lau6lq"]
 
-[ext_resource type="Script" path="res://Scripts/Interface/Game/Crafting/SelectIngredientPopup.cs" id="1_l8lqj"]
+[ext_resource type="Script" uid="uid://cf31y5ky5jj76" path="res://Scripts/Interface/Game/Crafting/SelectIngredientPopup.cs" id="1_l8lqj"]
 [ext_resource type="PackedScene" uid="uid://d3mhbs8it3b2f" path="res://Scenes/Interface/Game/Crafting/SelectIngredientButton.tscn" id="2_8s0fp"]
 
 [node name="SelectIngredientPopup" type="Window" node_paths=PackedStringArray("_buttonContainer", "_hideTimer", "_panelContainer")]

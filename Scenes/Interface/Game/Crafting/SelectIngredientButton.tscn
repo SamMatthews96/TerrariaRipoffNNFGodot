@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://d3mhbs8it3b2f"]
 
 [ext_resource type="Texture2D" uid="uid://wrf00jfy174v" path="res://Assets/Images/woodPlaceholder.png" id="1_3u4by"]
-[ext_resource type="Script" path="res://Scripts/Interface/Game/Crafting/SelectIngredientButton.cs" id="2_1x4fh"]
+[ext_resource type="Script" uid="uid://1uxl2njicoq4" path="res://Scripts/Interface/Game/Crafting/SelectIngredientButton.cs" id="2_1x4fh"]
 
 [node name="SelectIngredientButton" type="TextureButton"]
 anchors_preset = 15

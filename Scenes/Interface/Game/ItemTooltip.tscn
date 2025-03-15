@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://ctrvvlegklp1a"]
 
-[ext_resource type="Script" path="res://Scripts/Interface/Game/ItemTooltip.cs" id="1_mxh62"]
+[ext_resource type="Script" uid="uid://5sfof7d87ja1" path="res://Scripts/Interface/Game/ItemTooltip.cs" id="1_mxh62"]
 
 [node name="ItemTooltip" type="Control" node_paths=PackedStringArray("_propertyContainer", "_nameLabel", "_inventorySpaceLabel")]
 layout_mode = 3

@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://bk2b6q47sf7o8"]
 
-[ext_resource type="Script" path="res://testScripts/Test.cs" id="1_mddav"]
+[ext_resource type="Script" uid="uid://txn43aeawib0" path="res://testScripts/Test.cs" id="1_mddav"]
 [ext_resource type="Texture2D" uid="uid://cfc1e8nv4cp1q" path="res://Assets/Images/ItemIcons/Earth.png" id="2_nusmp"]
 
 [node name="Control" type="Control" node_paths=PackedStringArray("_popupButton", "_popupPanel")]

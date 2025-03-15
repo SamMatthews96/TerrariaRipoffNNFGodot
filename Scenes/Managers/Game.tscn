@@ -1,8 +1,8 @@
 [gd_scene load_steps=6 format=3 uid="uid://d3hhhiiydcfft"]
 
-[ext_resource type="Script" path="res://Scripts/Managers/Game.cs" id="1_6kfdr"]
-[ext_resource type="Script" path="res://Scripts/Managers/Region.cs" id="3_8fqtf"]
-[ext_resource type="Script" path="res://Scripts/Managers/InputManager.cs" id="4_lvxpj"]
+[ext_resource type="Script" uid="uid://crhglubj8pdob" path="res://Scripts/Managers/Game.cs" id="1_6kfdr"]
+[ext_resource type="Script" uid="uid://cfatvsnqilhmh" path="res://Scripts/Managers/Region.cs" id="3_8fqtf"]
+[ext_resource type="Script" uid="uid://cq6y2tgmtv8jf" path="res://Scripts/Managers/InputManager.cs" id="4_lvxpj"]
 [ext_resource type="PackedScene" uid="uid://javhx4rej0q4" path="res://Scenes/Interface/Game/GameInterface.tscn" id="5_mn7lu"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_jdm7i"]
@@ -31,13 +31,13 @@ replication_config = SubResource("SceneReplicationConfig_jdm7i")
 [node name="BlockParent" type="Node" parent="."]
 
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="BlockParent"]
-_spawnable_scenes = PackedStringArray("res://Scenes/GameObjects/ActiveBlock.tscn", "res://Scenes/GameObjects/ActivePickup.tscn", "res://Scenes/GameObjects/ActivePlaceable.tscn")
+_spawnable_scenes = PackedStringArray("uid://me8wg1m67cje", "uid://dq4nb0kwitffr", "uid://dycjeg4ul2skk")
 spawn_path = NodePath("..")
 
 [node name="PlayerParent" type="Node" parent="."]
 
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="PlayerParent"]
-_spawnable_scenes = PackedStringArray("res://Scenes/GameObjects/Player.tscn")
+_spawnable_scenes = PackedStringArray("uid://bx6lgpicpfal4")
 spawn_path = NodePath("..")
 
 [node name="InputManager" type="Node" parent="." node_paths=PackedStringArray("_node2D")]
