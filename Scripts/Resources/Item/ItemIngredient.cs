@@ -10,7 +10,8 @@ public partial class ItemIngredient : ItemProperty {
     [Export] private Array<IngredientProperty> _ingredientProperties = new();
 
     public override Dictionary ToDictionary() {
-        throw new NotImplementedException();
+        return new Dictionary();
+        // @todo Implement
     }
 
     public override Dictionary GetTooltipAttributes() {

@@ -1,10 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://djfevv5lx0bv"]
+[gd_scene load_steps=2 format=3 uid="uid://djfevv5lx0bv"]
 
 [ext_resource type="Script" uid="uid://dxli12gxpb3jh" path="res://Scripts/Managers/SceneManager.cs" id="1_vjk3m"]
-[ext_resource type="Script" uid="uid://d62eombgvefh" path="res://testScripts/FpsCounter.cs" id="2_ybejb"]
 
 [node name="SceneManager" type="Node"]
 script = ExtResource("1_vjk3m")
-
-[node name="FpsCounter" type="Label" parent="."]
-script = ExtResource("2_ybejb")

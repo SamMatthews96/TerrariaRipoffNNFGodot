@@ -45,3 +45,4 @@ Recipes = Array[Object]([SubResource("Resource_ikmh0")])
 [resource]
 script = ExtResource("1_ebx5k")
 _recipesArray = Array[Object]([SubResource("Resource_wftnm"), SubResource("Resource_y0317"), SubResource("Resource_78esk")])
+_delete = Array[Object]([null])

@@ -10,7 +10,7 @@ public partial class SavedBlock : Resource {
     public Item Item { get; private init; }
     public float CurrentHealth { get; set; }
 
-    public Dictionary Serialize() {
+    public Dictionary ToDictionary() {
         Dictionary serializedData = new();
         serializedData.Add("X", XPosition);
         serializedData.Add("Y", YPosition);

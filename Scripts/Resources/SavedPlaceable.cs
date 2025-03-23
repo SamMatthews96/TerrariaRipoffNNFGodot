@@ -28,7 +28,7 @@ public partial class SavedPlaceable : Resource {
         };
     }
 
-    public Dictionary Serialize() {
+    public Dictionary ToDictionary() {
         Dictionary serializedData = new();
         serializedData.Add("Item", Item.ToDictionary());
         serializedData.Add("XLeftPosition", XLeftPosition);
@@ -37,7 +37,7 @@ public partial class SavedPlaceable : Resource {
         return serializedData;
     }
 
-    public static SavedPlaceable FromDict(Dictionary dictionary) {
+    public static SavedPlaceable FromDictionary(Dictionary dictionary) {
         return Create(
             item: Item.FromDictionary(dictionary["Item"].AsGodotDictionary()),
             xLeftPosition: dictionary["XLeftPosition"].ToString().ToInt(),

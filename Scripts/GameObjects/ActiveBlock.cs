@@ -19,7 +19,7 @@ public partial class ActiveBlock : StaticBody2D {
     
     public static ActiveBlock Create(SavedBlock savedBlock) {
         ActiveBlock activeBlock = Data.PackedScenes.ActiveBlock.Instantiate<ActiveBlock>();
-        activeBlock._savedBlockDictionary = savedBlock.Serialize();
+        activeBlock._savedBlockDictionary = savedBlock.ToDictionary();
         
         return activeBlock;
     }

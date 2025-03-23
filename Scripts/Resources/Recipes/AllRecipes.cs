@@ -7,6 +7,7 @@ namespace TerrariaRipoffNNF;
 public partial class AllRecipes : Resource {
     [Export] private Array<CraftingStationRecipes> _recipesArray;
     private Dictionary<CraftingStationType, CraftingStationRecipes> _recipes;
+    [Export] private Array<Recipe> _delete;
 
     private Dictionary<CraftingStationType, CraftingStationRecipes> Recipes {
         get {

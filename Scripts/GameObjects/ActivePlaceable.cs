@@ -13,7 +13,7 @@ public partial class ActivePlaceable : Node2D {
     public event Action<ActivePlaceable> ActivePlaceableDespawned;
     
     public override void _Ready() {
-        SavedPlaceable = SavedPlaceable.FromDict(_savedPlaceableDictionary);
+        SavedPlaceable = SavedPlaceable.FromDictionary(_savedPlaceableDictionary);
 
         Position = new Vector2(
             SavedPlaceable.XLeftPosition * Game.BlockSize,
@@ -33,7 +33,7 @@ public partial class ActivePlaceable : Node2D {
 
     public static ActivePlaceable Create(SavedPlaceable savedPlaceable) {
         ActivePlaceable activePlaceable = Data.PackedScenes.ActivePlaceable.Instantiate<ActivePlaceable>();
-        activePlaceable._savedPlaceableDictionary = savedPlaceable.Serialize();
+        activePlaceable._savedPlaceableDictionary = savedPlaceable.ToDictionary();
         return activePlaceable;
     }
 }
