@@ -10,7 +10,6 @@ public partial class WorldMenu : Control {
     [Export] private VBoxContainer _worldListContainer;
     [Export] private PackedScene _packedWorldListItem;
     [Export] private LineEdit _worldNameEdit;
-    [Export] private WorldCreator _worldCreator;
 
     public event Action<WorldBasicInfo> SelectWorldButtonDown;
     public event Action BackButtonDown;
@@ -46,7 +45,7 @@ public partial class WorldMenu : Control {
 
     private async void OnCreateWorldButtonDown() {
         WorldBasicInfo worldBasicInfo = new(_worldNameEdit.Text, 100, 100);
-        await Task.Run(() => { _worldCreator.CreateWorld(worldBasicInfo); });
+        await Task.Run(() => { WorldCreator.CreateWorld(worldBasicInfo); });
         AddEnterWorldButton(worldBasicInfo);
     }
 

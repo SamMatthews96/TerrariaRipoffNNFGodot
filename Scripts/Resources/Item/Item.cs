@@ -34,7 +34,7 @@ public sealed partial class Item : Resource {
     }
 
     public bool HasProperty<T>() where T : ItemProperty {
-        return TryGetProperty(out T property);
+        return TryGetProperty(out T _);
     }
 
     public Dictionary ToDictionary() {
