@@ -46,7 +46,7 @@ public partial class Game : Node {
 
     public void InitAsSinglePlayer(Dictionary worldData, Dictionary playerData) {
         CreateWorld(worldData);
-        _playerData = playerData;
+        _playerData = FileManager.LoadPlayer(playerData);
         WorldManager.BlockManager.WorldLoaded += OnWorldLoaded;
         TreeExiting += () => { WorldManager.BlockManager.WorldLoaded -= OnWorldLoaded; };
     }
@@ -56,25 +56,25 @@ public partial class Game : Node {
         AddChild(_multiplayerHost);
 
         CreateWorld(worldData);
-        _playerData = playerData;
+        _playerData = FileManager.LoadPlayer(playerData);
         WorldManager.BlockManager.WorldLoaded += OnWorldLoaded;
         TreeExiting += () => { WorldManager.BlockManager.WorldLoaded -= OnWorldLoaded; };
     }
 
-    private void OnWorldLoaded() {
-        HostCreatePlayer(SceneManager.HostId);
-        _playerData = null;
-        GameLoaded?.Invoke();
-    }
-
     public void InitAsClient(Dictionary playerData) {
-        _playerData = playerData;
+        _playerData = FileManager.LoadPlayer(playerData);
         _multiplayerClient = new MultiplayerClient();
         AddChild(_multiplayerClient);
 
         Multiplayer.ConnectedToServer += () => {
             RpcId(SceneManager.HostId, nameof(HostCreatePlayer), Multiplayer.GetUniqueId());
         };
+    }
+
+    private void OnWorldLoaded() {
+        HostCreatePlayer(SceneManager.HostId);
+        _playerData = null;
+        GameLoaded?.Invoke();
     }
 
     private void OnLocalPlayerSpawned(Player player) {

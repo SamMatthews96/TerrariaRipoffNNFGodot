@@ -125,7 +125,8 @@ public static class FileManager {
         dirAccess.Remove(playerName);
     }
     
-    public static Dictionary LoadPlayer(string playerName) {
+    public static Dictionary LoadPlayer(Dictionary playerData) {
+        string playerName = playerData["Name"].ToString();
         FileAccess fileAccess = FileAccess.Open(
             $"{PlayerDir}/{playerName}/playerBasicData.txt", FileAccess.ModeFlags.Read);
         string content = fileAccess.GetAsText();

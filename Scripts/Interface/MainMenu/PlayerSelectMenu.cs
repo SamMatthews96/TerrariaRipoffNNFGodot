@@ -20,7 +20,7 @@ public partial class PlayerSelectMenu : Control {
         _createPlayerButton.ButtonDown += OnCreatePlayerButtonDown;
         _backButton.ButtonDown += OnBackButtonDown;
         
-        Dictionary[] playerBasicInfoArray =  FileManager.LoadAllPlayerBasicData();
+        Dictionary[] playerBasicInfoArray = FileManager.LoadAllPlayerBasicData();
         foreach (Dictionary playerBasicInfo in playerBasicInfoArray) {
             AddSelectPlayerButton(playerBasicInfo);
         }
@@ -31,9 +31,9 @@ public partial class PlayerSelectMenu : Control {
         _backButton.ButtonDown -= OnBackButtonDown;
     }
 
-    private void OnSelectPlayerButtonDown(Dictionary playerDictionary) {
+    private void OnSelectPlayerButtonDown(Dictionary playerBasicInfo) {
         Hide();
-        SelectPlayerButtonDown?.Invoke(playerDictionary);
+        SelectPlayerButtonDown?.Invoke(playerBasicInfo);
     }
 
     private void OnCreatePlayerButtonDown() {

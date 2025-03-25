@@ -14,7 +14,7 @@ Name = "Wood1"
 
 [sub_resource type="Resource" id="Resource_ofl4t"]
 script = ExtResource("3_y67oa")
-_ingredientProperties = [SubResource("Resource_akbf4")]
+_ingredientProperties = Array[ExtResource("2_ihdi1")]([SubResource("Resource_akbf4")])
 
 [resource]
 resource_local_to_scene = true
