@@ -1,8 +1,6 @@
-using System;
-using System.Collections.Generic;
 using Godot;
 using Godot.Collections;
-using Array = Godot.Collections.Array;
+using Exception = System.Exception;
 
 namespace TerrariaRipoffNNF;
 
@@ -19,7 +17,7 @@ public sealed partial class Item : Resource {
             return property;
         }
 
-        throw new KeyNotFoundException($"Item does not have property of type {typeof(T)}");
+        throw new Exception($"Item does not have property of type {typeof(T)}");
     }
 
     public bool TryGetProperty<T>(out T property) where T : ItemProperty {
@@ -57,8 +55,8 @@ public sealed partial class Item : Resource {
         return serialized;
     }
 
-    public Godot.Collections.Dictionary<string, Dictionary> GetTooltipAttributes() {
-        Godot.Collections.Dictionary<string, Dictionary> newDictionary = new();
+    public Dictionary<string, Dictionary> GetTooltipAttributes() {
+        Dictionary<string, Dictionary> newDictionary = new();
         foreach (ItemProperty itemProperty in _itemProperties) {
             Dictionary tooltipAttributes = itemProperty.GetTooltipAttributes();
             newDictionary.Add(tooltipAttributes["PropertyName"].ToString(), tooltipAttributes);

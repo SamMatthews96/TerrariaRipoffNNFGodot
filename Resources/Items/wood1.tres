@@ -9,7 +9,7 @@
 [sub_resource type="Resource" id="Resource_akbf4"]
 script = ExtResource("2_ihdi1")
 IngredientType = 1
-Quality = 1.0
+Quality = 2.0
 Name = "Wood1"
 
 [sub_resource type="Resource" id="Resource_ofl4t"]

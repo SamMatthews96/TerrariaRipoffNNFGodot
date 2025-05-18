@@ -1,0 +1,14 @@
+[gd_scene load_steps=5 format=3 uid="uid://cbkmv03rxhfvd"]
+
+[ext_resource type="Script" uid="uid://bo0aechuib3f7" path="res://NewRecipeIdea/ResourceImplementations/Test.cs" id="1_mugvr"]
+[ext_resource type="Resource" uid="uid://dam0jgnbrnseb" path="res://NewRecipeIdea/ResourceImplementations/weightTest.tres" id="2_vo7ms"]
+[ext_resource type="Resource" uid="uid://731ark5d28wl" path="res://Resources/Items/Ferrium.tres" id="3_lmuig"]
+[ext_resource type="Resource" uid="uid://nflnyydidyx6" path="res://Resources/Items/wood1.tres" id="4_oq5c8"]
+
+[node name="Test" type="Node2D"]
+script = ExtResource("1_mugvr")
+_dynamicRecipe = ExtResource("2_vo7ms")
+_suppliedIngredients = Dictionary[String, Object]({
+"pickaxeHandle": ExtResource("4_oq5c8"),
+"pickaxeHead": ExtResource("3_lmuig")
+})
