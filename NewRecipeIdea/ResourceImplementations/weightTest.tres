@@ -1,10 +1,12 @@
-[gd_resource type="Resource" script_class="DynamicRecipe" load_steps=11 format=3 uid="uid://dam0jgnbrnseb"]
+[gd_resource type="Resource" script_class="DynamicRecipe" load_steps=16 format=3 uid="uid://dam0jgnbrnseb"]
 
 [ext_resource type="Script" uid="uid://bg8jhsljipuqc" path="res://NewRecipeIdea/DynamicRecipe.cs" id="1_f36ef"]
 [ext_resource type="Texture2D" uid="uid://cargd8drjeywp" path="res://Assets/Images/ingotPlaceholder.png" id="1_nblo4"]
 [ext_resource type="Script" uid="uid://fn1nx4h2shbl" path="res://Scripts/Resources/Recipes/RecipeIngredientSlot.cs" id="2_8mnhe"]
 [ext_resource type="Texture2D" uid="uid://wrf00jfy174v" path="res://Assets/Images/woodPlaceholder.png" id="3_m1sil"]
 [ext_resource type="Script" uid="uid://plnguuoirtxu" path="res://NewRecipeIdea/RecipePropertyMaps/RecipePropertyMapMultiplier.cs" id="4_nx7xe"]
+[ext_resource type="Script" uid="uid://dtjaxrcrr2rk5" path="res://NewRecipeIdea/RecipePropertyMaps/RecipePropertyMapString.cs" id="5_8mnhe"]
+[ext_resource type="Script" uid="uid://coiqlucu73qbu" path="res://NewRecipeIdea/RecipePropertyMaps/IngredientNameToOutputNameMap.cs" id="5_m1sil"]
 [ext_resource type="Script" uid="uid://cgx84divwo82k" path="res://NewRecipeIdea/RecipeOutputTemplate.cs" id="5_uspbg"]
 
 [sub_resource type="Resource" id="Resource_ykxy4"]
@@ -34,9 +36,33 @@ _multiplier = 2.0
 _ingredientName = "pickaxeHead"
 metadata/_custom_type_script = "uid://plnguuoirtxu"
 
+[sub_resource type="Resource" id="Resource_nx7xe"]
+script = ExtResource("5_m1sil")
+Map = Dictionary[String, String]({
+"Birch": "Rough"
+})
+metadata/_custom_type_script = "uid://coiqlucu73qbu"
+
+[sub_resource type="Resource" id="Resource_uspbg"]
+script = ExtResource("5_m1sil")
+Map = Dictionary[String, String]({
+"Ferrium Ingot": "Ferrium"
+})
+metadata/_custom_type_script = "uid://coiqlucu73qbu"
+
+[sub_resource type="Resource" id="Resource_m1sil"]
+script = ExtResource("5_8mnhe")
+_stringTemplate = "{pickaxeHandle} {pickaxeHead} pickaxe"
+_ingredientNameMaps = {
+"pickaxeHandle": SubResource("Resource_nx7xe"),
+"pickaxeHead": SubResource("Resource_uspbg")
+}
+metadata/_custom_type_script = "uid://dtjaxrcrr2rk5"
+
 [sub_resource type="Resource" id="Resource_b5nl2"]
 script = ExtResource("5_uspbg")
 InventorySpace = SubResource("Resource_c6lkj")
+Name = SubResource("Resource_m1sil")
 metadata/_custom_type_script = "uid://cgx84divwo82k"
 
 [resource]

@@ -10,7 +10,7 @@
 script = ExtResource("2_ptkpt")
 IngredientType = 0
 Quality = 2.0
-Name = "Ferrium"
+Name = "Ferrium Ingot"
 
 [sub_resource type="Resource" id="Resource_ofl4t"]
 script = ExtResource("3_2w6dv")

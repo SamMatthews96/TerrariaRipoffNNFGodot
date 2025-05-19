@@ -11,17 +11,15 @@ public partial class DynamicRecipe : Resource {
     public Item BuildFromTemplate(
         Dictionary<string, Item> suppliedIngredients
     ) {
-        // start by making a static item, then try mapping a simple property
-        // let's say it weights more if the wood is better
+        float inventorySpace = OutputTemplate.InventorySpace
+            .ResolveTemplate(suppliedIngredients, IngredientSlots);
+        string name = OutputTemplate.Name
+            .ResolveTemplate(suppliedIngredients, IngredientSlots);
 
-        RecipePropertyMapMultiplier propertyMap = OutputTemplate.InventorySpace;
-        float inventorySpace = propertyMap.ResolveTemplate(suppliedIngredients, IngredientSlots);
-        
-        
         Item newItem = Item.Create(
-            name: "TempItem",
+            name: name,
             iconTexture: new Texture2D(),
-            inventorySpace: inventorySpace, 
+            inventorySpace: inventorySpace,
             isStackable: false
         );
 

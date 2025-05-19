@@ -1,17 +1,18 @@
-[gd_resource type="Resource" script_class="Item" load_steps=7 format=3 uid="uid://rcb4xtc6rcik"]
+[gd_resource type="Resource" script_class="Item" load_steps=8 format=3 uid="uid://rcb4xtc6rcik"]
 
 [ext_resource type="Texture2D" uid="uid://da0geb6ew751" path="res://Assets/Images/ItemIcons/torch.png" id="1_v187q"]
 [ext_resource type="Texture2D" uid="uid://dom0h6yhambyh" path="res://Assets/Images/placedTorch.png" id="2_alun3"]
 [ext_resource type="Script" uid="uid://bavg183x82165" path="res://Scripts/Resources/Item/Item.cs" id="2_c7kwk"]
 [ext_resource type="Script" uid="uid://jsfs7spy0f5g" path="res://Scripts/Resources/Item/ItemProperty.cs" id="2_r74lq"]
 [ext_resource type="Script" uid="uid://ctwdtjjrpbdwg" path="res://Scripts/Resources/Item/ItemPlaceable.cs" id="3_5qm1n"]
+[ext_resource type="Script" uid="uid://bewtx2cg224pu" path="res://Scripts/Resources/Item/PlaceableProperty.cs" id="4_r74lq"]
 
 [sub_resource type="Resource" id="Resource_tw1y6"]
 script = ExtResource("3_5qm1n")
 Width = 1
 Height = 1
 Texture = ExtResource("2_alun3")
-_placeableProperties = []
+_placeableProperties = Array[ExtResource("4_r74lq")]([])
 
 [resource]
 script = ExtResource("2_c7kwk")

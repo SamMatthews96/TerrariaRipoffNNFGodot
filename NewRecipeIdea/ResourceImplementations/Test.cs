@@ -9,5 +9,6 @@ public partial class Test : Node {
     public override void _Ready() {
         Item item = _dynamicRecipe.BuildFromTemplate(_suppliedIngredients);
         GD.Print(item.InventorySpace);
+        GD.Print(item.Name);
     }
 }
