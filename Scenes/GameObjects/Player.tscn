@@ -9,7 +9,7 @@
 [ext_resource type="Script" uid="uid://dvkkdi1y5ho67" path="res://Scripts/GameObjects/Player/BuildAction.cs" id="6_qab18"]
 [ext_resource type="Script" uid="uid://b43ui7yk16ekk" path="res://Scripts/GameObjects/Player/PlayerEquipment.cs" id="7_in65p"]
 [ext_resource type="Script" uid="uid://kjyoip5nu1o4" path="res://Scripts/GameObjects/Player/Crafting.cs" id="9_67855"]
-[ext_resource type="Resource" uid="uid://3tvo765qovuy" path="res://Resources/handcrafting.tres" id="10_wlky1"]
+[ext_resource type="Resource" uid="uid://3tvo765qovuy" path="res://Resources/CraftingStations/handcrafting.tres" id="10_wlky1"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_8kinl"]
 properties/0/path = NodePath(".:_spawnPosition")

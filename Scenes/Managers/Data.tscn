@@ -6,7 +6,7 @@
 [ext_resource type="Resource" uid="uid://cpty2vp0h2w83" path="res://Resources/Items/Earth.tres" id="4_3tc8q"]
 [ext_resource type="Resource" uid="uid://cqe6akp1lual" path="res://Resources/Items/FerriumOre.tres" id="5_om11x"]
 [ext_resource type="Resource" uid="uid://daxqeqjpn4ve1" path="res://Resources/Items/Stone.tres" id="6_i7kqy"]
-[ext_resource type="Resource" uid="uid://nflnyydidyx6" path="res://Resources/Items/wood1.tres" id="7_rggat"]
+[ext_resource type="Resource" uid="uid://c7hb2igx46aai" path="res://Resources/Items/Beach.tres" id="7_3tc8q"]
 [ext_resource type="Script" uid="uid://18jr81tkmkam" path="res://Scripts/Managers/Data/Items.cs" id="8_aqkac"]
 
 [sub_resource type="Resource" id="Resource_0cbqr"]
@@ -14,7 +14,7 @@ script = ExtResource("8_aqkac")
 Stone = ExtResource("6_i7kqy")
 Earth = ExtResource("4_3tc8q")
 FerriumOre = ExtResource("5_om11x")
-Wood = ExtResource("7_rggat")
+Wood = ExtResource("7_3tc8q")
 metadata/_custom_type_script = "uid://18jr81tkmkam"
 
 [node name="Data" type="Node"]

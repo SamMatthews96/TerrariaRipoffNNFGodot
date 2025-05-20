@@ -1,0 +1,74 @@
+[gd_resource type="Resource" script_class="DynamicRecipe" load_steps=18 format=3 uid="uid://dam0jgnbrnseb"]
+
+[ext_resource type="Texture2D" uid="uid://cargd8drjeywp" path="res://Assets/Images/ingotPlaceholder.png" id="1_wt0sh"]
+[ext_resource type="Script" uid="uid://fn1nx4h2shbl" path="res://Scripts/Resources/Recipes/RecipeIngredientSlot.cs" id="2_4xreq"]
+[ext_resource type="Texture2D" uid="uid://wrf00jfy174v" path="res://Assets/Images/woodPlaceholder.png" id="3_wukdn"]
+[ext_resource type="Script" uid="uid://plnguuoirtxu" path="res://NewRecipeIdea/RecipePropertyMaps/RecipePropertyMapMultiplier.cs" id="4_3k8e6"]
+[ext_resource type="Script" uid="uid://coiqlucu73qbu" path="res://NewRecipeIdea/RecipePropertyMaps/IngredientNameToOutputNameMap.cs" id="5_c8fir"]
+[ext_resource type="Resource" uid="uid://lrx4pfcv18va" path="res://Resources/Items/IngredientProperties/Beach.tres" id="6_uws8a"]
+[ext_resource type="Resource" uid="uid://bkgjkwogt0os4" path="res://Resources/Items/IngredientProperties/FerriumIngot.tres" id="7_4xreq"]
+[ext_resource type="Script" uid="uid://dtjaxrcrr2rk5" path="res://NewRecipeIdea/RecipePropertyMaps/RecipePropertyMapString.cs" id="7_s8xgb"]
+[ext_resource type="Script" uid="uid://cgx84divwo82k" path="res://NewRecipeIdea/RecipeOutputTemplate.cs" id="8_3ndkj"]
+[ext_resource type="Script" uid="uid://bg8jhsljipuqc" path="res://NewRecipeIdea/DynamicRecipe.cs" id="9_6m4wk"]
+
+[sub_resource type="Resource" id="Resource_ykxy4"]
+resource_name = "PickaxeHead"
+script = ExtResource("2_4xreq")
+RecipeSlot = "pickaxeHead"
+IngredientType = 0
+Amount = 8
+Icon = ExtResource("1_wt0sh")
+Required = true
+metadata/_custom_type_script = "uid://fn1nx4h2shbl"
+
+[sub_resource type="Resource" id="Resource_ydt65"]
+resource_name = "PickaxeHandle"
+script = ExtResource("2_4xreq")
+RecipeSlot = "pickaxeHandle"
+IngredientType = 2
+Amount = 10
+Icon = ExtResource("3_wukdn")
+Required = true
+metadata/_custom_type_script = "uid://fn1nx4h2shbl"
+
+[sub_resource type="Resource" id="Resource_c6lkj"]
+script = ExtResource("4_3k8e6")
+_base = 5.0
+_multiplier = 2.0
+_ingredientName = "pickaxeHead"
+metadata/_custom_type_script = "uid://plnguuoirtxu"
+
+[sub_resource type="Resource" id="Resource_7071n"]
+script = ExtResource("5_c8fir")
+Map = Dictionary[Object, String]({
+ExtResource("6_uws8a"): "Rough"
+})
+metadata/_custom_type_script = "uid://coiqlucu73qbu"
+
+[sub_resource type="Resource" id="Resource_wukdn"]
+script = ExtResource("5_c8fir")
+Map = Dictionary[Object, String]({
+ExtResource("7_4xreq"): "Ferrium"
+})
+metadata/_custom_type_script = "uid://coiqlucu73qbu"
+
+[sub_resource type="Resource" id="Resource_m1sil"]
+script = ExtResource("7_s8xgb")
+_stringTemplate = "{pickaxeHandle} {pickaxeHead} pickaxe"
+_ingredientNameMaps = Dictionary[String, ExtResource("5_c8fir")]({
+"pickaxeHandle": SubResource("Resource_7071n"),
+"pickaxeHead": SubResource("Resource_wukdn")
+})
+metadata/_custom_type_script = "uid://dtjaxrcrr2rk5"
+
+[sub_resource type="Resource" id="Resource_b5nl2"]
+script = ExtResource("8_3ndkj")
+InventorySpace = SubResource("Resource_c6lkj")
+Name = SubResource("Resource_m1sil")
+metadata/_custom_type_script = "uid://cgx84divwo82k"
+
+[resource]
+script = ExtResource("9_6m4wk")
+IngredientSlots = Array[Object]([SubResource("Resource_ykxy4"), SubResource("Resource_ydt65")])
+OutputTemplate = SubResource("Resource_b5nl2")
+metadata/_custom_type_script = "uid://bg8jhsljipuqc"

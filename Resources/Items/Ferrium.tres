@@ -5,16 +5,11 @@
 [ext_resource type="Script" uid="uid://jsfs7spy0f5g" path="res://Scripts/Resources/Item/ItemProperty.cs" id="2_gdypl"]
 [ext_resource type="Script" uid="uid://b5w8qhrh8qefd" path="res://Scripts/Resources/Item/IngredientProperty.cs" id="2_ptkpt"]
 [ext_resource type="Script" uid="uid://dp8bgot75ojla" path="res://Scripts/Resources/Item/ItemIngredient.cs" id="3_2w6dv"]
-
-[sub_resource type="Resource" id="Resource_akbf4"]
-script = ExtResource("2_ptkpt")
-IngredientType = 0
-Quality = 2.0
-Name = "Ferrium Ingot"
+[ext_resource type="Resource" uid="uid://bkgjkwogt0os4" path="res://Resources/Items/IngredientProperties/FerriumIngot.tres" id="4_pucpp"]
 
 [sub_resource type="Resource" id="Resource_ofl4t"]
 script = ExtResource("3_2w6dv")
-_ingredientProperties = Array[ExtResource("2_ptkpt")]([SubResource("Resource_akbf4")])
+_ingredientProperties = Array[ExtResource("2_ptkpt")]([ExtResource("4_pucpp")])
 
 [resource]
 script = ExtResource("1_bsu41")

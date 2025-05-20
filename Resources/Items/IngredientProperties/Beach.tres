@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="IngredientProperty" load_steps=2 format=3 uid="uid://lrx4pfcv18va"]
+
+[ext_resource type="Script" uid="uid://b5w8qhrh8qefd" path="res://Scripts/Resources/Item/IngredientProperty.cs" id="1_tkqm7"]
+
+[resource]
+script = ExtResource("1_tkqm7")
+IngredientType = 2
+Quality = 1.0
+Name = "Beach"

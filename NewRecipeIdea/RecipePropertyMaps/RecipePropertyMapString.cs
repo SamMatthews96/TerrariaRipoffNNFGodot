@@ -31,15 +31,16 @@ public partial class RecipePropertyMapString : RecipePropertyMap<string> {
             IngredientType ingredientType = ingredientSlot.IngredientType;
 
             Item item = suppliedIngredients[recipeSlotName];
-            string ingredientName = item.GetProperty<ItemIngredient>()
-                .GetProperty(ingredientType).Name;
+            ItemIngredient itemIngredient = item.GetProperty<ItemIngredient>();
+            IngredientProperty ingredientProperty = itemIngredient.GetProperty(ingredientType);
+            string templateSubstitute = _ingredientNameMaps.TryGetValue(
+                recipeSlotName,
+                out IngredientNameToOutputNameMap ingredientNameMap
+            )
+                ? ingredientNameMap.Map[ingredientProperty]
+                : ingredientProperty.Name;
 
-            string templateSubstitute = ingredientName;
-            if (_ingredientNameMaps.TryGetValue(recipeSlotName, out IngredientNameToOutputNameMap ingredientNameMap)) {
-                templateSubstitute = ingredientNameMap.Map[ingredientName];
-            }
-
-            currentTemplate = currentTemplate.Replace("{" + recipeSlotName +"}", templateSubstitute);
+            currentTemplate = currentTemplate.Replace("{" + recipeSlotName + "}", templateSubstitute);
         }
 
         return currentTemplate;

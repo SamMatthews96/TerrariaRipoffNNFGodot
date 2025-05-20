@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="IngredientProperty" load_steps=2 format=3 uid="uid://bkgjkwogt0os4"]
+
+[ext_resource type="Script" uid="uid://b5w8qhrh8qefd" path="res://Scripts/Resources/Item/IngredientProperty.cs" id="1_214ad"]
+
+[resource]
+script = ExtResource("1_214ad")
+IngredientType = 0
+Quality = 2.0
+Name = "Ferrium Ingot"

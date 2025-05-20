@@ -5,5 +5,5 @@ namespace TerrariaRipoffNNF;
 
 [GlobalClass]
 public partial class IngredientNameToOutputNameMap : Resource {
-    [Export] public Dictionary<string, string> Map;
+    [Export] public Dictionary<IngredientProperty, string> Map;
 }
