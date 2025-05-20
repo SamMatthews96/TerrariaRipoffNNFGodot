@@ -4,30 +4,31 @@ using Godot.Collections;
 namespace TerrariaRipoffNNF;
 
 [GlobalClass]
-public abstract partial class Recipe : Resource {
-    [Export] private Array<RecipeIngredientSlot> _ingredientSlotArray;
-    private Dictionary<string, RecipeIngredientSlot> _ingredientSlots;
-    public Dictionary<string, RecipeIngredientSlot> IngredientSlots {
-        get {
-            if (_ingredientSlots is null) {
-                _ingredientSlots = new Dictionary<string, RecipeIngredientSlot>();
-                foreach (var craftingStationRecipes in _ingredientSlotArray) {
-                    _ingredientSlots[craftingStationRecipes.RecipeSlot] = craftingStationRecipes;
-                }
-            }
-
-            return _ingredientSlots;
-        }
-        private set => _ingredientSlots = value;
-    }
-    [Export] public Texture2D ResultIcon { get; private set; }
+public partial class Recipe : Resource {
     [Export] public string Name { get; private set; }
+    [Export] public Dictionary<string, RecipeIngredientSlot> IngredientSlots { get; private set; }
+    [Export] public RecipePropertyMapString ResultNameMap { get; private set; }
+    [Export] public RecipePropertyMapMultiplier InventorySpace { get; private set; }
+    [Export] public bool IsStackable { get; private set; }
+    [Export] public Array<ItemPropertyOutputTemplate> ItemProperties { get; private set; }
+    
+    [Export] public Texture2D ResultIcon { get; private set; }
 
-    protected IngredientProperty GetIngredientType(string key, Dictionary<string, Item> suppliedIngredients) {
-        if (!suppliedIngredients.TryGetValue(key, out Item item)) return null;
-        return item.GetProperty<ItemIngredient>()
-            .GetProperty(IngredientSlots[key].IngredientType);
+    public StackedItems Build(Dictionary<string, Item> suppliedIngredients) {
+        Array<ItemProperty> newItemProperties = new();
+        foreach (ItemPropertyOutputTemplate itemPropertyOutputTemplate in ItemProperties) {
+            ItemProperty newItemProperty
+                = itemPropertyOutputTemplate.Build(suppliedIngredients, IngredientSlots);
+            newItemProperties.Add(newItemProperty);
+        }
+
+        Item item = Item.Create(
+            name: ResultNameMap.ResolveTemplate(suppliedIngredients, IngredientSlots),
+            iconTexture: new Texture2D(),
+            inventorySpace: InventorySpace.ResolveTemplate(suppliedIngredients, IngredientSlots),
+            isStackable: IsStackable,
+            itemProperties: newItemProperties
+        );
+        return new StackedItems(item);
     }
-
-    public abstract StackedItems Build(Dictionary<string, Item> suppliedIngredients);
 }

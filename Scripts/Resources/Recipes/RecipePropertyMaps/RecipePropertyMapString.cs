@@ -14,7 +14,7 @@ public partial class RecipePropertyMapString : RecipePropertyMap<string> {
 
     public override string ResolveTemplate(
         Dictionary<string, Item> suppliedIngredients,
-        Array<RecipeIngredientSlot> ingredientSlots
+        Dictionary<string, RecipeIngredientSlot> ingredientSlots
     ) {
         MatchCollection templateVariables = TemplateVariableRegex().Matches(_stringTemplate);
         string currentTemplate = _stringTemplate;
@@ -26,9 +26,7 @@ public partial class RecipePropertyMapString : RecipePropertyMap<string> {
 
             string recipeSlotName = templateString.Substring(1, templateString.Length - 2);
 
-            RecipeIngredientSlot ingredientSlot = ingredientSlots.First(
-                recipeIngredientSlot => recipeIngredientSlot.RecipeSlot == recipeSlotName);
-            IngredientType ingredientType = ingredientSlot.IngredientType;
+            IngredientType ingredientType = ingredientSlots[recipeSlotName].IngredientType;
 
             Item item = suppliedIngredients[recipeSlotName];
             ItemIngredient itemIngredient = item.GetProperty<ItemIngredient>();

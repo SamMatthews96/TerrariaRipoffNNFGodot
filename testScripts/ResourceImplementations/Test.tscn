@@ -1,13 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://cbkmv03rxhfvd"]
+[gd_scene load_steps=4 format=3 uid="uid://cbkmv03rxhfvd"]
 
-[ext_resource type="Script" uid="uid://bo0aechuib3f7" path="res://NewRecipeIdea/ResourceImplementations/Test.cs" id="1_mugvr"]
-[ext_resource type="Resource" uid="uid://dam0jgnbrnseb" path="res://NewRecipeIdea/ResourceImplementations/DynamicRecipeExample.tres" id="2_vo7ms"]
+[ext_resource type="Script" uid="uid://bo0aechuib3f7" path="res://testScripts/ResourceImplementations/Test.cs" id="1_mugvr"]
 [ext_resource type="Resource" uid="uid://731ark5d28wl" path="res://Resources/Items/Ferrium.tres" id="3_lmuig"]
 [ext_resource type="Resource" uid="uid://c7hb2igx46aai" path="res://Resources/Items/Beach.tres" id="4_mugvr"]
 
 [node name="Test" type="Node2D"]
 script = ExtResource("1_mugvr")
-_dynamicRecipe = ExtResource("2_vo7ms")
 _suppliedIngredients = Dictionary[String, Object]({
 "pickaxeHandle": ExtResource("4_mugvr"),
 "pickaxeHead": ExtResource("3_lmuig")

@@ -13,14 +13,19 @@ public partial class RecipePropertyMapMultiplier : RecipePropertyMap<float> {
 
     public override float ResolveTemplate(
         Dictionary<string, Item> suppliedIngredients,
-        Array<RecipeIngredientSlot> ingredientSlots
+        Dictionary<string, RecipeIngredientSlot> ingredientSlots
     ) {
-        RecipeIngredientSlot ingredientSlot = ingredientSlots.First(
-            ingredient => ingredient.RecipeSlot == _ingredientName);
+        if (_multiplier == 0) {
+            return _base;
+        }
+
+        if (_ingredientName == "") {
+            throw new Exception("[20250520.2338.1] Ingredient name is empty with a non-zero multiplier");
+        }
 
         float suppliedItemQuality = suppliedIngredients[_ingredientName]
             .GetProperty<ItemIngredient>()
-            .GetProperty(ingredientSlot.IngredientType).Quality;
+            .GetProperty(ingredientSlots[_ingredientName].IngredientType).Quality;
 
         return _base + suppliedItemQuality * _multiplier;
     }

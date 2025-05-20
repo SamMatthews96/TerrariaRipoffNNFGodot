@@ -1,46 +1,22 @@
-[gd_resource type="Resource" script_class="AllRecipes" load_steps=17 format=3 uid="uid://bxv0u74if3lg8"]
+[gd_resource type="Resource" script_class="AllRecipes" load_steps=6 format=3 uid="uid://bxv0u74if3lg8"]
 
 [ext_resource type="Script" uid="uid://15dmxouge3gl" path="res://Scripts/Resources/Recipes/AllRecipes.cs" id="1_ebx5k"]
 [ext_resource type="Script" uid="uid://df21tkox0o1bt" path="res://Scripts/Resources/Recipes/CraftingStationRecipes.cs" id="2_016by"]
-[ext_resource type="Resource" uid="uid://csovvvae6pyf5" path="res://Resources/Recipes/Torch.tres" id="2_syur6"]
-[ext_resource type="Resource" uid="uid://bgstt0xe0dhq3" path="res://Resources/Recipes/WorkBench.tres" id="3_jpioy"]
-[ext_resource type="Resource" uid="uid://cw1ec51isq4ga" path="res://Resources/Recipes/RecipeMining.tres" id="4_b6e0c"]
-[ext_resource type="Resource" uid="uid://et6tfl80qj6b" path="res://Resources/Recipes/TempFurnace.tres" id="5_0cj7l"]
-[ext_resource type="Script" uid="uid://deyl3xec1tb8u" path="res://Scripts/Resources/Recipes/RecipeStatic.cs" id="5_r0h7u"]
-[ext_resource type="Texture2D" uid="uid://cargd8drjeywp" path="res://Assets/Images/ingotPlaceholder.png" id="5_tjny8"]
-[ext_resource type="Texture2D" uid="uid://d01ol4xclmiyc" path="res://Assets/Images/FerriumOreTemppng.png" id="6_dd8ma"]
-[ext_resource type="Script" uid="uid://fn1nx4h2shbl" path="res://Scripts/Resources/Recipes/RecipeIngredientSlot.cs" id="7_f06ob"]
-[ext_resource type="Resource" uid="uid://731ark5d28wl" path="res://Resources/Items/Ferrium.tres" id="8_u3sjr"]
 
 [sub_resource type="Resource" id="Resource_wftnm"]
 script = ExtResource("2_016by")
 CraftingStationType = 0
-Recipes = Array[Object]([ExtResource("2_syur6"), ExtResource("3_jpioy")])
+Recipes = Array[Object]([])
 
 [sub_resource type="Resource" id="Resource_y0317"]
 script = ExtResource("2_016by")
 CraftingStationType = 1
-Recipes = Array[Object]([ExtResource("4_b6e0c"), ExtResource("5_0cj7l")])
-
-[sub_resource type="Resource" id="Resource_5hd5u"]
-script = ExtResource("7_f06ob")
-RecipeSlot = "ore"
-IngredientType = 1
-Amount = 1
-Icon = ExtResource("6_dd8ma")
-Required = true
-
-[sub_resource type="Resource" id="Resource_ikmh0"]
-script = ExtResource("5_r0h7u")
-_resultItem = ExtResource("8_u3sjr")
-_ingredientSlotArray = Array[Object]([SubResource("Resource_5hd5u")])
-ResultIcon = ExtResource("5_tjny8")
-Name = ""
+Recipes = Array[Object]([])
 
 [sub_resource type="Resource" id="Resource_78esk"]
 script = ExtResource("2_016by")
 CraftingStationType = 2
-Recipes = Array[Object]([SubResource("Resource_ikmh0")])
+Recipes = Array[Object]([])
 
 [resource]
 script = ExtResource("1_ebx5k")
