@@ -69,10 +69,10 @@ public partial class SelectIngredientsContainer : Container {
 
         _selectIngredientMouseovers.Clear();
 
-        foreach (RecipeIngredientSlot ingredientSlot in recipe.IngredientSlots.Values) {
+        foreach ((string slotName, RecipeIngredientSlot ingredientSlot) in recipe.IngredientSlots) {
             SelectIngredientMouseover newIngredientMouseover
                 = SelectIngredientMouseover.Create(ingredientSlot);
-            _selectIngredientMouseovers.Add(ingredientSlot.RecipeSlot, newIngredientMouseover);
+            _selectIngredientMouseovers.Add(slotName, newIngredientMouseover);
             newIngredientMouseover.MouseEnteredIcon += OnIngredientIconMouseEntered;
             newIngredientMouseover.MouseLeftIcon += OnIngredientIconMouseLeft;
             _ingredientContainer.AddChild(newIngredientMouseover);

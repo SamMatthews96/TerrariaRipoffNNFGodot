@@ -1,12 +1,13 @@
-[gd_resource type="Resource" script_class="AllRecipes" load_steps=6 format=3 uid="uid://bxv0u74if3lg8"]
+[gd_resource type="Resource" script_class="AllRecipes" load_steps=7 format=3 uid="uid://bxv0u74if3lg8"]
 
+[ext_resource type="Resource" uid="uid://bruexb2b2wap2" path="res://Resources/Recipes/Pickaxe.tres" id="1_0hfgn"]
 [ext_resource type="Script" uid="uid://15dmxouge3gl" path="res://Scripts/Resources/Recipes/AllRecipes.cs" id="1_ebx5k"]
 [ext_resource type="Script" uid="uid://df21tkox0o1bt" path="res://Scripts/Resources/Recipes/CraftingStationRecipes.cs" id="2_016by"]
 
 [sub_resource type="Resource" id="Resource_wftnm"]
 script = ExtResource("2_016by")
 CraftingStationType = 0
-Recipes = Array[Object]([])
+Recipes = Array[Object]([ExtResource("1_0hfgn")])
 
 [sub_resource type="Resource" id="Resource_y0317"]
 script = ExtResource("2_016by")

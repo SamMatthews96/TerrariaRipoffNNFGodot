@@ -5,8 +5,7 @@ namespace TerrariaRipoffNNF;
 
 public partial class PlayerEquipment : Node {
     [Export] private Player _player;
-
-    public ItemMining Pickaxe { get; private set; }
+    [Export] public ItemMining Pickaxe { get; private set; }
 
     public event Action<Item> ItemEquipped;
 
@@ -24,6 +23,7 @@ public partial class PlayerEquipment : Node {
             default:
                 throw new NotImplementedException();
         }
+
         // _player.Inventory.RemovedItemStack += OnEquippedItemRemoved;
         ItemEquipped?.Invoke(item);
     }

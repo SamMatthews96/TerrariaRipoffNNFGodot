@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://bx6lgpicpfal4"]
+[gd_scene load_steps=16 format=3 uid="uid://bx6lgpicpfal4"]
 
 [ext_resource type="Script" uid="uid://b11uqw4ifwmss" path="res://Scripts/GameObjects/Player/Player.cs" id="1_hx4ms"]
 [ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://Assets/Images/icon.svg" id="2_5yc1a"]
@@ -9,6 +9,7 @@
 [ext_resource type="Script" uid="uid://dvkkdi1y5ho67" path="res://Scripts/GameObjects/Player/BuildAction.cs" id="6_qab18"]
 [ext_resource type="Script" uid="uid://b43ui7yk16ekk" path="res://Scripts/GameObjects/Player/PlayerEquipment.cs" id="7_in65p"]
 [ext_resource type="Script" uid="uid://kjyoip5nu1o4" path="res://Scripts/GameObjects/Player/Crafting.cs" id="9_67855"]
+[ext_resource type="Script" uid="uid://dfb4kfm2jhuiq" path="res://Scripts/Resources/Item/ItemMining.cs" id="9_pqpyq"]
 [ext_resource type="Resource" uid="uid://3tvo765qovuy" path="res://Resources/CraftingStations/handcrafting.tres" id="10_wlky1"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_8kinl"]
@@ -23,6 +24,13 @@ properties/0/replication_mode = 1
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_raw6a"]
 size = Vector2(44, 93)
+
+[sub_resource type="Resource" id="Resource_7vd2l"]
+script = ExtResource("9_pqpyq")
+Speed = 5.0
+Range = 5.0
+Power = 5.0
+metadata/_custom_type_script = "uid://dfb4kfm2jhuiq"
 
 [node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("Inventory", "ActionController", "PickupArea", "PlayerEquipment", "Crafting", "_positionSynchronizer", "_camera")]
 collision_mask = 2
@@ -95,6 +103,7 @@ State = 1
 [node name="CurrentEquipment" type="Node" parent="." node_paths=PackedStringArray("_player")]
 script = ExtResource("7_in65p")
 _player = NodePath("..")
+Pickaxe = SubResource("Resource_7vd2l")
 
 [node name="Crafting" type="Node" parent="." node_paths=PackedStringArray("_player")]
 script = ExtResource("9_67855")
