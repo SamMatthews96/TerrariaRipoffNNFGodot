@@ -20,4 +20,5 @@ public partial class PackedScenes : Resource {
     // Managers
     [Export] public PackedScene WorldManager { get; private set; }
     [Export] public PackedScene LoadingScreen { get; private set; }
+    [Export] public PackedScene WorldObjectManager { get; private set; }
 }
