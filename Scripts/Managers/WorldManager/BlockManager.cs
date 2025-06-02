@@ -10,16 +10,11 @@ namespace TerrariaRipoffNNF;
 public partial class BlockManager : Node {
     public const int BlockSpawnDistance = 20;
 
-    [Export] private WorldManager _worldManager;
     private Game _game;
 
     private SavedBlock[,] _savedBlocks;
     private ActiveBlock[,] _activeBlocks;
-
-    public bool IsCellOccupied(IntVector coords) {
-        return _savedBlocks[coords.X, coords.Y] is not null;
-    }
-
+    
     public event Action WorldLoaded;
     public event Action<SavedBlock> BlockDestroyed;
 

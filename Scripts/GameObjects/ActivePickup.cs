@@ -4,7 +4,7 @@ using Godot.Collections;
 
 namespace TerrariaRipoffNNF;
 
-public partial class ActivePickup : RigidBody2D {
+public partial class ActivePickup : Node2D {
     [Export] private Sprite2D _sprite;
     [Export] private Dictionary _savedPickupDictionary;
     [Export] private Area2D _pickupArea;

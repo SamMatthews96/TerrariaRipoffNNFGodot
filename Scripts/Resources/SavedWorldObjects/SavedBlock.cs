@@ -4,13 +4,12 @@ using Godot.Collections;
 
 namespace TerrariaRipoffNNF;
 
-public partial class SavedBlock : Resource {
-    public int XPosition { get; private init; }
-    public int YPosition { get; private init; }
+public partial class SavedBlock : SavedWorldObject {
     public Item Item { get; private init; }
     public float CurrentHealth { get; set; }
+    
 
-    public Dictionary ToDictionary() {
+    public override Dictionary ToDictionary() {
         Dictionary serializedData = new();
         serializedData.Add("X", XPosition);
         serializedData.Add("Y", YPosition);
@@ -36,7 +35,7 @@ public partial class SavedBlock : Resource {
             YPosition = yPosition,
             CurrentHealth = currentHealth == 0
                 ? block.GetProperty<ItemBlock>().MaxHealth
-                : currentHealth
+                : currentHealth,
         };
     }
 }

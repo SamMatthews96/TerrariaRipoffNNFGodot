@@ -12,12 +12,12 @@ public partial class PickupManager : Node {
 
     public void SetGame(Game game) {
         _game = game;
-        _game.WorldManager.BlockManager.BlockDestroyed += OnBlockManagerBlockDestroyed;
+        // _game.WorldObjectManager.BlockManager.BlockDestroyed += OnBlockManagerBlockDestroyed;
         TreeExiting += OnTreeExiting;
     }
 
     private void OnTreeExiting() {
-        _game.WorldManager.BlockManager.BlockDestroyed -= OnBlockManagerBlockDestroyed;
+        // _game.WorldObjectManager.BlockManager.BlockDestroyed -= OnBlockManagerBlockDestroyed;
         TreeExiting -= OnTreeExiting;
     }
 
@@ -28,7 +28,7 @@ public partial class PickupManager : Node {
     }
 
     public override void _ExitTree() {
-        _game.WorldManager.BlockManager.BlockDestroyed -= OnBlockManagerBlockDestroyed;
+        // _game.WorldObjectManager.BlockManager.BlockDestroyed -= OnBlockManagerBlockDestroyed;
         Player.PlayerSpawned -= OnPlayerSpawned;
     }
 

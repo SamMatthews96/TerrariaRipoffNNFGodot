@@ -4,7 +4,7 @@ using Godot.Collections;
 
 namespace TerrariaRipoffNNF;
 
-public partial class SavedPlaceable : Resource {
+public partial class SavedPlaceable : SavedWorldObject {
     public int XLeftPosition { get; private init; }
     public int YBottomPosition { get; private init; }
     public Item Item { get; private init; }
@@ -28,7 +28,7 @@ public partial class SavedPlaceable : Resource {
         };
     }
 
-    public Dictionary ToDictionary() {
+    public override Dictionary ToDictionary() {
         Dictionary serializedData = new();
         serializedData.Add("Item", Item.ToDictionary());
         serializedData.Add("XLeftPosition", XLeftPosition);

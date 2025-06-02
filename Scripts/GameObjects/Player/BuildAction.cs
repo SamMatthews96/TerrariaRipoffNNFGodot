@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using Godot;
 using Godot.Collections;
 using Array = Godot.Collections.Array;
@@ -8,7 +9,6 @@ namespace TerrariaRipoffNNF;
 
 public partial class BuildAction : PlayerAction {
     public event Action<Item, IntVector> BlockPlaced;
-    public event Action<Item, IntVector> PlaceablePlaced;
 
     private Item _blockItem;
     private Game _game;
@@ -49,16 +49,16 @@ public partial class BuildAction : PlayerAction {
     private void BuildActionAttempt(Array intVectorArray, Dictionary itemData) {
         IntVector coords = new(intVectorArray);
         Item blockItem = Item.FromDictionary(itemData);
-        if (blockItem.HasProperty<ItemBlock>()) {
-            if (_game.WorldManager.BlockManager.IsCellOccupied(coords)) return;
-            BlockPlaced?.Invoke(blockItem, coords);
+
+        Array<SavedWorldObject> cellContents =
+            _game.WorldObjectManager.GetSavedCellContents(coords.X, coords.Y);
+        if (cellContents.Any(savedWorldObject =>
+                savedWorldObject is SavedBlock or SavedPlaceable)) {
+            return;
         }
 
-        if (blockItem.TryGetProperty(out ItemPlaceable placeable)) {
-            if (!_game.WorldManager.PlaceableManager
-                .AreCellsOccupied(coords, placeable.Width, placeable.Height)) {
-                PlaceablePlaced?.Invoke(blockItem, coords);
-            }
+        if (blockItem.HasProperty<ItemBlock>()) {
+            BlockPlaced?.Invoke(blockItem, coords);
         }
     }
 

@@ -9,9 +9,7 @@ public partial class MultiplayerClient : Node {
     private int _port = 8910;
     private string _ip = "127.0.0.1";
 
-
     public override void _Ready() {
-        // need to pass ip to this class
         Multiplayer.ConnectedToServer += () => { };
 
         _peer = new ENetMultiplayerPeer();

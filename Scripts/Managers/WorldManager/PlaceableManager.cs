@@ -32,7 +32,7 @@ public partial class PlaceableManager : Node {
         for (int x = coords.X; x < right; x++) {
             for (int y = coords.Y; y < bottom; y++) {
                 if (_savedPlaceableCells[x, y] is not null) return true;
-                if (_game.WorldManager.BlockManager.IsCellOccupied(new IntVector(x, y)))
+                // if (_game.WorldObjectManager.BlockManager.IsCellOccupied(new IntVector(x, y)))
                     return true;
             }
         }
@@ -41,7 +41,7 @@ public partial class PlaceableManager : Node {
     }
 
     private void OnPlayerManagerPlayerSpawned(Player player) {
-        player.ActionController.BuildAction.PlaceablePlaced += OnPlayerPlaceablePlaced;
+        // player.ActionController.BuildAction.PlaceablePlaced += OnPlayerPlaceablePlaced;
     }
 
     private void OnPlayerPlaceablePlaced(Item item, IntVector coords) {

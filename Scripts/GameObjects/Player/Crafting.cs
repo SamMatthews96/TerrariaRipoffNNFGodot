@@ -5,16 +5,6 @@ using Godot;
 
 namespace TerrariaRipoffNNF;
 
-public enum CraftingStationType {
-    Handcrafting,
-    Workbench,
-    Furnace,
-    Anvil,
-    AlchemyTable,
-    Loom,
-    CookingPot,
-}
-
 public sealed partial class Crafting : Node {
     [Export] private Player _player;
     [Export] private CraftingStation _handcrafting;

@@ -4,19 +4,13 @@ using Godot.Collections;
 namespace TerrariaRipoffNNF;
 
 public abstract partial class SavedWorldObject : Resource {
-    // IntVector isn't a variant type
-    // if we forget IntVectors life may just get easier
-    public int XPosition { get; private set; }
-    public int YPosition { get; private set; }
+    public int XPosition { get; protected set; }
+    public int YPosition { get; protected set; }
+    
 
     public abstract Dictionary ToDictionary();
 
     // Create can just be defined on the child classes
-
-
-    // Positions were init on SavedBlock
-    // I think it should be private set for SavedWorldObject
-    // worldObjects can move in case of fluids or pickups
 
     // would it be insane to use composition for worldObjects?
     // Examples of WorldObjects:

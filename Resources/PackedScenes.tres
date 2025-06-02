@@ -14,7 +14,7 @@
 [ext_resource type="PackedScene" uid="uid://0tlymjajesh" path="res://Scenes/Interface/Game/Crafting/SelectCraftStationButton.tscn" id="7_eocek"]
 [ext_resource type="PackedScene" uid="uid://dgm8a81v4g6g3" path="res://Scenes/Interface/Game/Crafting/SelectRecipeButton.tscn" id="8_bwf4d"]
 [ext_resource type="PackedScene" uid="uid://d3mhbs8it3b2f" path="res://Scenes/Interface/Game/Crafting/SelectIngredientButton.tscn" id="11_tftwe"]
-[ext_resource type="PackedScene" uid="uid://cvfy8a4lwu7a2" path="res://Scenes/Managers/WorldManager.tscn" id="13_6qgqe"]
+[ext_resource type="PackedScene" uid="uid://cakmoct7fr7qe" path="res://Scenes/Managers/WorldObjectManager.tscn" id="14_mase3"]
 
 [resource]
 script = ExtResource("1_tombv")
@@ -31,5 +31,5 @@ RecipeIngredientSlotTexture = ExtResource("7_6ykcs")
 BlockTypeButton = ExtResource("4_rx88w")
 ItemTooltipPropertyGroup = ExtResource("5_8fovs")
 SelectIngredientButton = ExtResource("11_tftwe")
-WorldManager = ExtResource("13_6qgqe")
 LoadingScreen = ExtResource("4_y0gj7")
+WorldObjectManager = ExtResource("14_mase3")

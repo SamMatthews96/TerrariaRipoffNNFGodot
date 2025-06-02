@@ -21,7 +21,7 @@ public partial class SceneManager : Node {
     private void OnMainMenuSinglePlayerClickedEnterWorld(Dictionary worldData, Dictionary playerData) {
         CreateGame();
         _game.InitAsSinglePlayer(worldData, playerData);
-        _game.WorldManager.BlockManager.WorldLoaded += OnWorldLoaded;
+        _game.WorldObjectManager.WorldLoaded += OnWorldLoaded;
     }
 
     private void CreateGame() {
@@ -37,7 +37,7 @@ public partial class SceneManager : Node {
     private void OnMainMenuHostClickedEnterWorld(Dictionary world, Dictionary playerInfo) {
         CreateGame();
         _game.InitAsHost(world, playerInfo);
-        _game.WorldManager.BlockManager.WorldLoaded += OnWorldLoaded;
+        _game.WorldObjectManager.WorldLoaded += OnWorldLoaded;
     }
 
     private void OnWorldLoaded() {
