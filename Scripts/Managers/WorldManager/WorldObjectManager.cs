@@ -124,8 +124,8 @@ public partial class WorldObjectManager : Node {
     private void SpawnBlocksInRegion(List<IntVector> region) {
         List<SavedBlock> savedBlocks = GetSavedBlocksInRegion(region);
         foreach (SavedBlock savedBlock in savedBlocks) {
-            Array<SavedBlock> cellContents =
-                GetSavedCellContents<SavedBlock>(savedBlock.XPosition, savedBlock.YPosition);
+            Array<ActiveBlock> cellContents =
+                GetActiveCellContents<ActiveBlock>(savedBlock.XPosition, savedBlock.YPosition);
             if (cellContents.Count == 0) {
                 SpawnBlock(savedBlock);
             }
