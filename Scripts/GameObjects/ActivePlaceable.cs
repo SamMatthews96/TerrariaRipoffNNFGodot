@@ -4,7 +4,7 @@ using Godot.Collections;
 
 namespace TerrariaRipoffNNF;
 
-public partial class ActivePlaceable : Node2D {
+public partial class ActivePlaceable : ActiveWorldObject {
     public SavedPlaceable SavedPlaceable { get; private set; }
     [Export] private Dictionary _savedPlaceableDictionary;
     [Export] private Sprite2D _sprite;

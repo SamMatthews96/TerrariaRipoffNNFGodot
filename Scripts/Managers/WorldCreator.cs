@@ -39,25 +39,18 @@ public static class WorldCreator {
         }
         worldDictionary.Add("SavedBlocks", savedBlockArray);
 
-        // Create world trees
-        Array savedTreeArray = new();
-        for (int i = 5; i < 40; i += 10) {
-            SavedTree savedTree = SavedTree.Create(
-                Data.Items.Wood,
-                new List<IntVector> {
-                    new(i, mid + 1),
-                    new(i, mid + 2),
-                    new(i, mid + 3),
-                    new(i, mid + 4),
-                    new(i, mid + 5),
-                    new(i, mid + 6),
-                    new(i, mid + 7),
-                    new(i, mid + 8)
-                });
-            savedTreeArray.Add(savedTree.ToDictionary());
-        }
-        worldDictionary.Add("SavedTrees", savedTreeArray);
-
+        Array savedProps = new();
+        for (int y = 0; y < 10; y++) {
+            SavedProp treePart = SavedProp.Create(
+                item: Data.Items.Wood,
+                xPosition: 20,
+                yPosition: mid - 1 - y,
+                currentHealth: 30
+            );
+            savedProps.Add(treePart.ToDictionary());
+        } 
+        worldDictionary.Add("SavedProps", savedProps);
+        
         FileManager.SaveWorld(worldDictionary);
     }
 }

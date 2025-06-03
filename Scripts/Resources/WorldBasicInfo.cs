@@ -26,7 +26,7 @@ public partial class WorldBasicInfo : Resource {
         return serializedData;
     }
 
-    public static WorldBasicInfo FromDict(Dictionary dictionary) {
+    public static WorldBasicInfo FromDictionary(Dictionary dictionary) {
         return new WorldBasicInfo(
             dictionary["Name"].ToString(),
             (int)Math.Round(dictionary["Width"].ToString().ToFloat()),

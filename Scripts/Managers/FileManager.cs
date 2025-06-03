@@ -56,7 +56,7 @@ public static class FileManager {
             fileAccess.Dispose();
             Dictionary worldBasicInfoDict = Json.ParseString(content).AsGodotDictionary();
 
-            worldBasicInfos[i] = WorldBasicInfo.FromDict(worldBasicInfoDict);
+            worldBasicInfos[i] = WorldBasicInfo.FromDictionary(worldBasicInfoDict);
         }
 
         return worldBasicInfos;

@@ -9,7 +9,7 @@ public partial class ActiveBlock : ActiveWorldObject {
     [Export] private Sprite2D _sprite;
 
     public override void _Ready() {
-        SavedBlock = SavedBlock.FromDict(_savedBlockDictionary);
+        SavedBlock = SavedBlock.FromDictionary(_savedBlockDictionary);
 
         Position = new Vector2(
             SavedBlock.XPosition * Game.BlockSize,

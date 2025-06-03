@@ -76,11 +76,19 @@ public partial class WorldObjectManager : Node {
         
         Array savedBlockArray = worldData["SavedBlocks"].AsGodotArray();
         foreach (Dictionary savedBlockDict in savedBlockArray) {
-            SavedBlock savedBlock = SavedBlock.FromDict(savedBlockDict);
+            SavedBlock savedBlock = SavedBlock.FromDictionary(savedBlockDict);
             _savedWorldObjects[savedBlock.XPosition, savedBlock.YPosition] ??=
                 new Array<SavedWorldObject>();
             _savedWorldObjects[savedBlock.XPosition, savedBlock.YPosition]
                 .Add(savedBlock);
+        }
+        Array savedPropArray = worldData["SavedProps"].AsGodotArray();
+        foreach (Dictionary savedPropDict in savedPropArray) {
+            SavedProp savedProp = SavedProp.FromDictionary(savedPropDict);
+            _savedWorldObjects[savedProp.XPosition, savedProp.YPosition] ??=
+                new Array<SavedWorldObject>();
+            _savedWorldObjects[savedProp.XPosition, savedProp.YPosition]
+                .Add(savedProp);
         }
     }
     private void OnPlayerSpawned(Player player) {
@@ -142,6 +150,7 @@ public partial class WorldObjectManager : Node {
         }
 
         ActiveBlock activeBlock = ActiveBlock.Create(savedBlock);
+        // ActiveWorldObject activeWorldObject = savedBlock.SpawnActiveObject();
 
         _game.BlockParent.AddChild(activeBlock, true);
 

@@ -18,7 +18,7 @@ public partial class SavedBlock : SavedWorldObject {
         return serializedData;
     }
 
-    public static SavedBlock FromDict(Dictionary dictionary) {
+    public static SavedBlock FromDictionary(Dictionary dictionary) {
         return Create(
             block: Item.FromDictionary(dictionary),
             xPosition: (int)Math.Round( dictionary["X"].ToString().ToFloat()),
