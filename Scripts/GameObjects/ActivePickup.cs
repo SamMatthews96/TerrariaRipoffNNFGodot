@@ -4,7 +4,7 @@ using Godot.Collections;
 
 namespace TerrariaRipoffNNF;
 
-public partial class ActivePickup : Node2D {
+public partial class ActivePickup : ActiveWorldObject {
     [Export] private Sprite2D _sprite;
     [Export] private Dictionary _savedPickupDictionary;
     [Export] private Area2D _pickupArea;
@@ -23,7 +23,7 @@ public partial class ActivePickup : Node2D {
     
     public void Initialize(SavedPickup savedPickup) {
         SavedPickup = savedPickup;
-        _savedPickupDictionary = savedPickup.Serialize();
+        _savedPickupDictionary = savedPickup.ToDictionary();
     }
 
     public override void _Ready() {

@@ -12,7 +12,6 @@ public partial class WorldObjectManager : Node {
     public const int BlockSpawnDistance = 20;
 
     private Game _game;
-
     private Array<SavedWorldObject>[,] _savedWorldObjects;
     private Array<ActiveWorldObject>[,] _activeWorldObjects;
 
@@ -93,13 +92,16 @@ public partial class WorldObjectManager : Node {
         player.ActionController.GatherAction.GatherAttempted += OnPlayerGatherAction;
         player.ActionController.BuildAction.BlockPlaced += OnPlayerBuildAction;
         player.PlayerDespawned += OnPlayerDespawned;
+        player.Inventory.PickedUpItem += OnPlayerPickedUpItem;
     }
 
     private void OnPlayerDespawned(Player player) {
         player.MovedCell -= OnLocalPlayerMoved;
         player.ActionController.GatherAction.GatherAttempted -= OnPlayerGatherAction;
         player.ActionController.BuildAction.BlockPlaced -= OnPlayerBuildAction;
+        player.Inventory.PickedUpItem -= OnPlayerPickedUpItem;
         player.PlayerDespawned -= OnPlayerDespawned;
+        
     }
 
     private void OnLocalPlayerMoved(Dictionary positionChange) {
@@ -170,7 +172,8 @@ public partial class WorldObjectManager : Node {
         activeBlock.QueueFree();
         _activeWorldObjects[savedBlock.XPosition, savedBlock.YPosition]
             .Remove(activeBlock);
-        BlockDestroyed?.Invoke(savedBlock);
+        
+        OnBlockManagerBlockDestroyed(savedBlock);
     }
 
     private void OnPlayerBuildAction(Item item, IntVector coords) {
@@ -185,5 +188,61 @@ public partial class WorldObjectManager : Node {
                 ??= new Array<SavedWorldObject>();
         savedWorldObjects.Add(savedBlock);
         SpawnBlock(savedBlock);
+    }
+    
+    // pickup manager
+    
+    private void OnPlayerPickedUpItem(ActivePickup activePickup) {
+        DeletePickup(activePickup);
+    }
+
+    private void DeletePickup(ActivePickup activePickup) {
+        int xPosition = activePickup.SavedPickup.XPosition;
+        int yPosition = activePickup.SavedPickup.YPosition;
+        _activeWorldObjects[xPosition, yPosition].Remove(activePickup);
+        _savedWorldObjects[xPosition, yPosition].Remove(activePickup.SavedPickup);
+        activePickup.QueueFree();
+    }
+    
+    private void OnBlockManagerBlockDestroyed(SavedBlock savedBlock) {
+        Vector2 position = new(savedBlock.XPosition * Game.BlockSize,
+            savedBlock.YPosition * Game.BlockSize);
+
+        CreatePickup(savedBlock.Item, position);
+    }
+    
+    private void CreatePickup(Item item, Vector2 position) {
+        IntVector coords = new(position / Game.BlockSize);
+
+        SavedPickup savedPickup = new(item, position);
+        _savedWorldObjects[coords.X, coords.Y] ??= new Array<SavedWorldObject>();
+        _savedWorldObjects[coords.X, coords.Y].Add(savedPickup);
+
+        ActivePickup activePickup = Data.PackedScenes.ActivePickup.Instantiate<ActivePickup>();
+        activePickup.Initialize(savedPickup);
+        _activeWorldObjects[coords.X, coords.Y] ??= new Array<ActiveWorldObject>();
+        _activeWorldObjects[coords.X, coords.Y].Add(activePickup);
+        activePickup.MovedCell += OnPickupMovedCell;
+
+        _game.BlockParent.AddChild(activePickup, true);
+    }
+
+    private void OnPickupMovedCell(ActivePickup activePickup, Dictionary positionChange) {
+        IntVector previousCoords = new(
+            (int)positionChange["PreviousX"], (int)positionChange["PreviousY"]);
+        IntVector coords = new(
+            (int)positionChange["X"], (int)positionChange["Y"]);
+        activePickup.SavedPickup.XPosition = coords.X;
+        activePickup.SavedPickup.YPosition = coords.Y;
+
+        _savedWorldObjects[previousCoords.X, previousCoords.Y].Remove(activePickup.SavedPickup);
+        _activeWorldObjects[previousCoords.X, previousCoords.Y].Remove(activePickup);
+
+        Array<SavedWorldObject> savedPickupsNewPosition =
+            _savedWorldObjects[coords.X, coords.Y] ??= new Array<SavedWorldObject>();
+        Array<ActiveWorldObject> activePickupsNewPosition =
+            _activeWorldObjects[coords.X, coords.Y] ??= new Array<ActiveWorldObject>();
+        savedPickupsNewPosition.Add(activePickup.SavedPickup);
+        activePickupsNewPosition.Add(activePickup);
     }
 }

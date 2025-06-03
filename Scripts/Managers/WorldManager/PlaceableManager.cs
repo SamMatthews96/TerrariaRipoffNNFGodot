@@ -5,7 +5,7 @@ using Godot.Collections;
 namespace TerrariaRipoffNNF;
 
 public partial class PlaceableManager : Node {
-    [Export] private BlockManager _blockManager;
+    // [Export] private BlockManager _blockManager;
     private Game _game;
 
     private SavedPlaceable[,] _savedPlaceableCells;

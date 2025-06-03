@@ -2,18 +2,18 @@
 using Godot.Collections;
 namespace TerrariaRipoffNNF;
 
-public partial class SavedPickup : Resource {
+public partial class SavedPickup : SavedWorldObject {
     public Vector2 Position { get; private set; }
     public InventoryItems InventoryItems { get; }
-    public IntVector Indices { get; set; }
 
     public SavedPickup(Item item, Vector2 position, int count = 1) {
         InventoryItems = new InventoryItems(item, count);
         Position = position;
-        Indices = new IntVector(position / Game.BlockSize);
+        XPosition = (int)(position.X / Game.BlockSize);
+        YPosition = (int)(position.Y / Game.BlockSize);
     }
 
-    public Dictionary Serialize() {
+    public override Dictionary ToDictionary() {
         return new Dictionary {
             { "InventoryItemType", InventoryItems.Serialize() },
             { "Position", Position },
@@ -26,6 +26,4 @@ public partial class SavedPickup : Resource {
         Vector2 position = (Vector2)dictionary["Position"];
         return new SavedPickup(inventoryItems.Item, position, inventoryItems.Count);
     }
-
-    public SavedPickup() { }
 }
