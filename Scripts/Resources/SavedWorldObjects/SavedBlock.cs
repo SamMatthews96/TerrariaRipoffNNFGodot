@@ -18,6 +18,10 @@ public partial class SavedBlock : SavedWorldObject {
         return serializedData;
     }
 
+    public override ActiveWorldObject SpawnActiveObject() {
+        return ActiveBlock.Create(this);
+    }
+
     public static SavedBlock FromDictionary(Dictionary dictionary) {
         return Create(
             block: Item.FromDictionary(dictionary),

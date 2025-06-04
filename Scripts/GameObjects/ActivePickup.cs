@@ -6,13 +6,11 @@ namespace TerrariaRipoffNNF;
 
 public partial class ActivePickup : ActiveWorldObject {
     [Export] private Sprite2D _sprite;
-    [Export] private Dictionary _savedPickupDictionary;
     [Export] private Area2D _pickupArea;
 
     private IntVector _previousCoords;
     public SavedPickup SavedPickup { get; private set; }
     
-
     private IntVector Coords => new(
         (int)Math.Round(Position.X / Game.BlockSize),
         (int)Math.Round(Position.Y / Game.BlockSize));
@@ -23,11 +21,11 @@ public partial class ActivePickup : ActiveWorldObject {
     
     public void Initialize(SavedPickup savedPickup) {
         SavedPickup = savedPickup;
-        _savedPickupDictionary = savedPickup.ToDictionary();
+        ObjectConfig = savedPickup.ToDictionary();
     }
 
     public override void _Ready() {
-        SavedPickup ??= SavedPickup.Deserialize(_savedPickupDictionary);
+        SavedPickup ??= SavedPickup.Deserialize(ObjectConfig);
         Position = SavedPickup.Position;
         _sprite.Texture = SavedPickup.InventoryItems.Item.IconTexture;
         _previousCoords = Coords;

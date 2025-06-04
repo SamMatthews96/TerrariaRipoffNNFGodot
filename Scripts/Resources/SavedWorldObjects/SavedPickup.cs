@@ -20,6 +20,10 @@ public partial class SavedPickup : SavedWorldObject {
         };
     }
 
+    public override ActiveWorldObject SpawnActiveObject() {
+        throw new System.NotImplementedException("");
+    }
+
     public static SavedPickup Deserialize(Dictionary dictionary) {
         InventoryItems inventoryItems =
             InventoryItems.Deserialize(dictionary["InventoryItemType"].AsGodotDictionary());

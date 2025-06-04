@@ -17,6 +17,10 @@ public partial class SavedProp : SavedWorldObject {
         return serializedData;
     }
 
+    public override ActiveWorldObject SpawnActiveObject() {
+        throw new NotImplementedException();
+    }
+
     public static SavedProp FromDictionary(Dictionary dictionary) {
         return Create(
             item: Item.FromDictionary(dictionary["Item"].AsGodotDictionary()),

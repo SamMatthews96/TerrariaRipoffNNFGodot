@@ -21,9 +21,9 @@ public partial class WorldObjectManager : Node {
     public static WorldObjectManager Create() {
         return Data.PackedScenes.WorldObjectManager.Instantiate<WorldObjectManager>();
     }
-    
+
     public Array<SavedWorldObject> GetSavedCellContents(int x, int y) {
-        return _savedWorldObjects[x, y] ?? new Array<SavedWorldObject>();
+        return _savedWorldObjects[x, y];
     }
 
     public Array<T> GetSavedCellContents<[MustBeVariant] T>(int x, int y)
@@ -39,7 +39,7 @@ public partial class WorldObjectManager : Node {
     }
 
     public Array<ActiveWorldObject> GetActiveCellContents(int x, int y) {
-        return _activeWorldObjects[x, y] ?? new Array<ActiveWorldObject>();
+        return _activeWorldObjects[x, y];
     }
 
     public Array<T> GetActiveCellContents<[MustBeVariant] T>(int x, int y)
@@ -64,7 +64,7 @@ public partial class WorldObjectManager : Node {
         task.GetAwaiter().OnCompleted(() => { WorldLoaded?.Invoke(); });
         TreeExiting += OnExiting;
     }
-    
+
     private void OnExiting() {
         Player.PlayerSpawned -= OnPlayerSpawned;
         TreeExiting -= OnExiting;
@@ -73,24 +73,21 @@ public partial class WorldObjectManager : Node {
     private void HostCreateWorld(Dictionary worldData) {
         _savedWorldObjects = new Array<SavedWorldObject>[_game.Width, _game.Height];
         _activeWorldObjects = new Array<ActiveWorldObject>[_game.Width, _game.Height];
-        
-        Array savedBlockArray = worldData["SavedBlocks"].AsGodotArray();
-        foreach (Dictionary savedBlockDict in savedBlockArray) {
+        for (int x = 0; x < _game.Width; x++) {
+            for (int y = 0; y < _game.Height; y++) {
+                _savedWorldObjects[x, y] = new Array<SavedWorldObject>();
+                _activeWorldObjects[x, y] = new Array<ActiveWorldObject>();
+            }
+        }
+
+        Array savedWorldObjects = worldData["SavedWorldObjects"].AsGodotArray();
+        foreach (Dictionary savedBlockDict in savedWorldObjects) {
             SavedBlock savedBlock = SavedBlock.FromDictionary(savedBlockDict);
-            _savedWorldObjects[savedBlock.XPosition, savedBlock.YPosition] ??=
-                new Array<SavedWorldObject>();
             _savedWorldObjects[savedBlock.XPosition, savedBlock.YPosition]
                 .Add(savedBlock);
         }
-        Array savedPropArray = worldData["SavedProps"].AsGodotArray();
-        foreach (Dictionary savedPropDict in savedPropArray) {
-            SavedProp savedProp = SavedProp.FromDictionary(savedPropDict);
-            _savedWorldObjects[savedProp.XPosition, savedProp.YPosition] ??=
-                new Array<SavedWorldObject>();
-            _savedWorldObjects[savedProp.XPosition, savedProp.YPosition]
-                .Add(savedProp);
-        }
     }
+
     private void OnPlayerSpawned(Player player) {
         List<IntVector> region = _game.Region.GetRegion(
             player.SpawnCoords, BlockSpawnDistance);
@@ -109,7 +106,6 @@ public partial class WorldObjectManager : Node {
         player.ActionController.BuildAction.BlockPlaced -= OnPlayerBuildAction;
         player.Inventory.PickedUpItem -= OnPlayerPickedUpItem;
         player.PlayerDespawned -= OnPlayerDespawned;
-        
     }
 
     private void OnLocalPlayerMoved(Dictionary positionChange) {
@@ -137,27 +133,17 @@ public partial class WorldObjectManager : Node {
             Array<ActiveBlock> cellContents =
                 GetActiveCellContents<ActiveBlock>(savedBlock.XPosition, savedBlock.YPosition);
             if (cellContents.Count == 0) {
-                SpawnBlock(savedBlock);
+                SpawnObject(savedBlock);
             }
         }
     }
 
-    private void SpawnBlock(SavedBlock savedBlock) {
-        Array<ActiveBlock> cellContents =
-            GetActiveCellContents<ActiveBlock>(savedBlock.XPosition, savedBlock.YPosition);
-        if (cellContents.Count > 0) {
-            throw new Exception("[20240814.2208.1] Block already spawned");
-        }
-
-        ActiveBlock activeBlock = ActiveBlock.Create(savedBlock);
-        // ActiveWorldObject activeWorldObject = savedBlock.SpawnActiveObject();
-
+    private void SpawnObject(SavedWorldObject savedWorldObject) {
+        ActiveWorldObject activeBlock = savedWorldObject.SpawnActiveObject();
         _game.BlockParent.AddChild(activeBlock, true);
 
-        Array<ActiveWorldObject> activeCellObjects =
-            _activeWorldObjects[savedBlock.XPosition, savedBlock.YPosition] ??=
-                new Array<ActiveWorldObject>();
-        activeCellObjects.Add(activeBlock);
+        _activeWorldObjects[savedWorldObject.XPosition, savedWorldObject.YPosition]
+            .Add(activeBlock);
     }
 
     private List<SavedBlock> GetSavedBlocksInRegion(List<IntVector> region) {
@@ -171,7 +157,7 @@ public partial class WorldObjectManager : Node {
 
         return savedBlocks;
     }
-    
+
     private void DamageActiveBlock(ActiveBlock activeBlock, float damageAmount) {
         SavedBlock savedBlock = activeBlock.SavedBlock;
         savedBlock.CurrentHealth -= damageAmount;
@@ -181,7 +167,7 @@ public partial class WorldObjectManager : Node {
         activeBlock.QueueFree();
         _activeWorldObjects[savedBlock.XPosition, savedBlock.YPosition]
             .Remove(activeBlock);
-        
+
         OnBlockManagerBlockDestroyed(savedBlock);
     }
 
@@ -192,15 +178,12 @@ public partial class WorldObjectManager : Node {
         SavedBlock savedBlock = SavedBlock.Create(
             block: item, xPosition: coords.X, yPosition: coords.Y
         );
-        Array<SavedWorldObject> savedWorldObjects =
-            _savedWorldObjects[coords.X, coords.Y]
-                ??= new Array<SavedWorldObject>();
-        savedWorldObjects.Add(savedBlock);
-        SpawnBlock(savedBlock);
+        _savedWorldObjects[coords.X, coords.Y].Add(savedBlock);
+        SpawnObject(savedBlock);
     }
-    
+
     // pickup manager
-    
+
     private void OnPlayerPickedUpItem(ActivePickup activePickup) {
         DeletePickup(activePickup);
     }
@@ -212,24 +195,22 @@ public partial class WorldObjectManager : Node {
         _savedWorldObjects[xPosition, yPosition].Remove(activePickup.SavedPickup);
         activePickup.QueueFree();
     }
-    
+
     private void OnBlockManagerBlockDestroyed(SavedBlock savedBlock) {
         Vector2 position = new(savedBlock.XPosition * Game.BlockSize,
             savedBlock.YPosition * Game.BlockSize);
 
         CreatePickup(savedBlock.Item, position);
     }
-    
+
     private void CreatePickup(Item item, Vector2 position) {
         IntVector coords = new(position / Game.BlockSize);
 
         SavedPickup savedPickup = new(item, position);
-        _savedWorldObjects[coords.X, coords.Y] ??= new Array<SavedWorldObject>();
         _savedWorldObjects[coords.X, coords.Y].Add(savedPickup);
 
         ActivePickup activePickup = Data.PackedScenes.ActivePickup.Instantiate<ActivePickup>();
         activePickup.Initialize(savedPickup);
-        _activeWorldObjects[coords.X, coords.Y] ??= new Array<ActiveWorldObject>();
         _activeWorldObjects[coords.X, coords.Y].Add(activePickup);
         activePickup.MovedCell += OnPickupMovedCell;
 
@@ -247,11 +228,7 @@ public partial class WorldObjectManager : Node {
         _savedWorldObjects[previousCoords.X, previousCoords.Y].Remove(activePickup.SavedPickup);
         _activeWorldObjects[previousCoords.X, previousCoords.Y].Remove(activePickup);
 
-        Array<SavedWorldObject> savedPickupsNewPosition =
-            _savedWorldObjects[coords.X, coords.Y] ??= new Array<SavedWorldObject>();
-        Array<ActiveWorldObject> activePickupsNewPosition =
-            _activeWorldObjects[coords.X, coords.Y] ??= new Array<ActiveWorldObject>();
-        savedPickupsNewPosition.Add(activePickup.SavedPickup);
-        activePickupsNewPosition.Add(activePickup);
+        _savedWorldObjects[coords.X, coords.Y].Add(activePickup.SavedPickup);
+        _activeWorldObjects[coords.X, coords.Y].Add(activePickup);
     }
 }

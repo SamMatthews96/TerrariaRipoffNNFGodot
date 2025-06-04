@@ -37,6 +37,10 @@ public partial class SavedPlaceable : SavedWorldObject {
         return serializedData;
     }
 
+    public override ActiveWorldObject SpawnActiveObject() {
+        throw new System.NotImplementedException();
+    }
+
     public static SavedPlaceable FromDictionary(Dictionary dictionary) {
         return Create(
             item: Item.FromDictionary(dictionary["Item"].AsGodotDictionary()),

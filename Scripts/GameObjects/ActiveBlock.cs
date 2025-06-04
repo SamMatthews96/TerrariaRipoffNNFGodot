@@ -5,11 +5,11 @@ namespace TerrariaRipoffNNF;
 
 public partial class ActiveBlock : ActiveWorldObject {
     public SavedBlock SavedBlock { get; private set; }
-    [Export] private Dictionary _savedBlockDictionary;
+   
     [Export] private Sprite2D _sprite;
 
     public override void _Ready() {
-        SavedBlock = SavedBlock.FromDictionary(_savedBlockDictionary);
+        SavedBlock = SavedBlock.FromDictionary(ObjectConfig);
 
         Position = new Vector2(
             SavedBlock.XPosition * Game.BlockSize,
@@ -19,7 +19,7 @@ public partial class ActiveBlock : ActiveWorldObject {
     
     public static ActiveBlock Create(SavedBlock savedBlock) {
         ActiveBlock activeBlock = Data.PackedScenes.ActiveBlock.Instantiate<ActiveBlock>();
-        activeBlock._savedBlockDictionary = savedBlock.ToDictionary();
+        activeBlock.ObjectConfig = savedBlock.ToDictionary();
         
         return activeBlock;
     }
