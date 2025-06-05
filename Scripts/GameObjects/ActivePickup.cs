@@ -7,9 +7,10 @@ namespace TerrariaRipoffNNF;
 public partial class ActivePickup : ActiveWorldObject {
     [Export] private Sprite2D _sprite;
     [Export] private Area2D _pickupArea;
+    public InventoryItems Items { get; private set; }
 
     private IntVector _previousCoords;
-    
+
     private IntVector Coords => new(
         (int)Math.Round(Position.X / Game.BlockSize),
         (int)Math.Round(Position.Y / Game.BlockSize));
@@ -17,13 +18,25 @@ public partial class ActivePickup : ActiveWorldObject {
     public event Action<ActivePickup, Dictionary> MovedCell;
 
     private bool IsHost => Multiplayer.GetUniqueId() == SceneManager.HostId;
-    
-    // public void Initialize(SavedPickup savedPickup) {
-    //     ObjectConfig = savedPickup.ToDictionary();
-    // }
+
+    public new static ActivePickup Create(Dictionary data) {
+        ActivePickup newPickup = Data.PackedScenes.ActivePickup.Instantiate<ActivePickup>();
+
+        Item item = Item.FromDictionary(data["item"].AsGodotDictionary());
+        newPickup.Items = new InventoryItems(item);
+        newPickup.XPosition = (int)Math.Round(data["xPosition"].ToString().ToFloat());
+        newPickup.YPosition = (int)Math.Round(data["yPosition"].ToString().ToFloat());
+        // newPickup.Disable();
+        return newPickup;
+    }
 
     public override void _Ready() {
         _previousCoords = Coords;
+        Position = new Vector2(
+            XPosition * Game.BlockSize,
+            YPosition * Game.BlockSize);
+        ItemBlock itemBlock = Items.Item.GetProperty<ItemBlock>();
+        _sprite.Texture = itemBlock.Texture;
     }
 
     public override void _PhysicsProcess(double delta) {
