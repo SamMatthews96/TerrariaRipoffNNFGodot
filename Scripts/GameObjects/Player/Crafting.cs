@@ -35,21 +35,21 @@ public sealed partial class Crafting : Node {
     }
 
     private void OnActivePlaceableSpawned(ActivePlaceable activePlaceable) {
-        ItemPlaceable itemPlaceable =
-            activePlaceable.SavedPlaceable.Item.GetProperty<ItemPlaceable>();
-        if (!itemPlaceable.TryGetProperty(out PlaceableCrafting placeableCrafting)) return;
+        // ItemPlaceable itemPlaceable =
+            // activePlaceable.SavedPlaceable.Item.GetProperty<ItemPlaceable>();
+        // if (!itemPlaceable.TryGetProperty(out PlaceableCrafting placeableCrafting)) return;
 
-        CraftingStationType craftingStationType = placeableCrafting.CraftingStation.Type;
-        if (_availableCraftingStations.ContainsKey(craftingStationType)) return;
-        AddCraftingStation(placeableCrafting.CraftingStation);
-        activePlaceable.ActivePlaceableDespawned += OnActivePlaceableDespawned;
+        // CraftingStationType craftingStationType = placeableCrafting.CraftingStation.Type;
+        // if (_availableCraftingStations.ContainsKey(craftingStationType)) return;
+        // AddCraftingStation(placeableCrafting.CraftingStation);
+        // activePlaceable.ActivePlaceableDespawned += OnActivePlaceableDespawned;
     }
 
     private void OnActivePlaceableDespawned(ActivePlaceable activePlaceable) {
         activePlaceable.ActivePlaceableDespawned -= OnActivePlaceableDespawned;
-        CraftingStation craftingStation = activePlaceable.SavedPlaceable.Item
-            .GetProperty<ItemPlaceable>().GetProperty<PlaceableCrafting>().CraftingStation;
-        RemoveCraftingStation(craftingStation);
+        // CraftingStation craftingStation = activePlaceable.SavedPlaceable.Item
+            // .GetProperty<ItemPlaceable>().GetProperty<PlaceableCrafting>().CraftingStation;
+        // RemoveCraftingStation(craftingStation);
     }
 
     private void OnTreeExitingLocal() {

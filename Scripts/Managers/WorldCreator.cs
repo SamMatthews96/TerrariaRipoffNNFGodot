@@ -24,28 +24,29 @@ public static class WorldCreator {
         };
         Random random = new();
 
-        // Create world blocks
         Array savedWorldObjects = new();
         for (int x = 0; x < worldBasicInfo.Width; x++) {
             for (int y = mid; y < worldBasicInfo.Height; y++) {
-                Item type = types[random.Next(3)];
-                SavedBlock savedBlock = SavedBlock.Create(
-                    block: type,
-                    xPosition: x,
-                    yPosition: y
-                );
-                savedWorldObjects.Add(savedBlock.ToDictionary());
+                Item item = types[random.Next(3)];
+                Dictionary newBlock = new() {
+                    {"type", "block"},
+                    {"item", item.ToDictionary()},
+                    {"xPosition", x},
+                    {"yPosition", y},
+                };
+                savedWorldObjects.Add(newBlock);
             }
         }
 
         for (int y = 0; y < 10; y++) {
-            SavedProp treePart = SavedProp.Create(
-                item: Data.Items.Wood,
-                xPosition: 20,
-                yPosition: mid - 1 - y,
-                currentHealth: 30
-            );
-            savedWorldObjects.Add(treePart.ToDictionary());
+            Dictionary newProp = new() {
+                {"type", "prop"},
+                {"item", Data.Items.Wood.ToDictionary()},
+                {"xPosition", 20},
+                {"yPosition", mid - 1 - y},
+                {"currentHealth", 30}
+            };
+            savedWorldObjects.Add(newProp);
         } 
         worldDictionary.Add("SavedWorldObjects", savedWorldObjects);
         

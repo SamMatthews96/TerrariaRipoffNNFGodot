@@ -9,7 +9,6 @@ public partial class ActivePickup : ActiveWorldObject {
     [Export] private Area2D _pickupArea;
 
     private IntVector _previousCoords;
-    public SavedPickup SavedPickup { get; private set; }
     
     private IntVector Coords => new(
         (int)Math.Round(Position.X / Game.BlockSize),
@@ -19,15 +18,11 @@ public partial class ActivePickup : ActiveWorldObject {
 
     private bool IsHost => Multiplayer.GetUniqueId() == SceneManager.HostId;
     
-    public void Initialize(SavedPickup savedPickup) {
-        SavedPickup = savedPickup;
-        ObjectConfig = savedPickup.ToDictionary();
-    }
+    // public void Initialize(SavedPickup savedPickup) {
+    //     ObjectConfig = savedPickup.ToDictionary();
+    // }
 
     public override void _Ready() {
-        SavedPickup ??= SavedPickup.Deserialize(ObjectConfig);
-        Position = SavedPickup.Position;
-        _sprite.Texture = SavedPickup.InventoryItems.Item.IconTexture;
         _previousCoords = Coords;
     }
 

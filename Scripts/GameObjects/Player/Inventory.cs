@@ -76,11 +76,11 @@ public partial class Inventory : Node {
     }
 
     private void OnHostCollidedWithPickup(ActivePickup activePickup) {
-        if (activePickup.SavedPickup.InventoryItems.TotalSpace > MaximumSpace - UsedSpace) {
-            return;
-        }
+        // if (activePickup.SavedPickup.InventoryItems.TotalSpace > MaximumSpace - UsedSpace) {
+        //     return;
+        // }
 
-        Rpc(nameof(ClientAddItems), activePickup.SavedPickup.InventoryItems.Serialize());
+        // Rpc(nameof(ClientAddItems), activePickup.SavedPickup.InventoryItems.Serialize());
 
         PickedUpItem?.Invoke(activePickup);
     }

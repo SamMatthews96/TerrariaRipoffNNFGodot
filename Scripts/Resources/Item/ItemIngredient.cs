@@ -11,7 +11,6 @@ public partial class ItemIngredient : ItemProperty {
 
     public override Dictionary ToDictionary() {
         return new Dictionary();
-        // @todo Implement
     }
 
     public override Dictionary GetTooltipAttributes() {
