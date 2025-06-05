@@ -63,7 +63,7 @@ public partial class WorldObjectManager : Node {
         int count = _savedWorldObjects.Count;
         Stopwatch stopwatch = new();
         stopwatch.Start();
-        while (_currentObjectCount < count ||
+        while (_currentObjectCount < count &&
                stopwatch.ElapsedMilliseconds < 16) {
             Dictionary savedWorldObjectDict =
                 _savedWorldObjects[_currentObjectCount].AsGodotDictionary();
