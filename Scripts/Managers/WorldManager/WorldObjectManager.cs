@@ -16,7 +16,8 @@ public partial class WorldObjectManager : Node {
     private Array<ActiveWorldObject>[,] _activeWorldObjects;
     private Array _savedWorldObjects;
     private int _currentObjectCount;
-
+    private bool _isWorldLoaded;
+    
     public event Action WorldLoaded;
 
     public static WorldObjectManager Create() {
@@ -53,14 +54,13 @@ public partial class WorldObjectManager : Node {
         }
 
         _savedWorldObjects = worldData["SavedWorldObjects"].AsGodotArray();
-        
+
         TreeExiting += OnExiting;
     }
 
-    private bool _isWorldLoaded;
     public override void _Process(double delta) {
         if (_isWorldLoaded) return;
-        
+
         int count = _savedWorldObjects.Count;
         Stopwatch stopwatch = new();
         stopwatch.Start();

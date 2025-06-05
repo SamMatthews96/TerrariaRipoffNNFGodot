@@ -30,8 +30,8 @@ public partial class Build : Container {
         Player.LocalPlayerSpawned -= OnLocalPlayerSpawned;
     }
 
-    private void OnPlayerActionChanged(PlayerAction.Type type) {
-        if (type == PlayerAction.Type.Build) {
+    private void OnPlayerActionChanged(PlayerActionType playerActionType) {
+        if (playerActionType == PlayerActionType.Build) {
             Show();
         } else {
             Hide();

@@ -22,7 +22,18 @@ public abstract partial class ActiveWorldObject : Node2D {
         }
         newObject.XPosition = (int)Math.Round(data["xPosition"].ToString().ToFloat());
         newObject.YPosition = (int)Math.Round(data["yPosition"].ToString().ToFloat());
+        newObject.Disable();
         return newObject;
+    }
+
+    public void Disable() {
+        ProcessMode = ProcessModeEnum.Disabled;
+        Visible = false;
+    }
+    
+    public void Enable() {
+        ProcessMode = ProcessModeEnum.Inherit;
+        Visible = true;
     }
     
     

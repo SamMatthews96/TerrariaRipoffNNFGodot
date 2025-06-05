@@ -25,7 +25,7 @@ public partial class GatherAction : PlayerAction {
         }
     }
 
-    private void OnActionChanged(Type _) {
+    private void OnActionChanged(PlayerActionType _) {
         _isGathering = false;
     }
 

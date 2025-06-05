@@ -11,7 +11,7 @@ public partial class ActionController : Node {
     [Export] public BuildAction BuildAction { get; private set; }
 
     private Game _game;
-    public event Action<PlayerAction.Type> ActionChanged;
+    public event Action<PlayerActionType> ActionChanged;
 
     public void InitAsLocal(Game game) {
         _game = game;
@@ -20,7 +20,7 @@ public partial class ActionController : Node {
         _game.Interface.ActionBar.ButtonClicked += EquipAction;
         _game.InputManager.PlayerActionModeChanged += EquipAction;
         TreeExiting += OnTreeExitingLocal;
-        EquipAction(PlayerAction.Type.Gather);
+        EquipAction(PlayerActionType.Gather);
         
         BuildAction.InitAsLocal(game);
         GatherAction.InitAsLocal(game);
@@ -53,11 +53,11 @@ public partial class ActionController : Node {
         _currentPlayerAction.PrimaryAction(mouseWorldPosition);
     }
 
-    private void EquipAction(PlayerAction.Type state) {
+    private void EquipAction(PlayerActionType state) {
         _currentPlayerAction = state switch {
-            PlayerAction.Type.Gather => GatherAction,
-            PlayerAction.Type.Build => BuildAction,
-            PlayerAction.Type.Weapon => throw new NotImplementedException(),
+            PlayerActionType.Gather => GatherAction,
+            PlayerActionType.Build => BuildAction,
+            PlayerActionType.Weapon => throw new NotImplementedException(),
             _ => throw new ArgumentOutOfRangeException(nameof(state), state, null)
         };
 
