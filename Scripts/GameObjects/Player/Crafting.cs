@@ -24,7 +24,7 @@ public sealed partial class Crafting : Node {
         _game = game;
         AddCraftingStation(_handcrafting);
         Interface.Crafting craftingInterface = _game.Interface.CraftingInterface;
-        ActivePlaceable.ActivePlaceableSpawned += OnActivePlaceableSpawned;
+        Placeable.ActivePlaceableSpawned += OnActivePlaceableSpawned;
         craftingInterface.SelectRecipeContainer.RecipeButtonClicked += OnRecipeButtonClicked;
         craftingInterface.SelectIngredientPopup.SelectIngredientButtonClicked += OnSelectIngredientButtonClicked;
         craftingInterface.SelectIngredientsContainer.CraftButtonPressed += OnCraftButtonPressed;
@@ -34,7 +34,7 @@ public sealed partial class Crafting : Node {
         // and for the player moving into/away from them,
     }
 
-    private void OnActivePlaceableSpawned(ActivePlaceable activePlaceable) {
+    private void OnActivePlaceableSpawned(Placeable placeable) {
         // ItemPlaceable itemPlaceable =
             // activePlaceable.SavedPlaceable.Item.GetProperty<ItemPlaceable>();
         // if (!itemPlaceable.TryGetProperty(out PlaceableCrafting placeableCrafting)) return;
@@ -45,8 +45,8 @@ public sealed partial class Crafting : Node {
         // activePlaceable.ActivePlaceableDespawned += OnActivePlaceableDespawned;
     }
 
-    private void OnActivePlaceableDespawned(ActivePlaceable activePlaceable) {
-        activePlaceable.ActivePlaceableDespawned -= OnActivePlaceableDespawned;
+    private void OnActivePlaceableDespawned(Placeable placeable) {
+        placeable.ActivePlaceableDespawned -= OnActivePlaceableDespawned;
         // CraftingStation craftingStation = activePlaceable.SavedPlaceable.Item
             // .GetProperty<ItemPlaceable>().GetProperty<PlaceableCrafting>().CraftingStation;
         // RemoveCraftingStation(craftingStation);

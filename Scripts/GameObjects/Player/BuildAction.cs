@@ -50,12 +50,11 @@ public partial class BuildAction : PlayerAction {
         IntVector coords = new(intVectorArray);
         Item blockItem = Item.FromDictionary(itemData);
 
-        Array<ActiveWorldObject> cellContents =
+        Array<WorldObject> cellContents =
             _game.WorldObjectManager.GetCellContents(coords.X, coords.Y);
-        if (cellContents.Any(savedWorldObject => savedWorldObject is
-                ActiveBlock or ActivePlaceable))
-            return;
-
+        bool doesCellHaveSpace = cellContents.Any(
+            savedWorldObject => savedWorldObject is Block or Placeable);
+        if (doesCellHaveSpace) return;
 
         if (blockItem.HasProperty<ItemBlock>()) {
             BlockPlaced?.Invoke(blockItem, coords);

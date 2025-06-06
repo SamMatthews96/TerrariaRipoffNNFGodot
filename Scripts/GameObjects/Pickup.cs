@@ -4,7 +4,7 @@ using Godot.Collections;
 
 namespace TerrariaRipoffNNF;
 
-public partial class ActivePickup : ActiveWorldObject {
+public partial class Pickup : WorldObject {
     [Export] private Sprite2D _sprite;
     [Export] private Area2D _pickupArea;
     public InventoryItems Items { get; private set; }
@@ -15,12 +15,12 @@ public partial class ActivePickup : ActiveWorldObject {
         (int)Math.Round(Position.X / Game.BlockSize),
         (int)Math.Round(Position.Y / Game.BlockSize));
 
-    public event Action<ActivePickup, Dictionary> MovedCell;
+    public event Action<Pickup, Dictionary> MovedCell;
 
     private bool IsHost => Multiplayer.GetUniqueId() == SceneManager.HostId;
 
-    public new static ActivePickup Create(Dictionary data) {
-        ActivePickup newPickup = Data.PackedScenes.ActivePickup.Instantiate<ActivePickup>();
+    public new static Pickup Create(Dictionary data) {
+        Pickup newPickup = Data.PackedScenes.ActivePickup.Instantiate<Pickup>();
 
         Item item = Item.FromDictionary(data["item"].AsGodotDictionary());
         newPickup.Items = new InventoryItems(item);

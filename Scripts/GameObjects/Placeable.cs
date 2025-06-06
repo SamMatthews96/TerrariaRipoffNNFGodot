@@ -4,13 +4,12 @@ using Godot.Collections;
 
 namespace TerrariaRipoffNNF;
 
-public partial class ActivePlaceable : ActiveWorldObject {
-    // public SavedPlaceable SavedPlaceable { get; private set; }
+public partial class Placeable : WorldObject {
     [Export] private Dictionary _savedPlaceableDictionary;
     [Export] private Sprite2D _sprite;
    
-    public static event Action<ActivePlaceable> ActivePlaceableSpawned;
-    public event Action<ActivePlaceable> ActivePlaceableDespawned;
+    public static event Action<Placeable> ActivePlaceableSpawned;
+    public event Action<Placeable> ActivePlaceableDespawned;
     
     public override void _Ready() {
         // SavedPlaceable = SavedPlaceable.FromDictionary(_savedPlaceableDictionary);

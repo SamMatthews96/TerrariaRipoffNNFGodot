@@ -12,7 +12,7 @@ public partial class WorldObjectManager : Node {
     public const int BlockSpawnDistance = 20;
 
     private Game _game;
-    private Array<ActiveWorldObject>[,] _activeWorldObjects;
+    private Array<WorldObject>[,] _activeWorldObjects;
     private Array _savedWorldObjects;
     private int _currentObjectCount;
     private bool _isWorldLoaded;
@@ -29,10 +29,10 @@ public partial class WorldObjectManager : Node {
 
         Player.PlayerSpawned += OnPlayerSpawned;
 
-        _activeWorldObjects = new Array<ActiveWorldObject>[_game.Width, _game.Height];
+        _activeWorldObjects = new Array<WorldObject>[_game.Width, _game.Height];
         for (int x = 0; x < _game.Width; x++) {
             for (int y = 0; y < _game.Height; y++) {
-                _activeWorldObjects[x, y] = new Array<ActiveWorldObject>();
+                _activeWorldObjects[x, y] = new Array<WorldObject>();
             }
         }
 
@@ -41,14 +41,14 @@ public partial class WorldObjectManager : Node {
         TreeExiting += OnExiting;
     }
 
-    public Array<ActiveWorldObject> GetCellContents(int x, int y) {
+    public Array<WorldObject> GetCellContents(int x, int y) {
         return _activeWorldObjects[x, y];
     }
 
     public Array<T> GetCellContents<[MustBeVariant] T>(int x, int y)
-        where T : ActiveWorldObject {
+        where T : WorldObject {
         Array<T> cellContentsOfType = new();
-        foreach (ActiveWorldObject activeWorldObject in GetCellContents(x, y)) {
+        foreach (WorldObject activeWorldObject in GetCellContents(x, y)) {
             if (activeWorldObject is T worldObject) {
                 cellContentsOfType.Add(worldObject);
             }
@@ -68,8 +68,8 @@ public partial class WorldObjectManager : Node {
             Dictionary savedWorldObjectDict =
                 _savedWorldObjects[_currentObjectCount].AsGodotDictionary();
             if (savedWorldObjectDict["type"].AsString() == "block") {
-                ActiveWorldObject newObject =
-                    ActiveWorldObject.Create(savedWorldObjectDict);
+                WorldObject newObject =
+                    WorldObject.Create(savedWorldObjectDict);
                 _game.BlockParent.AddChild(newObject, true);
                 _activeWorldObjects[newObject.XPosition, newObject.YPosition]
                     .Add(newObject);
@@ -89,16 +89,16 @@ public partial class WorldObjectManager : Node {
     }
 
     private void EnableObjectsInRegion(List<IntVector> region) {
-        Array<ActiveWorldObject> objects = GetObjectsInRegion(region);
-        foreach (ActiveWorldObject worldObject in objects) {
+        Array<WorldObject> objects = GetObjectsInRegion(region);
+        foreach (WorldObject worldObject in objects) {
             worldObject.Enable();
         }
     }
 
-    private Array<ActiveWorldObject> GetObjectsInRegion(List<IntVector> region) {
-        Array<ActiveWorldObject> objects = new();
+    private Array<WorldObject> GetObjectsInRegion(List<IntVector> region) {
+        Array<WorldObject> objects = new();
         foreach (IntVector coords in region) {
-            Array<ActiveWorldObject> cellContents =
+            Array<WorldObject> cellContents =
                 GetCellContents(coords.X, coords.Y);
             objects.AddRange(cellContents);
         }
@@ -139,16 +139,16 @@ public partial class WorldObjectManager : Node {
     }
 
     private void OnPlayerGatherAction(IntVector coords, float damage) {
-        Array<ActiveBlock> cellContents =
-            GetCellContents<ActiveBlock>(coords.X, coords.Y);
+        Array<Block> cellContents =
+            GetCellContents<Block>(coords.X, coords.Y);
         if (cellContents.Count == 0) return;
         DamageActiveBlock(cellContents[0], damage);
     }
 
     private void OnPlayerBuildAction(Item item, IntVector coords) {
-        Array<ActiveWorldObject> cellContents = GetCellContents(coords.X, coords.Y);
+        Array<WorldObject> cellContents = GetCellContents(coords.X, coords.Y);
         if (cellContents.Count > 0) return;
-        ActiveBlock newBlock = ActiveBlock.Create(new Dictionary {
+        Block newBlock = Block.Create(new Dictionary {
             { "item", item.ToDictionary() },
             { "xPosition", coords.X },
             { "yPosition", coords.Y }
@@ -158,11 +158,11 @@ public partial class WorldObjectManager : Node {
         newBlock.Enable();
     }
 
-    private void OnPlayerPickedUpItem(ActivePickup activePickup) {
-        DeletePickup(activePickup);
+    private void OnPlayerPickedUpItem(Pickup pickup) {
+        DeletePickup(pickup);
     }
 
-    private void DamageActiveBlock(ActiveBlock block, float damageAmount) {
+    private void DamageActiveBlock(Block block, float damageAmount) {
         block.CurrentHealth -= damageAmount;
         if (block.CurrentHealth > 0) return;
         block.QueueFree();
@@ -172,7 +172,7 @@ public partial class WorldObjectManager : Node {
         OnBlockManagerBlockDestroyed(block);
     }
 
-    private void OnBlockManagerBlockDestroyed(ActiveBlock block) {
+    private void OnBlockManagerBlockDestroyed(Block block) {
         Vector2 position = new(
             block.XPosition * Game.BlockSize,
             block.YPosition * Game.BlockSize);
@@ -184,7 +184,7 @@ public partial class WorldObjectManager : Node {
         IntVector coords = new(position / Game.BlockSize);
 
         // new pickup needs data from item
-        ActivePickup newPickup = ActivePickup.Create(new Dictionary {
+        Pickup newPickup = Pickup.Create(new Dictionary {
             { "item", item.ToDictionary() },
             { "xPosition", coords.X },
             { "yPosition", coords.Y }
@@ -199,21 +199,21 @@ public partial class WorldObjectManager : Node {
     // pickup manager
 
 
-    private void DeletePickup(ActivePickup activePickup) {
-        int xPosition = activePickup.XPosition;
-        int yPosition = activePickup.YPosition;
-        _activeWorldObjects[xPosition, yPosition].Remove(activePickup);
-        activePickup.QueueFree();
+    private void DeletePickup(Pickup pickup) {
+        int xPosition = pickup.XPosition;
+        int yPosition = pickup.YPosition;
+        _activeWorldObjects[xPosition, yPosition].Remove(pickup);
+        pickup.QueueFree();
     }
 
-    private void OnPickupMovedCell(ActivePickup activePickup, Dictionary positionChange) {
+    private void OnPickupMovedCell(Pickup pickup, Dictionary positionChange) {
         IntVector previousCoords = new(
             (int)positionChange["PreviousX"], (int)positionChange["PreviousY"]);
         IntVector coords = new(
             (int)positionChange["X"], (int)positionChange["Y"]);
 
-        _activeWorldObjects[previousCoords.X, previousCoords.Y].Remove(activePickup);
+        _activeWorldObjects[previousCoords.X, previousCoords.Y].Remove(pickup);
 
-        _activeWorldObjects[coords.X, coords.Y].Add(activePickup);
+        _activeWorldObjects[coords.X, coords.Y].Add(pickup);
     }
 }

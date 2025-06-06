@@ -4,19 +4,19 @@ using Godot.Collections;
 
 namespace TerrariaRipoffNNF;
 
-public partial class ActiveBlock : ActiveWorldObject {
+public partial class Block : WorldObject {
     public Item Item { get; private set; }
     [Export] private Sprite2D _sprite;
     public float CurrentHealth { get; set; }
 
-    public new static ActiveBlock Create(Dictionary data) {
-        ActiveBlock activeBlock = Data.PackedScenes.ActiveBlock.Instantiate<ActiveBlock>();
-        activeBlock.Item = Item.FromDictionary(data["item"].AsGodotDictionary());
+    public new static Block Create(Dictionary data) {
+        Block block = Data.PackedScenes.ActiveBlock.Instantiate<Block>();
+        block.Item = Item.FromDictionary(data["item"].AsGodotDictionary());
 
-        activeBlock.XPosition = (int)Math.Round(data["xPosition"].ToString().ToFloat());
-        activeBlock.YPosition = (int)Math.Round(data["yPosition"].ToString().ToFloat());
-        activeBlock.Disable();
-        return activeBlock;
+        block.XPosition = (int)Math.Round(data["xPosition"].ToString().ToFloat());
+        block.YPosition = (int)Math.Round(data["yPosition"].ToString().ToFloat());
+        block.Disable();
+        return block;
     }
 
     public override void _Ready() {

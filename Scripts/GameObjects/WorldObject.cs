@@ -4,13 +4,13 @@ using Godot.Collections;
 
 namespace TerrariaRipoffNNF;
 
-public abstract partial class ActiveWorldObject : Node2D {
+public abstract partial class WorldObject : Node2D {
     public int XPosition { get; protected set; }
     public int YPosition { get; protected set; }
 
-    public static ActiveWorldObject Create(Dictionary data) {
+    public static WorldObject Create(Dictionary data) {
         return data["type"].AsString() switch {
-            "block" => ActiveBlock.Create(data),
+            "block" => Block.Create(data),
             _ => throw new Exception(
                 $"[20250604.2252.1] Unknown ActiveWorldObject type: {data["type"]}")
         };

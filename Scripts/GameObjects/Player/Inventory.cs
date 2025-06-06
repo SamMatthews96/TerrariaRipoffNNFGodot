@@ -26,7 +26,7 @@ public partial class Inventory : Node {
     public event Action<StackedItems> ItemStackChangedSize;
     public event Action<StackedItems> AddedItemStack;
     public event Action<StackedItems> RemovedItemStack;
-    public event Action<ActivePickup> PickedUpItem;
+    public event Action<Pickup> PickedUpItem;
 
     public event Action<Item> EquipItemClicked;
 
@@ -75,14 +75,14 @@ public partial class Inventory : Node {
         }
     }
 
-    private void OnHostCollidedWithPickup(ActivePickup activePickup) {
-        if (activePickup.Items.TotalSpace > MaximumSpace - UsedSpace) {
+    private void OnHostCollidedWithPickup(Pickup pickup) {
+        if (pickup.Items.TotalSpace > MaximumSpace - UsedSpace) {
             return;
         }
 
-        Rpc(nameof(ClientAddItems), activePickup.Items.Serialize());
+        Rpc(nameof(ClientAddItems), pickup.Items.Serialize());
 
-        PickedUpItem?.Invoke(activePickup);
+        PickedUpItem?.Invoke(pickup);
     }
 
     private void OnBlockPlaced(Item item, IntVector _) {
