@@ -146,14 +146,16 @@ public partial class WorldObjectManager : Node {
     }
 
     private void OnPlayerBuildAction(Item item, IntVector coords) {
-        // Array<SavedBlock> savedBlocks =
-        //     GetSavedCellContents<SavedBlock>(coords.X, coords.Y);
-        // if (savedBlocks.Count > 0) return;
-        // SavedBlock savedBlock = SavedBlock.Create(
-        //     block: item, xPosition: coords.X, yPosition: coords.Y
-        // );
-        // _savedWorldObjects[coords.X, coords.Y].Add(savedBlock);
-        // SpawnObject(savedBlock);
+        Array<ActiveWorldObject> cellContents = GetCellContents(coords.X, coords.Y);
+        if (cellContents.Count > 0) return;
+        ActiveBlock newBlock = ActiveBlock.Create(new Dictionary {
+            { "item", item.ToDictionary() },
+            { "xPosition", coords.X },
+            { "yPosition", coords.Y }
+        });
+        _activeWorldObjects[coords.X, coords.Y].Add(newBlock);
+        _game.BlockParent.AddChild(newBlock, true);
+        newBlock.Enable();
     }
 
     private void OnPlayerPickedUpItem(ActivePickup activePickup) {
