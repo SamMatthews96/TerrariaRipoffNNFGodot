@@ -82,7 +82,7 @@ public partial class Game : Node {
         Width = (int)worldData["Width"];
         Height = (int)worldData["Height"];
         WorldObjectManager = WorldObjectManager.Create();
-        WorldObjectManager.SetGame(this, worldData);
+        WorldObjectManager.SetGame(this, worldData, playerData);
         AddChild(WorldObjectManager);
 
         DefaultSpawnPosition = new IntVector(
