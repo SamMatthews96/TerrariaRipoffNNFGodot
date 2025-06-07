@@ -31,10 +31,10 @@ public partial class Pickup : WorldObject {
     }
 
     public override void _Ready() {
-        _previousCoords = Coords;
         Position = new Vector2(
             XPosition * Game.BlockSize,
             YPosition * Game.BlockSize);
+        _previousCoords = Coords;
         ItemBlock itemBlock = Items.Item.GetProperty<ItemBlock>();
         _sprite.Texture = itemBlock.Texture;
     }

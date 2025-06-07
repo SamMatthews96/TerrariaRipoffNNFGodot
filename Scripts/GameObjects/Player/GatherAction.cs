@@ -6,7 +6,7 @@ namespace TerrariaRipoffNNF;
 
 public partial class GatherAction : PlayerAction {
     [Export] private Player _player;
-    public event Action<IntVector, float> GatherAttempted;
+    public event Action<IntVector, Player> GatherAttempted;
 
     private Game _game;
 
@@ -40,26 +40,17 @@ public partial class GatherAction : PlayerAction {
         IntVector coords = new(_player.GetGlobalMousePosition() / Game.BlockSize);
         if (!_game.IsInBounds(coords)) return;
 
-        if (_player.PlayerEquipment.Pickaxe == null) return;
-        if (_player.PlayerEquipment.Pickaxe.Range < IntVector.Distance(coords, Player.Coords)) return;
-        RpcId(SceneManager.HostId, nameof(HostGatherAttempted),
-            coords.ToSerialised(), _player.PlayerEquipment.Pickaxe.Power);
-        _gatherCooldown.Start();
-        /* 
-            Player is performing an action on a cell
-            get the cell contents
-            If the cell is a block it needs to be mined
-                damage cell based on equipment
-                incur gather cooldown based on equipment
-            
-         */
+        RpcId(SceneManager.HostId, nameof(HostAttemptGather), coords.ToSerialised());
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    public void HostGatherAttempted(Array intVectorArray, float damage) {
+    private void HostAttemptGather(Array intVectorArray) {
         IntVector coords = new(intVectorArray);
+        GatherAttempted?.Invoke(coords, _player);
+    }
 
-        GatherAttempted?.Invoke(coords, damage);
+    public void OnAfterGatherSuccess() {
+        _gatherCooldown.Start();
     }
 
     public override void EndPrimaryAction(Vector2 mouseWorldPosition) {

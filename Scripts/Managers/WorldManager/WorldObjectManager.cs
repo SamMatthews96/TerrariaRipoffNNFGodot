@@ -137,11 +137,43 @@ public partial class WorldObjectManager : Node {
         player.PlayerDespawned -= OnPlayerDespawned;
     }
 
-    private void OnPlayerGatherAction(IntVector coords, float damage) {
-        Array<Block> cellContents =
-            GetCellContents<Block>(coords.X, coords.Y);
-        if (cellContents.Count == 0) return;
-        DamageActiveBlock(cellContents[0], damage);
+    private void OnPlayerGatherAction(IntVector coords, Player player) {
+        WorldObject worldObject = GetCellContents(coords.X, coords.Y)
+            .FirstOrDefault(worldObject => worldObject is Block or Prop);
+
+        float damage = player.PlayerEquipment.Pickaxe.Power;
+        switch (worldObject) {
+            case Block block: {
+                block.CurrentHealth -= damage;
+                if (block.CurrentHealth > 0) return;
+                block.QueueFree();
+                _activeWorldObjects[block.XPosition, block.YPosition]
+                    .Remove(block);
+                Vector2 position = new(
+                    block.XPosition * Game.BlockSize,
+                    block.YPosition * Game.BlockSize);
+                CreatePickup(block.Item, position);
+                break;
+            }
+            case Prop prop: {
+                prop.CurrentHealth -= damage;
+                if (prop.CurrentHealth > 0) return;
+                prop.QueueFree();
+                _activeWorldObjects[prop.XPosition, prop.YPosition]
+                    .Remove(prop);
+                Vector2 position = new(
+                    prop.XPosition * Game.BlockSize,
+                    prop.YPosition * Game.BlockSize);
+                CreatePickup(prop.Item, position);
+                break;
+            }
+            case null: {
+                return;
+            }
+            default:
+                return;
+        }
+        player.ActionController.GatherAction.OnAfterGatherSuccess();
     }
 
     private void OnPlayerBuildAction(Item item, IntVector coords) {
@@ -159,24 +191,6 @@ public partial class WorldObjectManager : Node {
 
     private void OnPlayerPickedUpItem(Pickup pickup) {
         DeletePickup(pickup);
-    }
-
-    private void DamageActiveBlock(Block block, float damageAmount) {
-        block.CurrentHealth -= damageAmount;
-        if (block.CurrentHealth > 0) return;
-        block.QueueFree();
-        _activeWorldObjects[block.XPosition, block.YPosition]
-            .Remove(block);
-
-        OnBlockManagerBlockDestroyed(block);
-    }
-
-    private void OnBlockManagerBlockDestroyed(Block block) {
-        Vector2 position = new(
-            block.XPosition * Game.BlockSize,
-            block.YPosition * Game.BlockSize);
-
-        CreatePickup(block.Item, position);
     }
 
     private void CreatePickup(Item item, Vector2 position) {
