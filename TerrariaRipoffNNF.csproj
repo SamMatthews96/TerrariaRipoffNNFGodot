@@ -12,11 +12,13 @@
   <ItemGroup>
     <Compile Remove="Resources\**" />
     <Compile Remove="NewRecipeIdea\**" />
+    <Compile Remove="Scripts\Managers\Data\**" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Remove="Scripts\**" />
     <EmbeddedResource Remove="Resources\**" />
     <EmbeddedResource Remove="NewRecipeIdea\**" />
+    <EmbeddedResource Remove="Scripts\Managers\Data\**" />
   </ItemGroup>
   <ItemGroup>
     <!--Required for GdUnit4-->

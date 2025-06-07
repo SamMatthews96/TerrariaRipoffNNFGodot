@@ -1,13 +1,13 @@
 [gd_scene load_steps=10 format=3 uid="uid://c7dpe04jscc5f"]
 
-[ext_resource type="Script" uid="uid://c1d21p320xi1u" path="res://Scripts/Managers/Data/Data.cs" id="1_f38oj"]
-[ext_resource type="Resource" uid="uid://dllhhokx2wkse" path="res://Resources/PackedScenes.tres" id="2_4ri16"]
-[ext_resource type="Resource" uid="uid://bxv0u74if3lg8" path="res://Resources/Recipes/AllRecipes.tres" id="3_im3m0"]
+[ext_resource type="Script" uid="uid://c1d21p320xi1u" path="res://Scripts/Data/Data.cs" id="1_f38oj"]
+[ext_resource type="Resource" uid="uid://dllhhokx2wkse" path="res://Resources/Data/PackedScenes.tres" id="2_4ri16"]
+[ext_resource type="Resource" uid="uid://bxv0u74if3lg8" path="res://Resources/Data/AllRecipes.tres" id="3_im3m0"]
 [ext_resource type="Resource" uid="uid://cpty2vp0h2w83" path="res://Resources/Items/Earth.tres" id="4_3tc8q"]
 [ext_resource type="Resource" uid="uid://cqe6akp1lual" path="res://Resources/Items/FerriumOre.tres" id="5_om11x"]
 [ext_resource type="Resource" uid="uid://daxqeqjpn4ve1" path="res://Resources/Items/Stone.tres" id="6_i7kqy"]
 [ext_resource type="Resource" uid="uid://c7hb2igx46aai" path="res://Resources/Items/Beach.tres" id="7_3tc8q"]
-[ext_resource type="Script" uid="uid://18jr81tkmkam" path="res://Scripts/Managers/Data/Items.cs" id="8_aqkac"]
+[ext_resource type="Script" uid="uid://18jr81tkmkam" path="res://Scripts/Data/Items.cs" id="8_aqkac"]
 
 [sub_resource type="Resource" id="Resource_0cbqr"]
 script = ExtResource("8_aqkac")
