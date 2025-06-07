@@ -14,8 +14,9 @@ public partial class WorldObjectManager : Node {
     private Game _game;
     private Array<WorldObject>[,] _activeWorldObjects;
     private int _currentObjectCount;
-    private bool _isStartAreaLoaded;
-    private bool _isWorldLoaded;
+    
+    private bool _isStartAreaLoading = true;
+    private bool _isWorldLoading;
 
     private Array _spawnFirst = new();
     private Array _spawnSecond = new();
@@ -65,46 +66,42 @@ public partial class WorldObjectManager : Node {
     }
 
     public override void _Process(double delta) {
-        if (!_isStartAreaLoaded) {
-            int count = _spawnFirst.Count;
-            Stopwatch stopwatch = new();
-            stopwatch.Start();
-            while (_currentObjectCount < count &&
-                   stopwatch.ElapsedMilliseconds < 16) {
-                Dictionary savedWorldObjectDict =
-                    _spawnFirst[_currentObjectCount].AsGodotDictionary();
-
-                WorldObject newObject = WorldObject.Create(savedWorldObjectDict);
-                _game.BlockParent.AddChild(newObject, true);
-                _activeWorldObjects[newObject.XPosition, newObject.YPosition]
-                    .Add(newObject);
-
-                _currentObjectCount++;
+        if (_isStartAreaLoading) {
+            ProcessLoadWorld(_spawnFirst, 16, out bool finished);
+            if (finished) {
+                _isStartAreaLoading = false;
+                _isWorldLoading = true;
+                WorldLoaded?.Invoke();
             }
+        } else if (_isWorldLoading) {
+            ProcessLoadWorld(_spawnSecond, 16, out bool finished);
+            if (finished) {
+                _isWorldLoading = false;
+            }
+        }
+    }
 
-            if (_currentObjectCount < count) return;
+    private void ProcessLoadWorld(Array spawnArray, float timeout, out bool finished) {
+        Stopwatch stopwatch = new();
+        stopwatch.Start();
+        while (_currentObjectCount < spawnArray.Count &&
+               stopwatch.ElapsedMilliseconds < timeout) {
+            Dictionary savedWorldObjectDict =
+                spawnArray[_currentObjectCount].AsGodotDictionary();
+
+            WorldObject newObject = WorldObject.Create(savedWorldObjectDict);
+            _game.BlockParent.AddChild(newObject, true);
+            _activeWorldObjects[newObject.XPosition, newObject.YPosition]
+                .Add(newObject);
+
+            _currentObjectCount++;
+        }
+
+        if (_currentObjectCount == spawnArray.Count) {
+            finished = true;
             _currentObjectCount = 0;
-            _isStartAreaLoaded = true;
-            WorldLoaded?.Invoke();
-        } else if (!_isWorldLoaded) {
-            int count = _spawnSecond.Count;
-            Stopwatch stopwatch = new();
-            stopwatch.Start();
-            while (_currentObjectCount < count &&
-                   stopwatch.ElapsedMilliseconds < 16) {
-                Dictionary savedWorldObjectDict =
-                    _spawnSecond[_currentObjectCount].AsGodotDictionary();
-
-                WorldObject newObject = WorldObject.Create(savedWorldObjectDict);
-                _game.BlockParent.AddChild(newObject, true);
-                _activeWorldObjects[newObject.XPosition, newObject.YPosition]
-                    .Add(newObject);
-
-                _currentObjectCount++;
-            }
-
-            if (_currentObjectCount < count) return;
-            _isWorldLoaded = true;
+        } else {
+            finished = false;
         }
     }
 
