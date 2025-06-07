@@ -16,7 +16,7 @@ public static class WorldCreator {
         worldDictionary.Add("PlayerPositions", new Array());
         worldDictionary.Add("DefaultSpawnPosition", new Array { 5, 5 });
 
-        int mid = 7;
+        int mid = 15;
         Item[] types = {
             Data.Items.Stone,
             Data.Items.Earth,

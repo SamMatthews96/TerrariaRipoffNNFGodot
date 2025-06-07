@@ -1,7 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://d1yj3csn6nkcg"]
+[gd_scene load_steps=5 format=3 uid="uid://me8wg1m67cje"]
 
-[ext_resource type="Script" uid="uid://bmwwm3bhfmnou" path="res://Scripts/GameObjects/Block.cs" id="1_smo8o"]
-[ext_resource type="Texture2D" uid="uid://cerbvbxscjcpv" path="res://Assets/Images/tree.png" id="2_smo8o"]
+[ext_resource type="Script" uid="uid://bmwwm3bhfmnou" path="res://Scripts/GameObjects/Block.cs" id="1_lwbe4"]
+[ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://Assets/Images/icon.svg" id="2_7a6lh"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cnqwx"]
 size = Vector2(32, 32)
@@ -14,16 +14,16 @@ properties/1/path = NodePath(".:_savedBlockDictionary")
 properties/1/spawn = true
 properties/1/replication_mode = 2
 
-[node name="ActiveTreeBranch" type="StaticBody2D" node_paths=PackedStringArray("_sprite")]
-collision_layer = 8
+[node name="Block" type="StaticBody2D" node_paths=PackedStringArray("_sprite")]
+collision_layer = 2
 collision_mask = 0
 input_pickable = true
-script = ExtResource("1_smo8o")
+script = ExtResource("1_lwbe4")
 _sprite = NodePath("Sprite2D")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.25, 0.25)
-texture = ExtResource("2_smo8o")
+texture = ExtResource("2_7a6lh")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_cnqwx")

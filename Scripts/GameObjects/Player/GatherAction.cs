@@ -45,6 +45,14 @@ public partial class GatherAction : PlayerAction {
         RpcId(SceneManager.HostId, nameof(HostGatherAttempted),
             coords.ToSerialised(), _player.PlayerEquipment.Pickaxe.Power);
         _gatherCooldown.Start();
+        /* 
+            Player is performing an action on a cell
+            get the cell contents
+            If the cell is a block it needs to be mined
+                damage cell based on equipment
+                incur gather cooldown based on equipment
+            
+         */
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]

@@ -67,13 +67,12 @@ public partial class WorldObjectManager : Node {
                stopwatch.ElapsedMilliseconds < 16) {
             Dictionary savedWorldObjectDict =
                 _savedWorldObjects[_currentObjectCount].AsGodotDictionary();
-            if (savedWorldObjectDict["type"].AsString() == "block") {
-                WorldObject newObject =
-                    WorldObject.Create(savedWorldObjectDict);
-                _game.BlockParent.AddChild(newObject, true);
-                _activeWorldObjects[newObject.XPosition, newObject.YPosition]
-                    .Add(newObject);
-            }
+
+            WorldObject newObject = WorldObject.Create(savedWorldObjectDict);
+            _game.BlockParent.AddChild(newObject, true);
+            _activeWorldObjects[newObject.XPosition, newObject.YPosition]
+                .Add(newObject);
+
 
             _currentObjectCount++;
         }

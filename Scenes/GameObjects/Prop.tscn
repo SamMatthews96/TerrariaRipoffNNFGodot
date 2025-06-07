@@ -1,7 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://me8wg1m67cje"]
+[gd_scene load_steps=5 format=3 uid="uid://b0d6a38pyw5uk"]
 
-[ext_resource type="Script" uid="uid://bmwwm3bhfmnou" path="res://Scripts/GameObjects/Block.cs" id="1_5kmh3"]
-[ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://Assets/Images/icon.svg" id="2_kpwrr"]
+[ext_resource type="Script" uid="uid://cx6f82uecvufi" path="res://Scripts/GameObjects/Prop.cs" id="1_ume6u"]
+[ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://Assets/Images/icon.svg" id="2_81ibm"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cnqwx"]
 size = Vector2(32, 32)
@@ -14,21 +14,18 @@ properties/1/path = NodePath(".:_savedBlockDictionary")
 properties/1/spawn = true
 properties/1/replication_mode = 2
 
-[node name="ActiveBlock" type="StaticBody2D" node_paths=PackedStringArray("_sprite")]
+[node name="Prop" type="Area2D" node_paths=PackedStringArray("_sprite")]
 collision_layer = 2
 collision_mask = 0
-input_pickable = true
-script = ExtResource("1_5kmh3")
+script = ExtResource("1_ume6u")
 _sprite = NodePath("Sprite2D")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.25, 0.25)
-texture = ExtResource("2_kpwrr")
+texture = ExtResource("2_81ibm")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_cnqwx")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_xmfd4")
-
-[connection signal="input_event" from="." to="." method="OnInputEvent"]
