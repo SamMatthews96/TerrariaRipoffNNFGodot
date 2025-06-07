@@ -1,25 +1,25 @@
 [gd_resource type="Resource" script_class="AllRecipes" load_steps=7 format=3 uid="uid://bxv0u74if3lg8"]
 
-[ext_resource type="Resource" uid="uid://bruexb2b2wap2" path="res://Resources/Recipes/Pickaxe.tres" id="1_0hfgn"]
-[ext_resource type="Script" uid="uid://15dmxouge3gl" path="res://Scripts/Data/AllRecipes.cs" id="1_ebx5k"]
-[ext_resource type="Script" uid="uid://df21tkox0o1bt" path="res://Scripts/Resources/Recipes/CraftingStationRecipes.cs" id="2_016by"]
+[ext_resource type="Resource" uid="uid://bruexb2b2wap2" path="res://Resources/Recipes/Pickaxe.tres" id="1_v0yjm"]
+[ext_resource type="Script" uid="uid://df21tkox0o1bt" path="res://Scripts/Resources/Recipes/CraftingStationRecipes.cs" id="2_42bkl"]
+[ext_resource type="Script" uid="uid://15dmxouge3gl" path="res://Scripts/Data/AllRecipes.cs" id="3_qe3qm"]
 
 [sub_resource type="Resource" id="Resource_wftnm"]
-script = ExtResource("2_016by")
+script = ExtResource("2_42bkl")
 CraftingStationType = 0
-Recipes = Array[Object]([ExtResource("1_0hfgn")])
+Recipes = Array[Object]([ExtResource("1_v0yjm")])
 
 [sub_resource type="Resource" id="Resource_y0317"]
-script = ExtResource("2_016by")
+script = ExtResource("2_42bkl")
 CraftingStationType = 1
 Recipes = Array[Object]([])
 
 [sub_resource type="Resource" id="Resource_78esk"]
-script = ExtResource("2_016by")
+script = ExtResource("2_42bkl")
 CraftingStationType = 2
 Recipes = Array[Object]([])
 
 [resource]
-script = ExtResource("1_ebx5k")
+script = ExtResource("3_qe3qm")
 _recipesArray = Array[Object]([SubResource("Resource_wftnm"), SubResource("Resource_y0317"), SubResource("Resource_78esk")])
 _delete = Array[Object]([null])
