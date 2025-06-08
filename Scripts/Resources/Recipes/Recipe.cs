@@ -5,6 +5,7 @@ namespace TerrariaRipoffNNF;
 
 [GlobalClass]
 public partial class Recipe : Resource {
+    [Export] public CraftingStationType CraftingStationType { get; private set; }
     [Export] public string Name { get; private set; }
     [Export] public Dictionary<string, RecipeIngredientSlot> IngredientSlots { get; private set; }
     [Export] public RecipePropertyMapString ResultNameMap { get; private set; }
@@ -24,7 +25,7 @@ public partial class Recipe : Resource {
 
         Item item = Item.Create(
             name: ResultNameMap.ResolveTemplate(suppliedIngredients, IngredientSlots),
-            iconTexture: new Texture2D(),
+            iconTexture: ResultIcon,
             inventorySpace: InventorySpace.ResolveTemplate(suppliedIngredients, IngredientSlots),
             isStackable: IsStackable,
             itemProperties: newItemProperties

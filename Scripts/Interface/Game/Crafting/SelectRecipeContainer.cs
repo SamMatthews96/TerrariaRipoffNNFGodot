@@ -8,13 +8,14 @@ public partial class SelectRecipeContainer : Control {
     [Export] public Crafting CraftingInterface { get; private set; }
     [Export] private Container _selectRecipeButtonContainer;
     private readonly List<SelectRecipeButton> _recipeSelectButtons = new();
-    
+
     public event Action<Recipe> RecipeButtonClicked;
 
     public override void _Ready() {
         foreach (Node node in _selectRecipeButtonContainer.GetChildren()) {
             node.QueueFree();
         }
+
         Hide();
         CraftingInterface.CraftSelectStationContainer.CraftingStationButtonClicked +=
             OnCraftingSelectStationButtonClicked;
@@ -26,15 +27,14 @@ public partial class SelectRecipeContainer : Control {
             button.QueueFree();
         });
         _recipeSelectButtons.Clear();
-        
-        foreach (Recipe recipe in Data.AllRecipes
-                     .GetRecipes(craftingStation.Type)) {
+
+        foreach (Recipe recipe in Data.Recipes.GetRecipes(craftingStation.Type)) {
             SelectRecipeButton newButton = SelectRecipeButton.Create(recipe);
             _recipeSelectButtons.Add(newButton);
             newButton.RecipeButtonClicked += OnRecipeButtonClicked;
             _selectRecipeButtonContainer.AddChild(newButton);
         }
-        
+
         Show();
     }
 
