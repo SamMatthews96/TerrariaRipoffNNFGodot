@@ -50,9 +50,9 @@ public partial class Inventory : Node {
         TreeExiting += () => { _game.Interface.InventoryUi.ItemActionClicked -= OnItemActionClicked; };
 
         if (!playerData.TryGetValue("Inventory", out Variant inventory)) return;
-        if (!inventory.AsGodotDictionary<string,Array>().TryGetValue(
-            "InventoryItemsList", out Array inventoryItems)) return;
-        
+        if (!inventory.AsGodotDictionary<string, Array>().TryGetValue(
+                "InventoryItemsList", out Array inventoryItems)) return;
+
         foreach (Dictionary savedItem in inventoryItems) {
             ClientAddItems(savedItem);
         }
@@ -98,7 +98,7 @@ public partial class Inventory : Node {
         UsedSpace += inventoryItemsToAdd.TotalSpace;
 
         int index = _inventoryItemsList.FindIndex(inventoryItems =>
-            inventoryItems.Item == inventoryItemsToAdd.Item);
+            Item.AreItemsSame(inventoryItems.Item, inventoryItemsToAdd.Item));
 
         if (index == -1) {
             _inventoryItemsList.Add(inventoryItemsToAdd);

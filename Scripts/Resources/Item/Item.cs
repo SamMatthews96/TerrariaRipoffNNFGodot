@@ -11,6 +11,17 @@ public sealed partial class Item : Resource {
     [Export] public bool IsStackable { get; private set; } = true;
     [Export] public Texture2D IconTexture { get; private set; }
     [Export] private Array<ItemProperty> _itemProperties = new();
+    
+    public static bool AreItemsSame(Item a, Item b) {
+        if (a is null || b is null) {
+            return a is null && b is null;
+        }
+        if (a.ResourceName != "" || b.ResourceName != "") {
+            return a.ResourceName == b.ResourceName;
+        }
+
+        return a.Name == b.Name;
+    }
 
     public T GetProperty<T>() where T : ItemProperty {
         if (TryGetProperty(out T property)) {

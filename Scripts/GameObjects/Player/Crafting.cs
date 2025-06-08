@@ -29,9 +29,6 @@ public sealed partial class Crafting : Node {
         craftingInterface.SelectIngredientPopup.SelectIngredientButtonClicked += OnSelectIngredientButtonClicked;
         craftingInterface.SelectIngredientsContainer.CraftButtonPressed += OnCraftButtonPressed;
         TreeExiting += OnTreeExitingLocal;
-
-        // this class should listen for nearby crafting stations being placed/deleted,
-        // and for the player moving into/away from them,
     }
 
     private void OnActivePlaceableSpawned(Placeable placeable) {

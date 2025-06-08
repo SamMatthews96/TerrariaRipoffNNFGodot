@@ -1,4 +1,5 @@
-﻿using Godot;
+﻿using System.Linq;
+using Godot;
 using Godot.Collections;
 
 namespace TerrariaRipoffNNF;
@@ -16,6 +17,10 @@ public partial class Recipe : Resource {
     [Export] public Texture2D ResultIcon { get; private set; }
 
     public StackedItems Build(Dictionary<string, Item> suppliedIngredients) {
+        if (IngredientSlots.Keys.Any(key => !suppliedIngredients.ContainsKey(key))) {
+            return null;
+        }
+        
         Array<ItemProperty> newItemProperties = new();
         foreach (ItemPropertyOutputTemplate itemPropertyOutputTemplate in ItemProperties) {
             ItemProperty newItemProperty
