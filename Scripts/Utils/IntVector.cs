@@ -4,7 +4,7 @@ using Array = Godot.Collections.Array;
 
 namespace TerrariaRipoffNNF;
 
-public readonly struct IntVector {
+public partial class IntVector : Resource {
     public bool Equals(IntVector other) {
         return X == other.X && Y == other.Y;
     }
@@ -39,6 +39,8 @@ public readonly struct IntVector {
         }
     }
 
+    public IntVector() { }
+
     public static IntVector operator -(IntVector a, IntVector b) {
         return new IntVector(a.X - b.X, a.Y - b.Y);
     }
@@ -53,9 +55,5 @@ public readonly struct IntVector {
     
     public static float Distance(IntVector a, IntVector b) {
         return (float)Math.Sqrt(Math.Pow(a.X - b.X, 2) + Math.Pow(a.Y - b.Y, 2));
-    }
-
-    public Array ToSerialised() {
-        return new Array { X, Y };
     }
 }

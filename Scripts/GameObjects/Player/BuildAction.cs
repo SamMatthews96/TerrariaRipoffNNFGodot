@@ -41,13 +41,12 @@ public partial class BuildAction : PlayerAction {
         float range = 8;
         if (_blockItem is not null && range >= IntVector.Distance(coords, Player.Coords)) {
             RpcId(SceneManager.HostId, nameof(BuildActionAttempt),
-                coords.ToSerialised(), _blockItem.ToDictionary());
+                coords, _blockItem.ToDictionary());
         }
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    private void BuildActionAttempt(Array intVectorArray, Dictionary itemData) {
-        IntVector coords = new(intVectorArray);
+    private void BuildActionAttempt(IntVector coords, Dictionary itemData) {
         Item blockItem = Item.FromDictionary(itemData);
 
         Array<WorldObject> cellContents =

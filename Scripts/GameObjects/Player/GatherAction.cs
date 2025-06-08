@@ -40,12 +40,11 @@ public partial class GatherAction : PlayerAction {
         IntVector coords = new(_player.GetGlobalMousePosition() / Game.BlockSize);
         if (!_game.IsInBounds(coords)) return;
 
-        RpcId(SceneManager.HostId, nameof(HostAttemptGather), coords.ToSerialised());
+        RpcId(SceneManager.HostId, nameof(HostAttemptGather), coords);
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    private void HostAttemptGather(Array intVectorArray) {
-        IntVector coords = new(intVectorArray);
+    private void HostAttemptGather(IntVector coords) {
         GatherAttempted?.Invoke(coords, _player);
     }
 
