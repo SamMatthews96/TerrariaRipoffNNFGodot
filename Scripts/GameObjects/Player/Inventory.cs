@@ -36,10 +36,10 @@ public partial class Inventory : Node {
 
     public void InitAsHost() {
         _player.PickupArea.TouchedItem += OnHostCollidedWithPickup;
-        _player.ActionController.BuildAction.BlockPlaced += OnBlockPlaced;
+        _player.ActionController.BuildAction.ItemPlaced += OnItemPlaced;
         TreeExiting += () => {
             _player.PickupArea.TouchedItem -= OnHostCollidedWithPickup;
-            _player.ActionController.BuildAction.BlockPlaced -= OnBlockPlaced;
+            _player.ActionController.BuildAction.ItemPlaced -= OnItemPlaced;
         };
     }
 
@@ -79,13 +79,12 @@ public partial class Inventory : Node {
         if (pickup.Items.TotalSpace > MaximumSpace - UsedSpace) {
             return;
         }
-
         Rpc(nameof(ClientAddItems), pickup.Items.Serialize());
 
         PickedUpItem?.Invoke(pickup);
     }
 
-    private void OnBlockPlaced(Item item, IntVector _) {
+    private void OnItemPlaced(Item item, IntVector _) {
         InventoryItems inventoryItems = new(item, 1);
         Dictionary inventoryItemsDictionary = inventoryItems.Serialize();
         Rpc(nameof(ClientRemoveItems), inventoryItemsDictionary);

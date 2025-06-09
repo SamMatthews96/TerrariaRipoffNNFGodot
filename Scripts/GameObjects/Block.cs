@@ -10,19 +10,24 @@ public partial class Block : WorldObject {
     public float CurrentHealth { get; set; }
 
     public new static Block Create(Dictionary data) {
-        Block block = Data.PackedScenes.ActiveBlock.Instantiate<Block>();
-        block.Item = Item.FromDictionary(data["item"].AsGodotDictionary());
+        Item newItem = Item.FromDictionary(data["item"].AsGodotDictionary());
+        IntVector coords = new(
+            (int)Math.Round(data["xPosition"].ToString().ToFloat()),
+            (int)Math.Round(data["yPosition"].ToString().ToFloat())
+        );
+        return Create(newItem, coords);
+    }
 
-        block.XPosition = (int)Math.Round(data["xPosition"].ToString().ToFloat());
-        block.YPosition = (int)Math.Round(data["yPosition"].ToString().ToFloat());
+    public static Block Create(Item item, IntVector coords) {
+        Block block = Data.PackedScenes.ActiveBlock.Instantiate<Block>();
+        block.Item = item;
+        block.Coords = coords;
         block.Disable();
         return block;
     }
 
     public override void _Ready() {
-        Position = new Vector2(
-            XPosition * Game.BlockSize,
-            YPosition * Game.BlockSize);
+        Position = new Vector2(Coords.X * Game.BlockSize, Coords.Y * Game.BlockSize);
         ItemBlock itemBlock = Item.GetProperty<ItemBlock>();
         _sprite.Texture = itemBlock.Texture;
         CurrentHealth = itemBlock.MaxHealth;

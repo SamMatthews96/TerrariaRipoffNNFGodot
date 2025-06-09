@@ -5,8 +5,7 @@ using Godot.Collections;
 namespace TerrariaRipoffNNF;
 
 public abstract partial class WorldObject : Node2D {
-    public int XPosition { get; protected set; }
-    public int YPosition { get; protected set; }
+    public IntVector Coords;
 
     public static WorldObject Create(Dictionary data) {
         return data["type"].AsString() switch {

@@ -53,6 +53,18 @@ public partial class IntVector : Resource {
         return !(a == b);
     }
     
+    public static IntVector operator +(IntVector a, IntVector b) {
+        return new IntVector(a.X + b.X, a.Y + b.Y);
+    }
+    
+    public static IntVector operator *(IntVector a, int b) {
+        return new IntVector(a.X * b, a.Y * b);
+    }
+    
+    public Vector2 ToVector2() {
+        return new Vector2(X, Y);
+    } 
+    
     public static float Distance(IntVector a, IntVector b) {
         return (float)Math.Sqrt(Math.Pow(a.X - b.X, 2) + Math.Pow(a.Y - b.Y, 2));
     }

@@ -6,9 +6,9 @@ namespace TerrariaRipoffNNF;
 
 [GlobalClass]
 public partial class ItemPlaceable : ItemProperty {
-    [Export] public int Width { get; private set; }
-    [Export] public int Height { get; private set; }
+    [Export] public Array<IntVector> OccupiedCells { get; private set; }
     [Export] public Texture2D Texture { get; private set; }
+
     [Export] private Array<PlaceableProperty> _placeableProperties = new();
     
     public T GetProperty<T>() where T : PlaceableProperty {

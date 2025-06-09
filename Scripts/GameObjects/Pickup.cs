@@ -10,11 +10,7 @@ public partial class Pickup : WorldObject {
     public InventoryItems Items { get; private set; }
 
     private IntVector _previousCoords;
-
-    private IntVector Coords => new(
-        (int)Math.Round(Position.X / Game.BlockSize),
-        (int)Math.Round(Position.Y / Game.BlockSize));
-
+    
     public event Action<Pickup, Dictionary> MovedCell;
 
     private bool IsHost => Multiplayer.GetUniqueId() == SceneManager.HostId;
@@ -24,16 +20,15 @@ public partial class Pickup : WorldObject {
 
         Item item = Item.FromDictionary(data["item"].AsGodotDictionary());
         newPickup.Items = new InventoryItems(item);
-        newPickup.XPosition = (int)Math.Round(data["xPosition"].ToString().ToFloat());
-        newPickup.YPosition = (int)Math.Round(data["yPosition"].ToString().ToFloat());
-        // newPickup.Disable();
+        newPickup.Coords = new IntVector(
+            (int)Math.Round(data["xPosition"].ToString().ToFloat()),
+            (int)Math.Round(data["yPosition"].ToString().ToFloat())
+        );
         return newPickup;
     }
 
     public override void _Ready() {
-        Position = new Vector2(
-            XPosition * Game.BlockSize,
-            YPosition * Game.BlockSize);
+        Position = (Coords * Game.BlockSize).ToVector2(); 
         _previousCoords = Coords;
         ItemBlock itemBlock = Items.Item.GetProperty<ItemBlock>();
         _sprite.Texture = itemBlock.Texture;

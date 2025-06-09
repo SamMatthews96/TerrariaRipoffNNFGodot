@@ -13,17 +13,16 @@ public partial class Prop : WorldObject {
     public new static Prop Create(Dictionary data) {
         Prop prop = Data.PackedScenes.ActiveProp.Instantiate<Prop>();
         prop.Item = Item.FromDictionary(data["item"].AsGodotDictionary());
-
-        prop.XPosition = (int)Math.Round(data["xPosition"].ToString().ToFloat());
-        prop.YPosition = (int)Math.Round(data["yPosition"].ToString().ToFloat());
+        prop.Coords = new IntVector(
+            (int)Math.Round(data["xPosition"].ToString().ToFloat()),
+            (int)Math.Round(data["yPosition"].ToString().ToFloat())
+        );
         prop.Disable();
         return prop;
     }
 
     public override void _Ready() {
-        Position = new Vector2(
-            XPosition * Game.BlockSize,
-            YPosition * Game.BlockSize);
+        Position = (Coords * Game.BlockSize).ToVector2();
         ItemBlock itemBlock = Item.GetProperty<ItemBlock>();
         _sprite.Texture = itemBlock.Texture;
         CurrentHealth = itemBlock.MaxHealth;

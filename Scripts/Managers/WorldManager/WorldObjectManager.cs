@@ -14,7 +14,7 @@ public partial class WorldObjectManager : Node {
     private Game _game;
     private Array<WorldObject>[,] _activeWorldObjects;
     private int _currentObjectCount;
-    
+
     private bool _isStartAreaLoading = true;
     private bool _isWorldLoading;
 
@@ -91,8 +91,7 @@ public partial class WorldObjectManager : Node {
 
             WorldObject newObject = WorldObject.Create(savedWorldObjectDict);
             _game.BlockParent.AddChild(newObject, true);
-            _activeWorldObjects[newObject.XPosition, newObject.YPosition]
-                .Add(newObject);
+            _activeWorldObjects[newObject.Coords.X, newObject.Coords.Y].Add(newObject);
 
             _currentObjectCount++;
         }
@@ -147,7 +146,7 @@ public partial class WorldObjectManager : Node {
         EnableObjectsInRegion(region);
         player.MovedCell += OnLocalPlayerMoved;
         player.ActionController.GatherAction.GatherAttempted += OnPlayerGatherAction;
-        player.ActionController.BuildAction.BlockPlaced += OnPlayerBuildAction;
+        player.ActionController.BuildAction.ItemPlaced += OnPlayerBuildAction;
         player.PlayerDespawned += OnPlayerDespawned;
         player.Inventory.PickedUpItem += OnPlayerPickedUpItem;
     }
@@ -155,7 +154,7 @@ public partial class WorldObjectManager : Node {
     private void OnPlayerDespawned(Player player) {
         player.MovedCell -= OnLocalPlayerMoved;
         player.ActionController.GatherAction.GatherAttempted -= OnPlayerGatherAction;
-        player.ActionController.BuildAction.BlockPlaced -= OnPlayerBuildAction;
+        player.ActionController.BuildAction.ItemPlaced -= OnPlayerBuildAction;
         player.Inventory.PickedUpItem -= OnPlayerPickedUpItem;
         player.PlayerDespawned -= OnPlayerDespawned;
     }
@@ -170,11 +169,9 @@ public partial class WorldObjectManager : Node {
                 block.CurrentHealth -= damage;
                 if (block.CurrentHealth > 0) return;
                 block.QueueFree();
-                _activeWorldObjects[block.XPosition, block.YPosition]
+                _activeWorldObjects[block.Coords.X, block.Coords.Y]
                     .Remove(block);
-                Vector2 position = new(
-                    block.XPosition * Game.BlockSize,
-                    block.YPosition * Game.BlockSize);
+                Vector2 position = (block.Coords * Game.BlockSize).ToVector2();
                 CreatePickup(block.Item, position);
                 break;
             }
@@ -182,11 +179,8 @@ public partial class WorldObjectManager : Node {
                 prop.CurrentHealth -= damage;
                 if (prop.CurrentHealth > 0) return;
                 prop.QueueFree();
-                _activeWorldObjects[prop.XPosition, prop.YPosition]
-                    .Remove(prop);
-                Vector2 position = new(
-                    prop.XPosition * Game.BlockSize,
-                    prop.YPosition * Game.BlockSize);
+                _activeWorldObjects[prop.Coords.X, prop.Coords.Y].Remove(prop);
+                Vector2 position = (prop.Coords * Game.BlockSize).ToVector2();
                 CreatePickup(prop.Item, position);
                 break;
             }
@@ -201,16 +195,14 @@ public partial class WorldObjectManager : Node {
     }
 
     private void OnPlayerBuildAction(Item item, IntVector coords) {
-        Array<WorldObject> cellContents = GetCellContents(coords.X, coords.Y);
-        if (cellContents.Count > 0) return;
-        Block newBlock = Block.Create(new Dictionary {
-            { "item", item.ToDictionary() },
-            { "xPosition", coords.X },
-            { "yPosition", coords.Y }
-        });
-        _activeWorldObjects[coords.X, coords.Y].Add(newBlock);
-        _game.BlockParent.AddChild(newBlock, true);
-        newBlock.Enable();
+        if (item.HasProperty<ItemBlock>()) {
+            Array<WorldObject> cellContents = GetCellContents(coords.X, coords.Y);
+            if (cellContents.Count > 0) return;
+            Block newBlock = Block.Create(item, coords);
+            _activeWorldObjects[coords.X, coords.Y].Add(newBlock);
+            _game.BlockParent.AddChild(newBlock, true);
+            newBlock.Enable();
+        } else if (item.HasProperty<ItemPlaceable>()) { }
     }
 
     private void OnPlayerPickedUpItem(Pickup pickup) {
@@ -232,14 +224,9 @@ public partial class WorldObjectManager : Node {
         _game.BlockParent.AddChild(newPickup, true);
     }
 
-
     // pickup manager
-
-
     private void DeletePickup(Pickup pickup) {
-        int xPosition = pickup.XPosition;
-        int yPosition = pickup.YPosition;
-        _activeWorldObjects[xPosition, yPosition].Remove(pickup);
+        _activeWorldObjects[pickup.Coords.X, pickup.Coords.Y].Remove(pickup);
         pickup.QueueFree();
     }
 
