@@ -195,14 +195,40 @@ public partial class WorldObjectManager : Node {
     }
 
     private void OnPlayerBuildAction(Item item, IntVector coords) {
+        Array<WorldObject> cellContents = GetCellContents(coords.X, coords.Y);
         if (item.HasProperty<ItemBlock>()) {
-            Array<WorldObject> cellContents = GetCellContents(coords.X, coords.Y);
-            if (cellContents.Count > 0) return;
+            if (cellContents.Any(worldObject => worldObject is Block or Prop)) {
+                return;
+            }
             Block newBlock = Block.Create(item, coords);
             _activeWorldObjects[coords.X, coords.Y].Add(newBlock);
             _game.BlockParent.AddChild(newBlock, true);
             newBlock.Enable();
-        } else if (item.HasProperty<ItemPlaceable>()) { }
+        } else if (item.HasProperty<ItemPlaceable>()) {
+            ItemPlaceable itemPlaceable = item.GetProperty<ItemPlaceable>();
+            List<IntVector> region = itemPlaceable.OccupiedCells
+                .Select(cell => coords + cell).ToList();
+
+            Array<WorldObject> worldObjects = GetObjectsInRegion(region);
+            if (worldObjects.Any(worldObject => worldObject is Block or Prop)) {
+                return;
+            }
+
+            Placeable placeable = Placeable.Create(item, coords);
+            _activeWorldObjects[coords.X, coords.Y].Add(placeable);
+            _game.BlockParent.AddChild(placeable, true);
+            placeable.Enable();
+            foreach (IntVector cell in region) {
+                PlaceableCell placeableCell = PlaceableCell.Create(placeable, coords);
+                _activeWorldObjects[cell.X, cell.Y].Add(placeableCell);
+                _game.BlockParent.AddChild(placeableCell, true);
+                placeableCell.Enable();
+            }
+            
+            
+           
+            
+        }
     }
 
     private void OnPlayerPickedUpItem(Pickup pickup) {

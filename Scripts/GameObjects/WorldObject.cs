@@ -11,6 +11,7 @@ public abstract partial class WorldObject : Node2D {
         return data["type"].AsString() switch {
             "block" => Block.Create(data),
             "prop" => Prop.Create(data),
+            "placeable" => Placeable.Create(data),
             _ => throw new Exception(
                 $"[20250604.2252.1] Unknown ActiveWorldObject type: {data["type"]}")
         };

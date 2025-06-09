@@ -39,4 +39,12 @@ public partial class ItemPlaceable : ItemProperty {
     public override Dictionary GetTooltipAttributes() {
         return new Dictionary();
     }
+
+    public static ItemPlaceable Create(Texture2D texture, Array<IntVector> cells) {
+        ItemPlaceable itemPlaceable = new() {
+            Texture = texture,
+            OccupiedCells = cells
+        };
+        return itemPlaceable;
+    }
 }

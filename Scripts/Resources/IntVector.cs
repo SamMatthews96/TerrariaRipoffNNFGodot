@@ -4,6 +4,7 @@ using Array = Godot.Collections.Array;
 
 namespace TerrariaRipoffNNF;
 
+[GlobalClass]
 public partial class IntVector : Resource {
     public bool Equals(IntVector other) {
         return X == other.X && Y == other.Y;
@@ -17,8 +18,8 @@ public partial class IntVector : Resource {
         return HashCode.Combine(X, Y);
     }
 
-    public int X { get; }
-    public int Y { get; }
+    [Export] public int X { get; private set; }
+    [Export] public int Y { get; private set; }
 
     public IntVector(int x, int y) {
         X = x;

@@ -5,34 +5,20 @@ using Godot.Collections;
 namespace TerrariaRipoffNNF;
 
 public partial class Placeable : WorldObject {
-    [Export] private Dictionary _savedPlaceableDictionary;
-    [Export] private Sprite2D _sprite;
-   
-    public static event Action<Placeable> ActivePlaceableSpawned;
-    public event Action<Placeable> ActivePlaceableDespawned;
+    public Item Item { get; private set; }
+    public Texture2D Texture;
     
-    public override void _Ready() {
-        // SavedPlaceable = SavedPlaceable.FromDictionary(_savedPlaceableDictionary);
-
-        // Position = new Vector2(
-        //     SavedPlaceable.XLeftPosition * Game.BlockSize,
-        //     SavedPlaceable.YBottomPosition * Game.BlockSize);
-        // _sprite.Texture = SavedPlaceable.Item.GetProperty<ItemPlaceable>().Texture;
-        // ItemPlaceable itemPlaceable = SavedPlaceable.Item.GetProperty<ItemPlaceable>();
-        int offset = Game.BlockSize / 2;
-        // _sprite.Position = new Vector2(
-        //     offset * (itemPlaceable.Width - 1),
-        //     offset * (itemPlaceable.Height - 1));
-        ActivePlaceableSpawned?.Invoke(this);
+    public new static Placeable Create(Dictionary data) {
+        throw new NotImplementedException();
     }
-
-    public override void _ExitTree() {
-        ActivePlaceableDespawned?.Invoke(this);
+    
+    public static Placeable Create(Item item, IntVector coords) {
+        Placeable placeable = Data.PackedScenes.ActivePlaceable.Instantiate<Placeable>();
+        placeable.Item = item;
+        placeable.Coords = coords;
+        placeable.Texture = item.GetProperty<ItemPlaceable>().Texture;
+        placeable.Disable();
+        return placeable;
     }
-
-    // public static ActivePlaceable Create(SavedPlaceable savedPlaceable) {
-    //     ActivePlaceable activePlaceable = Data.PackedScenes.ActivePlaceable.Instantiate<ActivePlaceable>();
-    //     activePlaceable._savedPlaceableDictionary = savedPlaceable.ToDictionary();
-    //     return activePlaceable;
-    // }
+    
 }

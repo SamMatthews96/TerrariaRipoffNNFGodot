@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://cakmoct7fr7qe"]
 
-[ext_resource type="Script" uid="uid://be8irq5x65mj" path="res://Scripts/Managers/WorldManager/WorldObjectManager.cs" id="1_a18jm"]
+[ext_resource type="Script" uid="uid://be8irq5x65mj" path="res://Scripts/Managers/WorldObjectManager.cs" id="1_a18jm"]
 
 [node name="WorldObjectManager" type="Node"]
 script = ExtResource("1_a18jm")

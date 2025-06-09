@@ -21,12 +21,12 @@ public partial class Data : Node {
     }
 
     [Export] private PackedScenes _packedScenes;
-    [Export] private Recipes _recipes;
+    private Recipes _recipes;
     [Export] private Items _items;
 
     public override void _Ready() {
         PackedScenes = _packedScenes;
-        Recipes = _recipes;
+        Recipes = new Recipes();
         Items = _items;
     }
 }

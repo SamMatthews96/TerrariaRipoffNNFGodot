@@ -52,7 +52,7 @@ public partial class BuildAction : PlayerAction {
         Array<WorldObject> cellContents =
             _game.WorldObjectManager.GetCellContents(coords.X, coords.Y);
         bool doesCellHaveSpace = cellContents.Any(
-            savedWorldObject => savedWorldObject is Block or Placeable);
+            savedWorldObject => savedWorldObject is Block or PlaceableCell);
         if (doesCellHaveSpace) return;
 
         if (blockItem.HasProperty<ItemBlock>() || blockItem.HasProperty<ItemPlaceable>()) {

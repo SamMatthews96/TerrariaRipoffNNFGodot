@@ -1,7 +1,0 @@
-[gd_resource type="Resource" script_class="Recipes" load_steps=2 format=3 uid="uid://dnucr6amj72t1"]
-
-[ext_resource type="Script" uid="uid://dws54jwenmwsw" path="res://Scripts/Data/Recipes.cs" id="2_kt5pi"]
-
-[resource]
-script = ExtResource("2_kt5pi")
-metadata/_custom_type_script = "uid://dws54jwenmwsw"
