@@ -13,7 +13,7 @@ public partial class PlaceableCell : WorldObject {
 
     public static PlaceableCell Create(Placeable placeable, IntVector coords) {
         PlaceableCell placeableCell =
-            Data.PackedScenes.ActivePlaceable.Instantiate<PlaceableCell>();
+            Data.PackedScenes.PlaceableCell.Instantiate<PlaceableCell>();
         placeableCell.Coords = coords;
         placeableCell._placeable = placeable;
         return placeableCell;

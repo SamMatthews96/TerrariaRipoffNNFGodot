@@ -7,7 +7,8 @@ public partial class PackedScenes : Resource {
     [Export] public PackedScene Player { get; private set; }
     [Export] public PackedScene ActiveBlock { get; private set; }
     [Export] public PackedScene ActivePickup { get; private set; }
-    [Export] public PackedScene ActivePlaceable { get; private set; }
+    [Export] public PackedScene Placeable { get; private set; }
+    [Export] public PackedScene PlaceableCell { get; private set; }
     [Export] public PackedScene ActiveProp { get; private set; }
     [Export] public PackedScene MainMenu { get; private set; }
     [Export] public PackedScene LoadScreen { get; private set; }

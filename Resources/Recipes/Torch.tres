@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Recipe" load_steps=15 format=3 uid="uid://cluym6axujqgv"]
+[gd_resource type="Resource" script_class="Recipe" load_steps=16 format=3 uid="uid://cluym6axujqgv"]
 
 [ext_resource type="Texture2D" uid="uid://wrf00jfy174v" path="res://Assets/Images/woodPlaceholder.png" id="1_3o6yf"]
 [ext_resource type="Script" uid="uid://bg8jhsljipuqc" path="res://Scripts/Resources/Recipes/Recipe.cs" id="1_kuw5n"]
@@ -9,6 +9,7 @@
 [ext_resource type="Script" uid="uid://dahuhkn5eabvo" path="res://Scripts/Resources/IntVector.cs" id="4_qv3ni"]
 [ext_resource type="Texture2D" uid="uid://dom0h6yhambyh" path="res://Assets/Images/placedTorch.png" id="5_36n6r"]
 [ext_resource type="Script" uid="uid://yd4u7trnr176" path="res://Scripts/Resources/Recipes/ItemPlaceablePropertyOutputTemplate.cs" id="6_tar2b"]
+[ext_resource type="Script" uid="uid://coiqlucu73qbu" path="res://Scripts/Resources/Recipes/RecipePropertyMaps/IngredientNameToOutputNameMap.cs" id="8_36n6r"]
 
 [sub_resource type="Resource" id="Resource_qv3ni"]
 script = ExtResource("2_o6jgq")
@@ -41,7 +42,7 @@ metadata/_custom_type_script = "uid://yd4u7trnr176"
 [sub_resource type="Resource" id="Resource_o6jgq"]
 script = ExtResource("3_s60d2")
 _stringTemplate = "Torch"
-_ingredientNameMaps = {}
+_ingredientNameMaps = Dictionary[String, ExtResource("8_36n6r")]({})
 metadata/_custom_type_script = "uid://dtjaxrcrr2rk5"
 
 [resource]

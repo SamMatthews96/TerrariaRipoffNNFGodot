@@ -11,11 +11,12 @@ public sealed partial class Item : Resource {
     [Export] public bool IsStackable { get; private set; } = true;
     [Export] public Texture2D IconTexture { get; private set; }
     [Export] private Array<ItemProperty> _itemProperties = new();
-    
+
     public static bool AreItemsSame(Item a, Item b) {
         if (a is null || b is null) {
             return a is null && b is null;
         }
+
         if (a.ResourceName != "" || b.ResourceName != "") {
             return a.ResourceName == b.ResourceName;
         }
@@ -77,7 +78,10 @@ public sealed partial class Item : Resource {
     }
 
     public static Item FromDictionary(Dictionary dictionary) {
-        if (dictionary.TryGetValue("ResourcePath", out Variant resourcePath)) {
+        if (
+            dictionary.TryGetValue("ResourcePath", out Variant resourcePath)
+            && resourcePath.ToString() != ""
+        ) {
             return Data.LoadResource<Item>(resourcePath.ToString());
         }
 

@@ -10,7 +10,7 @@ public partial class ItemPlaceable : ItemProperty {
     [Export] public Texture2D Texture { get; private set; }
 
     [Export] private Array<PlaceableProperty> _placeableProperties = new();
-    
+
     public T GetProperty<T>() where T : PlaceableProperty {
         if (TryGetProperty(out T property)) {
             return property;
@@ -18,7 +18,7 @@ public partial class ItemPlaceable : ItemProperty {
 
         throw new KeyNotFoundException($"Item does not have property of type {typeof(T)}");
     }
-    
+
     public bool TryGetProperty<T>(out T property) where T : PlaceableProperty {
         foreach (PlaceableProperty placeableProperty in _placeableProperties) {
             if (placeableProperty is not T castedProperty) continue;
@@ -29,10 +29,13 @@ public partial class ItemPlaceable : ItemProperty {
         property = null;
         return false;
     }
-    
+
     public override Dictionary ToDictionary() {
         Dictionary serialized = new();
-        serialized.Add("ResourcePath", ResourcePath);
+        if (ResourcePath == "") { } else {
+            serialized.Add("ResourcePath", ResourcePath);
+        }
+
         return serialized;
     }
 

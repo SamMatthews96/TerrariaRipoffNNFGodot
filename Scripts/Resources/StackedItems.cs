@@ -1,8 +1,9 @@
-﻿using Godot.Collections;
+﻿using Godot;
+using Godot.Collections;
 
 namespace TerrariaRipoffNNF;
 
-public class StackedItems {
+public partial class StackedItems : Resource {
     public int Count { get; protected set; }
     public Item Item { get; protected init; }
     public float TotalSpace => Count * Item.InventorySpace;
@@ -12,6 +13,16 @@ public class StackedItems {
         Count = count;
     }
     
+    public static StackedItems operator +(StackedItems a, StackedItems b) {
+        return new StackedItems(a.Item, a.Count + b.Count);
+    }
+    
+    public static StackedItems operator -(StackedItems a, StackedItems b) {
+        return new StackedItems(a.Item, a.Count - b.Count);
+    }
+
+    public StackedItems() { }
+
     public StackedItems ToStackedItems() {
         return this;
     }
@@ -23,9 +34,9 @@ public class StackedItems {
         };
     }
 
-    public static InventoryItems Deserialize(Dictionary dictionary) {
+    public static StackedItems Deserialize(Dictionary dictionary) {
         Item item = Item.FromDictionary(dictionary["ItemType"].AsGodotDictionary());
         int count = (int)dictionary["Count"];
-        return new InventoryItems(item, count);
+        return new StackedItems(item, count);
     }
 }

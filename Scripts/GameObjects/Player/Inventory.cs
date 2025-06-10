@@ -32,7 +32,7 @@ public partial class Inventory : Node {
 
     [Export] private Player _player;
     private Game _game;
-    private readonly List<InventoryItems> _inventoryItemsList = new();
+    private readonly List<StackedItems> _inventoryItemsList = new();
 
     public void InitAsHost() {
         _player.PickupArea.TouchedItem += OnHostCollidedWithPickup;
@@ -54,7 +54,7 @@ public partial class Inventory : Node {
                 "InventoryItemsList", out Array inventoryItems)) return;
 
         foreach (Dictionary savedItem in inventoryItems) {
-            ClientAddItems(savedItem);
+            ClientAddItems(StackedItems.Deserialize(savedItem));
         }
     }
 
@@ -69,9 +69,9 @@ public partial class Inventory : Node {
     }
 
     private void OnItemCrafted(StackedItems newItems, List<StackedItems> ingredients) {
-        Rpc(nameof(ClientAddItems), newItems.Serialize());
+        Rpc(nameof(ClientAddItems), newItems);
         foreach (StackedItems ingredient in ingredients) {
-            Rpc(nameof(ClientRemoveItems), ingredient.Serialize());
+            Rpc(nameof(ClientRemoveItems), ingredient);
         }
     }
 
@@ -79,21 +79,20 @@ public partial class Inventory : Node {
         if (pickup.Items.TotalSpace > MaximumSpace - UsedSpace) {
             return;
         }
-        Rpc(nameof(ClientAddItems), pickup.Items.Serialize());
+        Rpc(nameof(ClientAddItems), pickup.Items);
 
         PickedUpItem?.Invoke(pickup);
     }
 
     private void OnItemPlaced(Item item, IntVector _) {
-        InventoryItems inventoryItems = new(item, 1);
-        Dictionary inventoryItemsDictionary = inventoryItems.Serialize();
-        Rpc(nameof(ClientRemoveItems), inventoryItemsDictionary);
+        StackedItems inventoryItems = new(item, 1);
+        Rpc(nameof(ClientRemoveItems), inventoryItems);
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    private void ClientAddItems(Dictionary inventoryItemsDictionary) {
-        InventoryItems inventoryItemsToAdd =
-            StackedItems.Deserialize(inventoryItemsDictionary);
+    private void ClientAddItems(StackedItems inventoryItemsToAdd) {
+        // InventoryItems inventoryItemsToAdd =
+        //     StackedItems.Deserialize(inventoryItemsDictionary);
         UsedSpace += inventoryItemsToAdd.TotalSpace;
 
         int index = _inventoryItemsList.FindIndex(inventoryItems =>
@@ -109,9 +108,7 @@ public partial class Inventory : Node {
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    private void ClientRemoveItems(Dictionary inventoryItemsDictionary) {
-        InventoryItems inventoryItemsToRemove =
-            StackedItems.Deserialize(inventoryItemsDictionary);
+    private void ClientRemoveItems(StackedItems inventoryItemsToRemove) {
         UsedSpace -= inventoryItemsToRemove.TotalSpace;
 
         int index = _inventoryItemsList.FindIndex(inventoryItems =>
@@ -138,7 +135,7 @@ public partial class Inventory : Node {
 
     public Dictionary Serialize() {
         Array itemsArray = new();
-        foreach (InventoryItems inventoryItems in _inventoryItemsList) {
+        foreach (StackedItems inventoryItems in _inventoryItemsList) {
             itemsArray.Add(inventoryItems.Serialize());
         }
 

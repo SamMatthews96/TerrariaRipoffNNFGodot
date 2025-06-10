@@ -10,7 +10,10 @@ public abstract partial class ItemProperty : Resource {
     public abstract Dictionary GetTooltipAttributes();
 
     public static ItemProperty FromDictionary(Dictionary dictionary) {
-        if (dictionary.TryGetValue("ResourcePath", out Variant resourcePath)) {
+        if (
+            dictionary.TryGetValue("ResourcePath", out Variant resourcePath)
+            && resourcePath.ToString() != ""
+        ) {
             return ResourceLoader.Load<ItemProperty>(resourcePath.ToString());
         }
 

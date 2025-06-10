@@ -7,7 +7,7 @@ namespace TerrariaRipoffNNF;
 public partial class Pickup : WorldObject {
     [Export] private Sprite2D _sprite;
     [Export] private Area2D _pickupArea;
-    public InventoryItems Items { get; private set; }
+    public StackedItems Items { get; private set; }
 
     private IntVector _previousCoords;
     
@@ -19,7 +19,7 @@ public partial class Pickup : WorldObject {
         Pickup newPickup = Data.PackedScenes.ActivePickup.Instantiate<Pickup>();
 
         Item item = Item.FromDictionary(data["item"].AsGodotDictionary());
-        newPickup.Items = new InventoryItems(item);
+        newPickup.Items = new StackedItems(item);
         newPickup.Coords = new IntVector(
             (int)Math.Round(data["xPosition"].ToString().ToFloat()),
             (int)Math.Round(data["yPosition"].ToString().ToFloat())
