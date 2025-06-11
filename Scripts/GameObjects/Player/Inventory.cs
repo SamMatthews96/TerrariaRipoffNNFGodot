@@ -10,8 +10,7 @@ public partial class Inventory : Node {
     public float MaximumSpace { get; private set; } = 50;
     public float UsedSpace { get; private set; }
 
-    public List<StackedItems> StackedItemsList =>
-        _inventoryItemsList.ConvertAll(inventoryItems => inventoryItems.ToStackedItems());
+    public List<StackedItems> StackedItemsList => _inventoryItemsList;
 
     public bool IsContainingStackedItems(StackedItems stackedItems) {
         foreach (StackedItems inventoryStackedItems in StackedItemsList) {
@@ -54,7 +53,11 @@ public partial class Inventory : Node {
                 "InventoryItemsList", out Array inventoryItems)) return;
 
         foreach (Dictionary savedItem in inventoryItems) {
-            ClientAddItems(StackedItems.Deserialize(savedItem));
+            StackedItems newItem = new (
+                Item.FromDictionary(savedItem["Item"].AsGodotDictionary()),
+                (int)savedItem["Count"].ToString().ToFloat()
+            );
+            ClientAddItems(newItem);
         }
     }
 
@@ -79,6 +82,7 @@ public partial class Inventory : Node {
         if (pickup.Items.TotalSpace > MaximumSpace - UsedSpace) {
             return;
         }
+
         Rpc(nameof(ClientAddItems), pickup.Items);
 
         PickedUpItem?.Invoke(pickup);
@@ -91,8 +95,6 @@ public partial class Inventory : Node {
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void ClientAddItems(StackedItems inventoryItemsToAdd) {
-        // InventoryItems inventoryItemsToAdd =
-        //     StackedItems.Deserialize(inventoryItemsDictionary);
         UsedSpace += inventoryItemsToAdd.TotalSpace;
 
         int index = _inventoryItemsList.FindIndex(inventoryItems =>
@@ -103,7 +105,7 @@ public partial class Inventory : Node {
             AddedItemStack?.Invoke(inventoryItemsToAdd);
         } else {
             _inventoryItemsList[index] += inventoryItemsToAdd;
-            ItemStackChangedSize?.Invoke(_inventoryItemsList[index].ToStackedItems());
+            ItemStackChangedSize?.Invoke(_inventoryItemsList[index]);
         }
     }
 
@@ -122,7 +124,7 @@ public partial class Inventory : Node {
 
         switch (_inventoryItemsList[index].Count) {
             case > 0:
-                ItemStackChangedSize?.Invoke(_inventoryItemsList[index].ToStackedItems());
+                ItemStackChangedSize?.Invoke(_inventoryItemsList[index]);
                 break;
             case 0:
                 _inventoryItemsList.RemoveAt(index);
@@ -133,15 +135,17 @@ public partial class Inventory : Node {
         }
     }
 
-    public Dictionary Serialize() {
+    public Dictionary ToDictionary() {
         Array itemsArray = new();
         foreach (StackedItems inventoryItems in _inventoryItemsList) {
-            itemsArray.Add(inventoryItems.Serialize());
+            Dictionary dict = new() {
+                { "Item", inventoryItems.Item.ToDictionary() },
+                { "Count", inventoryItems.Count }
+            };
+            itemsArray.Add(dict);
         }
 
         Dictionary inventoryDict = new() {
-            // { "MaximumSpace", MaximumSpace },
-            // { "UsedSpace", UsedSpace },
             { "InventoryItemsList", itemsArray }
         };
         return inventoryDict;

@@ -8,11 +8,7 @@ namespace TerrariaRipoffNNF;
 [GlobalClass]
 public partial class ItemIngredient : ItemProperty {
     [Export] private Array<IngredientProperty> _ingredientProperties = new();
-
-    public override Dictionary ToDictionary() {
-        return new Dictionary();
-    }
-
+    
     public override Dictionary GetTooltipAttributes() {
         Dictionary tooltipAttributes = new();
         tooltipAttributes.Add("PropertyName", "Ingredient");

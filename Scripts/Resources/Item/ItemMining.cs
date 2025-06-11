@@ -16,23 +16,6 @@ public sealed partial class ItemMining : ItemEquipment {
             Power = power
         };
     }
-    
-    public new static ItemMining FromDictionary(Dictionary dictionary) {
-        return Create(
-            float.Parse(dictionary["Speed"].ToString()),
-            float.Parse(dictionary["Range"].ToString()),
-            float.Parse(dictionary["Power"].ToString())
-        );
-    }
-
-    public override Dictionary ToDictionary() {
-        Dictionary serialized = new();
-        serialized.Add("PropertyType", nameof(ItemMining));
-        serialized.Add("Speed", Speed);
-        serialized.Add("Range", Range);
-        serialized.Add("Power", Power);
-        return serialized;
-    }
 
     public override Dictionary GetTooltipAttributes() {
         Dictionary tooltipAttributes = new();

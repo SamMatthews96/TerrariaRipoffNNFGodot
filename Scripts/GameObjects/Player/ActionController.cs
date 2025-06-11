@@ -57,7 +57,7 @@ public partial class ActionController : Node {
         _currentPlayerAction = state switch {
             PlayerActionType.Gather => GatherAction,
             PlayerActionType.Build => BuildAction,
-            PlayerActionType.Weapon => throw new NotImplementedException(),
+            // PlayerActionType.Weapon
             _ => throw new ArgumentOutOfRangeException(nameof(state), state, null)
         };
 

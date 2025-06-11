@@ -22,21 +22,5 @@ public partial class StackedItems : Resource {
     }
 
     public StackedItems() { }
-
-    public StackedItems ToStackedItems() {
-        return this;
-    }
-
-    public Dictionary Serialize() {
-        return new Dictionary {
-            { "ItemType", Item.ToDictionary() },
-            { "Count", Count }
-        };
-    }
-
-    public static StackedItems Deserialize(Dictionary dictionary) {
-        Item item = Item.FromDictionary(dictionary["ItemType"].AsGodotDictionary());
-        int count = (int)dictionary["Count"];
-        return new StackedItems(item, count);
-    }
+    
 }

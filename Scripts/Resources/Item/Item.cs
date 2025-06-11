@@ -1,3 +1,4 @@
+using System;
 using Godot;
 using Godot.Collections;
 using Exception = System.Exception;
@@ -48,23 +49,13 @@ public sealed partial class Item : Resource {
     }
 
     public Dictionary ToDictionary() {
-        Dictionary serialized = new();
-        if (ResourcePath == "") {
-            serialized.Add("Name", Name);
-            serialized.Add("InventorySpace", InventorySpace);
-            serialized.Add("IsStackable", IsStackable);
-            serialized.Add("IconTexture", IconTexture.ResourcePath);
-            Array serializedProperties = new();
-            foreach (ItemProperty property in _itemProperties) {
-                serializedProperties.Add(property.ToDictionary());
-            }
-
-            serialized.Add("ItemProperties", serializedProperties);
-        } else {
-            serialized.Add("ResourcePath", ResourcePath);
+        if (ResourcePath != "") {
+            return new Dictionary {
+                { "ResourcePath", ResourcePath },
+            };
         }
 
-        return serialized;
+        return GetProperty<ItemCrafted>().ToDictionary();
     }
 
     public Dictionary<string, Dictionary> GetTooltipAttributes() {
@@ -78,26 +69,19 @@ public sealed partial class Item : Resource {
     }
 
     public static Item FromDictionary(Dictionary dictionary) {
-        if (
-            dictionary.TryGetValue("ResourcePath", out Variant resourcePath)
-            && resourcePath.ToString() != ""
-        ) {
-            return Data.LoadResource<Item>(resourcePath.ToString());
+        if (dictionary.TryGetValue("ResourcePath", out Variant resourcePath)) {
+            return ResourceLoader.Load<Item>(resourcePath.AsString());
+        } else {
+            string recipeResourcePath = dictionary["RecipeResourcePath"].AsString();
+            Recipe recipe = ResourceLoader.Load<Recipe>(recipeResourcePath);
+            Dictionary<string, Item> suppliedIngredients = new();
+            dictionary["SuppliedIngredients"].AsGodotDictionary<string, Dictionary>();
+            foreach ((string key, Dictionary itemDict) in dictionary["SuppliedIngredients"].AsGodotDictionary<string, Dictionary>()) {
+                Item item = FromDictionary(itemDict);
+                suppliedIngredients.Add(key, item);
+            }
+            return recipe.Build(suppliedIngredients).Item;
         }
-
-        Array<ItemProperty> itemProperties = new();
-
-        foreach (Dictionary serializedProperty in dictionary["ItemProperties"].AsGodotArray()) {
-            itemProperties.Add(ItemProperty.FromDictionary(serializedProperty));
-        }
-
-        return Create(
-            dictionary["Name"].ToString(),
-            ResourceLoader.Load<Texture2D>(dictionary["IconTexture"].ToString()),
-            (float)dictionary["InventorySpace"],
-            (bool)dictionary["IsStackable"],
-            itemProperties
-        );
     }
 
     public static Item Create(

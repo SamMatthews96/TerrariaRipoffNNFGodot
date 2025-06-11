@@ -29,15 +29,7 @@ public partial class ItemPlaceable : ItemProperty {
         property = null;
         return false;
     }
-
-    public override Dictionary ToDictionary() {
-        Dictionary serialized = new();
-        if (ResourcePath == "") { } else {
-            serialized.Add("ResourcePath", ResourcePath);
-        }
-
-        return serialized;
-    }
+    
 
     public override Dictionary GetTooltipAttributes() {
         return new Dictionary();

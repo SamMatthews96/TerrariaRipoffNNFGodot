@@ -21,12 +21,15 @@ public partial class Recipe : Resource {
             return null;
         }
         
-        Array<ItemProperty> newItemProperties = new();
+        Array<ItemProperty> newItemProperties = new() {
+            new ItemCrafted(this, suppliedIngredients)
+        };
         foreach (ItemPropertyOutputTemplate itemPropertyOutputTemplate in ItemProperties) {
             ItemProperty newItemProperty
                 = itemPropertyOutputTemplate.Build(suppliedIngredients, IngredientSlots);
             newItemProperties.Add(newItemProperty);
         }
+        
 
         Item item = Item.Create(
             name: ResultNameMap.ResolveTemplate(suppliedIngredients, IngredientSlots),

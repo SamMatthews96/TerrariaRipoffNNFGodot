@@ -140,7 +140,7 @@ public partial class Player : CharacterBody2D {
     private void SavePlayerData() {
         Dictionary playerData = new() {
             {"Name", _characterName},
-            { "Inventory", Inventory.Serialize() },
+            { "Inventory", Inventory.ToDictionary() },
         };
         FileManager.SavePlayer(playerData);
     }
