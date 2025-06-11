@@ -12,8 +12,6 @@ public partial class ItemPlaceablePropertyOutputTemplate : ItemPropertyOutputTem
         Dictionary<string, Item> suppliedIngredients,
         Dictionary<string, RecipeIngredientSlot> ingredientSlots
     ) {
-        return ItemPlaceable.Create(
-            Texture, OccupiedCells
-        );
+        return new ItemPlaceable(Texture, OccupiedCells);
     }
 }

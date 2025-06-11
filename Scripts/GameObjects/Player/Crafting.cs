@@ -7,9 +7,6 @@ namespace TerrariaRipoffNNF;
 
 public sealed partial class Crafting : Node {
     [Export] private Player _player;
-    [Export] private CraftingStation _handcrafting;
-
-    private Godot.Collections.Dictionary<CraftingStationType, CraftingStation> _availableCraftingStations = new();
     private Recipe _selectedRecipe;
 
     private Godot.Collections.Dictionary<string, Item> _selectedIngredients = new();
@@ -22,12 +19,19 @@ public sealed partial class Crafting : Node {
 
     public void InitAsLocal(Game game) {
         _game = game;
-        AddCraftingStation(_handcrafting);
+        AddCraftingStation(CraftingStationType.Handcrafting);
         Interface.Crafting craftingInterface = _game.Interface.CraftingInterface;
         craftingInterface.SelectRecipeContainer.RecipeButtonClicked += OnRecipeButtonClicked;
         craftingInterface.SelectIngredientPopup.SelectIngredientButtonClicked += OnSelectIngredientButtonClicked;
         craftingInterface.SelectIngredientsContainer.CraftButtonPressed += OnCraftButtonPressed;
+        _game.WorldObjectManager.CraftStationPlaced += OnCraftStationPlaced;
         TreeExiting += OnTreeExitingLocal;
+    }
+
+    private void OnCraftStationPlaced(Item item, IntVector coords) {
+        int distance = IntVector.GetOrthogonalDistance(_player.Coords, coords);
+        if (distance > WorldObjectManager.BlockSpawnDistance) return;
+        AddCraftingStation(item.GetProperty<ItemCraftStation>().Type);
     }
 
     private void OnTreeExitingLocal() {
@@ -71,13 +75,11 @@ public sealed partial class Crafting : Node {
     }
 
 
-    private void AddCraftingStation(CraftingStation craftingStation) {
-        _availableCraftingStations[craftingStation.Type] = craftingStation;
-        CraftingStationAdded?.Invoke(craftingStation);
+    private void AddCraftingStation(CraftingStationType type) {
+        CraftingStationAdded?.Invoke(Data.CraftingStations[type]);
     }
 
     private void RemoveCraftingStation(CraftingStation craftingStation) {
-        _availableCraftingStations.Remove(craftingStation.Type);
         CraftingStationRemoved?.Invoke(craftingStation);
     }
 }

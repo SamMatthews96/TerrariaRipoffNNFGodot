@@ -8,7 +8,7 @@ using Array = Godot.Collections.Array;
 namespace TerrariaRipoffNNF;
 
 public partial class BuildAction : PlayerAction {
-    public event Action<Item, IntVector> ItemPlaced;
+    public event Action<Item, IntVector> BuildActionAttempted;
 
     private Item _blockItem;
     private Game _game;
@@ -54,7 +54,7 @@ public partial class BuildAction : PlayerAction {
         if (doesCellHaveSpace) return;
 
         if (item.HasProperty<ItemBlock>() || item.HasProperty<ItemPlaceable>()) {
-            ItemPlaced?.Invoke(item, coords);
+            BuildActionAttempted?.Invoke(item, coords);
         }
     }
 

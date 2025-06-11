@@ -9,6 +9,12 @@ public partial class IntVector : Resource {
     public bool Equals(IntVector other) {
         return X == other.X && Y == other.Y;
     }
+    
+    public static int GetOrthogonalDistance(IntVector a, IntVector b) {
+        int xDelta = Math.Abs(a.X - b.X);
+        int yDelta = Math.Abs(a.Y - b.Y);
+        return Math.Max(xDelta, yDelta);
+    }
 
     public override bool Equals(object obj) {
         return obj is IntVector other && Equals(other);

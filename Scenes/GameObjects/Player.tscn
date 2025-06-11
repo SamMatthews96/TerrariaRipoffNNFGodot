@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://bx6lgpicpfal4"]
+[gd_scene load_steps=15 format=3 uid="uid://bx6lgpicpfal4"]
 
 [ext_resource type="Script" uid="uid://b11uqw4ifwmss" path="res://Scripts/GameObjects/Player/Player.cs" id="1_hx4ms"]
 [ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://Assets/Images/icon.svg" id="2_5yc1a"]
@@ -10,7 +10,6 @@
 [ext_resource type="Script" uid="uid://b43ui7yk16ekk" path="res://Scripts/GameObjects/Player/PlayerEquipment.cs" id="7_in65p"]
 [ext_resource type="Script" uid="uid://kjyoip5nu1o4" path="res://Scripts/GameObjects/Player/Crafting.cs" id="9_67855"]
 [ext_resource type="Script" uid="uid://dfb4kfm2jhuiq" path="res://Scripts/Resources/Item/ItemMining.cs" id="9_pqpyq"]
-[ext_resource type="Resource" uid="uid://3tvo765qovuy" path="res://Resources/CraftingStations/handcrafting.tres" id="10_wlky1"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_8kinl"]
 properties/0/path = NodePath(".:_spawnPosition")
@@ -108,4 +107,3 @@ Pickaxe = SubResource("Resource_7vd2l")
 [node name="Crafting" type="Node" parent="." node_paths=PackedStringArray("_player")]
 script = ExtResource("9_67855")
 _player = NodePath("..")
-_handcrafting = ExtResource("10_wlky1")

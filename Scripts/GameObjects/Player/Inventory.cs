@@ -35,10 +35,10 @@ public partial class Inventory : Node {
 
     public void InitAsHost() {
         _player.PickupArea.TouchedItem += OnHostCollidedWithPickup;
-        _player.ActionController.BuildAction.ItemPlaced += OnItemPlaced;
+        _player.ActionController.BuildAction.BuildActionAttempted += OnBuildActionAttempted;
         TreeExiting += () => {
             _player.PickupArea.TouchedItem -= OnHostCollidedWithPickup;
-            _player.ActionController.BuildAction.ItemPlaced -= OnItemPlaced;
+            _player.ActionController.BuildAction.BuildActionAttempted -= OnBuildActionAttempted;
         };
     }
 
@@ -88,7 +88,7 @@ public partial class Inventory : Node {
         PickedUpItem?.Invoke(pickup);
     }
 
-    private void OnItemPlaced(Item item, IntVector _) {
+    private void OnBuildActionAttempted(Item item, IntVector _) {
         StackedItems inventoryItems = new(item, 1);
         Rpc(nameof(ClientRemoveItems), inventoryItems);
     }

@@ -22,6 +22,7 @@ public partial class WorldObjectManager : Node {
     private Array _spawnSecond = new();
 
     public event Action WorldLoaded;
+    public event Action<Item, IntVector> CraftStationPlaced;
 
     public static WorldObjectManager Create() {
         return Data.PackedScenes.WorldObjectManager.Instantiate<WorldObjectManager>();
@@ -146,7 +147,7 @@ public partial class WorldObjectManager : Node {
         EnableObjectsInRegion(region);
         player.MovedCell += OnLocalPlayerMoved;
         player.ActionController.GatherAction.GatherAttempted += OnPlayerGatherAction;
-        player.ActionController.BuildAction.ItemPlaced += OnPlayerBuildAction;
+        player.ActionController.BuildAction.BuildActionAttempted += OnPlayerBuildAction;
         player.PlayerDespawned += OnPlayerDespawned;
         player.Inventory.PickedUpItem += OnPlayerPickedUpItem;
     }
@@ -154,7 +155,7 @@ public partial class WorldObjectManager : Node {
     private void OnPlayerDespawned(Player player) {
         player.MovedCell -= OnLocalPlayerMoved;
         player.ActionController.GatherAction.GatherAttempted -= OnPlayerGatherAction;
-        player.ActionController.BuildAction.ItemPlaced -= OnPlayerBuildAction;
+        player.ActionController.BuildAction.BuildActionAttempted -= OnPlayerBuildAction;
         player.Inventory.PickedUpItem -= OnPlayerPickedUpItem;
         player.PlayerDespawned -= OnPlayerDespawned;
     }
@@ -204,7 +205,9 @@ public partial class WorldObjectManager : Node {
             _activeWorldObjects[coords.X, coords.Y].Add(newBlock);
             _game.BlockParent.AddChild(newBlock, true);
             newBlock.Enable();
-        } else if (item.HasProperty<ItemPlaceable>()) {
+        }
+
+        if (item.HasProperty<ItemPlaceable>()) {
             ItemPlaceable itemPlaceable = item.GetProperty<ItemPlaceable>();
             List<IntVector> region = itemPlaceable.OccupiedCells
                 .Select(cell => coords + cell).ToList();
@@ -224,6 +227,10 @@ public partial class WorldObjectManager : Node {
                 _game.BlockParent.AddChild(placeableCell, true);
                 placeableCell.Enable();
             }
+        }
+
+        if (item.HasProperty<ItemCraftStation>()) {
+            CraftStationPlaced?.Invoke(item, coords);
         }
     }
 

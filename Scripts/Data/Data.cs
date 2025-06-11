@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Godot;
+﻿using Godot;
+using Godot.Collections;
 
 namespace TerrariaRipoffNNF;
 
@@ -7,6 +7,9 @@ public partial class Data : Node {
     public static PackedScenes PackedScenes { get; private set; }
     public static Recipes Recipes { get; private set; }
     public static Items Items { get; private set; }
+
+    public static Dictionary<CraftingStationType, CraftingStation>
+        CraftingStations { get; private set; }
 
     private static readonly Dictionary<string, Resource> LoadedResources = new();
 
@@ -23,10 +26,12 @@ public partial class Data : Node {
     [Export] private PackedScenes _packedScenes;
     private Recipes _recipes;
     [Export] private Items _items;
+    [Export] private Dictionary<CraftingStationType, CraftingStation> _craftingStations;
 
     public override void _Ready() {
         PackedScenes = _packedScenes;
         Recipes = new Recipes();
         Items = _items;
+        CraftingStations = _craftingStations;
     }
 }
