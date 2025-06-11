@@ -46,15 +46,15 @@ public partial class BuildAction : PlayerAction {
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    private void BuildActionAttempt(IntVector coords, Item blockItem) {
+    private void BuildActionAttempt(IntVector coords, Item item) {
         Array<WorldObject> cellContents =
             _game.WorldObjectManager.GetCellContents(coords.X, coords.Y);
         bool doesCellHaveSpace = cellContents.Any(
             savedWorldObject => savedWorldObject is Block or PlaceableCell);
         if (doesCellHaveSpace) return;
 
-        if (blockItem.HasProperty<ItemBlock>() || blockItem.HasProperty<ItemPlaceable>()) {
-            ItemPlaced?.Invoke(blockItem, coords);
+        if (item.HasProperty<ItemBlock>() || item.HasProperty<ItemPlaceable>()) {
+            ItemPlaced?.Invoke(item, coords);
         }
     }
 

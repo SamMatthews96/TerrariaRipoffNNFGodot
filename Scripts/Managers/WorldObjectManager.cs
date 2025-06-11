@@ -184,9 +184,8 @@ public partial class WorldObjectManager : Node {
                 CreatePickup(prop.Item, position);
                 break;
             }
-            case null: {
+            case null:
                 return;
-            }
             default:
                 return;
         }
@@ -200,6 +199,7 @@ public partial class WorldObjectManager : Node {
             if (cellContents.Any(worldObject => worldObject is Block or Prop)) {
                 return;
             }
+
             Block newBlock = Block.Create(item, coords);
             _activeWorldObjects[coords.X, coords.Y].Add(newBlock);
             _game.BlockParent.AddChild(newBlock, true);
@@ -224,10 +224,6 @@ public partial class WorldObjectManager : Node {
                 _game.BlockParent.AddChild(placeableCell, true);
                 placeableCell.Enable();
             }
-            
-            
-           
-            
         }
     }
 

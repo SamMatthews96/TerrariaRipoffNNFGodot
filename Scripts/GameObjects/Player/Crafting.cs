@@ -24,29 +24,10 @@ public sealed partial class Crafting : Node {
         _game = game;
         AddCraftingStation(_handcrafting);
         Interface.Crafting craftingInterface = _game.Interface.CraftingInterface;
-        // PlaceableCell.ActivePlaceableSpawned += OnActivePlaceableSpawned;
         craftingInterface.SelectRecipeContainer.RecipeButtonClicked += OnRecipeButtonClicked;
         craftingInterface.SelectIngredientPopup.SelectIngredientButtonClicked += OnSelectIngredientButtonClicked;
         craftingInterface.SelectIngredientsContainer.CraftButtonPressed += OnCraftButtonPressed;
         TreeExiting += OnTreeExitingLocal;
-    }
-
-    private void OnActivePlaceableSpawned(PlaceableCell placeableCell) {
-        // ItemPlaceable itemPlaceable =
-            // activePlaceable.SavedPlaceable.Item.GetProperty<ItemPlaceable>();
-        // if (!itemPlaceable.TryGetProperty(out PlaceableCrafting placeableCrafting)) return;
-
-        // CraftingStationType craftingStationType = placeableCrafting.CraftingStation.Type;
-        // if (_availableCraftingStations.ContainsKey(craftingStationType)) return;
-        // AddCraftingStation(placeableCrafting.CraftingStation);
-        // activePlaceable.ActivePlaceableDespawned += OnActivePlaceableDespawned;
-    }
-
-    private void OnActivePlaceableDespawned(PlaceableCell placeableCell) {
-        // placeableCell.ActivePlaceableDespawned -= OnActivePlaceableDespawned;
-        // CraftingStation craftingStation = activePlaceable.SavedPlaceable.Item
-            // .GetProperty<ItemPlaceable>().GetProperty<PlaceableCrafting>().CraftingStation;
-        // RemoveCraftingStation(craftingStation);
     }
 
     private void OnTreeExitingLocal() {
