@@ -83,8 +83,8 @@ public sealed partial class Item : Resource {
                 Item item = FromDictionary(itemDict);
                 suppliedIngredients.Add(key, item);
             }
-
-            return recipe.Build(suppliedIngredients).Item;
+            Item newItem = recipe.Build(suppliedIngredients).Item;
+            return newItem;
         }
     }
 

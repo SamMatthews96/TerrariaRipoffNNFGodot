@@ -53,11 +53,11 @@ public partial class Inventory : Node {
                 "InventoryItemsList", out Array inventoryItems)) return;
 
         foreach (Dictionary savedItem in inventoryItems) {
-            StackedItems newItem = new (
-                Item.FromDictionary(savedItem["Item"].AsGodotDictionary()),
-                (int)savedItem["Count"].ToString().ToFloat()
-            );
-            ClientAddItems(newItem);
+            Item newItem = Item.FromDictionary(savedItem["Item"].AsGodotDictionary());
+            int count = (int)savedItem["Count"].ToString().ToFloat();
+            StackedItems newStack = new (newItem, count);
+            
+            ClientAddItems(newStack);
         }
     }
 

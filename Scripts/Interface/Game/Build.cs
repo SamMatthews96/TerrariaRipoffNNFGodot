@@ -87,6 +87,9 @@ public partial class Build : Container {
             return;
         }
 
+        _placeableButtons.Remove(stackedItems.Item.Name);
+        
+        
         if (_selectedButton == button) {
             _selectedButton = null;
         }

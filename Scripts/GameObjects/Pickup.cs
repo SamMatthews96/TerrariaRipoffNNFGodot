@@ -30,8 +30,8 @@ public partial class Pickup : WorldObject {
     public override void _Ready() {
         Position = (Coords * Game.BlockSize).ToVector2(); 
         _previousCoords = Coords;
-        ItemBlock itemBlock = Items.Item.GetProperty<ItemBlock>();
-        _sprite.Texture = itemBlock.Texture;
+
+        _sprite.Texture = Items.Item.IconTexture;
     }
 
     public override void _PhysicsProcess(double delta) {

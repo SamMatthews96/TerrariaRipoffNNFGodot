@@ -162,27 +162,34 @@ public partial class WorldObjectManager : Node {
 
     private void OnPlayerGatherAction(IntVector coords, Player player) {
         WorldObject worldObject = GetCellContents(coords.X, coords.Y)
-            .FirstOrDefault(worldObject => worldObject is Block or Prop);
+            .FirstOrDefault(worldObject => worldObject is Block or Prop or PlaceableCell);
+        if (worldObject is null) return;
 
         float damage = player.PlayerEquipment.Pickaxe.Power;
+        Vector2 position = (worldObject.Coords * Game.BlockSize).ToVector2();
         switch (worldObject) {
             case Block block: {
+                // @todo should be handled inside block
                 block.CurrentHealth -= damage;
                 if (block.CurrentHealth > 0) return;
                 block.QueueFree();
                 _activeWorldObjects[block.Coords.X, block.Coords.Y]
                     .Remove(block);
-                Vector2 position = (block.Coords * Game.BlockSize).ToVector2();
                 CreatePickup(block.Item, position);
                 break;
             }
             case Prop prop: {
+                // @todo should be handled inside prop
                 prop.CurrentHealth -= damage;
                 if (prop.CurrentHealth > 0) return;
                 prop.QueueFree();
                 _activeWorldObjects[prop.Coords.X, prop.Coords.Y].Remove(prop);
-                Vector2 position = (prop.Coords * Game.BlockSize).ToVector2();
                 CreatePickup(prop.Item, position);
+                break;
+            }
+            case PlaceableCell placeableCell: {
+                placeableCell.OnGather();
+                CreatePickup(placeableCell.Placeable.Item, position);
                 break;
             }
             case null:
@@ -226,12 +233,24 @@ public partial class WorldObjectManager : Node {
                 _activeWorldObjects[cell.X, cell.Y].Add(placeableCell);
                 _game.BlockParent.AddChild(placeableCell, true);
                 placeableCell.Enable();
+                placeable.RegisterCell(placeableCell);
             }
+
+            placeable.Destroyed += OnPlaceableDestroyed;
         }
 
         if (item.HasProperty<ItemCraftStation>()) {
             CraftStationPlaced?.Invoke(item, coords);
         }
+    }
+
+    private void OnPlaceableDestroyed(Placeable placeable) {
+        placeable.Destroyed -= OnPlaceableDestroyed;
+        foreach (PlaceableCell placeableCell in placeable.PlaceableCell) {
+            placeableCell.QueueFree();
+        }
+
+        placeable.QueueFree();
     }
 
     private void OnPlayerPickedUpItem(Pickup pickup) {

@@ -5,17 +5,18 @@ using Godot.Collections;
 namespace TerrariaRipoffNNF;
 
 public partial class PlaceableCell : WorldObject {
-    private Placeable _placeable;
-
-    public override void _Ready() {
-        
-    }
+    public Placeable Placeable { get; private set; }
+    public event Action Gathered;
 
     public static PlaceableCell Create(Placeable placeable, IntVector coords) {
         PlaceableCell placeableCell =
             Data.PackedScenes.PlaceableCell.Instantiate<PlaceableCell>();
+        placeableCell.Placeable = placeable;
         placeableCell.Coords = coords;
-        placeableCell._placeable = placeable;
         return placeableCell;
+    }
+
+    public void OnGather() {
+        Gathered?.Invoke();
     }
 }
