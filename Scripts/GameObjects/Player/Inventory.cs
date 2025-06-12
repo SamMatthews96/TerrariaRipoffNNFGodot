@@ -98,7 +98,7 @@ public partial class Inventory : Node {
         UsedSpace += inventoryItemsToAdd.TotalSpace;
 
         int index = _inventoryItemsList.FindIndex(inventoryItems =>
-            Item.AreItemsSame(inventoryItems.Item, inventoryItemsToAdd.Item));
+            Item.AreEqual(inventoryItems.Item, inventoryItemsToAdd.Item));
 
         if (index == -1) {
             _inventoryItemsList.Add(inventoryItemsToAdd);

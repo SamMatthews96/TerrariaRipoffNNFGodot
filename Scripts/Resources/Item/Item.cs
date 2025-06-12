@@ -13,16 +13,18 @@ public sealed partial class Item : Resource {
     [Export] public Texture2D IconTexture { get; private set; }
     [Export] private Array<ItemProperty> _itemProperties = new();
 
-    public static bool AreItemsSame(Item a, Item b) {
-        if (a is null || b is null) {
-            return a is null && b is null;
+    public static bool AreEqual(Item a, Item b) {
+        if (a.ResourcePath != "" || b.ResourcePath != "") {
+            return a.ResourcePath == b.ResourcePath;
+        }
+        if (
+            a.TryGetProperty(out ItemCrafted aItemCrafted) &&
+            b.TryGetProperty(out ItemCrafted bItemCrafted)
+        ) {
+            return ItemCrafted.AreEqual(aItemCrafted, bItemCrafted);
         }
 
-        if (a.ResourceName != "" || b.ResourceName != "") {
-            return a.ResourceName == b.ResourceName;
-        }
-
-        return a.Name == b.Name;
+        return false;
     }
 
     public T GetProperty<T>() where T : ItemProperty {
@@ -76,10 +78,12 @@ public sealed partial class Item : Resource {
             Recipe recipe = ResourceLoader.Load<Recipe>(recipeResourcePath);
             Dictionary<string, Item> suppliedIngredients = new();
             dictionary["SuppliedIngredients"].AsGodotDictionary<string, Dictionary>();
-            foreach ((string key, Dictionary itemDict) in dictionary["SuppliedIngredients"].AsGodotDictionary<string, Dictionary>()) {
+            foreach ((string key, Dictionary itemDict) in dictionary["SuppliedIngredients"]
+                         .AsGodotDictionary<string, Dictionary>()) {
                 Item item = FromDictionary(itemDict);
                 suppliedIngredients.Add(key, item);
             }
+
             return recipe.Build(suppliedIngredients).Item;
         }
     }
