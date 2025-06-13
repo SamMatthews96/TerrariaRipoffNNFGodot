@@ -19,7 +19,7 @@ public partial class Player : CharacterBody2D {
 
     [Export] public Inventory Inventory { get; private set; }
     [Export] public ActionController ActionController { get; private set; }
-    [Export] public PickupArea PickupArea { get; private set; }
+    // [Export] public PickupArea PickupArea { get; private set; }
     [Export] public PlayerEquipment PlayerEquipment { get; private set; }
     [Export] public Crafting Crafting { get; private set; }
 
@@ -71,7 +71,7 @@ public partial class Player : CharacterBody2D {
 
     public void InitAsHost(Game game) {
         Inventory.InitAsHost();
-        PickupArea.InitAsHost();
+        // PickupArea.InitAsHost();
         ActionController.InitAsHost(game);
     }
 

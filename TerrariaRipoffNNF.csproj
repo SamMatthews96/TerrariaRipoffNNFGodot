@@ -14,6 +14,7 @@
     <Compile Remove="NewRecipeIdea\**" />
     <Compile Remove="Scripts\Managers\Data\**" />
     <Compile Remove="Scripts\Managers\WorldManager\**" />
+    <Compile Remove="Scripts\GameObjects\WorldObjectProperty\**" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Remove="Scripts\**" />
@@ -21,6 +22,7 @@
     <EmbeddedResource Remove="NewRecipeIdea\**" />
     <EmbeddedResource Remove="Scripts\Managers\Data\**" />
     <EmbeddedResource Remove="Scripts\Managers\WorldManager\**" />
+    <EmbeddedResource Remove="Scripts\GameObjects\WorldObjectProperty\**" />
   </ItemGroup>
   <ItemGroup>
     <!--Required for GdUnit4-->

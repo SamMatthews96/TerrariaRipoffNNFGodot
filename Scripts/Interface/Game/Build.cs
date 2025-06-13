@@ -57,7 +57,7 @@ public partial class Build : Container {
             AddBlockButton(stackedItems);
         }
 
-        if (stackedItems.Item.HasProperty<ItemPlaceable>()) {
+        if (stackedItems.Item.HasProperty<ItemPlaceableOld>()) {
             AddPlaceableButton(stackedItems);
         }
     }

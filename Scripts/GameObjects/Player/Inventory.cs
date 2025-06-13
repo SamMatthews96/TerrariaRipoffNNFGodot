@@ -25,7 +25,7 @@ public partial class Inventory : Node {
     public event Action<StackedItems> ItemStackChangedSize;
     public event Action<StackedItems> AddedItemStack;
     public event Action<StackedItems> RemovedItemStack;
-    public event Action<Pickup> PickedUpItem;
+    // public event Action<Pickup> PickedUpItem;
 
     public event Action<Item> EquipItemClicked;
 
@@ -34,10 +34,10 @@ public partial class Inventory : Node {
     private readonly List<StackedItems> _inventoryItemsList = new();
 
     public void InitAsHost() {
-        _player.PickupArea.TouchedItem += OnHostCollidedWithPickup;
+        // _player.PickupArea.TouchedItem += OnHostCollidedWithPickup;
         _player.ActionController.BuildAction.BuildActionAttempted += OnBuildActionAttempted;
         TreeExiting += () => {
-            _player.PickupArea.TouchedItem -= OnHostCollidedWithPickup;
+            // _player.PickupArea.TouchedItem -= OnHostCollidedWithPickup;
             _player.ActionController.BuildAction.BuildActionAttempted -= OnBuildActionAttempted;
         };
     }
@@ -78,15 +78,15 @@ public partial class Inventory : Node {
         }
     }
 
-    private void OnHostCollidedWithPickup(Pickup pickup) {
-        if (pickup.Items.TotalSpace > MaximumSpace - UsedSpace) {
-            return;
-        }
-
-        Rpc(nameof(ClientAddItems), pickup.Items);
-
-        PickedUpItem?.Invoke(pickup);
-    }
+    // private void OnHostCollidedWithPickup(Pickup pickup) {
+    //     if (pickup.Items.TotalSpace > MaximumSpace - UsedSpace) {
+    //         return;
+    //     }
+    //
+    //     Rpc(nameof(ClientAddItems), pickup.Items);
+    //
+    //     PickedUpItem?.Invoke(pickup);
+    // }
 
     private void OnBuildActionAttempted(Item item, IntVector _) {
         StackedItems inventoryItems = new(item, 1);

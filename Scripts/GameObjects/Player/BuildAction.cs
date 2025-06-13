@@ -47,13 +47,7 @@ public partial class BuildAction : PlayerAction {
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void BuildActionAttempt(IntVector coords, Item item) {
-        Array<WorldObject> cellContents =
-            _game.WorldObjectManager.GetCellContents(coords.X, coords.Y);
-        bool doesCellHaveSpace = cellContents.Any(
-            savedWorldObject => savedWorldObject is Block or PlaceableCell);
-        if (doesCellHaveSpace) return;
-
-        if (item.HasProperty<ItemBlock>() || item.HasProperty<ItemPlaceable>()) {
+        if (item.HasProperty<ItemPlaceable>()) {
             BuildActionAttempted?.Invoke(item, coords);
         }
     }

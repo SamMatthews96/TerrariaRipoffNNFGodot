@@ -12,6 +12,6 @@ public partial class ItemPlaceablePropertyOutputTemplate : ItemPropertyOutputTem
         Dictionary<string, Item> suppliedIngredients,
         Dictionary<string, RecipeIngredientSlot> ingredientSlots
     ) {
-        return new ItemPlaceable(Texture, OccupiedCells);
+        return new ItemPlaceableOld(Texture, OccupiedCells);
     }
 }

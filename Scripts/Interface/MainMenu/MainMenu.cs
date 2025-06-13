@@ -18,12 +18,6 @@ public partial class MainMenu : Control {
     private bool _isPlayerSelected;
     private Dictionary _selectedPlayer;
 
-    private enum GameType {
-        SinglePlayer,
-        Host,
-        Client
-    }
-
     public event Action<Dictionary, Dictionary> SinglePlayerClickedEnterWorld;
     public event Action<Dictionary, Dictionary> HostClickedEnterWorld;
     public event Action<string, Dictionary> ClientClickedEnterWorld;

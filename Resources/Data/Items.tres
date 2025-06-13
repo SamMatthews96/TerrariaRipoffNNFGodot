@@ -1,15 +1,7 @@
-[gd_resource type="Resource" script_class="Items" load_steps=6 format=3 uid="uid://b4pasm3pwpyq2"]
+[gd_resource type="Resource" script_class="Items" load_steps=2 format=3 uid="uid://b4pasm3pwpyq2"]
 
-[ext_resource type="Resource" uid="uid://cpty2vp0h2w83" path="res://Resources/Items/Earth.tres" id="1_rjxfa"]
-[ext_resource type="Resource" uid="uid://cqe6akp1lual" path="res://Resources/Items/FerriumOre.tres" id="2_n2ifj"]
-[ext_resource type="Resource" uid="uid://daxqeqjpn4ve1" path="res://Resources/Items/Stone.tres" id="3_5huik"]
-[ext_resource type="Resource" uid="uid://c7hb2igx46aai" path="res://Resources/Items/Beach.tres" id="4_a4cso"]
 [ext_resource type="Script" uid="uid://18jr81tkmkam" path="res://Scripts/Data/Items.cs" id="5_nyv53"]
 
 [resource]
 script = ExtResource("5_nyv53")
-Stone = ExtResource("3_5huik")
-Earth = ExtResource("1_rjxfa")
-FerriumOre = ExtResource("2_n2ifj")
-Wood = ExtResource("4_a4cso")
 metadata/_custom_type_script = "uid://18jr81tkmkam"

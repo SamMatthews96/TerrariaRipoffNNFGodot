@@ -62,8 +62,8 @@ public partial class WorldObjectManager : Node {
         TreeExiting += OnExiting;
     }
 
-    public Array<WorldObject> GetCellContents(int x, int y) {
-        return _activeWorldObjects[x, y];
+    public Array<WorldObject> GetCellContents(IntVector coords) {
+        return _activeWorldObjects[coords.X, coords.Y];
     }
 
     public override void _Process(double delta) {
@@ -92,7 +92,7 @@ public partial class WorldObjectManager : Node {
 
             WorldObject newObject = WorldObject.Create(savedWorldObjectDict);
             AddWorldObject(newObject);
-            
+
             _currentObjectCount++;
         }
 
@@ -119,8 +119,7 @@ public partial class WorldObjectManager : Node {
     private Array<WorldObject> GetObjectsInRegion(List<IntVector> region) {
         Array<WorldObject> objects = new();
         foreach (IntVector coords in region) {
-            Array<WorldObject> cellContents =
-                GetCellContents(coords.X, coords.Y);
+            Array<WorldObject> cellContents = GetCellContents(coords);
             objects.AddRange(cellContents);
         }
 
@@ -148,66 +147,38 @@ public partial class WorldObjectManager : Node {
         player.ActionController.GatherAction.GatherAttempted += OnPlayerGatherAction;
         player.ActionController.BuildAction.BuildActionAttempted += OnPlayerBuildAction;
         player.PlayerDespawned += OnPlayerDespawned;
-        player.Inventory.PickedUpItem += OnPlayerPickedUpItem;
+        // player.Inventory.PickedUpItem += OnPlayerPickedUpItem;
     }
 
     private void OnPlayerDespawned(Player player) {
         player.MovedCell -= OnLocalPlayerMoved;
         player.ActionController.GatherAction.GatherAttempted -= OnPlayerGatherAction;
         player.ActionController.BuildAction.BuildActionAttempted -= OnPlayerBuildAction;
-        player.Inventory.PickedUpItem -= OnPlayerPickedUpItem;
+        // player.Inventory.PickedUpItem -= OnPlayerPickedUpItem;
         player.PlayerDespawned -= OnPlayerDespawned;
     }
 
     private void OnPlayerGatherAction(IntVector coords, Player player) {
-        WorldObject worldObject = GetCellContents(coords.X, coords.Y)
-            .FirstOrDefault(worldObject => worldObject is Block or Prop or PlaceableCell);
-        if (worldObject is null) return;
-
-        WorldObjectStatic worldObjectStatic =
-            worldObject.GetProperty<WorldObjectStatic>();
-        worldObjectStatic.GatherAction(player);
-
-        player.ActionController.GatherAction.OnAfterGatherSuccess();
+        foreach (WorldObject worldObject in GetCellContents(coords)) {
+            if (worldObject.TryGetProperty(out ObjectGatherable worldStatic)) {
+                // worldStatic.GatherAction(player);
+                player.ActionController.GatherAction.OnAfterGatherSuccess();
+                return;
+            }
+        }
     }
 
     private void OnPlayerBuildAction(Item item, IntVector coords) {
-        Array<WorldObject> cellContents = GetCellContents(coords.X, coords.Y);
-        if (item.HasProperty<ItemBlock>()) {
-            if (cellContents.Any(worldObject => worldObject is Block or Prop)) {
+        Array<WorldObject> cellContents = GetCellContents(coords);
+        if (item.TryGetProperty(out ItemPlaceable itemPlaceable)) {
+            //@todo
+            if (cellContents.Any(worldObject => true)) {
                 return;
             }
-            Block block = Block.Create(item, coords);
+
+            WorldObject block = WorldObject.Create(
+                itemPlaceable.SavedObject, coords);
             AddWorldObject(block);
-        }
-
-        if (item.HasProperty<ItemPlaceable>()) {
-            ItemPlaceable itemPlaceable = item.GetProperty<ItemPlaceable>();
-            List<IntVector> region = itemPlaceable.OccupiedCells
-                .Select(cell => coords + cell).ToList();
-
-            Array<WorldObject> worldObjects = GetObjectsInRegion(region);
-            if (worldObjects.Any(worldObject => worldObject is Block or Prop)) {
-                return;
-            }
-
-            Placeable placeable = Placeable.Create(item, coords);
-            _activeWorldObjects[coords.X, coords.Y].Add(placeable);
-            _game.BlockParent.AddChild(placeable, true);
-            placeable.Enable();
-            foreach (IntVector cell in region) {
-                PlaceableCell placeableCell = PlaceableCell.Create(placeable, coords);
-                _activeWorldObjects[cell.X, cell.Y].Add(placeableCell);
-                _game.BlockParent.AddChild(placeableCell, true);
-                placeableCell.Enable();
-                placeable.RegisterCell(placeableCell);
-            }
-
-            placeable.Destroyed += OnPlaceableDestroyed;
-        }
-
-        if (item.HasProperty<ItemCraftStation>()) {
-            CraftStationPlaced?.Invoke(item, coords);
         }
     }
 
@@ -226,48 +197,48 @@ public partial class WorldObjectManager : Node {
         worldObject.QueueFree();
     }
 
-    private void OnPlaceableDestroyed(Placeable placeable) {
-        placeable.Destroyed -= OnPlaceableDestroyed;
-        foreach (PlaceableCell placeableCell in placeable.PlaceableCell) {
-            placeableCell.QueueFree();
-        }
+    // private void OnPlaceableDestroyed(Placeable placeable) {
+    //     placeable.Destroyed -= OnPlaceableDestroyed;
+    //     foreach (PlaceableCell placeableCell in placeable.PlaceableCell) {
+    //         placeableCell.QueueFree();
+    //     }
+    //
+    //     placeable.QueueFree();
+    // }
 
-        placeable.QueueFree();
-    }
-
-    private void OnPlayerPickedUpItem(Pickup pickup) {
-        DeletePickup(pickup);
-    }
+    // private void OnPlayerPickedUpItem(Pickup pickup) {
+    //     DeletePickup(pickup);
+    // }
 
     private void CreatePickup(Item item, Vector2 position) {
-        IntVector coords = new(position / Game.BlockSize);
-
-        // new pickup needs data from item
-        Pickup newPickup = Pickup.Create(new Dictionary {
-            { "item", item.ToDictionary() },
-            { "xPosition", coords.X },
-            { "yPosition", coords.Y }
-        });
-        _activeWorldObjects[coords.X, coords.Y].Add(newPickup);
-        newPickup.MovedCell += OnPickupMovedCell;
-
-        _game.BlockParent.AddChild(newPickup, true);
+        // IntVector coords = new(position / Game.BlockSize);
+        //
+        // // new pickup needs data from item
+        // Pickup newPickup = Pickup.Create(new Dictionary {
+        //     { "item", item.ToDictionary() },
+        //     { "xPosition", coords.X },
+        //     { "yPosition", coords.Y }
+        // });
+        // _activeWorldObjects[coords.X, coords.Y].Add(newPickup);
+        // newPickup.MovedCell += OnPickupMovedCell;
+        //
+        // _game.BlockParent.AddChild(newPickup, true);
     }
 
     // pickup manager
-    private void DeletePickup(Pickup pickup) {
-        _activeWorldObjects[pickup.Coords.X, pickup.Coords.Y].Remove(pickup);
-        pickup.QueueFree();
-    }
+    // private void DeletePickup(Pickup pickup) {
+    //     _activeWorldObjects[pickup.Coords.X, pickup.Coords.Y].Remove(pickup);
+    //     pickup.QueueFree();
+    // }
 
-    private void OnPickupMovedCell(Pickup pickup, Dictionary positionChange) {
-        IntVector previousCoords = new(
-            (int)positionChange["PreviousX"], (int)positionChange["PreviousY"]);
-        IntVector coords = new(
-            (int)positionChange["X"], (int)positionChange["Y"]);
-
-        _activeWorldObjects[previousCoords.X, previousCoords.Y].Remove(pickup);
-
-        _activeWorldObjects[coords.X, coords.Y].Add(pickup);
-    }
+    // private void OnPickupMovedCell(Pickup pickup, Dictionary positionChange) {
+    //     IntVector previousCoords = new(
+    //         (int)positionChange["PreviousX"], (int)positionChange["PreviousY"]);
+    //     IntVector coords = new(
+    //         (int)positionChange["X"], (int)positionChange["Y"]);
+    //
+    //     _activeWorldObjects[previousCoords.X, previousCoords.Y].Remove(pickup);
+    //
+    //     _activeWorldObjects[coords.X, coords.Y].Add(pickup);
+    // }
 }
