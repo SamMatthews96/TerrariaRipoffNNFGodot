@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3 uid="uid://cysgkfj62akpl"]
+
+[ext_resource type="Texture2D" uid="uid://cfc1e8nv4cp1q" path="res://Assets/Images/ItemIcons/Earth.png" id="1_88dew"]
+[ext_resource type="Script" uid="uid://bavg183x82165" path="res://Scripts/Resources/Item/Item.cs" id="4_441l5"]
+
+[resource]
+script = ExtResource("4_441l5")
+Name = "Earth"
+InventorySpace = 1.0
+IsStackable = true
+IconTexture = ExtResource("1_88dew")
+_itemProperties = []
+metadata/_custom_type_script = "uid://bavg183x82165"

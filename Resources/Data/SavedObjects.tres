@@ -1,9 +1,11 @@
-[gd_resource type="Resource" script_class="SavedObjects" load_steps=3 format=3 uid="uid://bkqyuoll5p7c3"]
+[gd_resource type="Resource" script_class="SavedObjects" load_steps=4 format=3 uid="uid://bkqyuoll5p7c3"]
 
 [ext_resource type="Script" uid="uid://6bjtnyupwu35" path="res://Scripts/Data/SavedObjects.cs" id="1_68c4l"]
+[ext_resource type="Resource" uid="uid://cqylsq6i7gorp" path="res://Resources/SavedObjects/Earth.tres" id="1_glcmp"]
 [ext_resource type="Resource" uid="uid://dddrbpg1n0p3o" path="res://Resources/SavedObjects/Stone.tres" id="1_jki4p"]
 
 [resource]
 script = ExtResource("1_68c4l")
 Stone = ExtResource("1_jki4p")
+Earth = ExtResource("1_glcmp")
 metadata/_custom_type_script = "uid://6bjtnyupwu35"

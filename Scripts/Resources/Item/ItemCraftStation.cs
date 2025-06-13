@@ -9,7 +9,7 @@ public partial class ItemCraftStation : ItemProperty {
     [Export] public CraftingStationType Type { get; private set; }
     
     public override Dictionary GetTooltipAttributes() {
-        throw new NotImplementedException();
+        return new Dictionary();
     }
 
     public ItemCraftStation() {

@@ -1,31 +1,36 @@
-[gd_resource type="Resource" script_class="SavedObject" load_steps=11 format=3 uid="uid://dddrbpg1n0p3o"]
+[gd_resource type="Resource" script_class="SavedObject" load_steps=13 format=3 uid="uid://dddrbpg1n0p3o"]
 
-[ext_resource type="Script" uid="uid://dcactdei4bsgb" path="res://Scripts/GameObjects/WorldObject/ObjectCollision.cs" id="1_3hnr2"]
-[ext_resource type="Script" uid="uid://d3qgd4pjo4k1y" path="res://Scripts/GameObjects/WorldObject/ObjectGatherable.cs" id="2_vjevc"]
-[ext_resource type="Script" uid="uid://blx42wcinfsdo" path="res://Scripts/Resources/SavedObject.cs" id="2_xhx1w"]
-[ext_resource type="Script" uid="uid://cammfrarp2c53" path="res://Scripts/GameObjects/WorldObject/ObjectHealth.cs" id="3_0g5us"]
-[ext_resource type="Script" uid="uid://c8wi107b46ca6" path="res://Scripts/GameObjects/WorldObject/ObjectTexture.cs" id="4_dj4hp"]
+[ext_resource type="Script" uid="uid://dcactdei4bsgb" path="res://Scripts/Resources/SavedObject/ObjectCollision.cs" id="1_0g5us"]
+[ext_resource type="Script" uid="uid://d3qgd4pjo4k1y" path="res://Scripts/Resources/SavedObject/ObjectGatherable.cs" id="2_dj4hp"]
+[ext_resource type="Script" uid="uid://cammfrarp2c53" path="res://Scripts/Resources/SavedObject/ObjectHealth.cs" id="3_16tvr"]
 [ext_resource type="Texture2D" uid="uid://des01kpji7vcu" path="res://Assets/Images/Stone.png" id="4_vjevc"]
+[ext_resource type="Script" uid="uid://c8wi107b46ca6" path="res://Scripts/Resources/SavedObject/ObjectTexture.cs" id="5_a4gfa"]
+[ext_resource type="Script" uid="uid://cup1ov0bdhxe" path="res://Scripts/Resources/SavedObject/ObjectPickup.cs" id="6_7mdse"]
+[ext_resource type="Script" uid="uid://blx42wcinfsdo" path="res://Scripts/Resources/SavedObject/SavedObject.cs" id="7_g0421"]
 
 [sub_resource type="Resource" id="Resource_16tvr"]
-script = ExtResource("1_3hnr2")
+script = ExtResource("1_0g5us")
 metadata/_custom_type_script = "uid://dcactdei4bsgb"
 
 [sub_resource type="Resource" id="Resource_a4gfa"]
-script = ExtResource("2_vjevc")
+script = ExtResource("2_dj4hp")
 metadata/_custom_type_script = "uid://d3qgd4pjo4k1y"
 
 [sub_resource type="Resource" id="Resource_7mdse"]
-script = ExtResource("3_0g5us")
-MaxHealth = 20.0
+script = ExtResource("3_16tvr")
+MaxHealth = 10.0
 metadata/_custom_type_script = "uid://cammfrarp2c53"
 
 [sub_resource type="Resource" id="Resource_g0421"]
-script = ExtResource("4_dj4hp")
+script = ExtResource("5_a4gfa")
 Texture = ExtResource("4_vjevc")
 metadata/_custom_type_script = "uid://c8wi107b46ca6"
 
+[sub_resource type="Resource" id="Resource_dj4hp"]
+script = ExtResource("6_7mdse")
+metadata/_custom_type_script = "uid://cup1ov0bdhxe"
+
 [resource]
-script = ExtResource("2_xhx1w")
-Properties = [SubResource("Resource_16tvr"), SubResource("Resource_a4gfa"), SubResource("Resource_7mdse"), SubResource("Resource_g0421")]
+script = ExtResource("7_g0421")
+Properties = [SubResource("Resource_16tvr"), SubResource("Resource_a4gfa"), SubResource("Resource_7mdse"), SubResource("Resource_g0421"), SubResource("Resource_dj4hp")]
 metadata/_custom_type_script = "uid://blx42wcinfsdo"

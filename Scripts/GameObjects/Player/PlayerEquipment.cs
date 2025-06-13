@@ -21,7 +21,7 @@ public partial class PlayerEquipment : Node {
                 Pickaxe = item.GetProperty<ItemMining>();
                 break;
             default:
-                throw new NotImplementedException();
+                break;
         }
 
         // _player.Inventory.RemovedItemStack += OnEquippedItemRemoved;

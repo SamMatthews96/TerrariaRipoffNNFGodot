@@ -19,14 +19,18 @@ public static class WorldCreator {
         int mid = 15;
 
         SavedObject stone = Data.SavedObjects.Stone;
-
+        SavedObject earth = Data.SavedObjects.Earth;
+        SavedObject[] types = {
+            stone, earth
+        };
         Random random = new();
 
         Array savedWorldObjects = new();
         for (int x = 0; x < worldBasicInfo.Width; x++) {
             for (int y = mid; y < worldBasicInfo.Height; y++) {
+                SavedObject type = types[random.Next(types.Length)];
                 Dictionary newBlock = new() {
-                    { "savedObject", stone.ToDictionary() },
+                    { "savedObject", type.ToDictionary() },
                     { "xPosition", x },
                     { "yPosition", y },
                 };

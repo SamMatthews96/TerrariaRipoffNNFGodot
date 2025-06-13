@@ -7,7 +7,7 @@ public partial class ItemPlaceable : ItemProperty {
     [Export] public SavedObject SavedObject { get; private set; }
     
     public override Dictionary GetTooltipAttributes() {
-        throw new System.NotImplementedException();
+        return new Dictionary();
     }
     
     

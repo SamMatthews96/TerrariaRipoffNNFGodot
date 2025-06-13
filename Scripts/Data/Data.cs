@@ -11,8 +11,7 @@ public partial class Data : Node {
 
     public static Dictionary<CraftingStationType, CraftingStation>
         CraftingStations { get; private set; }
-
-    //@todo check if we actually need this
+    
     private static readonly Dictionary<string, Resource> LoadedResources = new();
 
     public static T LoadResource<T>(string path) where T : Resource {

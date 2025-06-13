@@ -15,6 +15,8 @@
     <Compile Remove="Scripts\Managers\Data\**" />
     <Compile Remove="Scripts\Managers\WorldManager\**" />
     <Compile Remove="Scripts\GameObjects\WorldObjectProperty\**" />
+    <Compile Remove="Scripts\GameObjects\WorldObject\**" />
+    <Compile Remove="Scripts\Resources\WorldObject\**" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Remove="Scripts\**" />
@@ -23,6 +25,8 @@
     <EmbeddedResource Remove="Scripts\Managers\Data\**" />
     <EmbeddedResource Remove="Scripts\Managers\WorldManager\**" />
     <EmbeddedResource Remove="Scripts\GameObjects\WorldObjectProperty\**" />
+    <EmbeddedResource Remove="Scripts\GameObjects\WorldObject\**" />
+    <EmbeddedResource Remove="Scripts\Resources\WorldObject\**" />
   </ItemGroup>
   <ItemGroup>
     <!--Required for GdUnit4-->
