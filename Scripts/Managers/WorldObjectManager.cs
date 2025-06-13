@@ -87,11 +87,17 @@ public partial class WorldObjectManager : Node {
         stopwatch.Start();
         while (_currentObjectCount < spawnArray.Count &&
                stopwatch.ElapsedMilliseconds < timeout) {
-            Dictionary savedWorldObjectDict =
+            Dictionary savedObjectDict =
                 spawnArray[_currentObjectCount].AsGodotDictionary();
 
-            WorldObject newObject = WorldObject.Create(savedWorldObjectDict);
-            AddWorldObject(newObject);
+            SavedObject savedObject = SavedObject.FromDictionary(
+                savedObjectDict["savedObject"].AsGodotDictionary());
+            IntVector coords = new(
+                (int)savedObjectDict["xPosition"].ToString().ToFloat(),
+                (int)savedObjectDict["yPosition"].ToString().ToFloat()
+            );
+            WorldObject worldObject = WorldObject.Create(savedObject, coords);
+            AddWorldObject(worldObject);
 
             _currentObjectCount++;
         }

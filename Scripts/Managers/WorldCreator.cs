@@ -17,39 +17,25 @@ public static class WorldCreator {
         worldDictionary.Add("DefaultSpawnPosition", new Array { 5, 5 });
 
         int mid = 15;
-        Item[] types = {
-            Data.Items.Stone,
-            Data.Items.Earth,
-            Data.Items.FerriumOre
-        };
+
+        SavedObject stone = Data.SavedObjects.Stone;
+
         Random random = new();
 
         Array savedWorldObjects = new();
         for (int x = 0; x < worldBasicInfo.Width; x++) {
             for (int y = mid; y < worldBasicInfo.Height; y++) {
-                Item item = types[random.Next(3)];
                 Dictionary newBlock = new() {
-                    {"type", "block"},
-                    {"item", item.ToDictionary()},
-                    {"xPosition", x},
-                    {"yPosition", y},
+                    { "savedObject", stone.ToDictionary() },
+                    { "xPosition", x },
+                    { "yPosition", y },
                 };
                 savedWorldObjects.Add(newBlock);
             }
         }
 
-        for (int y = 0; y < 10; y++) {
-            Dictionary newProp = new() {
-                {"type", "prop"},
-                {"item", Data.Items.Wood.ToDictionary()},
-                {"xPosition", 20},
-                {"yPosition", mid - 1 - y},
-                {"currentHealth", 30}
-            };
-            savedWorldObjects.Add(newProp);
-        } 
         worldDictionary.Add("SavedWorldObjects", savedWorldObjects);
-        
+
         FileManager.SaveWorld(worldDictionary);
     }
 }

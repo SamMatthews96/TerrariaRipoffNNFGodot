@@ -7,10 +7,12 @@ public partial class Data : Node {
     public static PackedScenes PackedScenes { get; private set; }
     public static Recipes Recipes { get; private set; }
     public static Items Items { get; private set; }
+    public static SavedObjects SavedObjects { get; private set; }
 
     public static Dictionary<CraftingStationType, CraftingStation>
         CraftingStations { get; private set; }
 
+    //@todo check if we actually need this
     private static readonly Dictionary<string, Resource> LoadedResources = new();
 
     public static T LoadResource<T>(string path) where T : Resource {
@@ -26,12 +28,14 @@ public partial class Data : Node {
     [Export] private PackedScenes _packedScenes;
     private Recipes _recipes;
     [Export] private Items _items;
+    [Export] private SavedObjects _savedObjects;
     [Export] private Dictionary<CraftingStationType, CraftingStation> _craftingStations;
 
     public override void _Ready() {
         PackedScenes = _packedScenes;
         Recipes = new Recipes();
         Items = _items;
+        SavedObjects = _savedObjects;
         CraftingStations = _craftingStations;
     }
 }

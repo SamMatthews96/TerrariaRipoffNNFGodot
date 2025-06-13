@@ -10,19 +10,9 @@ public partial class WorldObject : Node2D {
 
     public event Action<WorldObject> Destroyed;
 
-    // Blocking vs not blocking
-    // CellLayer wall, block or none
+    // CellLayer wall, block (could this use objectCollision?)
     // Leaves pickup on destruction
-    // has health
-    // has parent
-    // has sprite
-
-    public static WorldObject Create(Dictionary data) {
-        // @todo
-        SavedObject savedObject = new();
-        IntVector coords = new();
-        return Create(savedObject, coords);
-    }
+    // has multiple cells
 
     public static WorldObject Create(
         SavedObject savedObject, IntVector coords) {
@@ -30,6 +20,8 @@ public partial class WorldObject : Node2D {
             Data.PackedScenes.WorldObject.Instantiate<WorldObject>();
         worldObject.Coords = coords;
         worldObject.SavedObject = savedObject;
+        worldObject.Position =
+            (coords * WorldObjectManager.BlockSpawnDistance).ToVector2();
 
         foreach (ObjectProperty objectProperty in
                  worldObject.SavedObject.Properties) {

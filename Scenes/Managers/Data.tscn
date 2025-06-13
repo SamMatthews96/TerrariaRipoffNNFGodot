@@ -1,9 +1,10 @@
-[gd_scene load_steps=9 format=3 uid="uid://c7dpe04jscc5f"]
+[gd_scene load_steps=10 format=3 uid="uid://c7dpe04jscc5f"]
 
 [ext_resource type="Script" uid="uid://c1d21p320xi1u" path="res://Scripts/Data/Data.cs" id="1_f38oj"]
 [ext_resource type="Resource" uid="uid://dllhhokx2wkse" path="res://Resources/Data/PackedScenes.tres" id="2_4ri16"]
 [ext_resource type="Texture2D" uid="uid://c1dlk5ira363n" path="res://Assets/Images/hand.png" id="4_2ebmr"]
 [ext_resource type="Resource" uid="uid://b4pasm3pwpyq2" path="res://Resources/Data/Items.tres" id="4_esico"]
+[ext_resource type="Resource" uid="uid://bkqyuoll5p7c3" path="res://Resources/Data/SavedObjects.tres" id="4_iy35j"]
 [ext_resource type="Script" uid="uid://dsma6rw4bm7vo" path="res://Scripts/Resources/CraftingStation.cs" id="5_iy35j"]
 [ext_resource type="Texture2D" uid="uid://cyllurh0pjf8q" path="res://Assets/Images/ItemIcons/bench.png" id="6_3tc8q"]
 
@@ -23,6 +24,7 @@ metadata/_custom_type_script = "uid://dsma6rw4bm7vo"
 script = ExtResource("1_f38oj")
 _packedScenes = ExtResource("2_4ri16")
 _items = ExtResource("4_esico")
+_savedObjects = ExtResource("4_iy35j")
 _craftingStations = Dictionary[int, Object]({
 0: SubResource("Resource_om11x"),
 1: SubResource("Resource_i7kqy")
