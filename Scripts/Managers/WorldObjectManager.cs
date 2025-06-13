@@ -91,9 +91,8 @@ public partial class WorldObjectManager : Node {
                 spawnArray[_currentObjectCount].AsGodotDictionary();
 
             WorldObject newObject = WorldObject.Create(savedWorldObjectDict);
-            _game.BlockParent.AddChild(newObject, true);
-            _activeWorldObjects[newObject.Coords.X, newObject.Coords.Y].Add(newObject);
-
+            AddWorldObject(newObject);
+            
             _currentObjectCount++;
         }
 
@@ -165,38 +164,9 @@ public partial class WorldObjectManager : Node {
             .FirstOrDefault(worldObject => worldObject is Block or Prop or PlaceableCell);
         if (worldObject is null) return;
 
-        float damage = player.PlayerEquipment.Pickaxe.Power;
-        Vector2 position = (worldObject.Coords * Game.BlockSize).ToVector2();
-        switch (worldObject) {
-            case Block block: {
-                // @todo should be handled inside block
-                block.CurrentHealth -= damage;
-                if (block.CurrentHealth > 0) return;
-                block.QueueFree();
-                _activeWorldObjects[block.Coords.X, block.Coords.Y]
-                    .Remove(block);
-                CreatePickup(block.Item, position);
-                break;
-            }
-            case Prop prop: {
-                // @todo should be handled inside prop
-                prop.CurrentHealth -= damage;
-                if (prop.CurrentHealth > 0) return;
-                prop.QueueFree();
-                _activeWorldObjects[prop.Coords.X, prop.Coords.Y].Remove(prop);
-                CreatePickup(prop.Item, position);
-                break;
-            }
-            case PlaceableCell placeableCell: {
-                placeableCell.OnGather();
-                CreatePickup(placeableCell.Placeable.Item, position);
-                break;
-            }
-            case null:
-                return;
-            default:
-                return;
-        }
+        WorldObjectStatic worldObjectStatic =
+            worldObject.GetProperty<WorldObjectStatic>();
+        worldObjectStatic.GatherAction(player);
 
         player.ActionController.GatherAction.OnAfterGatherSuccess();
     }
@@ -207,11 +177,8 @@ public partial class WorldObjectManager : Node {
             if (cellContents.Any(worldObject => worldObject is Block or Prop)) {
                 return;
             }
-
-            Block newBlock = Block.Create(item, coords);
-            _activeWorldObjects[coords.X, coords.Y].Add(newBlock);
-            _game.BlockParent.AddChild(newBlock, true);
-            newBlock.Enable();
+            Block block = Block.Create(item, coords);
+            AddWorldObject(block);
         }
 
         if (item.HasProperty<ItemPlaceable>()) {
@@ -242,6 +209,21 @@ public partial class WorldObjectManager : Node {
         if (item.HasProperty<ItemCraftStation>()) {
             CraftStationPlaced?.Invoke(item, coords);
         }
+    }
+
+    private void AddWorldObject(WorldObject worldObject) {
+        _activeWorldObjects[worldObject.Coords.X, worldObject.Coords.Y]
+            .Add(worldObject);
+        _game.BlockParent.AddChild(worldObject, true);
+        worldObject.Destroyed += OnWorldObjectDestroyed;
+        worldObject.Enable();
+    }
+
+    private void OnWorldObjectDestroyed(WorldObject worldObject) {
+        worldObject.Destroyed -= OnWorldObjectDestroyed;
+        _activeWorldObjects[worldObject.Coords.X, worldObject.Coords.Y]
+            .Remove(worldObject);
+        worldObject.QueueFree();
     }
 
     private void OnPlaceableDestroyed(Placeable placeable) {
