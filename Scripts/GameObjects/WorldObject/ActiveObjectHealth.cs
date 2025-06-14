@@ -18,6 +18,15 @@ public class ActiveObjectHealth : ActiveObjectProperty {
         if (WorldObject.TryGetActiveProperty(out ActiveObjectGatherable gatherable)) {
             gatherable.Gathered += OnGathered;
         }
+
+        WorldObject.Destroyed += OnDestroyed;
+    }
+
+    private void OnDestroyed(WorldObject worldObject) {
+        worldObject.Destroyed -= OnDestroyed;
+        if (WorldObject.TryGetActiveProperty(out ActiveObjectGatherable gatherable)) {
+            gatherable.Gathered -= OnGathered;
+        }
     }
 
     private void OnGathered(Player player) {

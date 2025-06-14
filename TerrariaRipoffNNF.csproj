@@ -6,27 +6,14 @@
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="4.14.0" />
     <PackageReference Include="NUnit" Version="3.13.3" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Resources\**" />
-    <Compile Remove="NewRecipeIdea\**" />
-    <Compile Remove="Scripts\Managers\Data\**" />
-    <Compile Remove="Scripts\Managers\WorldManager\**" />
-    <Compile Remove="Scripts\GameObjects\WorldObjectProperty\**" />
-    <Compile Remove="Scripts\GameObjects\WorldObject\**" />
-    <Compile Remove="Scripts\Resources\WorldObject\**" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Remove="Scripts\**" />
     <EmbeddedResource Remove="Resources\**" />
-    <EmbeddedResource Remove="NewRecipeIdea\**" />
-    <EmbeddedResource Remove="Scripts\Managers\Data\**" />
-    <EmbeddedResource Remove="Scripts\Managers\WorldManager\**" />
-    <EmbeddedResource Remove="Scripts\GameObjects\WorldObjectProperty\**" />
-    <EmbeddedResource Remove="Scripts\GameObjects\WorldObject\**" />
-    <EmbeddedResource Remove="Scripts\Resources\WorldObject\**" />
   </ItemGroup>
   <ItemGroup>
     <!--Required for GdUnit4-->

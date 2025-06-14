@@ -168,7 +168,6 @@ public partial class WorldObjectManager : Node {
         foreach (WorldObject worldObject in GetCellContents(coords)) {
             if (worldObject.TryGetActiveProperty(out ActiveObjectGatherable gatherable)) {
                 gatherable.GatherAction(player);
-                player.ActionController.GatherAction.OnAfterGatherSuccess();
                 return;
             }
         }

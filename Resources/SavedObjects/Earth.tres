@@ -20,7 +20,7 @@ metadata/_custom_type_script = "uid://d3qgd4pjo4k1y"
 
 [sub_resource type="Resource" id="Resource_a67cf"]
 script = ExtResource("3_jjyeu")
-MaxHealth = 0.0
+MaxHealth = 10.0
 metadata/_custom_type_script = "uid://cammfrarp2c53"
 
 [sub_resource type="Resource" id="Resource_wuut2"]
