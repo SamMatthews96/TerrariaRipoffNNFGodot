@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="PackedScenes" load_steps=15 format=3 uid="uid://dllhhokx2wkse"]
+[gd_resource type="Resource" script_class="PackedScenes" load_steps=16 format=3 uid="uid://dllhhokx2wkse"]
 
 [ext_resource type="Script" uid="uid://btjjbewbkdhw8" path="res://Scripts/Data/PackedScenes.cs" id="1_tombv"]
 [ext_resource type="PackedScene" uid="uid://d3hhhiiydcfft" path="res://Scenes/Managers/Game.tscn" id="3_6enwa"]
@@ -13,12 +13,14 @@
 [ext_resource type="PackedScene" uid="uid://b3x4fp117ewhc" path="res://Scenes/GameObjects/WorldObject.tscn" id="11_413k8"]
 [ext_resource type="PackedScene" uid="uid://d3mhbs8it3b2f" path="res://Scenes/Interface/Game/Crafting/SelectIngredientButton.tscn" id="11_tftwe"]
 [ext_resource type="PackedScene" uid="uid://dmru6hdxblhh5" path="res://Scenes/GameObjects/WorldSolid.tscn" id="13_5ayme"]
+[ext_resource type="PackedScene" uid="uid://bdiv1g7jn5iao" path="res://Scenes/GameObjects/WorldPickup.tscn" id="13_h7xbu"]
 [ext_resource type="PackedScene" uid="uid://cakmoct7fr7qe" path="res://Scenes/Managers/WorldObjectManager.tscn" id="14_mase3"]
 
 [resource]
 script = ExtResource("1_tombv")
 Player = ExtResource("6_12bmn")
 WorldObject = ExtResource("11_413k8")
+WorldPickup = ExtResource("13_h7xbu")
 WorldSolid = ExtResource("13_5ayme")
 MainMenu = ExtResource("5_3f4ap")
 LoadScreen = ExtResource("4_y0gj7")

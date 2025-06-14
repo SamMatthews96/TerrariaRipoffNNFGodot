@@ -9,5 +9,5 @@ Name = "Stone"
 InventorySpace = 1.0
 IsStackable = true
 IconTexture = ExtResource("1_q3xiv")
-_itemProperties = []
+_itemProperties = [null]
 metadata/_custom_type_script = "uid://bavg183x82165"

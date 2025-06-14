@@ -15,8 +15,15 @@ public partial class WorldObject : Node2D {
     public event Action<WorldObject> Destroyed;
 
     public static WorldObject Create(SavedObject savedObject, IntVector coords) {
-        WorldObject worldObject =
-            Data.PackedScenes.WorldObject.Instantiate<WorldObject>();
+        WorldObject worldObject;
+        if (savedObject.TryGetProperty(out ObjectCanPickup canPickup)) {
+            worldObject =
+                Data.PackedScenes.WorldPickup.Instantiate<WorldObject>();
+        } else {
+            worldObject =
+                Data.PackedScenes.WorldObject.Instantiate<WorldObject>();
+        }
+        
         worldObject.Coords = coords;
         worldObject.SavedObject = savedObject;
 
@@ -59,29 +66,6 @@ public partial class WorldObject : Node2D {
 
     public void Destroy() {
         Destroyed?.Invoke(this);
-    }
-
-    public bool TryGetProperty<T>(out T property) where T : ObjectProperty {
-        foreach (ObjectProperty itemProperty in SavedObject.Properties) {
-            if (itemProperty is not T castedProperty) continue;
-            property = castedProperty;
-            return true;
-        }
-
-        property = null;
-        return false;
-    }
-
-    public T GetProperty<T>() where T : ObjectProperty {
-        if (TryGetProperty(out T property)) {
-            return property;
-        }
-
-        throw new Exception($"Item does not have property of type {typeof(T)}");
-    }
-
-    public bool HasProperty<T>() where T : ObjectProperty {
-        return TryGetProperty(out T _);
     }
 
     public bool TryGetActiveProperty<T>(out T property) where T : ActiveObjectProperty {

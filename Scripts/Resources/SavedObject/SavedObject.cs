@@ -25,4 +25,19 @@ public partial class SavedObject : Resource {
 
         throw new NotImplementedException();
     }
+    
+    public bool TryGetProperty<T>(out T property) where T : ObjectProperty {
+        foreach (ObjectProperty itemProperty in Properties) {
+            if (itemProperty is not T castedProperty) continue;
+            property = castedProperty;
+            return true;
+        }
+
+        property = null;
+        return false;
+    }
+    
+    public bool HasProperty<T>() where T : ObjectProperty {
+        return TryGetProperty(out T _);
+    }
 }

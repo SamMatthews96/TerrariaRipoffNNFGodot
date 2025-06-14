@@ -199,7 +199,7 @@ public partial class WorldObjectManager : Node {
         worldObject.Destroyed -= OnWorldObjectDestroyed;
         _activeWorldObjects[worldObject.Coords.X, worldObject.Coords.Y]
             .Remove(worldObject);
-        if (worldObject.TryGetProperty(out ObjectSpawnOnDeath objectDropsPickup)) {
+        if (worldObject.SavedObject.TryGetProperty(out ObjectSpawnOnDeath objectDropsPickup)) {
             WorldObject pickup = WorldObject.Create(
                 objectDropsPickup.SavedObject, worldObject.Coords);
             AddWorldObject(pickup);

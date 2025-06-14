@@ -1,8 +1,11 @@
-﻿namespace TerrariaRipoffNNF;
+﻿using Godot;
 
+namespace TerrariaRipoffNNF;
+
+[GlobalClass]
 public partial class ObjectCanPickup : ObjectProperty {
+    [Export] public Item Item;
     public override void OnWorldObjectCreate(WorldObject worldObject) {
-        // instructing the worldObject to obey gravity, and have a pickup radius
-        // need we override the Data.PackedScenes.WorldObject
+
     }
 }
