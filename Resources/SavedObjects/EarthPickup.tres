@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="SavedObject" load_steps=5 format=3 uid="uid://ccpb3hb70twe1"]
+
+[ext_resource type="Script" uid="uid://blx42wcinfsdo" path="res://Scripts/Resources/SavedObject/SavedObject.cs" id="1_77ulv"]
+[ext_resource type="Texture2D" uid="uid://cfc1e8nv4cp1q" path="res://Assets/Images/ItemIcons/Earth.png" id="1_f71c7"]
+[ext_resource type="Script" uid="uid://c8wi107b46ca6" path="res://Scripts/Resources/SavedObject/ObjectTexture.cs" id="2_p86fh"]
+
+[sub_resource type="Resource" id="Resource_tb68p"]
+script = ExtResource("2_p86fh")
+Texture = ExtResource("1_f71c7")
+metadata/_custom_type_script = "uid://c8wi107b46ca6"
+
+[resource]
+script = ExtResource("1_77ulv")
+Properties = [SubResource("Resource_tb68p")]
+metadata/_custom_type_script = "uid://blx42wcinfsdo"
