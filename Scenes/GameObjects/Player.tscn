@@ -31,11 +31,12 @@ Range = 5.0
 Power = 5.0
 metadata/_custom_type_script = "uid://dfb4kfm2jhuiq"
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("Inventory", "ActionController", "PlayerEquipment", "Crafting", "_positionSynchronizer", "_camera")]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("Inventory", "ActionController", "PickupArea", "PlayerEquipment", "Crafting", "_positionSynchronizer", "_camera")]
 collision_mask = 2
 script = ExtResource("1_hx4ms")
 Inventory = NodePath("Inventory")
 ActionController = NodePath("ActionController")
+PickupArea = NodePath("PickupArea")
 PlayerEquipment = NodePath("CurrentEquipment")
 Crafting = NodePath("Crafting")
 _positionSynchronizer = NodePath("PositionSync")
@@ -63,6 +64,7 @@ position_smoothing_enabled = true
 position_smoothing_speed = 25.0
 
 [node name="PickupArea" type="Area2D" parent="." node_paths=PackedStringArray("_player")]
+collision_layer = 0
 collision_mask = 4
 script = ExtResource("3_tkkq4")
 _player = NodePath("..")

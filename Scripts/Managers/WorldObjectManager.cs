@@ -153,15 +153,15 @@ public partial class WorldObjectManager : Node {
         player.ActionController.GatherAction.GatherAttempted += OnPlayerGatherAction;
         player.ActionController.BuildAction.BuildActionAttempted += OnPlayerBuildAction;
         player.PlayerDespawned += OnPlayerDespawned;
-        // player.Inventory.PickedUpItem += OnPlayerPickedUpItem;
+        player.Inventory.PickupLooted += OnPlayerPickupLooted;
     }
 
     private void OnPlayerDespawned(Player player) {
         player.MovedCell -= OnLocalPlayerMoved;
         player.ActionController.GatherAction.GatherAttempted -= OnPlayerGatherAction;
         player.ActionController.BuildAction.BuildActionAttempted -= OnPlayerBuildAction;
-        // player.Inventory.PickedUpItem -= OnPlayerPickedUpItem;
         player.PlayerDespawned -= OnPlayerDespawned;
+        player.Inventory.PickupLooted -= OnPlayerPickupLooted;
     }
 
     private void OnPlayerGatherAction(IntVector coords, Player player) {
@@ -187,6 +187,10 @@ public partial class WorldObjectManager : Node {
         }
     }
 
+    private void OnPlayerPickupLooted(WorldObject worldObject) {
+        OnWorldObjectDestroyed(worldObject);
+    }
+
     private void AddWorldObject(WorldObject worldObject) {
         _activeWorldObjects[worldObject.Coords.X, worldObject.Coords.Y]
             .Add(worldObject);
@@ -199,6 +203,7 @@ public partial class WorldObjectManager : Node {
         worldObject.Destroyed -= OnWorldObjectDestroyed;
         _activeWorldObjects[worldObject.Coords.X, worldObject.Coords.Y]
             .Remove(worldObject);
+        // @todo this logic could be handled inside worldObject
         if (worldObject.SavedObject.TryGetProperty(out ObjectSpawnOnDeath objectDropsPickup)) {
             WorldObject pickup = WorldObject.New(
                 objectDropsPickup.SavedObject, worldObject.Coords).Build();
@@ -207,49 +212,4 @@ public partial class WorldObjectManager : Node {
 
         worldObject.QueueFree();
     }
-
-    // private void OnPlaceableDestroyed(Placeable placeable) {
-    //     placeable.Destroyed -= OnPlaceableDestroyed;
-    //     foreach (PlaceableCell placeableCell in placeable.PlaceableCell) {
-    //         placeableCell.QueueFree();
-    //     }
-    //
-    //     placeable.QueueFree();
-    // }
-
-    // private void OnPlayerPickedUpItem(Pickup pickup) {
-    //     DeletePickup(pickup);
-    // }
-
-    private void CreatePickup(Item item, Vector2 position) {
-        // IntVector coords = new(position / Game.BlockSize);
-        //
-        // // new pickup needs data from item
-        // Pickup newPickup = Pickup.Create(new Dictionary {
-        //     { "item", item.ToDictionary() },
-        //     { "xPosition", coords.X },
-        //     { "yPosition", coords.Y }
-        // });
-        // _activeWorldObjects[coords.X, coords.Y].Add(newPickup);
-        // newPickup.MovedCell += OnPickupMovedCell;
-        //
-        // _game.BlockParent.AddChild(newPickup, true);
-    }
-
-    // pickup manager
-    // private void DeletePickup(Pickup pickup) {
-    //     _activeWorldObjects[pickup.Coords.X, pickup.Coords.Y].Remove(pickup);
-    //     pickup.QueueFree();
-    // }
-
-    // private void OnPickupMovedCell(Pickup pickup, Dictionary positionChange) {
-    //     IntVector previousCoords = new(
-    //         (int)positionChange["PreviousX"], (int)positionChange["PreviousY"]);
-    //     IntVector coords = new(
-    //         (int)positionChange["X"], (int)positionChange["Y"]);
-    //
-    //     _activeWorldObjects[previousCoords.X, previousCoords.Y].Remove(pickup);
-    //
-    //     _activeWorldObjects[coords.X, coords.Y].Add(pickup);
-    // }
 }
