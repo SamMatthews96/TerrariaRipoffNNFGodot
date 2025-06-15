@@ -2,20 +2,20 @@
 
 namespace TerrariaRipoffNNF;
 
-public class ActiveObjectHealth : ActiveObjectProperty {
+public class ObjectHealth : ObjectProperty {
     private float _maxHealth;
     private float _currentHealth;
 
     public event Action OnHealthHitZero;
 
-    public ActiveObjectHealth(WorldObject worldObject, float maxHealth)
+    public ObjectHealth(WorldObject worldObject, float maxHealth)
         : base(worldObject) {
         _maxHealth = maxHealth;
         _currentHealth = maxHealth;
     }
 
     public override void Init() {
-        if (WorldObject.TryGetActiveProperty(out ActiveObjectGatherable gatherable)) {
+        if (WorldObject.TryGetProperty(out ObjectGatherable gatherable)) {
             gatherable.Gathered += OnGathered;
         }
 
@@ -24,7 +24,7 @@ public class ActiveObjectHealth : ActiveObjectProperty {
 
     private void OnDestroyed(WorldObject worldObject) {
         worldObject.Destroyed -= OnDestroyed;
-        if (WorldObject.TryGetActiveProperty(out ActiveObjectGatherable gatherable)) {
+        if (WorldObject.TryGetProperty(out ObjectGatherable gatherable)) {
             gatherable.Gathered -= OnGathered;
         }
     }

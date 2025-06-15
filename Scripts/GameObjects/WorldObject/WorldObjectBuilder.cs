@@ -1,31 +1,67 @@
-﻿using Godot;
+﻿using System;
+using System.Collections.Generic;
+using Godot;
+using Godot.Collections;
 
 namespace TerrariaRipoffNNF;
 
 public partial class WorldObject {
-    public static Builder New(SavedObject savedObject, IntVector coords) {
-        return new Builder(savedObject, coords);
+    public static WorldObject FromDictionary(Dictionary dictionary) {
+        IntVector coords = new(
+            (int)dictionary["xPosition"].ToString().ToFloat(),
+            (int)dictionary["yPosition"].ToString().ToFloat()
+        );
+        switch (dictionary["type"].ToString()) {
+            case "block":
+                Item item = Item.FromDictionary(dictionary["item"].AsGodotDictionary());
+                return New(coords)
+                    .AsBlock(item)
+                    .Build();
+            default:
+                throw new ArgumentException($"Unknown WorldObject type: {dictionary["Type"]}");
+        }
     }
+
+    public static Builder New(IntVector coords) {
+        return new Builder(coords);
+    }
+
     public class Builder {
         private readonly WorldObject _worldObject;
-        
-        public Builder(SavedObject savedObject, IntVector coords) {
+
+        public Builder(IntVector coords) {
             _worldObject = new WorldObject();
-            _worldObject.SavedObject = savedObject;
             _worldObject.Coords = coords;
         }
 
-        public WorldObject Build() {
-            foreach (ObjectProperty property in _worldObject.SavedObject.Properties) {
-                property.Register(_worldObject);
-            }
+        public Builder AsBlock(Item item) {
+            _worldObject.ActiveProperties.AddRange(new List<ObjectProperty> {
+                new ObjectCollision(_worldObject),
+                new ObjectGatherable(_worldObject),
+                new ObjectSpawnOnDeath(_worldObject, item),
+                new ObjectHealth(_worldObject, 5),
+                new ObjectTexture(_worldObject, item.IconTexture)
+            });
 
+            return this;
+        }
+
+        public Builder AsPickup(Item item) {
+            _worldObject.ActiveProperties.AddRange(new List<ObjectProperty> {
+                new ObjectTexture(_worldObject, item.IconTexture),
+                new ObjectCanPickup(_worldObject, item),
+            });
+
+            return this;
+        }
+
+        public WorldObject Build() {
             _worldObject.ParentNode ??= new Node2D();
 
-            foreach (ActiveObjectProperty property in _worldObject.ActiveProperties) {
+            foreach (ObjectProperty property in _worldObject.ActiveProperties) {
                 property.Init();
             }
-            
+
             _worldObject.AddChild(_worldObject.ParentNode, true);
             return _worldObject;
         }

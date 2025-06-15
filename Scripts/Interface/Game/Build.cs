@@ -53,9 +53,9 @@ public partial class Build : Container {
     }
 
     private void OnInventoryAddedItemStack(StackedItems stackedItems) {
-        // if (stackedItems.Item.HasProperty<ItemBlock>()) {
-        //     AddBlockButton(stackedItems);
-        // }
+        if (stackedItems.Item.HasProperty<ItemPlaceable>()) {
+            AddBlockButton(stackedItems);
+        }
 
         // if (stackedItems.Item.HasProperty<ItemPlaceableOld>()) {
         //     AddPlaceableButton(stackedItems);

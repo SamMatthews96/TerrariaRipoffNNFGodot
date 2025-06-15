@@ -1,9 +1,9 @@
 ﻿namespace TerrariaRipoffNNF;
 
-public abstract class ActiveObjectProperty {
+public abstract class ObjectProperty {
     protected WorldObject WorldObject { get; private set; }
 
-    protected ActiveObjectProperty(WorldObject worldObject) {
+    protected ObjectProperty(WorldObject worldObject) {
         WorldObject = worldObject;
     }
 

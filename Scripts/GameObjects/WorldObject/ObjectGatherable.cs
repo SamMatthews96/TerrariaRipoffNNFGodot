@@ -2,10 +2,10 @@
 
 namespace TerrariaRipoffNNF;
 
-public class ActiveObjectGatherable : ActiveObjectProperty {
+public class ObjectGatherable : ObjectProperty {
     public event Action<Player> Gathered;
 
-    public ActiveObjectGatherable(WorldObject worldObject) : base(worldObject) { }
+    public ObjectGatherable(WorldObject worldObject) : base(worldObject) { }
 
 
     public void GatherAction(Player player) {

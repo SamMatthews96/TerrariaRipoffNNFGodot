@@ -90,13 +90,8 @@ public partial class WorldObjectManager : Node {
             Dictionary savedObjectDict =
                 spawnArray[_currentObjectCount].AsGodotDictionary();
 
-            SavedObject savedObject = SavedObject.FromDictionary(
-                savedObjectDict["savedObject"].AsGodotDictionary());
-            IntVector coords = new(
-                (int)savedObjectDict["xPosition"].ToString().ToFloat(),
-                (int)savedObjectDict["yPosition"].ToString().ToFloat()
-            );
-            WorldObject worldObject = WorldObject.New(savedObject, coords).Build();
+            WorldObject worldObject =
+                WorldObject.FromDictionary(savedObjectDict);
             AddWorldObject(worldObject);
 
             _currentObjectCount++;
@@ -166,7 +161,7 @@ public partial class WorldObjectManager : Node {
 
     private void OnPlayerGatherAction(IntVector coords, Player player) {
         foreach (WorldObject worldObject in GetCellContents(coords)) {
-            if (worldObject.TryGetActiveProperty(out ActiveObjectGatherable gatherable)) {
+            if (worldObject.TryGetProperty(out ObjectGatherable gatherable)) {
                 gatherable.GatherAction(player);
                 return;
             }
@@ -181,18 +176,9 @@ public partial class WorldObjectManager : Node {
             return;
         }
 
-        SavedObject savedObject = new() {
-            Properties = new Array<ObjectProperty> {
-                new ObjectCollision(),
-                new ObjectGatherable(),
-                new ObjectSpawnOnDeath(),
-                new ObjectHealth(),
-                new ObjectTexture()
-            },
-        };
-
-
-        WorldObject block = WorldObject.New(savedObject, coords).Build();
+        WorldObject block = WorldObject.New(coords)
+            .AsBlock(item)
+            .Build();
         AddWorldObject(block);
     }
 
@@ -213,9 +199,9 @@ public partial class WorldObjectManager : Node {
         _activeWorldObjects[worldObject.Coords.X, worldObject.Coords.Y]
             .Remove(worldObject);
         // @todo this logic could be handled inside worldObject
-        if (worldObject.SavedObject.TryGetProperty(out ObjectSpawnOnDeath objectDropsPickup)) {
-            WorldObject pickup = WorldObject.New(
-                objectDropsPickup.SavedObject, worldObject.Coords).Build();
+        if (worldObject.TryGetProperty(out ObjectSpawnOnDeath objectDropsPickup)) {
+            WorldObject pickup = WorldObject.New(worldObject.Coords)
+                .AsPickup(objectDropsPickup.Item).Build();
             AddWorldObject(pickup);
         }
 
