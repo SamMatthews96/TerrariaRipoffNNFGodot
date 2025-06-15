@@ -1,4 +1,5 @@
-﻿using Godot;
+﻿using System;
+using Godot;
 using Godot.Collections;
 
 namespace TerrariaRipoffNNF;
@@ -12,6 +13,7 @@ public partial class ItemPlaceablePropertyOutputTemplate : ItemPropertyOutputTem
         Dictionary<string, Item> suppliedIngredients,
         Dictionary<string, RecipeIngredientSlot> ingredientSlots
     ) {
-        return new ItemPlaceableOld(Texture, OccupiedCells);
+        throw new NotImplementedException();
+        // return new ItemPlaceableOld(Texture, OccupiedCells);
     }
 }

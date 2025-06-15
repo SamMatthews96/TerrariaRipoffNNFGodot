@@ -3,8 +3,8 @@ using Godot.Collections;
 
 namespace TerrariaRipoffNNF;
 
+[GlobalClass]
 public partial class ItemPlaceable : ItemProperty {
-    [Export] public SavedObject SavedObject { get; private set; }
     
     public override Dictionary GetTooltipAttributes() {
         return new Dictionary();

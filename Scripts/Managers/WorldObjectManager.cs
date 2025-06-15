@@ -175,16 +175,25 @@ public partial class WorldObjectManager : Node {
 
     private void OnPlayerBuildAction(Item item, IntVector coords) {
         Array<WorldObject> cellContents = GetCellContents(coords);
-        if (item.TryGetProperty(out ItemPlaceable itemPlaceable)) {
-            //@todo
-            if (cellContents.Any(worldObject => true)) {
-                return;
-            }
-
-            WorldObject block = WorldObject.New(
-                itemPlaceable.SavedObject, coords).Build();
-            AddWorldObject(block);
+        if (!item.TryGetProperty(out ItemPlaceable itemPlaceable)) return;
+        //@todo
+        if (cellContents.Any(worldObject => true)) {
+            return;
         }
+
+        SavedObject savedObject = new() {
+            Properties = new Array<ObjectProperty> {
+                new ObjectCollision(),
+                new ObjectGatherable(),
+                new ObjectSpawnOnDeath(),
+                new ObjectHealth(),
+                new ObjectTexture()
+            },
+        };
+
+
+        WorldObject block = WorldObject.New(savedObject, coords).Build();
+        AddWorldObject(block);
     }
 
     private void OnPlayerPickupLooted(WorldObject worldObject) {

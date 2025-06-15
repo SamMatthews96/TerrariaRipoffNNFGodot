@@ -6,7 +6,7 @@
 [ext_resource type="Script" uid="uid://cammfrarp2c53" path="res://Scripts/Resources/SavedObject/ObjectHealth.cs" id="4_551mj"]
 [ext_resource type="Texture2D" uid="uid://cfc1e8nv4cp1q" path="res://Assets/Images/ItemIcons/Earth.png" id="5_euoft"]
 [ext_resource type="Script" uid="uid://c8wi107b46ca6" path="res://Scripts/Resources/SavedObject/ObjectTexture.cs" id="6_8wt3t"]
-[ext_resource type="Resource" uid="uid://ccpb3hb70twe1" path="res://Resources/SavedObjects/EarthPickup.tres" id="7_beio2"]
+[ext_resource type="Resource" uid="uid://ccpb3hb70twe1" path="res://Resources/SavedObjects/EarthPickup.tres" id="7_x7q4d"]
 [ext_resource type="Script" uid="uid://d02286nnqyr5n" path="res://Scripts/Resources/SavedObject/ObjectSpawnOnDeath.cs" id="8_5ovjg"]
 [ext_resource type="Script" uid="uid://blx42wcinfsdo" path="res://Scripts/Resources/SavedObject/SavedObject.cs" id="9_oynyc"]
 
@@ -30,7 +30,7 @@ metadata/_custom_type_script = "uid://c8wi107b46ca6"
 
 [sub_resource type="Resource" id="Resource_u4dsy"]
 script = ExtResource("8_5ovjg")
-SavedObject = ExtResource("7_beio2")
+SavedObject = ExtResource("7_x7q4d")
 metadata/_custom_type_script = "uid://d02286nnqyr5n"
 
 [resource]
