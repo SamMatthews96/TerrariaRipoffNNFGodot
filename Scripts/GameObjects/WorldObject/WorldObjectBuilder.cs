@@ -11,15 +11,12 @@ public partial class WorldObject {
             (int)dictionary["xPosition"].ToString().ToFloat(),
             (int)dictionary["yPosition"].ToString().ToFloat()
         );
-        switch (dictionary["type"].ToString()) {
-            case "block":
-                Item item = Item.FromDictionary(dictionary["item"].AsGodotDictionary());
-                return New(coords)
-                    .AsBlock(item)
-                    .Build();
-            default:
-                throw new ArgumentException($"Unknown WorldObject type: {dictionary["Type"]}");
-        }
+        Item item = Item.FromDictionary(dictionary["item"].AsGodotDictionary());
+        return dictionary["type"].ToString() switch {
+            "block" => New(coords).AsBlock(item).Build(),
+            "tree" => New(coords).AsTree(item).Build(),
+            _ => throw new ArgumentException($"Unknown WorldObject type: {dictionary["Type"]}")
+        };
     }
 
     public static Builder New(IntVector coords) {
@@ -54,6 +51,17 @@ public partial class WorldObject {
                 new ObjectTexture(_worldObject, item.IconTexture, true)
             });
 
+            return this;
+        }
+
+        public Builder AsTree(Item item) {
+            _worldObject.ActiveProperties.AddRange(new List<ObjectProperty> {
+                new ObjectGatherable(_worldObject),
+                new ObjectSpawnOnDeath(_worldObject, item),
+                new ObjectHealth(_worldObject, 5),
+                new ObjectTexture(_worldObject, item.IconTexture, true)
+            });
+            
             return this;
         }
 

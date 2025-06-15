@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
 using Godot.Collections;
 using Array = Godot.Collections.Array;
@@ -29,13 +30,25 @@ public static class WorldCreator {
             for (int y = mid; y < worldBasicInfo.Height; y++) {
                 Item item = items[random.Next(items.Length)];
                 Dictionary newBlock = new() {
-                    { "type", "block"},
+                    { "type", "block" },
                     { "item", item.ToDictionary() },
                     { "xPosition", x },
                     { "yPosition", y },
                 };
                 savedWorldObjects.Add(newBlock);
             }
+        }
+
+        Item wood = Data.Items.Wood;
+
+        for (int y = mid - 10; y < mid - 1; y++) {
+            Dictionary tree = new() {
+                { "type", "tree" },
+                { "item", wood.ToDictionary() },
+                { "xPosition", 10 },
+                { "yPosition", y },
+            };
+            savedWorldObjects.Add(tree);
         }
 
         worldDictionary.Add("SavedWorldObjects", savedWorldObjects);

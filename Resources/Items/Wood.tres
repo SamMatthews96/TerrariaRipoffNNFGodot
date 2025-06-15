@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="Item" load_steps=7 format=3 uid="uid://be8tbdvrre8v8"]
+
+[ext_resource type="Script" uid="uid://bavg183x82165" path="res://Scripts/Resources/Item/Item.cs" id="1_ga8wg"]
+[ext_resource type="Texture2D" uid="uid://dh51pmlsc06fg" path="res://Assets/Images/ItemIcons/log2.png" id="1_qklcq"]
+[ext_resource type="Script" uid="uid://b5w8qhrh8qefd" path="res://Scripts/Resources/Item/IngredientProperty.cs" id="2_7yecp"]
+[ext_resource type="Script" uid="uid://dp8bgot75ojla" path="res://Scripts/Resources/Item/ItemIngredient.cs" id="3_6xii4"]
+
+[sub_resource type="Resource" id="Resource_o8ysd"]
+script = ExtResource("2_7yecp")
+IngredientType = 2
+Quality = 1.0
+Name = "Wood"
+metadata/_custom_type_script = "uid://b5w8qhrh8qefd"
+
+[sub_resource type="Resource" id="Resource_mjsl1"]
+script = ExtResource("3_6xii4")
+_ingredientProperties = Array[ExtResource("2_7yecp")]([SubResource("Resource_o8ysd")])
+metadata/_custom_type_script = "uid://dp8bgot75ojla"
+
+[resource]
+script = ExtResource("1_ga8wg")
+Name = "Wood"
+InventorySpace = 1.0
+IsStackable = true
+IconTexture = ExtResource("1_qklcq")
+_itemProperties = [SubResource("Resource_mjsl1")]
+metadata/_custom_type_script = "uid://bavg183x82165"
