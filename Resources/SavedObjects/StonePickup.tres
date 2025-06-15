@@ -1,6 +1,7 @@
-[gd_resource type="Resource" script_class="SavedObject" load_steps=8 format=3 uid="uid://braly44jijwbg"]
+[gd_resource type="Resource" script_class="SavedObject" load_steps=9 format=3 uid="uid://braly44jijwbg"]
 
 [ext_resource type="Script" uid="uid://blx42wcinfsdo" path="res://Scripts/Resources/SavedObject/SavedObject.cs" id="1_0ywpx"]
+[ext_resource type="Script" uid="uid://cbyft0pv68v3s" path="res://Scripts/Resources/SavedObject/ObjectProperty.cs" id="1_6rc6o"]
 [ext_resource type="Resource" uid="uid://bqshlfwn0tksb" path="res://Resources/Items/Stone.tres" id="1_fkkso"]
 [ext_resource type="Script" uid="uid://b3giggosm8w5c" path="res://Scripts/Resources/SavedObject/ObjectCanPickup.cs" id="2_6rc6o"]
 [ext_resource type="Texture2D" uid="uid://des01kpji7vcu" path="res://Assets/Images/Stone.png" id="3_ekqml"]
@@ -18,5 +19,5 @@ metadata/_custom_type_script = "uid://c8wi107b46ca6"
 
 [resource]
 script = ExtResource("1_0ywpx")
-Properties = [SubResource("Resource_1ve11"), SubResource("Resource_2n333")]
+Properties = Array[ExtResource("1_6rc6o")]([SubResource("Resource_1ve11"), SubResource("Resource_2n333")])
 metadata/_custom_type_script = "uid://blx42wcinfsdo"

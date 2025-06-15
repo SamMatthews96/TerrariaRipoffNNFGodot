@@ -7,7 +7,8 @@ namespace TerrariaRipoffNNF;
 public partial class ObjectSpawnOnDeath : ObjectProperty {
     [Export] public SavedObject SavedObject { get; private set; }
     
-    public override void OnWorldObjectCreate(WorldObject worldObject) {
-        
+    public override void Register(WorldObject worldObject) {
+        worldObject.ActiveProperties
+            .Add(new ActiveObjectSpawnOnDeath(worldObject));
     }
 }

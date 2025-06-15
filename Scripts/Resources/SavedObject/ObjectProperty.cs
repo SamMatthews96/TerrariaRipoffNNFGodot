@@ -4,5 +4,5 @@ namespace TerrariaRipoffNNF;
 
 [GlobalClass]
 public abstract partial class ObjectProperty : Resource {
-    public abstract void OnWorldObjectCreate(WorldObject worldObject);
+    public abstract void Register(WorldObject worldObject);
 }

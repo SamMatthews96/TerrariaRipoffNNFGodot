@@ -1,45 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
 using Godot;
-using Godot.Collections;
 
 namespace TerrariaRipoffNNF;
 
-public partial class WorldObject : Node2D {
+public partial class WorldObject : Node {
     public IntVector Coords { get; private set; }
     public SavedObject SavedObject { get; private set; }
+
+    public Node2D ParentNode {
+        get => _parentNode;
+        set {
+            if (_parentNode is null) {
+                _parentNode = value;
+            } else {
+                throw new Exception("[20250615.1109.1] ParentNode is already set.");
+            }
+        }
+    }
+
+    private Node2D _parentNode;
 
     public List<ActiveObjectProperty> ActiveProperties { get; private set; }
         = new();
 
     public event Action<WorldObject> Destroyed;
 
-    public static WorldObject Create(SavedObject savedObject, IntVector coords) {
-        WorldObject worldObject;
-        if (savedObject.TryGetProperty(out ObjectCanPickup canPickup)) {
-            worldObject =
-                Data.PackedScenes.WorldPickup.Instantiate<WorldObject>();
-        } else {
-            worldObject =
-                Data.PackedScenes.WorldObject.Instantiate<WorldObject>();
-        }
-        
-        worldObject.Coords = coords;
-        worldObject.SavedObject = savedObject;
-
-        return worldObject;
-    }
-
     public override void _Ready() {
-        Position = (Coords * Game.BlockSize).ToVector2();
-        foreach (ObjectProperty objectProperty in SavedObject.Properties) {
-            objectProperty.OnWorldObjectCreate(this);
-        }
+        ParentNode.Position = (Coords * Game.BlockSize).ToVector2();
 
-        foreach (ActiveObjectProperty activeProperty in ActiveProperties) {
-            activeProperty.Init();
-        }
-        
         if (TryGetActiveProperty(out ActiveObjectHealth health)) {
             health.OnHealthHitZero += Destroy;
         } else {
@@ -47,21 +36,20 @@ public partial class WorldObject : Node2D {
                 gatherable.Gathered += OnGatheredNoHealth;
             }
         }
-
     }
 
-    private void OnGatheredNoHealth(Player played) {
+    private void OnGatheredNoHealth(Player player) {
         Destroy();
     }
 
     public void Disable() {
         ProcessMode = ProcessModeEnum.Disabled;
-        Visible = false;
+        ParentNode.Visible = false;
     }
 
     public void Enable() {
         ProcessMode = ProcessModeEnum.Inherit;
-        Visible = true;
+        ParentNode.Visible = true;
     }
 
     public void Destroy() {

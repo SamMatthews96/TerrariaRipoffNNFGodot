@@ -96,7 +96,7 @@ public partial class WorldObjectManager : Node {
                 (int)savedObjectDict["xPosition"].ToString().ToFloat(),
                 (int)savedObjectDict["yPosition"].ToString().ToFloat()
             );
-            WorldObject worldObject = WorldObject.Create(savedObject, coords);
+            WorldObject worldObject = WorldObject.New(savedObject, coords).Build();
             AddWorldObject(worldObject);
 
             _currentObjectCount++;
@@ -181,8 +181,8 @@ public partial class WorldObjectManager : Node {
                 return;
             }
 
-            WorldObject block = WorldObject.Create(
-                itemPlaceable.SavedObject, coords);
+            WorldObject block = WorldObject.New(
+                itemPlaceable.SavedObject, coords).Build();
             AddWorldObject(block);
         }
     }
@@ -200,8 +200,8 @@ public partial class WorldObjectManager : Node {
         _activeWorldObjects[worldObject.Coords.X, worldObject.Coords.Y]
             .Remove(worldObject);
         if (worldObject.SavedObject.TryGetProperty(out ObjectSpawnOnDeath objectDropsPickup)) {
-            WorldObject pickup = WorldObject.Create(
-                objectDropsPickup.SavedObject, worldObject.Coords);
+            WorldObject pickup = WorldObject.New(
+                objectDropsPickup.SavedObject, worldObject.Coords).Build();
             AddWorldObject(pickup);
         }
 

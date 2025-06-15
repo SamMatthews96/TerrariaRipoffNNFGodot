@@ -9,3 +9,4 @@ public abstract class ActiveObjectProperty {
 
     public abstract void Init();
 }
+

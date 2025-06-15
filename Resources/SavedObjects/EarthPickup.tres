@@ -1,7 +1,8 @@
-[gd_resource type="Resource" script_class="SavedObject" load_steps=7 format=3 uid="uid://ccpb3hb70twe1"]
+[gd_resource type="Resource" script_class="SavedObject" load_steps=8 format=3 uid="uid://ccpb3hb70twe1"]
 
 [ext_resource type="Script" uid="uid://blx42wcinfsdo" path="res://Scripts/Resources/SavedObject/SavedObject.cs" id="1_77ulv"]
 [ext_resource type="Texture2D" uid="uid://cfc1e8nv4cp1q" path="res://Assets/Images/ItemIcons/Earth.png" id="1_f71c7"]
+[ext_resource type="Script" uid="uid://cbyft0pv68v3s" path="res://Scripts/Resources/SavedObject/ObjectProperty.cs" id="1_tb68p"]
 [ext_resource type="Script" uid="uid://c8wi107b46ca6" path="res://Scripts/Resources/SavedObject/ObjectTexture.cs" id="2_p86fh"]
 [ext_resource type="Script" uid="uid://b3giggosm8w5c" path="res://Scripts/Resources/SavedObject/ObjectCanPickup.cs" id="3_p86fh"]
 
@@ -16,5 +17,5 @@ metadata/_custom_type_script = "uid://b3giggosm8w5c"
 
 [resource]
 script = ExtResource("1_77ulv")
-Properties = [SubResource("Resource_tb68p"), SubResource("Resource_yx3mc")]
+Properties = Array[ExtResource("1_tb68p")]([SubResource("Resource_tb68p"), SubResource("Resource_yx3mc")])
 metadata/_custom_type_script = "uid://blx42wcinfsdo"
