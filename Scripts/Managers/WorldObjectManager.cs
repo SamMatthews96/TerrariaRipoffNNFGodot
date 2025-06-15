@@ -145,16 +145,25 @@ public partial class WorldObjectManager : Node {
 
         EnableObjectsInRegion(region);
         player.MovedCell += OnLocalPlayerMoved;
-        player.ActionController.GatherAction.GatherAttempted += OnPlayerGatherAction;
-        player.ActionController.BuildAction.BuildActionAttempted += OnPlayerBuildAction;
+        player.ActionController.GatherAction.GatherAttempted
+            += OnPlayerGatherAction;
+        player.ActionController.BuildAction.BuildBlockActionAttempted
+            += OnPlayerBuildBlockAction;
+        player.ActionController.BuildAction.BuildWallActionAttempted
+            += OnPlayerBuildWallAction;
         player.PlayerDespawned += OnPlayerDespawned;
         player.Inventory.PickupLooted += OnPlayerPickupLooted;
     }
 
     private void OnPlayerDespawned(Player player) {
         player.MovedCell -= OnLocalPlayerMoved;
-        player.ActionController.GatherAction.GatherAttempted -= OnPlayerGatherAction;
-        player.ActionController.BuildAction.BuildActionAttempted -= OnPlayerBuildAction;
+        player.ActionController.GatherAction.GatherAttempted
+            -= OnPlayerGatherAction;
+        player.ActionController.BuildAction.BuildBlockActionAttempted
+            -= OnPlayerBuildBlockAction;
+        player.ActionController.BuildAction.BuildWallActionAttempted
+            -= OnPlayerBuildWallAction;
+
         player.PlayerDespawned -= OnPlayerDespawned;
         player.Inventory.PickupLooted -= OnPlayerPickupLooted;
     }
@@ -168,7 +177,7 @@ public partial class WorldObjectManager : Node {
         }
     }
 
-    private void OnPlayerBuildAction(Item item, IntVector coords) {
+    private void OnPlayerBuildBlockAction(Item item, IntVector coords) {
         Array<WorldObject> cellContents = GetCellContents(coords);
         if (!item.TryGetProperty(out ItemPlaceable itemPlaceable)) return;
         //@todo
@@ -178,6 +187,20 @@ public partial class WorldObjectManager : Node {
 
         WorldObject block = WorldObject.New(coords)
             .AsBlock(item)
+            .Build();
+        AddWorldObject(block);
+    }
+
+    private void OnPlayerBuildWallAction(Item item, IntVector coords) {
+        Array<WorldObject> cellContents = GetCellContents(coords);
+        if (!item.TryGetProperty(out ItemPlaceable itemPlaceable)) return;
+        //@todo
+        if (cellContents.Any(worldObject => true)) {
+            return;
+        }
+
+        WorldObject block = WorldObject.New(coords)
+            .AsWall(item)
             .Build();
         AddWorldObject(block);
     }

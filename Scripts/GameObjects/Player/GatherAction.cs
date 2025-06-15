@@ -29,7 +29,7 @@ public partial class GatherAction : PlayerAction {
         _isGathering = false;
     }
 
-    public override void PrimaryAction(Vector2 mouseWorldPosition) {
+    public override void LeftMouseAction(Vector2 mouseWorldPosition) {
         _isGathering = true;
         if (_gatherCooldown.IsStopped()) {
             AttemptGather();
@@ -52,7 +52,7 @@ public partial class GatherAction : PlayerAction {
         _gatherCooldown.Start();
     }
 
-    public override void EndPrimaryAction(Vector2 mouseWorldPosition) {
+    public override void EndLeftMouseAction(Vector2 mouseWorldPosition) {
         _isGathering = false;
     }
 }

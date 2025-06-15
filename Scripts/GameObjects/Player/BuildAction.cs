@@ -8,7 +8,8 @@ using Array = Godot.Collections.Array;
 namespace TerrariaRipoffNNF;
 
 public partial class BuildAction : PlayerAction {
-    public event Action<Item, IntVector> BuildActionAttempted;
+    public event Action<Item, IntVector> BuildBlockActionAttempted;
+    public event Action<Item, IntVector> BuildWallActionAttempted;
 
     private Item _blockItem;
     private Game _game;
@@ -34,25 +35,45 @@ public partial class BuildAction : PlayerAction {
         _blockItem = item;
     }
 
-    public override void PrimaryAction(Vector2 mouseWorldPosition) {
+    public override void LeftMouseAction(Vector2 mouseWorldPosition) {
         IntVector coords = new(mouseWorldPosition / Game.BlockSize);
         if (!_game.IsInBounds(coords)) return;
 
         float range = 8;
         if (_blockItem is not null && range >= IntVector.Distance(coords, Player.Coords)) {
-            RpcId(SceneManager.HostId, nameof(BuildActionAttempt),
+            RpcId(SceneManager.HostId, nameof(BuildBlockActionAttempt),
                 coords, _blockItem);
         }
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    private void BuildActionAttempt(IntVector coords, Item item) {
+    private void BuildBlockActionAttempt(IntVector coords, Item item) {
         if (item.HasProperty<ItemPlaceable>()) {
-            BuildActionAttempted?.Invoke(item, coords);
+            BuildBlockActionAttempted?.Invoke(item, coords);
         }
     }
 
-    public override void EndPrimaryAction(Vector2 mouseWorldPosition) { }
+    public override void RightMouseAction(Vector2 mouseWorldPosition) {
+        IntVector coords = new(mouseWorldPosition / Game.BlockSize);
+        if (!_game.IsInBounds(coords)) return;
+
+        float range = 8;
+        if (_blockItem is not null && range >= IntVector.Distance(coords, Player.Coords)) {
+            RpcId(SceneManager.HostId, nameof(BuildWallActionAttempt),
+                coords, _blockItem);
+        }
+    }
+    
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+    private void BuildWallActionAttempt(IntVector coords, Item item) {
+        if (item.HasProperty<ItemPlaceable>()) {
+            BuildWallActionAttempted?.Invoke(item, coords);
+        }
+    }
+
+    public override void EndLeftMouseAction(Vector2 mouseWorldPosition) { }
+
+    public override void EndRightMouseAction(Vector2 mouseWorldPosition) { }
 
     private void OnInventoryRemovedItemStack(StackedItems stackedItems) {
         if (_blockItem == stackedItems.Item) {

@@ -35,10 +35,10 @@ public partial class Inventory : Node {
 
     public void InitAsHost() {
         _player.PickupArea.TouchedItem += OnHostCollidedWithPickup;
-        _player.ActionController.BuildAction.BuildActionAttempted += OnBuildActionAttempted;
+        _player.ActionController.BuildAction.BuildBlockActionAttempted += OnBuildActionAttempted;
         TreeExiting += () => {
             _player.PickupArea.TouchedItem -= OnHostCollidedWithPickup;
-            _player.ActionController.BuildAction.BuildActionAttempted -= OnBuildActionAttempted;
+            _player.ActionController.BuildAction.BuildBlockActionAttempted -= OnBuildActionAttempted;
         };
     }
 

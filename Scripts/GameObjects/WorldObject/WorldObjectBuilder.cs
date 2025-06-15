@@ -46,6 +46,17 @@ public partial class WorldObject {
             return this;
         }
 
+        public Builder AsWall(Item item) {
+            _worldObject.ActiveProperties.AddRange(new List<ObjectProperty> {
+                new ObjectGatherable(_worldObject),
+                new ObjectSpawnOnDeath(_worldObject, item),
+                new ObjectHealth(_worldObject, 5),
+                new ObjectTexture(_worldObject, item.IconTexture, true)
+            });
+
+            return this;
+        }
+
         public Builder AsPickup(Item item) {
             _worldObject.ActiveProperties.AddRange(new List<ObjectProperty> {
                 new ObjectTexture(_worldObject, item.IconTexture),

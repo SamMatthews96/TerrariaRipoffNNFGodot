@@ -7,7 +7,11 @@ public abstract partial class PlayerAction : Node {
     [Export] public PlayerActionType State { get; private set; }
 
 
-    public abstract void PrimaryAction(Vector2 mouseWorldPosition);
+    public abstract void LeftMouseAction(Vector2 mouseWorldPosition);
 
-    public abstract void EndPrimaryAction(Vector2 mouseWorldPosition);
+    public abstract void EndLeftMouseAction(Vector2 mouseWorldPosition);
+
+    public virtual void RightMouseAction(Vector2 mouseWorldPosition){}
+
+    public virtual void EndRightMouseAction(Vector2 mouseWorldPosition){}
 }

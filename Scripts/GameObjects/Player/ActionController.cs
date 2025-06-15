@@ -17,6 +17,8 @@ public partial class ActionController : Node {
         _game = game;
         _game.InputManager.LeftMouseUp += OnInputManagerLeftMouseUp;
         _game.InputManager.LeftMouseDown += OnInputManagerLeftMouseDown;
+        _game.InputManager.RightMouseUp += OnInputManagerRightMouseUp;
+        _game.InputManager.RightMouseDown += OnInputManagerRightMouseDown;
         _game.Interface.ActionBar.ButtonClicked += EquipAction;
         _game.InputManager.PlayerActionModeChanged += EquipAction;
         TreeExiting += OnTreeExitingLocal;
@@ -46,12 +48,20 @@ public partial class ActionController : Node {
     }
 
     private void OnInputManagerLeftMouseUp(Vector2 mouseWorldPosition) {
-        _currentPlayerAction.EndPrimaryAction(mouseWorldPosition);
+        _currentPlayerAction.EndLeftMouseAction(mouseWorldPosition);
     }
 
     private void OnInputManagerLeftMouseDown(Vector2 mouseWorldPosition) {
-        _currentPlayerAction.PrimaryAction(mouseWorldPosition);
+        _currentPlayerAction.LeftMouseAction(mouseWorldPosition);
     }
+
+    private void OnInputManagerRightMouseDown(Vector2 mouseWorldPosition) {
+        _currentPlayerAction.RightMouseAction(mouseWorldPosition);
+    }
+
+    private void OnInputManagerRightMouseUp(Vector2 mouseWorldPosition) {
+        _currentPlayerAction.EndRightMouseAction(mouseWorldPosition);
+    } 
 
     private void EquipAction(PlayerActionType state) {
         _currentPlayerAction = state switch {
