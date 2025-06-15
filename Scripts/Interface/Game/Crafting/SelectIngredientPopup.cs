@@ -111,7 +111,7 @@ public partial class SelectIngredientPopup : Window {
 
         _player?.Inventory.StackedItemsList.ForEach(stackedItems => {
             if (!stackedItems.Item.TryGetProperty(out ItemIngredient itemIngredient)) return;
-            if (!itemIngredient.HasProperty(_ingredientSlot.IngredientType)) return;
+            if (itemIngredient.IngredientType != _ingredientSlot.IngredientType) return;
             SelectIngredientButton newButton = SelectIngredientButton.Create(stackedItems.Item);
             _ingredientButtons.Add(newButton);
             _buttonContainer.AddChild(newButton);

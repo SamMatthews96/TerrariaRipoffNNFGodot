@@ -24,8 +24,7 @@ public partial class RecipePropertyMapMultiplier : RecipePropertyMap<float> {
         }
 
         float suppliedItemQuality = suppliedIngredients[_ingredientName]
-            .GetProperty<ItemIngredient>()
-            .GetProperty(ingredientSlots[_ingredientName].IngredientType).Quality;
+            .GetProperty<ItemIngredient>().Quality;
 
         return _base + suppliedItemQuality * _multiplier;
     }
