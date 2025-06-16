@@ -186,8 +186,11 @@ public partial class WorldObjectManager : Node {
         WorldObject block;
         switch (placeable.Type) {
             case PlaceableType.Block:
-                if (GetCellContents(coords).Any(worldObject => true)) {
-                    return;
+                foreach (WorldObject worldObject in GetCellContents(coords)) {
+                    if (worldObject.TryGetProperty(out ObjectPlacementCollision collision) &&
+                        collision.Layer == PlacementCollisionLayer.Foreground) {
+                        return;
+                    }
                 }
 
                 block = WorldObject.New(coords).AsBlock(item).Build();
@@ -195,8 +198,12 @@ public partial class WorldObjectManager : Node {
             case PlaceableType.Prop:
                 List<IntVector> region = placeable.OccupiedCells.Select(
                     intVector => coords + intVector).ToList();
-                if (GetObjectsInRegion(region).Any(worldObject => true)) {
-                    return;
+
+                foreach (WorldObject worldObject in GetObjectsInRegion(region)) {
+                    if (worldObject.TryGetProperty(out ObjectPlacementCollision collision) &&
+                        collision.Layer == PlacementCollisionLayer.Foreground) {
+                        return;
+                    }
                 }
 
                 block = WorldObject.New(coords).AsProp(item).Build();
@@ -216,12 +223,14 @@ public partial class WorldObjectManager : Node {
     }
 
     private void OnPlayerBuildWallAction(Player player, Item item, IntVector coords) {
-        Array<WorldObject> cellContents = GetCellContents(coords);
         if (!item.TryGetProperty(out ItemPlaceable placeable)) return;
         if (placeable.Type == PlaceableType.Prop) return;
 
-        if (cellContents.Any(worldObject => true)) {
-            return;
+        foreach (WorldObject worldObject in GetCellContents(coords)) {
+            if (worldObject.TryGetProperty(out ObjectPlacementCollision collision) &&
+                collision.Layer == PlacementCollisionLayer.Background) {
+                return;
+            }
         }
 
         WorldObject block = WorldObject.New(coords)

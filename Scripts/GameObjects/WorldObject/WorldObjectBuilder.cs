@@ -37,7 +37,9 @@ public partial class WorldObject {
                 new ObjectGatherable(_worldObject),
                 new ObjectSpawnOnDeath(_worldObject, item),
                 new ObjectHealth(_worldObject, 5),
-                new ObjectTexture(_worldObject, item.IconTexture)
+                new ObjectTexture(_worldObject, item.IconTexture),
+                new ObjectPlacementCollision(
+                    _worldObject, PlacementCollisionLayer.Foreground)
             });
 
             return this;
@@ -48,7 +50,9 @@ public partial class WorldObject {
                 new ObjectGatherable(_worldObject),
                 new ObjectSpawnOnDeath(_worldObject, item),
                 new ObjectHealth(_worldObject, 5),
-                new ObjectTexture(_worldObject, item.IconTexture, true)
+                new ObjectTexture(_worldObject, item.IconTexture, true),
+                new ObjectPlacementCollision(
+                    _worldObject, PlacementCollisionLayer.Background)
             });
 
             return this;
@@ -59,9 +63,11 @@ public partial class WorldObject {
                 new ObjectGatherable(_worldObject),
                 new ObjectSpawnOnDeath(_worldObject, item),
                 new ObjectHealth(_worldObject, 5),
-                new ObjectTexture(_worldObject, item.IconTexture, true)
+                new ObjectTexture(_worldObject, item.IconTexture, true),
+                new ObjectPlacementCollision(
+                    _worldObject, PlacementCollisionLayer.Foreground)
             });
-            
+
             return this;
         }
 
@@ -70,16 +76,20 @@ public partial class WorldObject {
                 new ObjectGatherable(_worldObject),
                 new ObjectSpawnOnDeath(_worldObject, item),
                 new ObjectHealth(_worldObject, 5),
-                new ObjectTexture(_worldObject, item.IconTexture)
+                new ObjectTexture(_worldObject, item.IconTexture),
+                new ObjectPlacementCollision(
+                    _worldObject, PlacementCollisionLayer.Foreground)
             });
-            
+
             return this;
         }
 
         public Builder AsComponent(WorldObject main) {
             _worldObject.ActiveProperties.AddRange(new List<ObjectProperty> {
                 new ObjectComponent(_worldObject, main),
-                new ObjectGatherable(_worldObject)
+                new ObjectGatherable(_worldObject),
+                new ObjectPlacementCollision(
+                    _worldObject, PlacementCollisionLayer.Foreground)
             });
             return this;
         }
