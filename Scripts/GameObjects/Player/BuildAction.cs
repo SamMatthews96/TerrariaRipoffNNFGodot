@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Linq;
 using Godot;
-using Godot.Collections;
-using Array = Godot.Collections.Array;
 
 namespace TerrariaRipoffNNF;
 

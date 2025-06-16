@@ -178,25 +178,32 @@ public partial class WorldObjectManager : Node {
         }
     }
 
-    private void OnPlayerBuildBlockAction(Player player, Item item, IntVector coords) {
+    private void OnPlayerBuildBlockAction(
+        Player player, Item item, IntVector coords) {
         Array<WorldObject> cellContents = GetCellContents(coords);
-        if (!item.HasProperty<ItemPlaceable>()) return;
+        if (!item.TryGetProperty(out ItemPlaceable placeable)) return;
+
         //@todo check cell contents for blocks / placeables
         if (cellContents.Any(worldObject => true)) {
             return;
         }
 
-        WorldObject block = WorldObject.New(coords)
-            .AsBlock(item)
-            .Build();
+        WorldObject block = placeable.Type switch {
+            PlaceableType.Block => WorldObject.New(coords).AsBlock(item).Build(),
+            PlaceableType.Prop => WorldObject.New(coords).AsProp(item).Build(),
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(placeable.Type), placeable.Type, "Unknown placeable type")
+        };
+
         AddWorldObject(block);
         player.Inventory.OnAfterBuildSuccess(item);
     }
 
     private void OnPlayerBuildWallAction(Player player, Item item, IntVector coords) {
         Array<WorldObject> cellContents = GetCellContents(coords);
-        if (!item.HasProperty<ItemPlaceable>()) return;
-        //@todo
+        if (!item.TryGetProperty(out ItemPlaceable placeable)) return;
+        if (placeable.Type == PlaceableType.Prop) return;
+        //@todo check cell contents for walls
         if (cellContents.Any(worldObject => true)) {
             return;
         }
@@ -207,6 +214,8 @@ public partial class WorldObjectManager : Node {
         AddWorldObject(block);
         player.Inventory.OnAfterBuildSuccess(item);
     }
+
+    private void OnPlayerBuildPlaceableAction() { }
 
     private void OnPlayerPickupLooted(WorldObject worldObject) {
         OnWorldObjectDestroyed(worldObject);
@@ -224,7 +233,6 @@ public partial class WorldObjectManager : Node {
         worldObject.Destroyed -= OnWorldObjectDestroyed;
         _activeWorldObjects[worldObject.Coords.X, worldObject.Coords.Y]
             .Remove(worldObject);
-        // @todo this logic could be handled inside worldObject
         if (worldObject.TryGetProperty(out ObjectSpawnOnDeath objectDropsPickup)) {
             WorldObject pickup = WorldObject.New(worldObject.Coords)
                 .AsPickup(objectDropsPickup.Item).Build();

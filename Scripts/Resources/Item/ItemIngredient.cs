@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using Godot;
+﻿using Godot;
 using Godot.Collections;
 
 namespace TerrariaRipoffNNF;

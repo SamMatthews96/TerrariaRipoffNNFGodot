@@ -1,12 +1,12 @@
-[gd_resource type="Resource" script_class="Item" load_steps=6 format=3 uid="uid://cysgkfj62akpl"]
+[gd_resource type="Resource" script_class="Item" load_steps=5 format=3 uid="uid://cysgkfj62akpl"]
 
 [ext_resource type="Texture2D" uid="uid://cfc1e8nv4cp1q" path="res://Assets/Images/ItemIcons/Earth.png" id="1_88dew"]
-[ext_resource type="Script" uid="uid://jsfs7spy0f5g" path="res://Scripts/Resources/Item/ItemProperty.cs" id="2_n23du"]
 [ext_resource type="Script" uid="uid://ctwdtjjrpbdwg" path="res://Scripts/Resources/Item/ItemPlaceable.cs" id="3_pyd5u"]
 [ext_resource type="Script" uid="uid://bavg183x82165" path="res://Scripts/Resources/Item/Item.cs" id="4_441l5"]
 
-[sub_resource type="Resource" id="Resource_ss8xv"]
+[sub_resource type="Resource" id="Resource_57ykf"]
 script = ExtResource("3_pyd5u")
+Type = 0
 metadata/_custom_type_script = "uid://ctwdtjjrpbdwg"
 
 [resource]
@@ -15,5 +15,5 @@ Name = "Earth"
 InventorySpace = 1.0
 IsStackable = true
 IconTexture = ExtResource("1_88dew")
-_itemProperties = Array[ExtResource("2_n23du")]([SubResource("Resource_ss8xv")])
+_itemProperties = [SubResource("Resource_57ykf")]
 metadata/_custom_type_script = "uid://bavg183x82165"
