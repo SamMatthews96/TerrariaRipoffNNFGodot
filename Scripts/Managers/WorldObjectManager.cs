@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using Godot;
 using Godot.Collections;
@@ -180,20 +181,35 @@ public partial class WorldObjectManager : Node {
 
     private void OnPlayerBuildBlockAction(
         Player player, Item item, IntVector coords) {
-        Array<WorldObject> cellContents = GetCellContents(coords);
         if (!item.TryGetProperty(out ItemPlaceable placeable)) return;
 
-        //@todo check cell contents for blocks / placeables
-        if (cellContents.Any(worldObject => true)) {
-            return;
-        }
+        WorldObject block;
+        switch (placeable.Type) {
+            case PlaceableType.Block:
+                if (GetCellContents(coords).Any(worldObject => true)) {
+                    return;
+                }
 
-        WorldObject block = placeable.Type switch {
-            PlaceableType.Block => WorldObject.New(coords).AsBlock(item).Build(),
-            PlaceableType.Prop => WorldObject.New(coords).AsProp(item).Build(),
-            _ => throw new ArgumentOutOfRangeException(
-                nameof(placeable.Type), placeable.Type, "Unknown placeable type")
-        };
+                block = WorldObject.New(coords).AsBlock(item).Build();
+                break;
+            case PlaceableType.Prop:
+                List<IntVector> region = placeable.OccupiedCells.Select(
+                    intVector => coords + intVector).ToList();
+                if (GetObjectsInRegion(region).Any(worldObject => true)) {
+                    return;
+                }
+
+                block = WorldObject.New(coords).AsProp(item).Build();
+                foreach (IntVector regionCoords in region) {
+                    WorldObject component = WorldObject.New(regionCoords)
+                        .AsComponent(block).Build();
+                    AddWorldObject(component);
+                }
+
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(placeable.Type), placeable.Type, "Unknown placeable type");
+        }
 
         AddWorldObject(block);
         player.Inventory.OnAfterBuildSuccess(item);
@@ -203,7 +219,7 @@ public partial class WorldObjectManager : Node {
         Array<WorldObject> cellContents = GetCellContents(coords);
         if (!item.TryGetProperty(out ItemPlaceable placeable)) return;
         if (placeable.Type == PlaceableType.Prop) return;
-        //@todo check cell contents for walls
+
         if (cellContents.Any(worldObject => true)) {
             return;
         }
@@ -214,8 +230,6 @@ public partial class WorldObjectManager : Node {
         AddWorldObject(block);
         player.Inventory.OnAfterBuildSuccess(item);
     }
-
-    private void OnPlayerBuildPlaceableAction() { }
 
     private void OnPlayerPickupLooted(WorldObject worldObject) {
         OnWorldObjectDestroyed(worldObject);

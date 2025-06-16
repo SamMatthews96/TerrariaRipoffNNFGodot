@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Godot;
+using NUnit.Framework;
 
 namespace TerrariaRipoffNNF;
 
@@ -28,10 +29,14 @@ public partial class WorldObject : Node {
     public override void _Ready() {
         ParentNode.Position = (Coords * Game.BlockSize).ToVector2();
 
+        if (HasProperty<ObjectComponent>()) {
+            
+        }
+        
         if (TryGetProperty(out ObjectHealth health)) {
             health.OnHealthHitZero += Destroy;
-        } else {
-            if (TryGetProperty(out ObjectGatherable gatherable)) {
+        } else if (TryGetProperty(out ObjectGatherable gatherable)) {
+            if (!HasProperty<ObjectComponent>()) {
                 gatherable.Gathered += OnGatheredNoHealth;
             }
         }
@@ -40,6 +45,18 @@ public partial class WorldObject : Node {
     private void OnGatheredNoHealth(Player player) {
         Destroy();
     }
+
+    public void AddComponent(WorldObject component) {
+        component.GetProperty<ObjectGatherable>().Gathered
+            += GetProperty<ObjectGatherable>().GatherAction;
+        Destroyed += component.OnMainDestroyed;
+    }
+    
+    private void OnMainDestroyed(WorldObject component) {
+        Destroy();
+        Destroyed -= component.OnMainDestroyed;
+    }
+    
 
     public void Disable() {
         ProcessMode = ProcessModeEnum.Disabled;
@@ -51,7 +68,7 @@ public partial class WorldObject : Node {
         ParentNode.Visible = true;
     }
 
-    public void Destroy() {
+    private void Destroy() {
         Destroyed?.Invoke(this);
     }
 

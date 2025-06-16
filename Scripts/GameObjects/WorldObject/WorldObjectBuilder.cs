@@ -76,6 +76,14 @@ public partial class WorldObject {
             return this;
         }
 
+        public Builder AsComponent(WorldObject main) {
+            _worldObject.ActiveProperties.AddRange(new List<ObjectProperty> {
+                new ObjectComponent(_worldObject, main),
+                new ObjectGatherable(_worldObject)
+            });
+            return this;
+        }
+
         public Builder AsPickup(Item item) {
             _worldObject.ActiveProperties.AddRange(new List<ObjectProperty> {
                 new ObjectTexture(_worldObject, item.IconTexture),
