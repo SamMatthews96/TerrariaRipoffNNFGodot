@@ -9,7 +9,6 @@ public class ObjectGatherable : ObjectProperty {
 
 
     public void GatherAction(Player player) {
-        player.ActionController.GatherAction.OnAfterGatherSuccess();
         Gathered?.Invoke(player);
     }
 

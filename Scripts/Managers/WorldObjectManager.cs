@@ -172,15 +172,16 @@ public partial class WorldObjectManager : Node {
         foreach (WorldObject worldObject in GetCellContents(coords)) {
             if (worldObject.TryGetProperty(out ObjectGatherable gatherable)) {
                 gatherable.GatherAction(player);
+                player.ActionController.GatherAction.OnAfterGatherSuccess();
                 return;
             }
         }
     }
 
-    private void OnPlayerBuildBlockAction(Item item, IntVector coords) {
+    private void OnPlayerBuildBlockAction(Player player, Item item, IntVector coords) {
         Array<WorldObject> cellContents = GetCellContents(coords);
-        if (!item.TryGetProperty(out ItemPlaceable itemPlaceable)) return;
-        //@todo
+        if (!item.HasProperty<ItemPlaceable>()) return;
+        //@todo check cell contents for blocks / placeables
         if (cellContents.Any(worldObject => true)) {
             return;
         }
@@ -189,11 +190,12 @@ public partial class WorldObjectManager : Node {
             .AsBlock(item)
             .Build();
         AddWorldObject(block);
+        player.Inventory.OnAfterBuildSuccess(item);
     }
 
-    private void OnPlayerBuildWallAction(Item item, IntVector coords) {
+    private void OnPlayerBuildWallAction(Player player, Item item, IntVector coords) {
         Array<WorldObject> cellContents = GetCellContents(coords);
-        if (!item.TryGetProperty(out ItemPlaceable itemPlaceable)) return;
+        if (!item.HasProperty<ItemPlaceable>()) return;
         //@todo
         if (cellContents.Any(worldObject => true)) {
             return;
@@ -203,6 +205,7 @@ public partial class WorldObjectManager : Node {
             .AsWall(item)
             .Build();
         AddWorldObject(block);
+        player.Inventory.OnAfterBuildSuccess(item);
     }
 
     private void OnPlayerPickupLooted(WorldObject worldObject) {

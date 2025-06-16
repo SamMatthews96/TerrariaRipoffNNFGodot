@@ -35,10 +35,8 @@ public partial class Inventory : Node {
 
     public void InitAsHost() {
         _player.PickupArea.TouchedItem += OnHostCollidedWithPickup;
-        _player.ActionController.BuildAction.BuildBlockActionAttempted += OnBuildActionAttempted;
         TreeExiting += () => {
             _player.PickupArea.TouchedItem -= OnHostCollidedWithPickup;
-            _player.ActionController.BuildAction.BuildBlockActionAttempted -= OnBuildActionAttempted;
         };
     }
 
@@ -55,8 +53,8 @@ public partial class Inventory : Node {
         foreach (Dictionary savedItem in inventoryItems) {
             Item newItem = Item.FromDictionary(savedItem["Item"].AsGodotDictionary());
             int count = (int)savedItem["Count"].ToString().ToFloat();
-            StackedItems newStack = new (newItem, count);
-            
+            StackedItems newStack = new(newItem, count);
+
             ClientAddItems(newStack);
         }
     }
@@ -84,13 +82,13 @@ public partial class Inventory : Node {
         }
 
         StackedItems items = new(pickup.Item);
-    
+
         Rpc(nameof(ClientAddItems), items);
-    
+
         PickupLooted?.Invoke(pickup.WorldObject);
     }
 
-    private void OnBuildActionAttempted(Item item, IntVector _) {
+    public void OnAfterBuildSuccess(Item item) {
         StackedItems inventoryItems = new(item, 1);
         Rpc(nameof(ClientRemoveItems), inventoryItems);
     }

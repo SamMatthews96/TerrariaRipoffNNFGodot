@@ -8,8 +8,8 @@ using Array = Godot.Collections.Array;
 namespace TerrariaRipoffNNF;
 
 public partial class BuildAction : PlayerAction {
-    public event Action<Item, IntVector> BuildBlockActionAttempted;
-    public event Action<Item, IntVector> BuildWallActionAttempted;
+    public event Action<Player, Item, IntVector> BuildBlockActionAttempted;
+    public event Action<Player, Item, IntVector> BuildWallActionAttempted;
 
     private Item _blockItem;
     private Game _game;
@@ -49,7 +49,7 @@ public partial class BuildAction : PlayerAction {
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void BuildBlockActionAttempt(IntVector coords, Item item) {
         if (item.HasProperty<ItemPlaceable>()) {
-            BuildBlockActionAttempted?.Invoke(item, coords);
+            BuildBlockActionAttempted?.Invoke(Player, item, coords);
         }
     }
 
@@ -63,11 +63,11 @@ public partial class BuildAction : PlayerAction {
                 coords, _blockItem);
         }
     }
-    
+
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void BuildWallActionAttempt(IntVector coords, Item item) {
         if (item.HasProperty<ItemPlaceable>()) {
-            BuildWallActionAttempted?.Invoke(item, coords);
+            BuildWallActionAttempted?.Invoke(Player, item, coords);
         }
     }
 
