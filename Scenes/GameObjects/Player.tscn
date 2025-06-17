@@ -12,9 +12,6 @@
 [ext_resource type="Script" uid="uid://dfb4kfm2jhuiq" path="res://Scripts/Resources/Item/ItemMining.cs" id="9_pqpyq"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_8kinl"]
-properties/0/path = NodePath(".:_spawnPosition")
-properties/0/spawn = true
-properties/0/replication_mode = 1
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_3bb8o"]
 properties/0/path = NodePath(".:position")
@@ -114,7 +111,7 @@ _player = NodePath("..")
 _craftingArea = NodePath("../CraftingArea")
 
 [node name="CraftingArea" type="Area2D" parent="."]
-collision_layer = 9
+collision_layer = 0
 collision_mask = 8
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CraftingArea"]

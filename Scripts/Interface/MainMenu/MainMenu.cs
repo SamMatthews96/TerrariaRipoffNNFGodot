@@ -146,7 +146,7 @@ public partial class MainMenu : Control {
                 HostClickedEnterWorld?.Invoke(_selectedWorld, _selectedPlayer);
                 break;
             case GameType.Client:
-                ClientClickedEnterWorld?.Invoke("127.0.0.1", _selectedWorld);
+                ClientClickedEnterWorld?.Invoke("127.0.0.1", _selectedPlayer);
                 break;
             default:
                 throw new ArgumentOutOfRangeException();

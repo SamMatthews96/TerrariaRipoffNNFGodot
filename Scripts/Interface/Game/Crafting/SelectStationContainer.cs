@@ -15,6 +15,7 @@ public partial class SelectStationContainer : Control {
         foreach (Node node in _craftingStationButtonContainer.GetChildren()) {
             node.QueueFree();
         }
+
         Player.LocalPlayerSpawned += OnLocalPlayerSpawned;
     }
 
@@ -24,20 +25,24 @@ public partial class SelectStationContainer : Control {
 
     private void OnLocalPlayerSpawned(Player player) {
         player.Crafting.CraftingStationAdded += OnCraftingStationAdded;
+        player.Crafting.CraftingStationRemoved += OnCraftingStationRemoved;
     }
 
-    private void OnCraftingStationAdded(CraftingStation craftingStation) {
+    private void OnCraftingStationAdded(CraftingStationType type) {
+        CraftingStation craftingStation = Data.CraftingStations[type];
         SelectStationButton newButton
             = SelectStationButton.Create(craftingStation);
         newButton.CraftingStationButtonClicked += OnCraftingStationButtonClicked;
         _craftingStationButtonContainer.AddChild(newButton);
+
+        _craftingStationButtons.Add(type, newButton);
     }
 
-    private void OnCraftingStationRemoved(CraftingStation craftingStation) {
-        SelectStationButton button = _craftingStationButtons[craftingStation.Type];
+    private void OnCraftingStationRemoved(CraftingStationType type) {
+        SelectStationButton button = _craftingStationButtons[type];
         button.CraftingStationButtonClicked -= OnCraftingStationButtonClicked;
         button.QueueFree();
-        _craftingStationButtons.Remove(craftingStation.Type);
+        _craftingStationButtons.Remove(type);
     }
 
     private void OnCraftingStationButtonClicked(CraftingStation craftingStation) {

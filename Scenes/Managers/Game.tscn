@@ -31,6 +31,7 @@ replication_config = SubResource("SceneReplicationConfig_jdm7i")
 [node name="BlockParent" type="Node" parent="."]
 
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="BlockParent"]
+_spawnable_scenes = PackedStringArray("uid://dfd3nx6gn2gr4")
 spawn_path = NodePath("..")
 
 [node name="PlayerParent" type="Node" parent="."]

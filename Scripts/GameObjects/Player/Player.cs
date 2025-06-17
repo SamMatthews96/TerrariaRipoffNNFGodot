@@ -28,7 +28,7 @@ public partial class Player : CharacterBody2D {
     [Export] private float _speed = 300f;
     [Export] private float _gravityCoefficient = 1600;
     [Export] private float _jumpStrength = 800;
-    public Vector2 SpawnPosition { get; private set; }
+    [Export] public Vector2 SpawnPosition { get; private set; }
     public IntVector SpawnCoords { get; private set; }
 
 

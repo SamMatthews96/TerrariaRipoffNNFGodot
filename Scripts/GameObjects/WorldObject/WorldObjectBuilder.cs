@@ -27,7 +27,8 @@ public partial class WorldObject {
         private readonly WorldObject _worldObject;
 
         public Builder(IntVector coords) {
-            _worldObject = new WorldObject();
+            _worldObject = Data.PackedScenes.WorldObject
+                .Instantiate<WorldObject>();
             _worldObject.Coords = coords;
         }
 
@@ -110,13 +111,16 @@ public partial class WorldObject {
         }
 
         public WorldObject Build() {
-            _worldObject.ParentNode ??= new Node2D();
+            _worldObject.ParentNode ??= Data.PackedScenes.WorldStatic
+                .Instantiate<Node2D>();
 
             foreach (ObjectProperty property in _worldObject.ActiveProperties) {
                 property.Init();
             }
 
             _worldObject.AddChild(_worldObject.ParentNode, true);
+            _worldObject.ParentNode.Position = 
+                (_worldObject.Coords * Game.BlockSize).ToVector2();
             return _worldObject;
         }
     }

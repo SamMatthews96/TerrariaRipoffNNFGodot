@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Godot;
-using NUnit.Framework;
 
 namespace TerrariaRipoffNNF;
 
@@ -27,10 +26,6 @@ public partial class WorldObject : Node {
     public event Action<WorldObject> Destroyed;
 
     public override void _Ready() {
-        ParentNode.Position = (Coords * Game.BlockSize).ToVector2();
-
-
-        
         if (TryGetProperty(out ObjectHealth health)) {
             health.OnHealthHitZero += Destroy;
         } else if (TryGetProperty(out ObjectGatherable gatherable)) {

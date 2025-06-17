@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
 using Godot;
 using Godot.Collections;
@@ -10,7 +9,7 @@ using Array = Godot.Collections.Array;
 namespace TerrariaRipoffNNF;
 
 public partial class WorldObjectManager : Node {
-    public const int BlockSpawnDistance = 20;
+    private const int BlockSpawnDistance = 20;
 
     private Game _game;
     private Array<WorldObject>[,] _activeWorldObjects;
@@ -23,13 +22,12 @@ public partial class WorldObjectManager : Node {
     private Array _spawnSecond = new();
 
     public event Action WorldLoaded;
-    public event Action<Item, IntVector> CraftStationPlaced;
 
     public static WorldObjectManager Create() {
         return Data.PackedScenes.WorldObjectManager.Instantiate<WorldObjectManager>();
     }
 
-    public void SetGame(Game game, Dictionary worldData, Dictionary playerData) {
+    public void SetGameAsHost(Game game, Dictionary worldData, Dictionary playerData) {
         if (_game is not null) throw new Exception("[20250529.2332.1] Game already set");
         _game = game;
 
@@ -75,12 +73,13 @@ public partial class WorldObjectManager : Node {
                 _isWorldLoading = true;
                 WorldLoaded?.Invoke();
             }
-        } else if (_isWorldLoading) {
-            ProcessLoadWorld(_spawnSecond, 16, out bool finished);
-            if (finished) {
-                _isWorldLoading = false;
-            }
         }
+        // else if (_isWorldLoading) {
+        //     ProcessLoadWorld(_spawnSecond, 16, out bool finished);
+        //     if (finished) {
+        //         _isWorldLoading = false;
+        //     }
+        // }
     }
 
     private void ProcessLoadWorld(Array spawnArray, float timeout, out bool finished) {
@@ -145,6 +144,7 @@ public partial class WorldObjectManager : Node {
             player.SpawnCoords, BlockSpawnDistance);
 
         EnableObjectsInRegion(region);
+        GD.Print(player.Name);
         player.MovedCell += OnLocalPlayerMoved;
         player.ActionController.GatherAction.GatherAttempted
             += OnPlayerGatherAction;

@@ -13,19 +13,18 @@ public sealed partial class Crafting : Node {
     private Game _game;
     [Export] private Area2D _craftingArea;
     public List<CraftStationArea> LocalCraftStationsAreas = new();
-    public event Action<CraftingStation> CraftingStationAdded;
-    public event Action<CraftingStation> CraftingStationRemoved;
+    public event Action<CraftingStationType> CraftingStationAdded;
+    public event Action<CraftingStationType> CraftingStationRemoved;
     public event Action<StackedItems> SelectedIngredientsChanged;
     public event Action<StackedItems, List<StackedItems>> ItemCrafted;
 
     public void InitAsLocal(Game game) {
         _game = game;
-        AddCraftingStation(CraftingStationType.Handcrafting);
+        CraftingStationAdded?.Invoke(CraftingStationType.Handcrafting);
         Interface.Crafting craftingInterface = _game.Interface.CraftingInterface;
         craftingInterface.SelectRecipeContainer.RecipeButtonClicked += OnRecipeButtonClicked;
         craftingInterface.SelectIngredientPopup.SelectIngredientButtonClicked += OnSelectIngredientButtonClicked;
         craftingInterface.SelectIngredientsContainer.CraftButtonPressed += OnCraftButtonPressed;
-        // _game.WorldObjectManager.CraftStationPlaced += OnCraftStationPlaced;
 
         _craftingArea.AreaEntered += OnCraftingAreaEntered;
         _craftingArea.AreaExited += OnCraftingAreaExited;
@@ -41,7 +40,7 @@ public sealed partial class Crafting : Node {
         CraftingStationType newType = craftStationArea.CraftStation.Type;
         if (!LocalCraftStationsAreas.Exists(
                 currentArea => currentArea.CraftStation.Type == newType)) {
-            // CraftingStationAdded?.Invoke(craftStationArea.CraftStation);
+            CraftingStationAdded?.Invoke(newType);
         }
         LocalCraftStationsAreas.Add(craftStationArea);
     }
@@ -55,7 +54,7 @@ public sealed partial class Crafting : Node {
         LocalCraftStationsAreas.Remove(craftStationArea);
         if (!LocalCraftStationsAreas.Exists(
                 currentArea => currentArea.CraftStation.Type == exitingType)) {
-            // it's being removed
+            CraftingStationRemoved?.Invoke(exitingType);
         }
     }
 
@@ -98,14 +97,5 @@ public sealed partial class Crafting : Node {
     private void OnRecipeButtonClicked(Recipe recipe) {
         _selectedRecipe = recipe;
         _selectedIngredients.Clear();
-    }
-
-
-    private void AddCraftingStation(CraftingStationType type) {
-        CraftingStationAdded?.Invoke(Data.CraftingStations[type]);
-    }
-
-    private void RemoveCraftingStation(CraftingStation craftingStation) {
-        CraftingStationRemoved?.Invoke(craftingStation);
     }
 }
