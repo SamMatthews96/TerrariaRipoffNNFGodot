@@ -12,9 +12,13 @@ public partial class Game : Node {
 
     [Export] public Region Region { get; private set; }
     [Export] public Interface.Game Interface { get; private set; }
+
     [Export] public InputManager InputManager { get; private set; }
-    [Export] public int Width { get; private set; }
-    [Export] public int Height { get; private set; }
+
+    //@todo temp
+    [Export] public int Width { get; private set; } = 100;
+    [Export] public int Height { get; private set; } = 100;
+    public int PeerId => Multiplayer.GetUniqueId();
 
     public event Action GameLoaded;
 
@@ -61,15 +65,33 @@ public partial class Game : Node {
         AddChild(_multiplayerClient);
 
         Multiplayer.ConnectedToServer += () => {
-            RpcId(SceneManager.HostId,
-                nameof(HostCreatePlayer),
-                Multiplayer.GetUniqueId());
+            // RpcId(SceneManager.HostId,
+            //     nameof(HostCreatePlayer),
+            //     Multiplayer.GetUniqueId());
+
+            WorldObjectManager = WorldObjectManager.Create();
+            AddChild(WorldObjectManager);
+            WorldObjectManager.SetGameAsClient(this, playerData);
+
+            DefaultSpawnPosition = new IntVector(5, 5);
+
+
+            WorldObjectManager.WorldLoaded += () => {
+                RpcId(SceneManager.HostId, nameof(HostCreatePlayer),
+                    PeerId);
+                // _playerData = null;
+                GameLoaded?.Invoke();
+            };
+
+            TreeExiting += () => {
+                // WorldObjectManager.WorldLoaded -= OnWorldLoaded;
+            };
         };
     }
 
     private void OnWorldLoaded() {
         HostCreatePlayer(SceneManager.HostId);
-        _playerData = null;
+        // _playerData = null;
         GameLoaded?.Invoke();
     }
 

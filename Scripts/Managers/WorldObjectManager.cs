@@ -15,7 +15,7 @@ public partial class WorldObjectManager : Node {
     private Array<WorldObject>[,] _activeWorldObjects;
     private int _currentObjectCount;
 
-    private bool _isStartAreaLoading = true;
+    private bool _isStartAreaLoading;
     private bool _isWorldLoading;
 
     private Array _spawnFirst = new();
@@ -57,10 +57,55 @@ public partial class WorldObjectManager : Node {
                 _spawnSecond.Add(worldObject);
             }
         }
+        
+        _isStartAreaLoading = true;
 
         TreeExiting += OnExiting;
     }
 
+    private void OnExiting() {
+        Player.PlayerSpawned -= OnPlayerSpawned;
+        TreeExiting -= OnExiting;
+    }
+    
+    public void SetGameAsClient(Game game, Dictionary playerData) {
+        if (_game is not null) throw new Exception("[20250529.2332.1] Game already set");
+        _game = game;
+        
+        // RPC the host with playerData, 
+        RpcId(SceneManager.HostId, nameof(ClientJoinedGame), 
+            playerData, _game.PeerId);
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    private void ClientJoinedGame(Dictionary playerData, int clientPeerId) {
+        IntVector spawnPosition = new(5, 5);
+        List<IntVector> region = _game.Region.GetRegion(
+            spawnPosition, BlockSpawnDistance);
+        Array localWorldObjects = new();
+        foreach (WorldObject worldObject in GetObjectsInRegion(region)) {
+            localWorldObjects.Add(worldObject.ToDictionary());
+        }
+        
+        RpcId(clientPeerId, nameof(SendClientLocalWorldObjects),
+            localWorldObjects);
+    }
+    
+    [Rpc]
+    private void SendClientLocalWorldObjects(Array worldObjects) {
+        _activeWorldObjects = new Array<WorldObject>[_game.Width, _game.Height];
+        for (int x = 0; x < _game.Width; x++) {
+            for (int y = 0; y < _game.Height; y++) {
+                _activeWorldObjects[x, y] = new Array<WorldObject>();
+            }
+        }
+        
+        _spawnFirst = worldObjects;
+        _isStartAreaLoading = true;
+    }
+    
+    
+    
     public Array<WorldObject> GetCellContents(IntVector coords) {
         return _activeWorldObjects[coords.X, coords.Y];
     }
@@ -105,10 +150,6 @@ public partial class WorldObjectManager : Node {
         }
     }
 
-    private void OnExiting() {
-        Player.PlayerSpawned -= OnPlayerSpawned;
-        TreeExiting -= OnExiting;
-    }
 
     private void EnableObjectsInRegion(List<IntVector> region) {
         Array<WorldObject> objects = GetObjectsInRegion(region);

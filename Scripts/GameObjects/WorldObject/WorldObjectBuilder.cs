@@ -19,6 +19,19 @@ public partial class WorldObject {
         };
     }
 
+    public Dictionary ToDictionary() {
+        if (_type != "block" && _type != "tree") {
+            throw new NotImplementedException();
+        }
+        Dictionary dictionary = new() {
+            { "type", _type },
+            { "item", GetProperty<ObjectSpawnOnDeath>().Item.ToDictionary() },
+            { "xPosition", Coords.X },
+            { "yPosition", Coords.Y }
+        };
+        return dictionary;
+    }
+
     public static Builder New(IntVector coords) {
         return new Builder(coords);
     }
@@ -33,6 +46,7 @@ public partial class WorldObject {
         }
 
         public Builder AsBlock(Item item) {
+            _worldObject._type = "block";
             _worldObject.ActiveProperties.AddRange(new List<ObjectProperty> {
                 new ObjectCollision(_worldObject),
                 new ObjectGatherable(_worldObject),
@@ -47,6 +61,7 @@ public partial class WorldObject {
         }
 
         public Builder AsWall(Item item) {
+            _worldObject._type = "wall";
             _worldObject.ActiveProperties.AddRange(new List<ObjectProperty> {
                 new ObjectGatherable(_worldObject),
                 new ObjectSpawnOnDeath(_worldObject, item),
@@ -60,6 +75,7 @@ public partial class WorldObject {
         }
 
         public Builder AsTree(Item item) {
+            _worldObject._type = "tree";
             _worldObject.ActiveProperties.AddRange(new List<ObjectProperty> {
                 new ObjectGatherable(_worldObject),
                 new ObjectSpawnOnDeath(_worldObject, item),
@@ -73,6 +89,7 @@ public partial class WorldObject {
         }
 
         public Builder AsProp(Item item) {
+            _worldObject._type = "prop";
             _worldObject.ActiveProperties.AddRange(new List<ObjectProperty> {
                 new ObjectGatherable(_worldObject),
                 new ObjectSpawnOnDeath(_worldObject, item),
@@ -119,7 +136,7 @@ public partial class WorldObject {
             }
 
             _worldObject.AddChild(_worldObject.ParentNode, true);
-            _worldObject.ParentNode.Position = 
+            _worldObject.ParentNode.Position =
                 (_worldObject.Coords * Game.BlockSize).ToVector2();
             return _worldObject;
         }
