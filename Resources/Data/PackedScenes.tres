@@ -1,6 +1,7 @@
-[gd_resource type="Resource" script_class="PackedScenes" load_steps=15 format=3 uid="uid://dllhhokx2wkse"]
+[gd_resource type="Resource" script_class="PackedScenes" load_steps=16 format=3 uid="uid://dllhhokx2wkse"]
 
 [ext_resource type="Script" uid="uid://btjjbewbkdhw8" path="res://Scripts/Data/PackedScenes.cs" id="1_tombv"]
+[ext_resource type="PackedScene" uid="uid://cdxpjclstgoxa" path="res://Scenes/GameObjects/CraftStationArea.tscn" id="2_5ayme"]
 [ext_resource type="PackedScene" uid="uid://d3hhhiiydcfft" path="res://Scenes/Managers/Game.tscn" id="3_6enwa"]
 [ext_resource type="PackedScene" uid="uid://dsp7h2dpxh0i6" path="res://Scenes/Interface/Game/BlockTypeButton.tscn" id="4_rx88w"]
 [ext_resource type="PackedScene" uid="uid://cy52ebe7eud3c" path="res://Scenes/Interface/LoadingScreen.tscn" id="4_y0gj7"]
@@ -20,6 +21,7 @@ script = ExtResource("1_tombv")
 Player = ExtResource("6_12bmn")
 WorldPickup = ExtResource("13_h7xbu")
 WorldSolid = ExtResource("13_5ayme")
+CraftStationArea = ExtResource("2_5ayme")
 MainMenu = ExtResource("5_3f4ap")
 LoadScreen = ExtResource("4_y0gj7")
 Game = ExtResource("3_6enwa")

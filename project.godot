@@ -109,3 +109,4 @@ craftMenu={
 2d_physics/layer_1="player"
 2d_physics/layer_2="block"
 2d_physics/layer_3="pickup"
+2d_physics/layer_4="craft area"

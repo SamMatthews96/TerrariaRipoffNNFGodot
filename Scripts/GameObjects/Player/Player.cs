@@ -22,7 +22,7 @@ public partial class Player : CharacterBody2D {
     [Export] public PickupArea PickupArea { get; private set; }
     [Export] public PlayerEquipment PlayerEquipment { get; private set; }
     [Export] public Crafting Crafting { get; private set; }
-
+    
     [Export] private MultiplayerSynchronizer _positionSynchronizer;
     [Export] private Camera2D _camera;
     [Export] private float _speed = 300f;

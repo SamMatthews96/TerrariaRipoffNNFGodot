@@ -11,7 +11,8 @@ public sealed partial class Crafting : Node {
 
     private Godot.Collections.Dictionary<string, Item> _selectedIngredients = new();
     private Game _game;
-
+    [Export] private Area2D _craftingArea;
+    public List<CraftStationArea> LocalCraftStationsAreas = new();
     public event Action<CraftingStation> CraftingStationAdded;
     public event Action<CraftingStation> CraftingStationRemoved;
     public event Action<StackedItems> SelectedIngredientsChanged;
@@ -24,14 +25,38 @@ public sealed partial class Crafting : Node {
         craftingInterface.SelectRecipeContainer.RecipeButtonClicked += OnRecipeButtonClicked;
         craftingInterface.SelectIngredientPopup.SelectIngredientButtonClicked += OnSelectIngredientButtonClicked;
         craftingInterface.SelectIngredientsContainer.CraftButtonPressed += OnCraftButtonPressed;
-        _game.WorldObjectManager.CraftStationPlaced += OnCraftStationPlaced;
+        // _game.WorldObjectManager.CraftStationPlaced += OnCraftStationPlaced;
+
+        _craftingArea.AreaEntered += OnCraftingAreaEntered;
+        _craftingArea.AreaExited += OnCraftingAreaExited;
+
         TreeExiting += OnTreeExitingLocal;
     }
 
-    private void OnCraftStationPlaced(Item item, IntVector coords) {
-        int distance = IntVector.GetOrthogonalDistance(_player.Coords, coords);
-        if (distance > WorldObjectManager.BlockSpawnDistance) return;
-        AddCraftingStation(item.GetProperty<ItemCraftStation>().Type);
+    private void OnCraftingAreaEntered(Area2D area) {
+        if (area is not CraftStationArea craftStationArea) {
+            throw new Exception("[20250617.1422.1] Crafting area entered by non-crafting area");
+        }
+
+        CraftingStationType newType = craftStationArea.CraftStation.Type;
+        if (!LocalCraftStationsAreas.Exists(
+                currentArea => currentArea.CraftStation.Type == newType)) {
+            // CraftingStationAdded?.Invoke(craftStationArea.CraftStation);
+        }
+        LocalCraftStationsAreas.Add(craftStationArea);
+    }
+
+    private void OnCraftingAreaExited(Area2D area) {
+        if (area is not CraftStationArea craftStationArea) {
+            throw new Exception("[20250617.1424.1] Crafting area entered by non-crafting area");
+        }
+
+        CraftingStationType exitingType = craftStationArea.CraftStation.Type;
+        LocalCraftStationsAreas.Remove(craftStationArea);
+        if (!LocalCraftStationsAreas.Exists(
+                currentArea => currentArea.CraftStation.Type == exitingType)) {
+            // it's being removed
+        }
     }
 
     private void OnTreeExitingLocal() {
@@ -39,6 +64,7 @@ public sealed partial class Crafting : Node {
         craftingInterface.SelectRecipeContainer.RecipeButtonClicked -= OnRecipeButtonClicked;
         craftingInterface.SelectIngredientPopup.SelectIngredientButtonClicked -= OnSelectIngredientButtonClicked;
         craftingInterface.SelectIngredientsContainer.CraftButtonPressed -= OnCraftButtonPressed;
+
         TreeExiting -= OnTreeExitingLocal;
     }
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://bx6lgpicpfal4"]
+[gd_scene load_steps=16 format=3 uid="uid://bx6lgpicpfal4"]
 
 [ext_resource type="Script" uid="uid://b11uqw4ifwmss" path="res://Scripts/GameObjects/Player/Player.cs" id="1_hx4ms"]
 [ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://Assets/Images/icon.svg" id="2_5yc1a"]
@@ -30,6 +30,9 @@ Speed = 5.0
 Range = 5.0
 Power = 5.0
 metadata/_custom_type_script = "uid://dfb4kfm2jhuiq"
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dv6dr"]
+size = Vector2(574, 410)
 
 [node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("Inventory", "ActionController", "PickupArea", "PlayerEquipment", "Crafting", "_positionSynchronizer", "_camera")]
 collision_mask = 2
@@ -105,6 +108,15 @@ script = ExtResource("7_in65p")
 _player = NodePath("..")
 Pickaxe = SubResource("Resource_7vd2l")
 
-[node name="Crafting" type="Node" parent="." node_paths=PackedStringArray("_player")]
+[node name="Crafting" type="Node" parent="." node_paths=PackedStringArray("_player", "_craftingArea")]
 script = ExtResource("9_67855")
 _player = NodePath("..")
+_craftingArea = NodePath("../CraftingArea")
+
+[node name="CraftingArea" type="Area2D" parent="."]
+collision_layer = 9
+collision_mask = 8
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CraftingArea"]
+position = Vector2(0, -45)
+shape = SubResource("RectangleShape2D_dv6dr")

@@ -29,9 +29,7 @@ public partial class WorldObject : Node {
     public override void _Ready() {
         ParentNode.Position = (Coords * Game.BlockSize).ToVector2();
 
-        if (HasProperty<ObjectComponent>()) {
-            
-        }
+
         
         if (TryGetProperty(out ObjectHealth health)) {
             health.OnHealthHitZero += Destroy;

@@ -80,6 +80,12 @@ public partial class WorldObject {
                 new ObjectPlacementCollision(
                     _worldObject, PlacementCollisionLayer.Foreground)
             });
+            if (item.TryGetProperty(out ItemCraftStation craftStation)) {
+                _worldObject.ActiveProperties.Add(
+                    new ObjectCraftStation(_worldObject, craftStation)
+                );
+            }
+
 
             return this;
         }
