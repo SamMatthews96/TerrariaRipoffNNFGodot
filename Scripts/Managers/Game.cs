@@ -15,7 +15,7 @@ public partial class Game : Node {
 
     [Export] public InputManager InputManager { get; private set; }
 
-    //@todo temp
+    //@todo set these dynamically on peer from worldInfo
     [Export] public int Width { get; private set; } = 100;
     [Export] public int Height { get; private set; } = 100;
     public int PeerId => Multiplayer.GetUniqueId();

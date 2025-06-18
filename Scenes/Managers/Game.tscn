@@ -1,17 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://d3hhhiiydcfft"]
+[gd_scene load_steps=5 format=3 uid="uid://d3hhhiiydcfft"]
 
 [ext_resource type="Script" uid="uid://crhglubj8pdob" path="res://Scripts/Managers/Game.cs" id="1_6kfdr"]
 [ext_resource type="Script" uid="uid://cfatvsnqilhmh" path="res://Scripts/Managers/Region.cs" id="3_8fqtf"]
 [ext_resource type="Script" uid="uid://cq6y2tgmtv8jf" path="res://Scripts/Managers/InputManager.cs" id="4_lvxpj"]
 [ext_resource type="PackedScene" uid="uid://javhx4rej0q4" path="res://Scenes/Interface/Game/GameInterface.tscn" id="5_mn7lu"]
-
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_jdm7i"]
-properties/0/path = NodePath(".:Width")
-properties/0/spawn = true
-properties/0/replication_mode = 2
-properties/1/path = NodePath(".:Height")
-properties/1/spawn = true
-properties/1/replication_mode = 2
 
 [node name="Game" type="Node" node_paths=PackedStringArray("BlockParent", "PlayerParent", "Region", "Interface", "InputManager")]
 script = ExtResource("1_6kfdr")
@@ -25,14 +17,7 @@ InputManager = NodePath("InputManager")
 script = ExtResource("3_8fqtf")
 _game = NodePath("..")
 
-[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
-replication_config = SubResource("SceneReplicationConfig_jdm7i")
-
 [node name="BlockParent" type="Node" parent="."]
-
-[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="BlockParent"]
-_spawnable_scenes = PackedStringArray("uid://dfd3nx6gn2gr4")
-spawn_path = NodePath("..")
 
 [node name="PlayerParent" type="Node" parent="."]
 

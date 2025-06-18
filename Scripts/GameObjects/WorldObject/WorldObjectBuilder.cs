@@ -21,6 +21,7 @@ public partial class WorldObject {
 
     public Dictionary ToDictionary() {
         if (_type != "block" && _type != "tree") {
+            //@todo enable serialise of all worldObjects
             throw new NotImplementedException();
         }
         Dictionary dictionary = new() {

@@ -13,13 +13,14 @@ public partial class WorldObjectManager : Node {
 
     private Game _game;
     private Array<WorldObject>[,] _activeWorldObjects;
-    private int _currentObjectCount;
+    private int _currentLoadCellCount;
 
     private bool _isStartAreaLoading;
     private bool _isWorldLoading;
 
-    private Array _spawnFirst = new();
-    private Array _spawnSecond = new();
+    private Array<Dictionary>[,] _unspawnedWorldObjects;
+    private List<(int x, int y)> _loadingQueue = new();
+    private int _worldSpawnThreshold;
 
     public event Action WorldLoaded;
 
@@ -33,47 +34,85 @@ public partial class WorldObjectManager : Node {
 
         Player.PlayerSpawned += OnPlayerSpawned;
 
-        _activeWorldObjects = new Array<WorldObject>[_game.Width, _game.Height];
+        _worldSpawnThreshold = (int)Math.Pow(2 * BlockSpawnDistance - 1, 2);
+        _activeWorldObjects =
+            new Array<WorldObject>[_game.Width, _game.Height];
+        _unspawnedWorldObjects =
+            new Array<Dictionary>[_game.Width, _game.Height];
         for (int x = 0; x < _game.Width; x++) {
             for (int y = 0; y < _game.Height; y++) {
-                _activeWorldObjects[x, y] = new Array<WorldObject>();
+                _unspawnedWorldObjects[x, y] = new Array<Dictionary>();
             }
         }
 
-        IntVector spawnPosition =
-            new(worldData["DefaultSpawnPosition"].AsGodotArray());
+        Array defaultSpawnPos =
+            worldData["DefaultSpawnPosition"].AsGodotArray();
+        (int x, int y) loadingOrigin =
+            ((int)defaultSpawnPos[0], (int)defaultSpawnPos[1]);
+        SetLoadingQueue(loadingOrigin);
 
-        Array allWorldObjects = worldData["SavedWorldObjects"].AsGodotArray();
-
-        foreach (Dictionary worldObject in allWorldObjects) {
-            int xPosition = (int)worldObject["xPosition"].ToString().ToFloat();
-            int yPosition = (int)worldObject["yPosition"].ToString().ToFloat();
-
-            int xDiff = Math.Abs(xPosition - spawnPosition.X);
-            int yDiff = Math.Abs(yPosition - spawnPosition.Y);
-            if (xDiff <= BlockSpawnDistance && yDiff <= BlockSpawnDistance) {
-                _spawnFirst.Add(worldObject);
-            } else {
-                _spawnSecond.Add(worldObject);
-            }
+        Array allWorldObjects =
+            worldData["SavedWorldObjects"].AsGodotArray();
+        foreach (Dictionary dictionary in allWorldObjects) {
+            _unspawnedWorldObjects[
+                (int)dictionary["xPosition"].ToString().ToFloat(),
+                (int)dictionary["yPosition"].ToString().ToFloat()
+            ].Add(dictionary);
         }
-        
+
         _isStartAreaLoading = true;
+        _isWorldLoading = true;
 
         TreeExiting += OnExiting;
+    }
+
+    private void SetLoadingQueue((int x, int y) loadingOrigin) {
+        int distanceFromOrigin = 0;
+        _loadingQueue.Add(loadingOrigin);
+        while (distanceFromOrigin <= Math.Max(_game.Width, _game.Height)) {
+            distanceFromOrigin++;
+            (int x, int y) topLeft = (
+                loadingOrigin.x - distanceFromOrigin,
+                loadingOrigin.y - distanceFromOrigin
+            );
+            (int x, int y) topRight = (
+                loadingOrigin.x + distanceFromOrigin,
+                loadingOrigin.y - distanceFromOrigin
+            );
+            (int x, int y) bottomLeft = (
+                loadingOrigin.x - distanceFromOrigin,
+                loadingOrigin.y + distanceFromOrigin
+            );
+            (int x, int y) bottomRight = (
+                loadingOrigin.x + distanceFromOrigin,
+                loadingOrigin.y + distanceFromOrigin
+            );
+            for (int i = 0; i <= 2 * distanceFromOrigin - 1; i++) {
+                QueueCellIfValid((topLeft.x + i, topLeft.y));
+                QueueCellIfValid((topRight.x, topRight.y + i));
+                QueueCellIfValid((bottomRight.x - i, bottomRight.y));
+                QueueCellIfValid((bottomLeft.x, bottomLeft.y - i));
+            }
+        }
+    }
+
+    private void QueueCellIfValid((int x, int y) currentCell) {
+        if (currentCell.x < 0 || currentCell.x >= _game.Width ||
+            currentCell.y < 0 || currentCell.y >= _game.Height) return;
+        _loadingQueue.Add(currentCell);
     }
 
     private void OnExiting() {
         Player.PlayerSpawned -= OnPlayerSpawned;
         TreeExiting -= OnExiting;
     }
-    
+
     public void SetGameAsClient(Game game, Dictionary playerData) {
         if (_game is not null) throw new Exception("[20250529.2332.1] Game already set");
         _game = game;
-        
+
         // RPC the host with playerData, 
-        RpcId(SceneManager.HostId, nameof(ClientJoinedGame), 
+        RpcId(SceneManager.HostId, nameof(ClientJoinedGame),
             playerData, _game.PeerId);
     }
 
@@ -86,11 +125,11 @@ public partial class WorldObjectManager : Node {
         foreach (WorldObject worldObject in GetObjectsInRegion(region)) {
             localWorldObjects.Add(worldObject.ToDictionary());
         }
-        
+
         RpcId(clientPeerId, nameof(SendClientLocalWorldObjects),
             localWorldObjects);
     }
-    
+
     [Rpc]
     private void SendClientLocalWorldObjects(Array worldObjects) {
         _activeWorldObjects = new Array<WorldObject>[_game.Width, _game.Height];
@@ -99,55 +138,53 @@ public partial class WorldObjectManager : Node {
                 _activeWorldObjects[x, y] = new Array<WorldObject>();
             }
         }
-        
-        _spawnFirst = worldObjects;
-        _isStartAreaLoading = true;
+
     }
-    
-    
-    
+
+
     public Array<WorldObject> GetCellContents(IntVector coords) {
-        return _activeWorldObjects[coords.X, coords.Y];
+        return _activeWorldObjects[coords.X, coords.Y] ?? 
+               new Array<WorldObject>();
     }
 
     public override void _Process(double delta) {
-        if (_isStartAreaLoading) {
-            ProcessLoadWorld(_spawnFirst, 16, out bool finished);
+        if (_isWorldLoading) {
+            ProcessLoadWorld(16, out bool finished);
             if (finished) {
-                _isStartAreaLoading = false;
-                _isWorldLoading = true;
-                WorldLoaded?.Invoke();
+                _isWorldLoading = false;
             }
         }
-        // else if (_isWorldLoading) {
-        //     ProcessLoadWorld(_spawnSecond, 16, out bool finished);
-        //     if (finished) {
-        //         _isWorldLoading = false;
-        //     }
-        // }
     }
 
-    private void ProcessLoadWorld(Array spawnArray, float timeout, out bool finished) {
+    private void ProcessLoadWorld(float timeout, out bool finished) {
         Stopwatch stopwatch = new();
         stopwatch.Start();
-        while (_currentObjectCount < spawnArray.Count &&
-               stopwatch.ElapsedMilliseconds < timeout) {
-            Dictionary savedObjectDict =
-                spawnArray[_currentObjectCount].AsGodotDictionary();
+        while (
+            _currentLoadCellCount < _loadingQueue.Count &&
+            stopwatch.ElapsedMilliseconds < timeout
+        ) {
+            (int x, int y) coords = _loadingQueue[_currentLoadCellCount];
+            Array<Dictionary> cellObjects =
+                _unspawnedWorldObjects[coords.x, coords.y];
+            _activeWorldObjects[coords.x, coords.y] =
+                new Array<WorldObject>();
+            foreach (Dictionary dictionary in cellObjects) {
+                WorldObject worldObject =
+                    WorldObject.FromDictionary(dictionary);
+                AddWorldObject(worldObject);
+            }
 
-            WorldObject worldObject =
-                WorldObject.FromDictionary(savedObjectDict);
-            AddWorldObject(worldObject);
+            _currentLoadCellCount++;
+        }
+        
 
-            _currentObjectCount++;
+        if (_isStartAreaLoading && 
+            _currentLoadCellCount >= _worldSpawnThreshold) {
+            _isStartAreaLoading = false;
+            WorldLoaded?.Invoke();
         }
 
-        if (_currentObjectCount == spawnArray.Count) {
-            finished = true;
-            _currentObjectCount = 0;
-        } else {
-            finished = false;
-        }
+        finished = _currentLoadCellCount == _loadingQueue.Count;
     }
 
 
@@ -185,7 +222,6 @@ public partial class WorldObjectManager : Node {
             player.SpawnCoords, BlockSpawnDistance);
 
         EnableObjectsInRegion(region);
-        GD.Print(player.Name);
         player.MovedCell += OnLocalPlayerMoved;
         player.ActionController.GatherAction.GatherAttempted
             += OnPlayerGatherAction;
