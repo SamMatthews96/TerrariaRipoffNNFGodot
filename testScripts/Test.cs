@@ -1,13 +1,15 @@
 using Godot;
+using Godot.Collections;
 using TerrariaRipoffNNF;
 
 public partial class Test : Node
 {
     public override void _Ready() {
+        Dictionary myDic = new() {
+            {"key1", "val1"}
+        };
+        GD.Print(myDic.ToString());
     }
 
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    private void TestVariantPassing(IntVector resource) {
-        GD.Print(resource.X, resource.Y);
-    }
+    
 }

@@ -19,8 +19,9 @@ public partial class WorldObjectManager : Node {
     private bool _isWorldLoading;
 
     private Array<Dictionary>[,] _unspawnedWorldObjects;
-    private List<(int x, int y)> _loadingQueue = new();
+    private List<(int x, int y)> _loadingQueue;
     private int _worldSpawnThreshold;
+    private (int x, int y) _defaultSpawnPosition;
 
     public event Action WorldLoaded;
 
@@ -47,9 +48,9 @@ public partial class WorldObjectManager : Node {
 
         Array defaultSpawnPos =
             worldData["DefaultSpawnPosition"].AsGodotArray();
-        (int x, int y) loadingOrigin =
+        _defaultSpawnPosition =
             ((int)defaultSpawnPos[0], (int)defaultSpawnPos[1]);
-        SetLoadingQueue(loadingOrigin);
+        _loadingQueue = CreateLoadingQueue(_defaultSpawnPosition);
 
         Array allWorldObjects =
             worldData["SavedWorldObjects"].AsGodotArray();
@@ -66,9 +67,10 @@ public partial class WorldObjectManager : Node {
         TreeExiting += OnExiting;
     }
 
-    private void SetLoadingQueue((int x, int y) loadingOrigin) {
+    private List<(int x, int y)> CreateLoadingQueue((int x, int y) loadingOrigin) {
+        List<(int x, int y)> loadingQueue = new();
         int distanceFromOrigin = 0;
-        _loadingQueue.Add(loadingOrigin);
+        loadingQueue.Add(loadingOrigin);
         while (distanceFromOrigin <= Math.Max(_game.Width, _game.Height)) {
             distanceFromOrigin++;
             (int x, int y) topLeft = (
@@ -88,18 +90,22 @@ public partial class WorldObjectManager : Node {
                 loadingOrigin.y + distanceFromOrigin
             );
             for (int i = 0; i <= 2 * distanceFromOrigin - 1; i++) {
-                QueueCellIfValid((topLeft.x + i, topLeft.y));
-                QueueCellIfValid((topRight.x, topRight.y + i));
-                QueueCellIfValid((bottomRight.x - i, bottomRight.y));
-                QueueCellIfValid((bottomLeft.x, bottomLeft.y - i));
+                QueueCellIfValid(loadingQueue, (topLeft.x + i, topLeft.y));
+                QueueCellIfValid(loadingQueue, (topRight.x, topRight.y + i));
+                QueueCellIfValid(loadingQueue, (bottomRight.x - i, bottomRight.y));
+                QueueCellIfValid(loadingQueue, (bottomLeft.x, bottomLeft.y - i));
             }
         }
+
+        return loadingQueue;
     }
 
-    private void QueueCellIfValid((int x, int y) currentCell) {
+    private void QueueCellIfValid(
+        List<(int x, int y)> loadingQueue, (int x, int y) currentCell
+    ) {
         if (currentCell.x < 0 || currentCell.x >= _game.Width ||
             currentCell.y < 0 || currentCell.y >= _game.Height) return;
-        _loadingQueue.Add(currentCell);
+        loadingQueue.Add(currentCell);
     }
 
     private void OnExiting() {
@@ -111,39 +117,49 @@ public partial class WorldObjectManager : Node {
         if (_game is not null) throw new Exception("[20250529.2332.1] Game already set");
         _game = game;
 
-        // RPC the host with playerData, 
-        RpcId(SceneManager.HostId, nameof(ClientJoinedGame),
-            playerData, _game.PeerId);
+        RpcId(SceneManager.HostId, nameof(CmdRequestWorldData),
+            _game.PeerId, _defaultSpawnPosition.x, _defaultSpawnPosition.y);
     }
 
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
-    private void ClientJoinedGame(Dictionary playerData, int clientPeerId) {
-        IntVector spawnPosition = new(5, 5);
-        List<IntVector> region = _game.Region.GetRegion(
-            spawnPosition, BlockSpawnDistance);
-        Array localWorldObjects = new();
-        foreach (WorldObject worldObject in GetObjectsInRegion(region)) {
-            localWorldObjects.Add(worldObject.ToDictionary());
-        }
 
-        RpcId(clientPeerId, nameof(SendClientLocalWorldObjects),
-            localWorldObjects);
+    private System.Collections.Generic.Dictionary<int, List<(int x, int y)>>
+        _peerLoadingQueues = new();
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    private void CmdRequestWorldData(int peerId, int spawnX, int spawnY) {
+        /*
+         The server can send frequent RPCs of game data
+         currently the world is just under 1MB, which appears to be the RPC
+         size limit.
+         We can assume it will be a few orders of magnitude larger
+         */
+        _peerLoadingQueues.Add(peerId, CreateLoadingQueue((spawnX, spawnY)));
+
+        Array worldObjects = new();
+        foreach ((int x, int y) cell in _peerLoadingQueues[peerId]) {
+            Array cellObjects = new();
+            foreach (WorldObject worldObject in _activeWorldObjects[cell.x,cell.y]) {
+                cellObjects.Add(worldObject.ToDictionary());
+            }
+            worldObjects.Add(new Dictionary {
+                {"x", cell.x},
+                {"y", cell.y},
+                {"objects", cellObjects}
+            });
+        }
+        
+        RpcId(peerId, nameof(RpcReceiveWorldData),
+            worldObjects);
     }
 
     [Rpc]
-    private void SendClientLocalWorldObjects(Array worldObjects) {
-        _activeWorldObjects = new Array<WorldObject>[_game.Width, _game.Height];
-        for (int x = 0; x < _game.Width; x++) {
-            for (int y = 0; y < _game.Height; y++) {
-                _activeWorldObjects[x, y] = new Array<WorldObject>();
-            }
-        }
-
+    private void RpcReceiveWorldData(Array worldObjects) {
+        GD.Print(worldObjects.Count);
     }
 
 
     public Array<WorldObject> GetCellContents(IntVector coords) {
-        return _activeWorldObjects[coords.X, coords.Y] ?? 
+        return _activeWorldObjects[coords.X, coords.Y] ??
                new Array<WorldObject>();
     }
 
@@ -176,9 +192,8 @@ public partial class WorldObjectManager : Node {
 
             _currentLoadCellCount++;
         }
-        
 
-        if (_isStartAreaLoading && 
+        if (_isStartAreaLoading &&
             _currentLoadCellCount >= _worldSpawnThreshold) {
             _isStartAreaLoading = false;
             WorldLoaded?.Invoke();
