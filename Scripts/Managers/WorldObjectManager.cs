@@ -213,6 +213,9 @@ public partial class WorldObjectManager : Node {
         }
 
         _isWorldLoading = _currentLoadCellCount < _loadingQueue.Count;
+        if (!_isWorldLoading) {
+            GD.Print("loaded");
+        }
     }
 
 
@@ -324,7 +327,19 @@ public partial class WorldObjectManager : Node {
         }
 
         AddWorldObject(block);
+        Rpc(nameof(RpcWorldObjectCreate), block.ToDictionary());
         player.Inventory.OnAfterBuildSuccess(item);
+    }
+
+    [Rpc]
+    private void RpcWorldObjectCreate(Dictionary data) {
+        WorldObject worldObject = WorldObject.FromDictionary(data);
+        AddWorldObject(worldObject);
+    }
+
+    [Rpc]
+    private void RpcWorldObjectDestroy() {
+        
     }
 
     private void OnPlayerBuildWallAction(Player player, Item item, IntVector coords) {
@@ -342,6 +357,7 @@ public partial class WorldObjectManager : Node {
             .AsWall(item)
             .Build();
         AddWorldObject(block);
+        Rpc(nameof(RpcWorldObjectCreate), block.ToDictionary());
         player.Inventory.OnAfterBuildSuccess(item);
     }
 
@@ -365,6 +381,7 @@ public partial class WorldObjectManager : Node {
             WorldObject pickup = WorldObject.New(worldObject.Coords)
                 .AsPickup(objectDropsPickup.Item).Build();
             AddWorldObject(pickup);
+            Rpc(nameof(RpcWorldObjectCreate), pickup.ToDictionary());
         }
 
         worldObject.QueueFree();

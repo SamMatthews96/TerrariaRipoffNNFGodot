@@ -15,21 +15,28 @@ public partial class WorldObject {
         return dictionary["type"].ToString() switch {
             "block" => New(coords).AsBlock(item).Build(),
             "tree" => New(coords).AsTree(item).Build(),
+            "pickup" => New(coords).AsPickup(item).Build(),
             _ => throw new ArgumentException($"Unknown WorldObject type: {dictionary["Type"]}")
         };
     }
 
     public Dictionary ToDictionary() {
-        if (_type != "block" && _type != "tree") {
+        if (_type != "block" && _type != "tree" && _type != "pickup") {
             //@todo enable serialise of all worldObjects
             throw new NotImplementedException();
         }
+
         Dictionary dictionary = new() {
             { "type", _type },
-            { "item", GetProperty<ObjectSpawnOnDeath>().Item.ToDictionary() },
             { "xPosition", Coords.X },
             { "yPosition", Coords.Y }
         };
+        dictionary["item"] = _type switch {
+            "block" or "tree" => GetProperty<ObjectSpawnOnDeath>().Item.ToDictionary(),
+            "pickup" => GetProperty<ObjectCanPickup>().Item.ToDictionary(),
+            _ => dictionary["item"]
+        };
+
         return dictionary;
     }
 
@@ -120,6 +127,7 @@ public partial class WorldObject {
         }
 
         public Builder AsPickup(Item item) {
+            _worldObject._type = "pickup";
             _worldObject.ActiveProperties.AddRange(new List<ObjectProperty> {
                 new ObjectTexture(_worldObject, item.IconTexture),
                 new ObjectCanPickup(_worldObject, item),

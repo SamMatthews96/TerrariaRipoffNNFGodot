@@ -35,9 +35,7 @@ public partial class Inventory : Node {
 
     public void InitAsHost() {
         _player.PickupArea.TouchedItem += OnHostCollidedWithPickup;
-        TreeExiting += () => {
-            _player.PickupArea.TouchedItem -= OnHostCollidedWithPickup;
-        };
+        TreeExiting += () => { _player.PickupArea.TouchedItem -= OnHostCollidedWithPickup; };
     }
 
     public void InitAsLocal(Game game, Dictionary playerData) {
@@ -55,7 +53,7 @@ public partial class Inventory : Node {
             int count = (int)savedItem["Count"].ToString().ToFloat();
             StackedItems newStack = new(newItem, count);
 
-            ClientAddItems(newStack);
+            ClientAddItems(newStack.ToDictionary());
         }
     }
 
@@ -70,9 +68,9 @@ public partial class Inventory : Node {
     }
 
     private void OnItemCrafted(StackedItems newItems, List<StackedItems> ingredients) {
-        Rpc(nameof(ClientAddItems), newItems);
+        Rpc(nameof(ClientAddItems), newItems.ToDictionary());
         foreach (StackedItems ingredient in ingredients) {
-            Rpc(nameof(ClientRemoveItems), ingredient);
+            Rpc(nameof(ClientRemoveItems), ingredient.ToDictionary());
         }
     }
 
@@ -83,18 +81,20 @@ public partial class Inventory : Node {
 
         StackedItems items = new(pickup.Item);
 
-        Rpc(nameof(ClientAddItems), items);
+        Rpc(nameof(ClientAddItems), items.ToDictionary());
 
         PickupLooted?.Invoke(pickup.WorldObject);
     }
 
     public void OnAfterBuildSuccess(Item item) {
         StackedItems inventoryItems = new(item, 1);
-        Rpc(nameof(ClientRemoveItems), inventoryItems);
+        Rpc(nameof(ClientRemoveItems), inventoryItems.ToDictionary());
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    private void ClientAddItems(StackedItems inventoryItemsToAdd) {
+    private void ClientAddItems(Dictionary dictionary) {
+        StackedItems inventoryItemsToAdd =
+            StackedItems.FromDictionary(dictionary);
         UsedSpace += inventoryItemsToAdd.TotalSpace;
 
         int index = _inventoryItemsList.FindIndex(inventoryItems =>
@@ -110,7 +110,9 @@ public partial class Inventory : Node {
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    private void ClientRemoveItems(StackedItems inventoryItemsToRemove) {
+    private void ClientRemoveItems(Dictionary dictionary) {
+        StackedItems inventoryItemsToRemove = StackedItems.FromDictionary(
+            dictionary);
         UsedSpace -= inventoryItemsToRemove.TotalSpace;
 
         int index = _inventoryItemsList.FindIndex(inventoryItems =>
