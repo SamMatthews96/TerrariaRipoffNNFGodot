@@ -338,8 +338,19 @@ public partial class WorldObjectManager : Node {
     }
 
     [Rpc]
-    private void RpcWorldObjectDestroy() {
-        
+    private void RpcWorldObjectDestroy(Dictionary data) {
+        int x = (int)data["xPosition"].ToString().ToFloat();
+        int y = (int)data["yPosition"].ToString().ToFloat();
+        string type = data["type"].ToString();
+        foreach (WorldObject worldObject in _activeWorldObjects[x,y]) {
+            if (worldObject.Type != type) continue;
+            _activeWorldObjects[x, y].Remove(worldObject);
+            worldObject.QueueFree();
+            return;
+        }
+
+        throw new Exception("[20250621.0018.1] Couldn't find worldObject to destroy on peer");
+
     }
 
     private void OnPlayerBuildWallAction(Player player, Item item, IntVector coords) {
@@ -385,5 +396,7 @@ public partial class WorldObjectManager : Node {
         }
 
         worldObject.QueueFree();
+        Rpc(nameof(RpcWorldObjectDestroy), 
+            worldObject.ToDictionary());
     }
 }

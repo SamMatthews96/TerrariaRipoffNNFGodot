@@ -19,7 +19,7 @@ public partial class WorldObject : Node {
     }
 
     private Node2D _parentNode;
-    private string _type;
+    public string Type { get; private set; }
 
     public List<ObjectProperty> ActiveProperties { get; private set; }
         = new();

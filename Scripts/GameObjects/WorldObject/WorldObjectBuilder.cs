@@ -21,17 +21,17 @@ public partial class WorldObject {
     }
 
     public Dictionary ToDictionary() {
-        if (_type != "block" && _type != "tree" && _type != "pickup") {
+        if (Type != "block" && Type != "tree" && Type != "pickup") {
             //@todo enable serialise of all worldObjects
             throw new NotImplementedException();
         }
 
         Dictionary dictionary = new() {
-            { "type", _type },
+            { "type", Type },
             { "xPosition", Coords.X },
             { "yPosition", Coords.Y }
         };
-        dictionary["item"] = _type switch {
+        dictionary["item"] = Type switch {
             "block" or "tree" => GetProperty<ObjectSpawnOnDeath>().Item.ToDictionary(),
             "pickup" => GetProperty<ObjectCanPickup>().Item.ToDictionary(),
             _ => dictionary["item"]
@@ -54,7 +54,7 @@ public partial class WorldObject {
         }
 
         public Builder AsBlock(Item item) {
-            _worldObject._type = "block";
+            _worldObject.Type = "block";
             _worldObject.ActiveProperties.AddRange(new List<ObjectProperty> {
                 new ObjectCollision(_worldObject),
                 new ObjectGatherable(_worldObject),
@@ -69,7 +69,7 @@ public partial class WorldObject {
         }
 
         public Builder AsWall(Item item) {
-            _worldObject._type = "wall";
+            _worldObject.Type = "wall";
             _worldObject.ActiveProperties.AddRange(new List<ObjectProperty> {
                 new ObjectGatherable(_worldObject),
                 new ObjectSpawnOnDeath(_worldObject, item),
@@ -83,7 +83,7 @@ public partial class WorldObject {
         }
 
         public Builder AsTree(Item item) {
-            _worldObject._type = "tree";
+            _worldObject.Type = "tree";
             _worldObject.ActiveProperties.AddRange(new List<ObjectProperty> {
                 new ObjectGatherable(_worldObject),
                 new ObjectSpawnOnDeath(_worldObject, item),
@@ -97,7 +97,7 @@ public partial class WorldObject {
         }
 
         public Builder AsProp(Item item) {
-            _worldObject._type = "prop";
+            _worldObject.Type = "prop";
             _worldObject.ActiveProperties.AddRange(new List<ObjectProperty> {
                 new ObjectGatherable(_worldObject),
                 new ObjectSpawnOnDeath(_worldObject, item),
@@ -127,7 +127,7 @@ public partial class WorldObject {
         }
 
         public Builder AsPickup(Item item) {
-            _worldObject._type = "pickup";
+            _worldObject.Type = "pickup";
             _worldObject.ActiveProperties.AddRange(new List<ObjectProperty> {
                 new ObjectTexture(_worldObject, item.IconTexture),
                 new ObjectCanPickup(_worldObject, item),
