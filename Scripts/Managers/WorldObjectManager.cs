@@ -67,6 +67,14 @@ public partial class WorldObjectManager : Node {
         TreeExiting += OnExiting;
     }
 
+    public void SetGameAsClient(Game game, Dictionary playerData) {
+        if (_game is not null) throw new Exception("[20250529.2332.1] Game already set");
+        _game = game;
+
+        RpcId(SceneManager.HostId, nameof(CmdRequestWorldData),
+            _game.PeerId, _defaultSpawnPosition.x, _defaultSpawnPosition.y);
+    }
+
     private List<(int x, int y)> CreateLoadingQueue((int x, int y) loadingOrigin) {
         List<(int x, int y)> loadingQueue = new();
         int distanceFromOrigin = 0;
@@ -113,48 +121,56 @@ public partial class WorldObjectManager : Node {
         TreeExiting -= OnExiting;
     }
 
-    public void SetGameAsClient(Game game, Dictionary playerData) {
-        if (_game is not null) throw new Exception("[20250529.2332.1] Game already set");
-        _game = game;
-
-        RpcId(SceneManager.HostId, nameof(CmdRequestWorldData),
-            _game.PeerId, _defaultSpawnPosition.x, _defaultSpawnPosition.y);
-    }
-
 
     private System.Collections.Generic.Dictionary<int, List<(int x, int y)>>
         _peerLoadingQueues = new();
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
     private void CmdRequestWorldData(int peerId, int spawnX, int spawnY) {
-        /*
-         The server can send frequent RPCs of game data
-         currently the world is just under 1MB, which appears to be the RPC
-         size limit.
-         We can assume it will be a few orders of magnitude larger
-         */
         _peerLoadingQueues.Add(peerId, CreateLoadingQueue((spawnX, spawnY)));
 
         Array worldObjects = new();
         foreach ((int x, int y) cell in _peerLoadingQueues[peerId]) {
             Array cellObjects = new();
-            foreach (WorldObject worldObject in _activeWorldObjects[cell.x,cell.y]) {
+            foreach (WorldObject worldObject in _activeWorldObjects[cell.x, cell.y]) {
                 cellObjects.Add(worldObject.ToDictionary());
             }
+
             worldObjects.Add(new Dictionary {
-                {"x", cell.x},
-                {"y", cell.y},
-                {"objects", cellObjects}
+                { "x", cell.x },
+                { "y", cell.y },
+                { "objects", cellObjects }
             });
         }
-        
+
         RpcId(peerId, nameof(RpcReceiveWorldData),
             worldObjects);
     }
 
     [Rpc]
-    private void RpcReceiveWorldData(Array worldObjects) {
-        GD.Print(worldObjects.Count);
+    private void RpcReceiveWorldData(Array worldData) {
+        //@todo pull game size from worldData
+        _worldSpawnThreshold = (int)Math.Pow(2 * BlockSpawnDistance - 1, 2);
+        _activeWorldObjects =
+            new Array<WorldObject>[_game.Width, _game.Height];
+        _unspawnedWorldObjects =
+            new Array<Dictionary>[_game.Width, _game.Height];
+
+        _defaultSpawnPosition = (5, 5);
+        _loadingQueue = CreateLoadingQueue(_defaultSpawnPosition);
+
+        foreach (Dictionary dictionary in worldData) {
+            int x = (int)dictionary["x"].ToString().ToFloat();
+            int y = (int)dictionary["y"].ToString().ToFloat();
+            _unspawnedWorldObjects[x, y] = new Array<Dictionary>();
+            foreach (Dictionary objectDict in
+                     dictionary["objects"].AsGodotArray()) {
+                _unspawnedWorldObjects[x, y].Add(objectDict);
+            }
+        }
+
+        _isStartAreaLoading = true;
+        _isWorldLoading = true;
     }
 
 
@@ -165,14 +181,11 @@ public partial class WorldObjectManager : Node {
 
     public override void _Process(double delta) {
         if (_isWorldLoading) {
-            ProcessLoadWorld(16, out bool finished);
-            if (finished) {
-                _isWorldLoading = false;
-            }
+            ProcessLoadWorld(16);
         }
     }
 
-    private void ProcessLoadWorld(float timeout, out bool finished) {
+    private void ProcessLoadWorld(float timeout) {
         Stopwatch stopwatch = new();
         stopwatch.Start();
         while (
@@ -199,7 +212,7 @@ public partial class WorldObjectManager : Node {
             WorldLoaded?.Invoke();
         }
 
-        finished = _currentLoadCellCount == _loadingQueue.Count;
+        _isWorldLoading = _currentLoadCellCount < _loadingQueue.Count;
     }
 
 
