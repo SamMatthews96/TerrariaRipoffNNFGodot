@@ -131,16 +131,23 @@ public partial class WorldObjectManager : Node {
 
         Array worldObjects = new();
         foreach ((int x, int y) cell in _peerLoadingQueues[peerId]) {
-            Array cellObjects = new();
-            foreach (WorldObject worldObject in _activeWorldObjects[cell.x, cell.y]) {
-                cellObjects.Add(worldObject.ToDictionary());
-            }
-
-            worldObjects.Add(new Dictionary {
+            Dictionary cellInformation = new() {
                 { "x", cell.x },
                 { "y", cell.y },
-                { "objects", cellObjects }
-            });
+            };
+            if (_activeWorldObjects[cell.x, cell.y] is null) {
+                cellInformation.Add("objects", 
+                    _unspawnedWorldObjects[cell.x, cell.y]);
+            } else {
+                Array cellObjects = new();
+                foreach (WorldObject worldObject in _activeWorldObjects[cell.x, cell.y]) {
+                    cellObjects.Add(worldObject.ToDictionary());
+                }
+                cellInformation.Add("objects", cellObjects);
+            }
+            
+
+            worldObjects.Add(cellInformation);
         }
 
         RpcId(peerId, nameof(RpcReceiveWorldData),
