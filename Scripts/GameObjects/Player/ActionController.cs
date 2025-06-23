@@ -4,47 +4,44 @@ using Godot;
 namespace TerrariaRipoffNNF;
 
 public partial class ActionController : Node {
-    [Export] private Player _player;
     private PlayerAction _currentPlayerAction;
+    public Player Player { get; private set; }
+    public Game Game { get; private set; }
 
     [Export] public GatherAction GatherAction { get; private set; }
     [Export] public BuildAction BuildAction { get; private set; }
 
-    private Game _game;
     public event Action<PlayerActionType> ActionChanged;
 
-    public void InitAsLocal(Game game) {
-        _game = game;
-        _game.InputManager.LeftMouseUp += OnInputManagerLeftMouseUp;
-        _game.InputManager.LeftMouseDown += OnInputManagerLeftMouseDown;
-        _game.InputManager.RightMouseUp += OnInputManagerRightMouseUp;
-        _game.InputManager.RightMouseDown += OnInputManagerRightMouseDown;
-        _game.Interface.ActionBar.ButtonClicked += EquipAction;
-        _game.InputManager.PlayerActionModeChanged += EquipAction;
-        TreeExiting += OnTreeExitingLocal;
+    public static ActionController Create(Game game, Player player) {
+        ActionController newController = Data.PackedScenes.PlayerActionController
+            .Instantiate<ActionController>();
+        newController.Game = game;
+        newController.Player = player;
+
+        return newController;
+    }
+
+    public override void _Ready() {
+        Game.InputManager.LeftMouseUp += OnInputManagerLeftMouseUp;
+        Game.InputManager.LeftMouseDown += OnInputManagerLeftMouseDown;
+        Game.InputManager.RightMouseUp += OnInputManagerRightMouseUp;
+        Game.InputManager.RightMouseDown += OnInputManagerRightMouseDown;
+        Game.InputManager.PlayerActionModeChanged += EquipAction;
+        Game.Interface.ActionBar.ButtonClicked += EquipAction;
+        TreeExiting += OnTreeExiting;
+
         EquipAction(PlayerActionType.Gather);
-        
-        BuildAction.InitAsLocal(game);
-        GatherAction.InitAsLocal(game);
     }
 
-    private void OnTreeExitingLocal() {
-        _game.InputManager.LeftMouseUp -= OnInputManagerLeftMouseUp;
-        _game.InputManager.LeftMouseDown -= OnInputManagerLeftMouseDown;
-        _game.Interface.ActionBar.ButtonClicked -= EquipAction;
-        _game.InputManager.PlayerActionModeChanged -= EquipAction;
-        TreeExiting -= OnTreeExitingLocal;
-    }
-
-    public void InitAsHost(Game game) {
-        _game = game;
-        // _gatherAction.InitAsHost(game);
-        BuildAction.InitAsHost(game);
-        TreeExiting += OnTreeExitingHost;
-    }
-
-    private void OnTreeExitingHost() {
-        TreeExiting -= OnTreeExitingHost;
+    private void OnTreeExiting() {
+        Game.InputManager.LeftMouseUp -= OnInputManagerLeftMouseUp;
+        Game.InputManager.LeftMouseDown -= OnInputManagerLeftMouseDown;
+        Game.InputManager.RightMouseUp -= OnInputManagerRightMouseUp;
+        Game.InputManager.RightMouseDown -= OnInputManagerRightMouseDown;
+        Game.InputManager.PlayerActionModeChanged -= EquipAction;
+        Game.Interface.ActionBar.ButtonClicked -= EquipAction;
+        TreeExiting -= OnTreeExiting;
     }
 
     private void OnInputManagerLeftMouseUp(Vector2 mouseWorldPosition) {
@@ -61,13 +58,13 @@ public partial class ActionController : Node {
 
     private void OnInputManagerRightMouseUp(Vector2 mouseWorldPosition) {
         _currentPlayerAction.EndRightMouseAction(mouseWorldPosition);
-    } 
+    }
 
     private void EquipAction(PlayerActionType state) {
         _currentPlayerAction = state switch {
             PlayerActionType.Gather => GatherAction,
             PlayerActionType.Build => BuildAction,
-            // PlayerActionType.Weapon
+            PlayerActionType.Weapon => throw new NotImplementedException(),
             _ => throw new ArgumentOutOfRangeException(nameof(state), state, null)
         };
 

@@ -1,17 +1,10 @@
-[gd_scene load_steps=16 format=3 uid="uid://bx6lgpicpfal4"]
+[gd_scene load_steps=9 format=3 uid="uid://bx6lgpicpfal4"]
 
 [ext_resource type="Script" uid="uid://b11uqw4ifwmss" path="res://Scripts/GameObjects/Player/Player.cs" id="1_hx4ms"]
 [ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://Assets/Images/icon.svg" id="2_5yc1a"]
-[ext_resource type="Script" uid="uid://de0rc4wpvdrwn" path="res://Scripts/GameObjects/Player/Inventory.cs" id="3_81ck4"]
 [ext_resource type="Script" uid="uid://cxwnlrso3c8bg" path="res://Scripts/GameObjects/Player/PickupArea.cs" id="3_tkkq4"]
-[ext_resource type="Script" uid="uid://nkve3tokkn8r" path="res://Scripts/GameObjects/Player/ActionController.cs" id="4_00ysa"]
-[ext_resource type="Script" uid="uid://b2qds2g2sqgyu" path="res://Scripts/GameObjects/Player/GatherAction.cs" id="5_l1f4o"]
-[ext_resource type="Script" uid="uid://dvkkdi1y5ho67" path="res://Scripts/GameObjects/Player/BuildAction.cs" id="6_qab18"]
 [ext_resource type="Script" uid="uid://b43ui7yk16ekk" path="res://Scripts/GameObjects/Player/PlayerEquipment.cs" id="7_in65p"]
-[ext_resource type="Script" uid="uid://kjyoip5nu1o4" path="res://Scripts/GameObjects/Player/Crafting.cs" id="9_67855"]
 [ext_resource type="Script" uid="uid://dfb4kfm2jhuiq" path="res://Scripts/Resources/Item/ItemMining.cs" id="9_pqpyq"]
-
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_8kinl"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_3bb8o"]
 properties/0/path = NodePath(".:position")
@@ -28,25 +21,17 @@ Range = 5.0
 Power = 5.0
 metadata/_custom_type_script = "uid://dfb4kfm2jhuiq"
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_dv6dr"]
-size = Vector2(574, 410)
-
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("Inventory", "ActionController", "PickupArea", "PlayerEquipment", "Crafting", "_positionSynchronizer", "_camera")]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("PickupArea", "PlayerEquipment", "_positionSynchronizer", "_camera")]
 collision_mask = 2
 script = ExtResource("1_hx4ms")
-Inventory = NodePath("Inventory")
-ActionController = NodePath("ActionController")
 PickupArea = NodePath("PickupArea")
 PlayerEquipment = NodePath("CurrentEquipment")
-Crafting = NodePath("Crafting")
 _positionSynchronizer = NodePath("PositionSync")
 _camera = NodePath("Camera2D")
 
-[node name="PlayerInfoSync" type="MultiplayerSynchronizer" parent="."]
-replication_config = SubResource("SceneReplicationConfig_8kinl")
-
 [node name="PositionSync" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_3bb8o")
+public_visibility = false
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(0, -46)
@@ -73,47 +58,7 @@ _player = NodePath("..")
 position = Vector2(0, -46.5)
 shape = SubResource("RectangleShape2D_raw6a")
 
-[node name="Inventory" type="Node" parent="." node_paths=PackedStringArray("_player")]
-script = ExtResource("3_81ck4")
-_player = NodePath("..")
-
-[node name="ActionController" type="Node" parent="." node_paths=PackedStringArray("_player", "GatherAction", "BuildAction")]
-script = ExtResource("4_00ysa")
-_player = NodePath("..")
-GatherAction = NodePath("GatherActionState")
-BuildAction = NodePath("BuildActionState")
-
-[node name="GatherActionState" type="Node" parent="ActionController" node_paths=PackedStringArray("_player", "_gatherCooldown", "Player")]
-script = ExtResource("5_l1f4o")
-_player = NodePath("../..")
-_gatherCooldown = NodePath("GatherCooldown")
-Player = NodePath("../..")
-
-[node name="GatherCooldown" type="Timer" parent="ActionController/GatherActionState"]
-wait_time = 0.5
-one_shot = true
-
-[node name="BuildActionState" type="Node" parent="ActionController" node_paths=PackedStringArray("Player")]
-script = ExtResource("6_qab18")
-Player = NodePath("../..")
-State = 1
-
-[node name="WeaponActionState" type="Node" parent="ActionController"]
-
 [node name="CurrentEquipment" type="Node" parent="." node_paths=PackedStringArray("_player")]
 script = ExtResource("7_in65p")
 _player = NodePath("..")
 Pickaxe = SubResource("Resource_7vd2l")
-
-[node name="Crafting" type="Node" parent="." node_paths=PackedStringArray("_player", "_craftingArea")]
-script = ExtResource("9_67855")
-_player = NodePath("..")
-_craftingArea = NodePath("../CraftingArea")
-
-[node name="CraftingArea" type="Area2D" parent="."]
-collision_layer = 0
-collision_mask = 8
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="CraftingArea"]
-position = Vector2(0, -45)
-shape = SubResource("RectangleShape2D_dv6dr")

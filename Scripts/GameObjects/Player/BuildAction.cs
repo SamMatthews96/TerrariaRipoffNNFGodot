@@ -8,23 +8,17 @@ public partial class BuildAction : PlayerAction {
     public event Action<Player, Item, IntVector> BuildWallActionAttempted;
 
     private Item _blockItem;
-    private Game _game;
 
-    public void InitAsLocal(Game game) {
-        _game = game;
-        _game.Interface.BuildUi.BuildButtonSelected += OnBuildTypeSelected;
+    public override void _Ready() {
+        Player = ActionController.Player;
+        Game = ActionController.Game;
+        Game.Interface.BuildUi.BuildButtonSelected += OnBuildTypeSelected;
         Player.Inventory.RemovedItemStack += OnInventoryRemovedItemStack;
-        TreeExiting += OnTreeExitingLocal;
     }
 
-    public void InitAsHost(Game game) {
-        _game = game;
-    }
-
-    private void OnTreeExitingLocal() {
-        _game.Interface.BuildUi.BuildButtonSelected -= OnBuildTypeSelected;
+    public override void _ExitTree() {
+        Game.Interface.BuildUi.BuildButtonSelected -= OnBuildTypeSelected;
         Player.Inventory.RemovedItemStack -= OnInventoryRemovedItemStack;
-        TreeExiting -= OnTreeExitingLocal;
     }
 
     private void OnBuildTypeSelected(Item item) {
@@ -33,7 +27,7 @@ public partial class BuildAction : PlayerAction {
 
     public override void LeftMouseAction(Vector2 mouseWorldPosition) {
         IntVector coords = new(mouseWorldPosition / Game.BlockSize);
-        if (!_game.IsInBounds(coords)) return;
+        if (!Game.IsInBounds(coords)) return;
 
         float range = 8;
         if (_blockItem is not null && range >= IntVector.Distance(coords, Player.Coords)) {
@@ -42,7 +36,6 @@ public partial class BuildAction : PlayerAction {
         }
     }
 
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void BuildBlockActionAttempt(IntVector coords, Item item) {
         if (item.HasProperty<ItemPlaceable>()) {
             BuildBlockActionAttempted?.Invoke(Player, item, coords);
@@ -51,7 +44,7 @@ public partial class BuildAction : PlayerAction {
 
     public override void RightMouseAction(Vector2 mouseWorldPosition) {
         IntVector coords = new(mouseWorldPosition / Game.BlockSize);
-        if (!_game.IsInBounds(coords)) return;
+        if (!Game.IsInBounds(coords)) return;
 
         float range = 8;
         if (_blockItem is not null && range >= IntVector.Distance(coords, Player.Coords)) {
@@ -60,7 +53,6 @@ public partial class BuildAction : PlayerAction {
         }
     }
 
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void BuildWallActionAttempt(IntVector coords, Item item) {
         if (item.HasProperty<ItemPlaceable>()) {
             BuildWallActionAttempted?.Invoke(Player, item, coords);

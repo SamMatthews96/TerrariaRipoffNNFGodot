@@ -20,7 +20,7 @@ public partial class SceneManager : Node {
     private void OnMainMenuSinglePlayerClickedEnterWorld(Dictionary worldData, Dictionary playerData) {
         CreateGame();
         _game.InitAsSinglePlayer(worldData, playerData);
-        _game.WorldObjectManager.WorldLoaded += OnWorldLoaded;
+        _game.WorldObjectManager.WorldLoadedLocally += OnWorldLoadedLocally;
     }
 
     private void CreateGame() {
@@ -36,10 +36,10 @@ public partial class SceneManager : Node {
     private void OnMainMenuHostClickedEnterWorld(Dictionary world, Dictionary playerInfo) {
         CreateGame();
         _game.InitAsHost(world, playerInfo);
-        _game.WorldObjectManager.WorldLoaded += OnWorldLoaded;
+        _game.WorldObjectManager.WorldLoadedLocally += OnWorldLoadedLocally;
     }
 
-    private void OnWorldLoaded() {
+    private void OnWorldLoadedLocally() {
         _loadingScreen.QueueFree();
         _loadingScreen = null;
     }

@@ -23,17 +23,26 @@ public partial class WorldObjectManager : Node {
     private int _worldSpawnThreshold;
     private (int x, int y) _defaultSpawnPosition;
 
-    public event Action WorldLoaded;
+    private Dictionary _localPlayerData;
+    
+    private Godot.Collections.Dictionary<int, Player> _players = new();
 
-    public static WorldObjectManager Create() {
-        return Data.PackedScenes.WorldObjectManager.Instantiate<WorldObjectManager>();
-    }
+    public event Action WorldLoadedLocally;
+    /*
+     * At this point, the local player should be created
+     * and replicated to the host.
+     * The local one needs to be listened to for actions
+     * These actions then should be carried on to the host
+     */
+
+    // public static WorldObjectManager Create() {
+    //     return Data.PackedScenes.WorldObjectManager.Instantiate<WorldObjectManager>();
+    // }
 
     public void SetGameAsHost(Game game, Dictionary worldData, Dictionary playerData) {
         if (_game is not null) throw new Exception("[20250529.2332.1] Game already set");
         _game = game;
-
-        Player.PlayerSpawned += OnPlayerSpawned;
+        _localPlayerData = playerData;
 
         _worldSpawnThreshold = (int)Math.Pow(2 * BlockSpawnDistance - 1, 2);
         _activeWorldObjects =
@@ -67,12 +76,20 @@ public partial class WorldObjectManager : Node {
         TreeExiting += OnExiting;
     }
 
-    public void SetGameAsClient(Game game, Dictionary playerData) {
-        if (_game is not null) throw new Exception("[20250529.2332.1] Game already set");
-        _game = game;
+    public override void _Ready() {
+        Player.LocalPlayerSpawned += OnLocalPlayerSpawned;
+    }
 
-        RpcId(SceneManager.HostId, nameof(CmdRequestWorldData),
-            _game.PeerId, _defaultSpawnPosition.x, _defaultSpawnPosition.y);
+    private void OnLocalPlayerSpawned(Player player) {
+        // listen to player's actions
+        player.ActionController.GatherAction.GatherAttempted +=
+            OnLocalPlayerGatherAction;
+        player.ActionController.BuildAction.BuildBlockActionAttempted +=
+            OnLocalPlayerBuildBlockAction;
+        player.ActionController.BuildAction.BuildWallActionAttempted +=
+            OnLocalPlayerBuildWallAction;
+
+        // when player is deleted, unsubscribe from all events
     }
 
     private List<(int x, int y)> CreateLoadingQueue((int x, int y) loadingOrigin) {
@@ -117,35 +134,44 @@ public partial class WorldObjectManager : Node {
     }
 
     private void OnExiting() {
-        Player.PlayerSpawned -= OnPlayerSpawned;
         TreeExiting -= OnExiting;
     }
 
+    public void SetGameAsClient(Game game, Dictionary playerData) {
+        if (_game is not null) throw new Exception("[20250529.2332.1] Game already set");
+        _game = game;
+        _localPlayerData = playerData;
+        // if the playerData contains a defaultSpawnPosition, we use that
+        // otherwise, we need to get the information from the server
+        // before we spawn the player
 
-    private System.Collections.Generic.Dictionary<int, List<(int x, int y)>>
-        _peerLoadingQueues = new();
+        RpcId(SceneManager.HostId, nameof(CmdRequestWorldData),
+            _game.PeerId, _defaultSpawnPosition.x, _defaultSpawnPosition.y);
+    }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
     private void CmdRequestWorldData(int peerId, int spawnX, int spawnY) {
-        _peerLoadingQueues.Add(peerId, CreateLoadingQueue((spawnX, spawnY)));
+        List<(int x, int y)> loadingQueueForPeer =
+            CreateLoadingQueue((spawnX, spawnY));
 
         Array worldObjects = new();
-        foreach ((int x, int y) cell in _peerLoadingQueues[peerId]) {
+        foreach ((int x, int y) cell in loadingQueueForPeer) {
             Dictionary cellInformation = new() {
                 { "x", cell.x },
                 { "y", cell.y },
             };
             if (_activeWorldObjects[cell.x, cell.y] is null) {
-                cellInformation.Add("objects", 
+                cellInformation.Add("objects",
                     _unspawnedWorldObjects[cell.x, cell.y]);
             } else {
                 Array cellObjects = new();
                 foreach (WorldObject worldObject in _activeWorldObjects[cell.x, cell.y]) {
                     cellObjects.Add(worldObject.ToDictionary());
                 }
+
                 cellInformation.Add("objects", cellObjects);
             }
-            
+
 
             worldObjects.Add(cellInformation);
         }
@@ -181,7 +207,12 @@ public partial class WorldObjectManager : Node {
     }
 
 
-    public Array<WorldObject> GetCellContents(IntVector coords) {
+    private Array<WorldObject> GetCellContents(int x, int y) {
+        return _activeWorldObjects[x, y] ??
+               new Array<WorldObject>();
+    }
+
+    private Array<WorldObject> GetCellContents(IntVector coords) {
         return _activeWorldObjects[coords.X, coords.Y] ??
                new Array<WorldObject>();
     }
@@ -216,15 +247,23 @@ public partial class WorldObjectManager : Node {
         if (_isStartAreaLoading &&
             _currentLoadCellCount >= _worldSpawnThreshold) {
             _isStartAreaLoading = false;
-            WorldLoaded?.Invoke();
+            SpawnLocalPlayer();
+            WorldLoadedLocally?.Invoke();
+            
         }
 
         _isWorldLoading = _currentLoadCellCount < _loadingQueue.Count;
-        if (!_isWorldLoading) {
-            GD.Print("loaded");
-        }
     }
 
+    private void SpawnLocalPlayer() {
+        // @todo consider making players a type of WorldObject
+        Player player = Player.Create(_game.PeerId, 
+            new IntVector(5, 5));
+        player.InitAsLocal(_game, _localPlayerData);
+        _game.PlayerParent.AddChild(player, true);
+        _players.Add(_game.PeerId, player);
+        // this will work until we add more peers
+    }
 
     private void EnableObjectsInRegion(List<IntVector> region) {
         Array<WorldObject> objects = GetObjectsInRegion(region);
@@ -243,58 +282,31 @@ public partial class WorldObjectManager : Node {
         return objects;
     }
 
-    private void OnLocalPlayerMoved(Dictionary positionChange) {
-        IntVector oldCoordinates = new(
-            (int)positionChange["PreviousX"], (int)positionChange["PreviousY"]);
-        IntVector newCoordinates = new(
-            (int)positionChange["X"], (int)positionChange["Y"]);
-
-        List<IntVector> newRegion = _game.Region.GetRegionDelta(
-            newCoordinates, oldCoordinates, BlockSpawnDistance);
-
-        EnableObjectsInRegion(newRegion);
+    private void OnLocalPlayerGatherAction(IntVector coords, Player player) {
+        RpcId(SceneManager.HostId, nameof(CmdPlayerGatherAction),
+            coords.X, coords.Y, player.PeerId);
+        player.ActionController.GatherAction.OnAfterGatherSuccess();
     }
 
-    private void OnPlayerSpawned(Player player) {
-        List<IntVector> region = _game.Region.GetRegion(
-            player.SpawnCoords, BlockSpawnDistance);
-
-        EnableObjectsInRegion(region);
-        player.MovedCell += OnLocalPlayerMoved;
-        player.ActionController.GatherAction.GatherAttempted
-            += OnPlayerGatherAction;
-        player.ActionController.BuildAction.BuildBlockActionAttempted
-            += OnPlayerBuildBlockAction;
-        player.ActionController.BuildAction.BuildWallActionAttempted
-            += OnPlayerBuildWallAction;
-        player.PlayerDespawned += OnPlayerDespawned;
-        player.Inventory.PickupLooted += OnPlayerPickupLooted;
-    }
-
-    private void OnPlayerDespawned(Player player) {
-        player.MovedCell -= OnLocalPlayerMoved;
-        player.ActionController.GatherAction.GatherAttempted
-            -= OnPlayerGatherAction;
-        player.ActionController.BuildAction.BuildBlockActionAttempted
-            -= OnPlayerBuildBlockAction;
-        player.ActionController.BuildAction.BuildWallActionAttempted
-            -= OnPlayerBuildWallAction;
-
-        player.PlayerDespawned -= OnPlayerDespawned;
-        player.Inventory.PickupLooted -= OnPlayerPickupLooted;
-    }
-
-    private void OnPlayerGatherAction(IntVector coords, Player player) {
-        foreach (WorldObject worldObject in GetCellContents(coords)) {
-            if (worldObject.TryGetProperty(out ObjectGatherable gatherable)) {
-                gatherable.GatherAction(player);
-                player.ActionController.GatherAction.OnAfterGatherSuccess();
-                return;
-            }
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+    private void CmdPlayerGatherAction(int x, int y, int peerId) {
+        Player player = _players[peerId];
+        //@todo get player node from peerId
+        foreach (WorldObject worldObject in GetCellContents(x, y)) {
+            if (!worldObject.TryGetProperty(out ObjectGatherable gatherable)) continue;
+            gatherable.GatherAction(player);
+            RpcId(peerId, nameof(RpcGatherSuccess));
+            return;
         }
     }
 
-    private void OnPlayerBuildBlockAction(
+    [Rpc(CallLocal = true)]
+    private void RpcGatherSuccess() {
+        Player player = _players[_game.PeerId];
+        player.ActionController.GatherAction.OnAfterGatherSuccess();
+    }
+
+    private void OnLocalPlayerBuildBlockAction(
         Player player, Item item, IntVector coords) {
         if (!item.TryGetProperty(out ItemPlaceable placeable)) return;
 
@@ -349,7 +361,7 @@ public partial class WorldObjectManager : Node {
         int x = (int)data["xPosition"].ToString().ToFloat();
         int y = (int)data["yPosition"].ToString().ToFloat();
         string type = data["type"].ToString();
-        foreach (WorldObject worldObject in _activeWorldObjects[x,y]) {
+        foreach (WorldObject worldObject in _activeWorldObjects[x, y]) {
             if (worldObject.Type != type) continue;
             _activeWorldObjects[x, y].Remove(worldObject);
             worldObject.QueueFree();
@@ -357,10 +369,9 @@ public partial class WorldObjectManager : Node {
         }
 
         throw new Exception("[20250621.0018.1] Couldn't find worldObject to destroy on peer");
-
     }
 
-    private void OnPlayerBuildWallAction(Player player, Item item, IntVector coords) {
+    private void OnLocalPlayerBuildWallAction(Player player, Item item, IntVector coords) {
         if (!item.TryGetProperty(out ItemPlaceable placeable)) return;
         if (placeable.Type == PlaceableType.Prop) return;
 
@@ -403,7 +414,7 @@ public partial class WorldObjectManager : Node {
         }
 
         worldObject.QueueFree();
-        Rpc(nameof(RpcWorldObjectDestroy), 
+        Rpc(nameof(RpcWorldObjectDestroy),
             worldObject.ToDictionary());
     }
 }

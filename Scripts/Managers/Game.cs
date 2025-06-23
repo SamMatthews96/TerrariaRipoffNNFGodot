@@ -20,32 +20,18 @@ public partial class Game : Node {
     [Export] public int Height { get; private set; } = 100;
     public int PeerId => Multiplayer.GetUniqueId();
 
-    public event Action GameLoaded;
-
     public IntVector DefaultSpawnPosition { get; private set; }
-    private WorldObjectManager _worldObjectManager;
 
     private MultiplayerHost _multiplayerHost;
     private MultiplayerClient _multiplayerClient;
 
     private Dictionary _playerData;
 
-    public WorldObjectManager WorldObjectManager {
-        get => _worldObjectManager ?? throw new Exception("[20241205.2011.1] Host not instantiated");
-        private set => _worldObjectManager = value;
-    }
+    [Export] public WorldObjectManager WorldObjectManager { get; private set; }
 
 
     public static Game Create() {
         return Data.PackedScenes.Game.Instantiate<Game>();
-    }
-
-    public override void _Ready() {
-        Player.LocalPlayerSpawned += OnLocalPlayerSpawned;
-    }
-
-    public override void _ExitTree() {
-        Player.LocalPlayerSpawned -= OnLocalPlayerSpawned;
     }
 
     public void InitAsSinglePlayer(Dictionary worldData, Dictionary playerData) {
@@ -65,56 +51,21 @@ public partial class Game : Node {
         AddChild(_multiplayerClient);
 
         Multiplayer.ConnectedToServer += () => {
-            // RpcId(SceneManager.HostId,
-            //     nameof(HostCreatePlayer),
-            //     Multiplayer.GetUniqueId());
-
-            WorldObjectManager = WorldObjectManager.Create();
-            AddChild(WorldObjectManager);
             WorldObjectManager.SetGameAsClient(this, playerData);
-
             DefaultSpawnPosition = new IntVector(5, 5);
-
-
-            WorldObjectManager.WorldLoaded += () => {
-                RpcId(SceneManager.HostId, nameof(HostCreatePlayer),
-                    PeerId);
-                // _playerData = null;
-                GameLoaded?.Invoke();
-            };
-
-            TreeExiting += () => {
-                // WorldObjectManager.WorldLoaded -= OnWorldLoaded;
-            };
         };
-    }
-
-    private void OnWorldLoaded() {
-        HostCreatePlayer(SceneManager.HostId);
-        // _playerData = null;
-        GameLoaded?.Invoke();
-    }
-
-    private void OnLocalPlayerSpawned(Player player) {
-        player.InitAsLocal(this, _playerData);
-        _playerData = null;
     }
 
     private void CreateWorld(Dictionary worldData, Dictionary playerData) {
         Width = (int)worldData["Width"];
         Height = (int)worldData["Height"];
-        WorldObjectManager = WorldObjectManager.Create();
         WorldObjectManager.SetGameAsHost(this, worldData, playerData);
-        AddChild(WorldObjectManager);
 
         DefaultSpawnPosition = new IntVector(
             worldData["DefaultSpawnPosition"].AsGodotArray()[0].AsInt32(),
             worldData["DefaultSpawnPosition"].AsGodotArray()[1].AsInt32());
 
         _playerData = FileManager.LoadPlayer(playerData);
-        WorldObjectManager.WorldLoaded += OnWorldLoaded;
-
-        TreeExiting += () => { WorldObjectManager.WorldLoaded -= OnWorldLoaded; };
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
@@ -125,6 +76,9 @@ public partial class Game : Node {
     }
 
     public bool IsInBounds(IntVector intVector) {
-        return intVector.X >= 0 && intVector.X < Width && intVector.Y >= 0 && intVector.Y < Height;
+        return intVector.X >= 0
+               && intVector.X < Width
+               && intVector.Y >= 0
+               && intVector.Y < Height;
     }
 }

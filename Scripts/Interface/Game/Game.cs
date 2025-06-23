@@ -12,11 +12,11 @@ public partial class Game : CanvasLayer {
     
     public override void _Ready() {
         Hide();
-        GameManager.GameLoaded += OnGameLoaded;
+        GameManager.WorldObjectManager.WorldLoadedLocally += OnWorldLoadedLocally;
+        // worldObjectManager is not created when this is called.
     }
 
-    private void OnGameLoaded() {
+    private void OnWorldLoadedLocally() {
         Show();
-        GameManager.GameLoaded -= OnGameLoaded;
     }
 }

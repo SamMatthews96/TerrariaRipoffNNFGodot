@@ -13,15 +13,14 @@ public partial class Player : CharacterBody2D {
             spawnCoords.X * Game.BlockSize,
             spawnCoords.Y * Game.BlockSize
         );
-        PlayerSpawned?.Invoke(player);
         return player;
     }
 
-    [Export] public Inventory Inventory { get; private set; }
-    [Export] public ActionController ActionController { get; private set; }
+    public Inventory Inventory { get; private set; }
+    public ActionController ActionController { get; private set; }
+    public Crafting Crafting { get; private set; }
     [Export] public PickupArea PickupArea { get; private set; }
     [Export] public PlayerEquipment PlayerEquipment { get; private set; }
-    [Export] public Crafting Crafting { get; private set; }
     
     [Export] private MultiplayerSynchronizer _positionSynchronizer;
     [Export] private Camera2D _camera;
@@ -43,12 +42,11 @@ public partial class Player : CharacterBody2D {
 
     public IntVector Coords => new(Position / Game.BlockSize);
 
-    private int PeerId => Name.ToString().ToInt();
+    public int PeerId => Name.ToString().ToInt();
     public bool IsLocalPlayer => Multiplayer.GetUniqueId() == PeerId;
 
 
     public static event Action<Player> LocalPlayerSpawned;
-    public static event Action<Player> PlayerSpawned;
     public event Action<Dictionary> MovedCell;
 
     public event Action<Player> PlayerDespawned;
@@ -57,7 +55,6 @@ public partial class Player : CharacterBody2D {
         _positionSynchronizer.SetMultiplayerAuthority(PeerId);
         if (IsLocalPlayer) {
             _camera.Enabled = true;
-            LocalPlayerSpawned?.Invoke(this);
         }
     }
 
@@ -70,15 +67,23 @@ public partial class Player : CharacterBody2D {
     }
 
     public void InitAsHost(Game game) {
-        Inventory.InitAsHost();
         PickupArea.InitAsHost();
-        ActionController.InitAsHost(game);
     }
 
     public void InitAsLocal(Game game, Dictionary playerData) {
         if (_game is not null) {
             throw new Exception("[20250104.0137.1] Game already set");
         }
+        
+        Inventory = Inventory.Create(game, playerData, this);
+        ActionController = ActionController.Create(game, this);
+        Crafting = Crafting.Create(game, this);
+        
+        AddChild(Inventory);
+        AddChild(ActionController);
+        AddChild(Crafting);
+        
+        PlayerEquipment.InitAsLocal();
 
         _game = game;
         _game.InputManager.HorizontalInputChanged += OnHorizontalInputChanged;
@@ -86,15 +91,13 @@ public partial class Player : CharacterBody2D {
 
         _characterName = playerData["Name"].ToString();
 
-        ActionController.InitAsLocal(game);
-        Crafting.InitAsLocal(game);
-        Inventory.InitAsLocal(game, playerData);
-
         TreeExiting += () => {
             _game.InputManager.HorizontalInputChanged -= OnHorizontalInputChanged;
             _game.InputManager.JumpPressed -= OnJumpPressed;
             SavePlayerData();
         };
+        
+        LocalPlayerSpawned?.Invoke(this);
     }
 
     private void OnHorizontalInputChanged(int newInput) {
@@ -143,5 +146,15 @@ public partial class Player : CharacterBody2D {
             { "Inventory", Inventory.ToDictionary() },
         };
         FileManager.SavePlayer(playerData);
+    }
+    
+    public void Disable() {
+        ProcessMode = ProcessModeEnum.Disabled;
+        Visible = false;
+    }
+
+    public void Enable() {
+        ProcessMode = ProcessModeEnum.Inherit;
+        Visible = true;
     }
 }

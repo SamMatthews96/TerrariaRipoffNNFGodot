@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3 uid="uid://cn7bp5sib73p6"]
+
+[ext_resource type="Script" uid="uid://nkve3tokkn8r" path="res://Scripts/GameObjects/Player/ActionController.cs" id="1_akseq"]
+[ext_resource type="Script" uid="uid://b2qds2g2sqgyu" path="res://Scripts/GameObjects/Player/GatherAction.cs" id="2_tpcfn"]
+[ext_resource type="Script" uid="uid://dvkkdi1y5ho67" path="res://Scripts/GameObjects/Player/BuildAction.cs" id="3_ca5xg"]
+
+[node name="ActionController" type="Node" node_paths=PackedStringArray("GatherAction", "BuildAction")]
+script = ExtResource("1_akseq")
+GatherAction = NodePath("GatherActionState")
+BuildAction = NodePath("BuildActionState")
+
+[node name="GatherActionState" type="Node" parent="." node_paths=PackedStringArray("_gatherCooldown", "ActionController")]
+script = ExtResource("2_tpcfn")
+_gatherCooldown = NodePath("GatherCooldown")
+ActionController = NodePath("..")
+
+[node name="GatherCooldown" type="Timer" parent="GatherActionState"]
+wait_time = 0.5
+one_shot = true
+
+[node name="BuildActionState" type="Node" parent="." node_paths=PackedStringArray("ActionController")]
+script = ExtResource("3_ca5xg")
+State = 1
+ActionController = NodePath("..")
+
+[node name="WeaponActionState" type="Node" parent="."]

@@ -6,17 +6,24 @@ using Godot;
 namespace TerrariaRipoffNNF;
 
 public sealed partial class Crafting : Node {
-    [Export] private Player _player;
+    [Export] private Area2D _craftingArea; 
+    private Player _player;
     private Recipe _selectedRecipe;
 
     private Godot.Collections.Dictionary<string, Item> _selectedIngredients = new();
     private Game _game;
-    [Export] private Area2D _craftingArea;
     public List<CraftStationArea> LocalCraftStationsAreas = new();
     public event Action<CraftingStationType> CraftingStationAdded;
     public event Action<CraftingStationType> CraftingStationRemoved;
     public event Action<StackedItems> SelectedIngredientsChanged;
     public event Action<StackedItems, List<StackedItems>> ItemCrafted;
+
+    public static Crafting Create(Game game, Player player) {
+        Crafting crafting = new();
+        crafting._game = game;
+        crafting._player = player;
+        return crafting;
+    }
 
     public void InitAsLocal(Game game) {
         _game = game;

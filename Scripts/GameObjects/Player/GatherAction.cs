@@ -4,18 +4,21 @@ using Godot;
 namespace TerrariaRipoffNNF;
 
 public partial class GatherAction : PlayerAction {
-    [Export] private Player _player;
     public event Action<IntVector, Player> GatherAttempted;
-
-    private Game _game;
 
     private bool _isGathering;
     [Export] private Timer _gatherCooldown;
 
-    public void InitAsLocal(Game game) {
-        _game = game;
-        _player.ActionController.ActionChanged += OnActionChanged;
+    public override void _Ready() {
+        Player = ActionController.Player;
+        Game = ActionController.Game;
+        Player.ActionController.ActionChanged += OnActionChanged;
         _gatherCooldown.Timeout += OnGatherCooldownTimeout;
+    }
+    
+    public override void _ExitTree() {
+        Player.ActionController.ActionChanged -= OnActionChanged;
+        _gatherCooldown.Timeout -= OnGatherCooldownTimeout;
     }
 
     private void OnGatherCooldownTimeout() {
@@ -35,23 +38,18 @@ public partial class GatherAction : PlayerAction {
         }
     }
 
-    private void AttemptGather() {
-        IntVector coords = new(_player.GetGlobalMousePosition() / Game.BlockSize);
-        if (!_game.IsInBounds(coords)) return;
-
-        RpcId(SceneManager.HostId, nameof(HostAttemptGather), coords);
+    public override void EndLeftMouseAction(Vector2 mouseWorldPosition) {
+        _isGathering = false;
     }
 
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    private void HostAttemptGather(IntVector coords) {
-        GatherAttempted?.Invoke(coords, _player);
+    private void AttemptGather() {
+        IntVector coords = new(Player.GetGlobalMousePosition() / Game.BlockSize);
+        if (!Game.IsInBounds(coords)) return;
+
+        GatherAttempted?.Invoke(coords, Player);
     }
 
     public void OnAfterGatherSuccess() {
         _gatherCooldown.Start();
-    }
-
-    public override void EndLeftMouseAction(Vector2 mouseWorldPosition) {
-        _isGathering = false;
     }
 }

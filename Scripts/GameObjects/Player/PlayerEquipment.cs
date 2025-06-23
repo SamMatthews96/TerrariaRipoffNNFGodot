@@ -9,8 +9,7 @@ public partial class PlayerEquipment : Node {
 
     public event Action<Item> ItemEquipped;
 
-
-    public override void _Ready() {
+    public void InitAsLocal() {
         _player.Inventory.EquipItemClicked += OnEquipItemClicked;
     }
 
@@ -24,10 +23,6 @@ public partial class PlayerEquipment : Node {
                 break;
         }
 
-        // _player.Inventory.RemovedItemStack += OnEquippedItemRemoved;
         ItemEquipped?.Invoke(item);
-    }
-
-    private void OnEquippedItemRemoved(StackedItems obj) {
     }
 }

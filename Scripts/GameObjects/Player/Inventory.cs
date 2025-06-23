@@ -29,31 +29,37 @@ public partial class Inventory : Node {
 
     public event Action<Item> EquipItemClicked;
 
-    [Export] private Player _player;
+    private Player _player;
     private Game _game;
+    private Dictionary _playerData;
     private readonly List<StackedItems> _inventoryItemsList = new();
 
-    public void InitAsHost() {
-        _player.PickupArea.TouchedItem += OnHostCollidedWithPickup;
-        TreeExiting += () => { _player.PickupArea.TouchedItem -= OnHostCollidedWithPickup; };
+    public static Inventory Create(
+        Game game, Dictionary playerData, Player player
+    ) {
+        Inventory inventory = new();
+        inventory._game = game;
+        inventory._player = player;
+        inventory._playerData = playerData;
+
+        return inventory;
     }
 
-    public void InitAsLocal(Game game, Dictionary playerData) {
-        _game = game;
+    public override void _Ready() {
+        _player.Crafting.ItemCrafted += OnItemCrafted;
         _game.Interface.InventoryUi.ItemActionClicked += OnItemActionClicked;
-
-        TreeExiting += () => { _game.Interface.InventoryUi.ItemActionClicked -= OnItemActionClicked; };
-
-        if (!playerData.TryGetValue("Inventory", out Variant inventory)) return;
-        if (!inventory.AsGodotDictionary<string, Array>().TryGetValue(
+        TreeExiting += () => {
+            _game.Interface.InventoryUi.ItemActionClicked -= OnItemActionClicked;
+        };
+        if (!_playerData.TryGetValue("Inventory", out Variant inventoryData)) return;
+        if (!inventoryData.AsGodotDictionary<string, Array>().TryGetValue(
                 "InventoryItemsList", out Array inventoryItems)) return;
-
+        
         foreach (Dictionary savedItem in inventoryItems) {
             Item newItem = Item.FromDictionary(savedItem["Item"].AsGodotDictionary());
             int count = (int)savedItem["Count"].ToString().ToFloat();
             StackedItems newStack = new(newItem, count);
-
-            ClientAddItems(newStack.ToDictionary());
+            AddItems(newStack);
         }
     }
 
@@ -63,14 +69,10 @@ public partial class Inventory : Node {
         }
     }
 
-    public override void _Ready() {
-        _player.Crafting.ItemCrafted += OnItemCrafted;
-    }
-
     private void OnItemCrafted(StackedItems newItems, List<StackedItems> ingredients) {
-        Rpc(nameof(ClientAddItems), newItems.ToDictionary());
+        AddItems(newItems);
         foreach (StackedItems ingredient in ingredients) {
-            Rpc(nameof(ClientRemoveItems), ingredient.ToDictionary());
+            RemoveItems(ingredient);
         }
     }
 
@@ -81,20 +83,16 @@ public partial class Inventory : Node {
 
         StackedItems items = new(pickup.Item);
 
-        Rpc(nameof(ClientAddItems), items.ToDictionary());
-
+        AddItems(items);
         PickupLooted?.Invoke(pickup.WorldObject);
     }
 
     public void OnAfterBuildSuccess(Item item) {
         StackedItems inventoryItems = new(item, 1);
-        Rpc(nameof(ClientRemoveItems), inventoryItems.ToDictionary());
+        RemoveItems(inventoryItems);
     }
 
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    private void ClientAddItems(Dictionary dictionary) {
-        StackedItems inventoryItemsToAdd =
-            StackedItems.FromDictionary(dictionary);
+    private void AddItems(StackedItems inventoryItemsToAdd) {
         UsedSpace += inventoryItemsToAdd.TotalSpace;
 
         int index = _inventoryItemsList.FindIndex(inventoryItems =>
@@ -109,10 +107,7 @@ public partial class Inventory : Node {
         }
     }
 
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    private void ClientRemoveItems(Dictionary dictionary) {
-        StackedItems inventoryItemsToRemove = StackedItems.FromDictionary(
-            dictionary);
+    private void RemoveItems(StackedItems inventoryItemsToRemove) {
         UsedSpace -= inventoryItemsToRemove.TotalSpace;
 
         int index = _inventoryItemsList.FindIndex(inventoryItems =>
