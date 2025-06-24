@@ -47,20 +47,24 @@ public partial class Inventory : Node {
 
     public override void _Ready() {
         _player.Crafting.ItemCrafted += OnItemCrafted;
+        _player.PickupArea.TouchedItem += OnCollidedWithPickup;
         _game.Interface.InventoryUi.ItemActionClicked += OnItemActionClicked;
-        TreeExiting += () => {
-            _game.Interface.InventoryUi.ItemActionClicked -= OnItemActionClicked;
-        };
+        
         if (!_playerData.TryGetValue("Inventory", out Variant inventoryData)) return;
         if (!inventoryData.AsGodotDictionary<string, Array>().TryGetValue(
                 "InventoryItemsList", out Array inventoryItems)) return;
-        
+
         foreach (Dictionary savedItem in inventoryItems) {
             Item newItem = Item.FromDictionary(savedItem["Item"].AsGodotDictionary());
             int count = (int)savedItem["Count"].ToString().ToFloat();
             StackedItems newStack = new(newItem, count);
             AddItems(newStack);
         }
+    }
+
+    public override void _ExitTree() {
+        _game.Interface.InventoryUi.ItemActionClicked -= OnItemActionClicked;
+        _player.Crafting.ItemCrafted -= OnItemCrafted;
     }
 
     private void OnItemActionClicked(StackedItems stackedItems) {
@@ -76,7 +80,7 @@ public partial class Inventory : Node {
         }
     }
 
-    private void OnHostCollidedWithPickup(WorldPickup pickup) {
+    private void OnCollidedWithPickup(WorldPickup pickup) {
         if (pickup.Item.InventorySpace > MaximumSpace - UsedSpace) {
             return;
         }

@@ -19,7 +19,7 @@ public partial class Player : CharacterBody2D {
     public Inventory Inventory { get; private set; }
     public ActionController ActionController { get; private set; }
     public Crafting Crafting { get; private set; }
-    [Export] public PickupArea PickupArea { get; private set; }
+    public PickupArea PickupArea { get; private set; }
     [Export] public PlayerEquipment PlayerEquipment { get; private set; }
     
     [Export] private MultiplayerSynchronizer _positionSynchronizer;
@@ -66,10 +66,6 @@ public partial class Player : CharacterBody2D {
         PlayerDespawned?.Invoke(this);
     }
 
-    public void InitAsHost(Game game) {
-        PickupArea.InitAsHost();
-    }
-
     public void InitAsLocal(Game game, Dictionary playerData) {
         if (_game is not null) {
             throw new Exception("[20250104.0137.1] Game already set");
@@ -78,10 +74,12 @@ public partial class Player : CharacterBody2D {
         Inventory = Inventory.Create(game, playerData, this);
         ActionController = ActionController.Create(game, this);
         Crafting = Crafting.Create(game, this);
+        PickupArea = PickupArea.Create(this);
         
         AddChild(Inventory);
         AddChild(ActionController);
         AddChild(Crafting);
+        AddChild(PickupArea);
         
         PlayerEquipment.InitAsLocal();
 

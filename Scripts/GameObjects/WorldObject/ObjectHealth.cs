@@ -32,7 +32,7 @@ public class ObjectHealth : ObjectProperty {
     private void OnGathered(Player player) {
         float damage = player.PlayerEquipment.Pickaxe.Power;
         _currentHealth -= damage;
-        if (!(_currentHealth <= 0)) return;
+        if (_currentHealth > 0) return;
         _currentHealth = 0;
         OnHealthHitZero?.Invoke();
     }

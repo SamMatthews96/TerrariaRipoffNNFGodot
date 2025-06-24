@@ -68,13 +68,6 @@ public partial class Game : Node {
         _playerData = FileManager.LoadPlayer(playerData);
     }
 
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    private void HostCreatePlayer(int peerId) {
-        Player player = Player.Create(peerId, DefaultSpawnPosition);
-        player.InitAsHost(this);
-        PlayerParent.AddChild(player, true);
-    }
-
     public bool IsInBounds(IntVector intVector) {
         return intVector.X >= 0
                && intVector.X < Width

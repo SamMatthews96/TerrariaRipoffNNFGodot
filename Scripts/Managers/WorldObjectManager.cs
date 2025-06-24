@@ -24,7 +24,7 @@ public partial class WorldObjectManager : Node {
     private (int x, int y) _defaultSpawnPosition;
 
     private Dictionary _localPlayerData;
-    
+
     private Godot.Collections.Dictionary<int, Player> _players = new();
 
     public event Action WorldLoadedLocally;
@@ -88,6 +88,7 @@ public partial class WorldObjectManager : Node {
             OnLocalPlayerBuildBlockAction;
         player.ActionController.BuildAction.BuildWallActionAttempted +=
             OnLocalPlayerBuildWallAction;
+        player.Inventory.PickupLooted += OnLocalPlayerPickupLooted;
 
         // when player is deleted, unsubscribe from all events
     }
@@ -249,7 +250,6 @@ public partial class WorldObjectManager : Node {
             _isStartAreaLoading = false;
             SpawnLocalPlayer();
             WorldLoadedLocally?.Invoke();
-            
         }
 
         _isWorldLoading = _currentLoadCellCount < _loadingQueue.Count;
@@ -257,7 +257,7 @@ public partial class WorldObjectManager : Node {
 
     private void SpawnLocalPlayer() {
         // @todo consider making players a type of WorldObject
-        Player player = Player.Create(_game.PeerId, 
+        Player player = Player.Create(_game.PeerId,
             new IntVector(5, 5));
         player.InitAsLocal(_game, _localPlayerData);
         _game.PlayerParent.AddChild(player, true);
@@ -282,16 +282,15 @@ public partial class WorldObjectManager : Node {
         return objects;
     }
 
+    // Gather
     private void OnLocalPlayerGatherAction(IntVector coords, Player player) {
         RpcId(SceneManager.HostId, nameof(CmdPlayerGatherAction),
             coords.X, coords.Y, player.PeerId);
-        player.ActionController.GatherAction.OnAfterGatherSuccess();
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void CmdPlayerGatherAction(int x, int y, int peerId) {
         Player player = _players[peerId];
-        //@todo get player node from peerId
         foreach (WorldObject worldObject in GetCellContents(x, y)) {
             if (!worldObject.TryGetProperty(out ObjectGatherable gatherable)) continue;
             gatherable.GatherAction(player);
@@ -306,8 +305,22 @@ public partial class WorldObjectManager : Node {
         player.ActionController.GatherAction.OnAfterGatherSuccess();
     }
 
+    // Build
     private void OnLocalPlayerBuildBlockAction(
         Player player, Item item, IntVector coords) {
+        RpcId(SceneManager.HostId,
+            nameof(CmdPlayerBuildBlockAction),
+            item.ToDictionary(), coords.X, coords.Y, player.PeerId
+        );
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+    private void CmdPlayerBuildBlockAction(
+        Dictionary data, int x, int y, int peerId
+    ) {
+        Item item = Item.FromDictionary(data);
+        IntVector coords = new(x, y);
+
         if (!item.TryGetProperty(out ItemPlaceable placeable)) return;
 
         WorldObject block;
@@ -347,9 +360,18 @@ public partial class WorldObjectManager : Node {
 
         AddWorldObject(block);
         Rpc(nameof(RpcWorldObjectCreate), block.ToDictionary());
+        RpcId(peerId, nameof(RpcBuildSuccess),
+            item.ToDictionary());
+    }
+
+    [Rpc(CallLocal = true)]
+    private void RpcBuildSuccess(Dictionary data) {
+        Item item = Item.FromDictionary(data);
+        Player player = _players[_game.PeerId];
         player.Inventory.OnAfterBuildSuccess(item);
     }
 
+    //
     [Rpc]
     private void RpcWorldObjectCreate(Dictionary data) {
         WorldObject worldObject = WorldObject.FromDictionary(data);
@@ -390,8 +412,23 @@ public partial class WorldObjectManager : Node {
         player.Inventory.OnAfterBuildSuccess(item);
     }
 
-    private void OnPlayerPickupLooted(WorldObject worldObject) {
-        OnWorldObjectDestroyed(worldObject);
+    private void OnLocalPlayerPickupLooted(WorldObject worldObject) {
+        RpcId(SceneManager.HostId, nameof(CmdPlayerPickedLooted),
+            worldObject.ToDictionary());
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+    private void CmdPlayerPickedLooted(Dictionary data) {
+        int xPosition = (int)data["xPosition"].ToString().ToFloat();
+        int yPosition = (int)data["yPosition"].ToString().ToFloat();
+        string type = data["type"].AsString();
+        Array<WorldObject> cellContents = GetCellContents(xPosition, yPosition);
+        foreach (WorldObject worldObject in cellContents) {
+            if (worldObject.Type != type) continue;
+            // @todo this is incomplete
+            OnWorldObjectDestroyed(worldObject);
+            return;
+        }
     }
 
     private void AddWorldObject(WorldObject worldObject) {

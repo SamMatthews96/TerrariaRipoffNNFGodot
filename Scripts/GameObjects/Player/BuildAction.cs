@@ -31,16 +31,13 @@ public partial class BuildAction : PlayerAction {
 
         float range = 8;
         if (_blockItem is not null && range >= IntVector.Distance(coords, Player.Coords)) {
-            RpcId(SceneManager.HostId, nameof(BuildBlockActionAttempt),
-                coords, _blockItem);
+            if (_blockItem.HasProperty<ItemPlaceable>()) {
+                BuildBlockActionAttempted?.Invoke(Player, _blockItem, coords);
+            }
         }
     }
 
-    private void BuildBlockActionAttempt(IntVector coords, Item item) {
-        if (item.HasProperty<ItemPlaceable>()) {
-            BuildBlockActionAttempted?.Invoke(Player, item, coords);
-        }
-    }
+
 
     public override void RightMouseAction(Vector2 mouseWorldPosition) {
         IntVector coords = new(mouseWorldPosition / Game.BlockSize);
@@ -48,14 +45,9 @@ public partial class BuildAction : PlayerAction {
 
         float range = 8;
         if (_blockItem is not null && range >= IntVector.Distance(coords, Player.Coords)) {
-            RpcId(SceneManager.HostId, nameof(BuildWallActionAttempt),
-                coords, _blockItem);
-        }
-    }
-
-    private void BuildWallActionAttempt(IntVector coords, Item item) {
-        if (item.HasProperty<ItemPlaceable>()) {
-            BuildWallActionAttempted?.Invoke(Player, item, coords);
+            if (_blockItem.HasProperty<ItemPlaceable>()) {
+                BuildWallActionAttempted?.Invoke(Player, _blockItem, coords);
+            }
         }
     }
 

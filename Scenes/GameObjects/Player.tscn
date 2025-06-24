@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://b11uqw4ifwmss" path="res://Scripts/GameObjects/Player/Player.cs" id="1_hx4ms"]
 [ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://Assets/Images/icon.svg" id="2_5yc1a"]
-[ext_resource type="Script" uid="uid://cxwnlrso3c8bg" path="res://Scripts/GameObjects/Player/PickupArea.cs" id="3_tkkq4"]
+[ext_resource type="PackedScene" uid="uid://c8u386chg2fea" path="res://Scenes/GameObjects/PickupArea.tscn" id="3_om7r2"]
 [ext_resource type="Script" uid="uid://b43ui7yk16ekk" path="res://Scripts/GameObjects/Player/PlayerEquipment.cs" id="7_in65p"]
 [ext_resource type="Script" uid="uid://dfb4kfm2jhuiq" path="res://Scripts/Resources/Item/ItemMining.cs" id="9_pqpyq"]
 
@@ -21,10 +21,9 @@ Range = 5.0
 Power = 5.0
 metadata/_custom_type_script = "uid://dfb4kfm2jhuiq"
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("PickupArea", "PlayerEquipment", "_positionSynchronizer", "_camera")]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("PlayerEquipment", "_positionSynchronizer", "_camera")]
 collision_mask = 2
 script = ExtResource("1_hx4ms")
-PickupArea = NodePath("PickupArea")
 PlayerEquipment = NodePath("CurrentEquipment")
 _positionSynchronizer = NodePath("PositionSync")
 _camera = NodePath("Camera2D")
@@ -48,15 +47,7 @@ enabled = false
 position_smoothing_enabled = true
 position_smoothing_speed = 25.0
 
-[node name="PickupArea" type="Area2D" parent="." node_paths=PackedStringArray("_player")]
-collision_layer = 0
-collision_mask = 4
-script = ExtResource("3_tkkq4")
-_player = NodePath("..")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PickupArea"]
-position = Vector2(0, -46.5)
-shape = SubResource("RectangleShape2D_raw6a")
+[node name="PickupArea" parent="." instance=ExtResource("3_om7r2")]
 
 [node name="CurrentEquipment" type="Node" parent="." node_paths=PackedStringArray("_player")]
 script = ExtResource("7_in65p")
