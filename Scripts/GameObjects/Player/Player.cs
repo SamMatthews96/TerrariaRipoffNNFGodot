@@ -60,6 +60,13 @@ public partial class Player : CharacterBody2D {
 
     public override void _Ready() {
         Position = SpawnPosition;
+        foreach (int peer in Multiplayer.GetPeers()) {
+            _positionSynchronizer.SetVisibilityFor(peer, true);
+        }
+    }
+    
+    public void AddPeerToSynchronizer(int peerId) {
+        _positionSynchronizer.SetVisibilityFor(peerId, true);
     }
 
     public override void _ExitTree() {

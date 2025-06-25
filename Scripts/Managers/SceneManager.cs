@@ -47,6 +47,7 @@ public partial class SceneManager : Node {
     private void OnMainMenuClientClickedEnterWorld(string ip, Dictionary playerInfo) {
         CreateGame();
         _game.InitAsClient(playerInfo);
+        _game.WorldObjectManager.WorldLoadedLocally += OnWorldLoadedLocally;
     }
 
     private void ExitGame() {

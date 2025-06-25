@@ -257,13 +257,41 @@ public partial class WorldObjectManager : Node {
 
     private void SpawnLocalPlayer() {
         // @todo consider making players a type of WorldObject
+        // @todo when a player joins, they need to see other players
         Player player = Player.Create(_game.PeerId,
             new IntVector(5, 5));
         player.InitAsLocal(_game, _localPlayerData);
         _game.PlayerParent.AddChild(player, true);
         _players.Add(_game.PeerId, player);
-        // this will work until we add more peers
+        
+        Rpc(nameof(RpcOnNewPlayerJoining), _game.PeerId);
+        
+        // when a new player joins
+        // the new player needs to make their sync visible to all peers
+        
+        // all existing peers need to make their sync visible to the player
     }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    private void RpcOnNewPlayerJoining(int newPeerId) {
+        Player player = Player.Create(newPeerId, new IntVector(5, 5));
+        _game.PlayerParent.AddChild(player, true);
+        _players.Add(newPeerId, player);
+        
+        _players[_game.PeerId].AddPeerToSynchronizer(newPeerId);
+
+        RpcId(newPeerId, nameof(SpawnRemoteExistingPlayer), _game.PeerId);
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    private void SpawnRemoteExistingPlayer(int peerId) {
+        Player player = Player.Create(peerId,
+            new IntVector(5, 5));
+        _game.PlayerParent.AddChild(player, true);
+        _players.Add(peerId, player);
+    }
+    
+    
 
     private void EnableObjectsInRegion(List<IntVector> region) {
         Array<WorldObject> objects = GetObjectsInRegion(region);

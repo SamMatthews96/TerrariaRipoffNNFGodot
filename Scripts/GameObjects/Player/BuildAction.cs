@@ -30,10 +30,10 @@ public partial class BuildAction : PlayerAction {
         if (!Game.IsInBounds(coords)) return;
 
         float range = 8;
-        if (_blockItem is not null && range >= IntVector.Distance(coords, Player.Coords)) {
-            if (_blockItem.HasProperty<ItemPlaceable>()) {
-                BuildBlockActionAttempted?.Invoke(Player, _blockItem, coords);
-            }
+        if (_blockItem is null) return;
+        if (range > IntVector.Distance(coords, Player.Coords)) return;
+        if (_blockItem.HasProperty<ItemPlaceable>()) {
+            BuildBlockActionAttempted?.Invoke(Player, _blockItem, coords);
         }
     }
 
@@ -44,10 +44,10 @@ public partial class BuildAction : PlayerAction {
         if (!Game.IsInBounds(coords)) return;
 
         float range = 8;
-        if (_blockItem is not null && range >= IntVector.Distance(coords, Player.Coords)) {
-            if (_blockItem.HasProperty<ItemPlaceable>()) {
-                BuildWallActionAttempted?.Invoke(Player, _blockItem, coords);
-            }
+        if (_blockItem is null) return;
+        if (range > IntVector.Distance(coords, Player.Coords)) return;
+        if (_blockItem.HasProperty<ItemPlaceable>()) {
+            BuildWallActionAttempted?.Invoke(Player, _blockItem, coords);
         }
     }
 
