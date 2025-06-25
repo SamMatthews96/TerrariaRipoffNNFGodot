@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="PackedScenes" load_steps=20 format=3 uid="uid://dllhhokx2wkse"]
+[gd_resource type="Resource" script_class="PackedScenes" load_steps=21 format=3 uid="uid://dllhhokx2wkse"]
 
 [ext_resource type="Script" uid="uid://btjjbewbkdhw8" path="res://Scripts/Data/PackedScenes.cs" id="1_tombv"]
 [ext_resource type="PackedScene" uid="uid://cdxpjclstgoxa" path="res://Scenes/GameObjects/CraftStationArea.tscn" id="2_5ayme"]
@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://0tlymjajesh" path="res://Scenes/Interface/Game/Crafting/SelectCraftStationButton.tscn" id="7_eocek"]
 [ext_resource type="PackedScene" uid="uid://cn7bp5sib73p6" path="res://Scenes/GameObjects/ActionController.tscn" id="8_7uyj2"]
 [ext_resource type="PackedScene" uid="uid://dgm8a81v4g6g3" path="res://Scenes/Interface/Game/Crafting/SelectRecipeButton.tscn" id="8_bwf4d"]
+[ext_resource type="PackedScene" uid="uid://dpvw8x6fjjkkg" path="res://Scenes/GameObjects/Crafting.tscn" id="9_dslwf"]
 [ext_resource type="PackedScene" uid="uid://c8u386chg2fea" path="res://Scenes/GameObjects/PickupArea.tscn" id="9_n06ho"]
 [ext_resource type="PackedScene" uid="uid://d3mhbs8it3b2f" path="res://Scenes/Interface/Game/Crafting/SelectIngredientButton.tscn" id="11_tftwe"]
 [ext_resource type="PackedScene" uid="uid://dfd3nx6gn2gr4" path="res://Scenes/GameObjects/WorldObject.tscn" id="12_h7xbu"]
@@ -25,6 +26,7 @@ script = ExtResource("1_tombv")
 Player = ExtResource("6_12bmn")
 PlayerActionController = ExtResource("8_7uyj2")
 PlayerPickupArea = ExtResource("9_n06ho")
+PlayerCrafting = ExtResource("9_dslwf")
 WorldObject = ExtResource("12_h7xbu")
 WorldPickup = ExtResource("13_h7xbu")
 WorldSolid = ExtResource("13_5ayme")

@@ -257,7 +257,6 @@ public partial class WorldObjectManager : Node {
 
     private void SpawnLocalPlayer() {
         // @todo consider making players a type of WorldObject
-        // @todo when a player joins, they need to see other players
         Player player = Player.Create(_game.PeerId,
             new IntVector(5, 5));
         player.InitAsLocal(_game, _localPlayerData);
@@ -265,11 +264,6 @@ public partial class WorldObjectManager : Node {
         _players.Add(_game.PeerId, player);
         
         Rpc(nameof(RpcOnNewPlayerJoining), _game.PeerId);
-        
-        // when a new player joins
-        // the new player needs to make their sync visible to all peers
-        
-        // all existing peers need to make their sync visible to the player
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]

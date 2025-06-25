@@ -6,7 +6,7 @@ using Godot;
 namespace TerrariaRipoffNNF;
 
 public sealed partial class Crafting : Node {
-    [Export] private Area2D _craftingArea; 
+    [Export] private Area2D _craftingArea;
     private Player _player;
     private Recipe _selectedRecipe;
 
@@ -19,15 +19,27 @@ public sealed partial class Crafting : Node {
     public event Action<StackedItems, List<StackedItems>> ItemCrafted;
 
     public static Crafting Create(Game game, Player player) {
-        Crafting crafting = new();
+        Crafting crafting = Data.PackedScenes.PlayerCrafting
+            .Instantiate<Crafting>();
         crafting._game = game;
         crafting._player = player;
         return crafting;
     }
 
     public void InitAsLocal(Game game) {
-        _game = game;
-        CraftingStationAdded?.Invoke(CraftingStationType.Handcrafting);
+        // _game = game;
+        // Interface.Crafting craftingInterface = _game.Interface.CraftingInterface;
+        // craftingInterface.SelectRecipeContainer.RecipeButtonClicked += OnRecipeButtonClicked;
+        // craftingInterface.SelectIngredientPopup.SelectIngredientButtonClicked += OnSelectIngredientButtonClicked;
+        // craftingInterface.SelectIngredientsContainer.CraftButtonPressed += OnCraftButtonPressed;
+        //
+        // _craftingArea.AreaEntered += OnCraftingAreaEntered;
+        // _craftingArea.AreaExited += OnCraftingAreaExited;
+
+        // TreeExiting += OnTreeExitingLocal;
+    }
+
+    public override void _Ready() {
         Interface.Crafting craftingInterface = _game.Interface.CraftingInterface;
         craftingInterface.SelectRecipeContainer.RecipeButtonClicked += OnRecipeButtonClicked;
         craftingInterface.SelectIngredientPopup.SelectIngredientButtonClicked += OnSelectIngredientButtonClicked;
@@ -36,7 +48,17 @@ public sealed partial class Crafting : Node {
         _craftingArea.AreaEntered += OnCraftingAreaEntered;
         _craftingArea.AreaExited += OnCraftingAreaExited;
 
-        TreeExiting += OnTreeExitingLocal;
+        CraftingStationAdded?.Invoke(CraftingStationType.Handcrafting);
+    }
+
+    public override void _ExitTree() {
+        Interface.Crafting craftingInterface = _game.Interface.CraftingInterface;
+        craftingInterface.SelectRecipeContainer.RecipeButtonClicked -= OnRecipeButtonClicked;
+        craftingInterface.SelectIngredientPopup.SelectIngredientButtonClicked -= OnSelectIngredientButtonClicked;
+        craftingInterface.SelectIngredientsContainer.CraftButtonPressed -= OnCraftButtonPressed;
+
+        _craftingArea.AreaEntered -= OnCraftingAreaEntered;
+        _craftingArea.AreaExited -= OnCraftingAreaExited;
     }
 
     private void OnCraftingAreaEntered(Area2D area) {
@@ -49,6 +71,7 @@ public sealed partial class Crafting : Node {
                 currentArea => currentArea.CraftStation.Type == newType)) {
             CraftingStationAdded?.Invoke(newType);
         }
+
         LocalCraftStationsAreas.Add(craftStationArea);
     }
 
@@ -63,15 +86,6 @@ public sealed partial class Crafting : Node {
                 currentArea => currentArea.CraftStation.Type == exitingType)) {
             CraftingStationRemoved?.Invoke(exitingType);
         }
-    }
-
-    private void OnTreeExitingLocal() {
-        Interface.Crafting craftingInterface = _game.Interface.CraftingInterface;
-        craftingInterface.SelectRecipeContainer.RecipeButtonClicked -= OnRecipeButtonClicked;
-        craftingInterface.SelectIngredientPopup.SelectIngredientButtonClicked -= OnSelectIngredientButtonClicked;
-        craftingInterface.SelectIngredientsContainer.CraftButtonPressed -= OnCraftButtonPressed;
-
-        TreeExiting -= OnTreeExitingLocal;
     }
 
     private void OnCraftButtonPressed() {

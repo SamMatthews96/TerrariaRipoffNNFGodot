@@ -5,9 +5,8 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_dv6dr"]
 size = Vector2(574, 410)
 
-[node name="Crafting" type="Node" node_paths=PackedStringArray("_player", "_craftingArea")]
+[node name="Crafting" type="Node" node_paths=PackedStringArray("_craftingArea")]
 script = ExtResource("1_wvuew")
-_player = NodePath("")
 _craftingArea = NodePath("CraftingArea")
 
 [node name="CraftingArea" type="Area2D" parent="."]
