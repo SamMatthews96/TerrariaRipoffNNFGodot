@@ -115,7 +115,7 @@ public partial class Inventory : Node {
         UsedSpace -= inventoryItemsToRemove.TotalSpace;
 
         int index = _inventoryItemsList.FindIndex(inventoryItems =>
-            inventoryItems.Item == inventoryItemsToRemove.Item);
+            Item.AreEqual(inventoryItems.Item,inventoryItemsToRemove.Item));
 
         if (index == -1) {
             throw new Exception("[20240815.0934.1] Inventory item not found");

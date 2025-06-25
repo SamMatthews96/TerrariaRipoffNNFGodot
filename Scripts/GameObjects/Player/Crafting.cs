@@ -26,19 +26,6 @@ public sealed partial class Crafting : Node {
         return crafting;
     }
 
-    public void InitAsLocal(Game game) {
-        // _game = game;
-        // Interface.Crafting craftingInterface = _game.Interface.CraftingInterface;
-        // craftingInterface.SelectRecipeContainer.RecipeButtonClicked += OnRecipeButtonClicked;
-        // craftingInterface.SelectIngredientPopup.SelectIngredientButtonClicked += OnSelectIngredientButtonClicked;
-        // craftingInterface.SelectIngredientsContainer.CraftButtonPressed += OnCraftButtonPressed;
-        //
-        // _craftingArea.AreaEntered += OnCraftingAreaEntered;
-        // _craftingArea.AreaExited += OnCraftingAreaExited;
-
-        // TreeExiting += OnTreeExitingLocal;
-    }
-
     public override void _Ready() {
         Interface.Crafting craftingInterface = _game.Interface.CraftingInterface;
         craftingInterface.SelectRecipeContainer.RecipeButtonClicked += OnRecipeButtonClicked;

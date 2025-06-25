@@ -473,6 +473,7 @@ public partial class WorldObjectManager : Node {
         }
 
         worldObject.QueueFree();
+        if (worldObject.Type == "component") return;
         Rpc(nameof(RpcWorldObjectDestroy),
             worldObject.ToDictionary());
     }

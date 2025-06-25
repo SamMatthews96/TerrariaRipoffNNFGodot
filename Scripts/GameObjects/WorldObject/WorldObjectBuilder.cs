@@ -21,20 +21,16 @@ public partial class WorldObject {
     }
 
     public Dictionary ToDictionary() {
-        if (Type != "block" && Type != "tree" && Type != "pickup") {
-            //@todo enable serialise of all worldObjects
-            throw new NotImplementedException();
-        }
-
         Dictionary dictionary = new() {
             { "type", Type },
             { "xPosition", Coords.X },
             { "yPosition", Coords.Y }
         };
         dictionary["item"] = Type switch {
-            "block" or "tree" => GetProperty<ObjectSpawnOnDeath>().Item.ToDictionary(),
+            "block" or "tree" or "prop"
+                => GetProperty<ObjectSpawnOnDeath>().Item.ToDictionary(),
             "pickup" => GetProperty<ObjectCanPickup>().Item.ToDictionary(),
-            _ => dictionary["item"]
+            _ => throw new ArgumentException($"Unknown WorldObject type: {Type}")
         };
 
         return dictionary;
@@ -117,6 +113,7 @@ public partial class WorldObject {
         }
 
         public Builder AsComponent(WorldObject main) {
+            _worldObject.Type = "component";
             _worldObject.ActiveProperties.AddRange(new List<ObjectProperty> {
                 new ObjectComponent(_worldObject, main),
                 new ObjectGatherable(_worldObject),
