@@ -19,6 +19,7 @@ public static class WorldCreator {
         Item[] items = {
             Data.Items.Stone,
             Data.Items.Earth,
+            Data.Items.IronOre
         };
         Random random = new();
 
@@ -38,15 +39,18 @@ public static class WorldCreator {
 
         Item wood = Data.Items.Wood;
 
-        for (int y = mid - 10; y < mid - 1; y++) {
-            Dictionary tree = new() {
-                { "type", "tree" },
-                { "item", wood.ToDictionary() },
-                { "xPosition", 10 },
-                { "yPosition", y },
-            };
-            savedWorldObjects.Add(tree);
+        for (int x = 10; x < 31; x += 10) {
+            for (int y = mid - 10; y < mid; y++) {
+                Dictionary tree = new() {
+                    { "type", "tree" },
+                    { "item", wood.ToDictionary() },
+                    { "xPosition", x },
+                    { "yPosition", y },
+                };
+                savedWorldObjects.Add(tree);
+            }
         }
+
 
         worldDictionary.Add("SavedWorldObjects", savedWorldObjects);
 

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemIngredient" load_steps=2 format=3 uid="uid://bolojhwxf18dq"]
+
+[ext_resource type="Script" uid="uid://dp8bgot75ojla" path="res://Scripts/Resources/Item/ItemIngredient.cs" id="1_1mrvi"]
+
+[resource]
+script = ExtResource("1_1mrvi")
+IngredientType = 2
+Quality = 1.0
+Name = "wood"
+metadata/_custom_type_script = "uid://dp8bgot75ojla"

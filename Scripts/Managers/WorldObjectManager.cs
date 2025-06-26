@@ -28,16 +28,6 @@ public partial class WorldObjectManager : Node {
     private Godot.Collections.Dictionary<int, Player> _players = new();
 
     public event Action WorldLoadedLocally;
-    /*
-     * At this point, the local player should be created
-     * and replicated to the host.
-     * The local one needs to be listened to for actions
-     * These actions then should be carried on to the host
-     */
-
-    // public static WorldObjectManager Create() {
-    //     return Data.PackedScenes.WorldObjectManager.Instantiate<WorldObjectManager>();
-    // }
 
     public void SetGameAsHost(Game game, Dictionary worldData, Dictionary playerData) {
         if (_game is not null) throw new Exception("[20250529.2332.1] Game already set");
@@ -285,8 +275,6 @@ public partial class WorldObjectManager : Node {
         _players.Add(peerId, player);
     }
     
-    
-
     private void EnableObjectsInRegion(List<IntVector> region) {
         Array<WorldObject> objects = GetObjectsInRegion(region);
         foreach (WorldObject worldObject in objects) {
@@ -326,8 +314,7 @@ public partial class WorldObjectManager : Node {
         Player player = _players[_game.PeerId];
         player.ActionController.GatherAction.OnAfterGatherSuccess();
     }
-
-    // Build
+    
     private void OnLocalPlayerBuildBlockAction(
         Player player, Item item, IntVector coords) {
         RpcId(SceneManager.HostId,
@@ -392,8 +379,7 @@ public partial class WorldObjectManager : Node {
         Player player = _players[_game.PeerId];
         player.Inventory.OnAfterBuildSuccess(item);
     }
-
-    //
+    
     [Rpc]
     private void RpcWorldObjectCreate(Dictionary data) {
         WorldObject worldObject = WorldObject.FromDictionary(data);
@@ -447,7 +433,6 @@ public partial class WorldObjectManager : Node {
         Array<WorldObject> cellContents = GetCellContents(xPosition, yPosition);
         foreach (WorldObject worldObject in cellContents) {
             if (worldObject.Type != type) continue;
-            // @todo this is incomplete
             OnWorldObjectDestroyed(worldObject);
             return;
         }
