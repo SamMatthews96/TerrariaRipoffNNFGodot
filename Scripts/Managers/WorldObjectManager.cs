@@ -14,6 +14,7 @@ public partial class WorldObjectManager : Node {
     private Game _game;
     private Array<WorldObject>[,] _activeWorldObjects;
     private int _currentLoadCellCount;
+    private string _worldName;
 
     private bool _isStartAreaLoading;
     private bool _isWorldLoading;
@@ -28,6 +29,7 @@ public partial class WorldObjectManager : Node {
     private Godot.Collections.Dictionary<int, Player> _players = new();
 
     public event Action WorldLoadedLocally;
+    public event Action ExitGameProcessed;
 
     public void SetGameAsHost(Game game, Dictionary worldData, Dictionary playerData) {
         if (_game is not null) throw new Exception("[20250529.2332.1] Game already set");
@@ -45,6 +47,7 @@ public partial class WorldObjectManager : Node {
             }
         }
 
+        _worldName = worldData["Name"].ToString();
         Array defaultSpawnPos =
             worldData["DefaultSpawnPosition"].AsGodotArray();
         _defaultSpawnPosition =
@@ -63,11 +66,52 @@ public partial class WorldObjectManager : Node {
         _isStartAreaLoading = true;
         _isWorldLoading = true;
 
-        TreeExiting += OnExiting;
+        _game.Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
     }
 
     public override void _Ready() {
         Player.LocalPlayerSpawned += OnLocalPlayerSpawned;
+    }
+
+    public override void _ExitTree() {
+        Player.LocalPlayerSpawned -= OnLocalPlayerSpawned;
+    }
+
+    private void OnExitGameClicked() {
+        _game.Interface.GameMenu.ExitGameButtonDown -= OnExitGameClicked;
+        // if this is the host, save game
+        Dictionary worldData = new();
+        worldData.Add("Name", _worldName);
+        worldData.Add("Width", _game.Width);
+        worldData.Add("Height", _game.Height);
+        worldData.Add("PlayerPositions", new Array());
+        worldData.Add("DefaultSpawnPosition",
+            new Array { _defaultSpawnPosition.x, _defaultSpawnPosition.y });
+        Array savedWorldObjects = new();
+
+        // @todo will be faster if they are serialized as they
+        // are changed
+        for (int x = 0; x < _game.Width; x++) {
+            for (int y = 0; y < _game.Height; y++) {
+                if (_activeWorldObjects[x, y] is null) {
+                    foreach (Dictionary worldObjectData in _unspawnedWorldObjects[x, y]) {
+                        if (worldObjectData["type"].ToString() == "component") continue;
+                        savedWorldObjects.Add(worldObjectData);
+                    }
+                } else {
+                    foreach (WorldObject worldObject in _activeWorldObjects[x, y]) {
+                        if (worldObject.Type == "component") continue;
+                        savedWorldObjects.Add(worldObject.ToDictionary());
+                    }
+                }
+                
+            }
+        }
+
+        worldData.Add("SavedWorldObjects", savedWorldObjects);
+        FileManager.SaveWorld(worldData);
+
+        ExitGameProcessed?.Invoke();
     }
 
     private void OnLocalPlayerSpawned(Player player) {
@@ -124,9 +168,6 @@ public partial class WorldObjectManager : Node {
         loadingQueue.Add(currentCell);
     }
 
-    private void OnExiting() {
-        TreeExiting -= OnExiting;
-    }
 
     public void SetGameAsClient(Game game, Dictionary playerData) {
         if (_game is not null) throw new Exception("[20250529.2332.1] Game already set");
@@ -252,7 +293,7 @@ public partial class WorldObjectManager : Node {
         player.InitAsLocal(_game, _localPlayerData);
         _game.PlayerParent.AddChild(player, true);
         _players.Add(_game.PeerId, player);
-        
+
         Rpc(nameof(RpcOnNewPlayerJoining), _game.PeerId);
     }
 
@@ -261,7 +302,7 @@ public partial class WorldObjectManager : Node {
         Player player = Player.Create(newPeerId, new IntVector(5, 5));
         _game.PlayerParent.AddChild(player, true);
         _players.Add(newPeerId, player);
-        
+
         _players[_game.PeerId].AddPeerToSynchronizer(newPeerId);
 
         RpcId(newPeerId, nameof(SpawnRemoteExistingPlayer), _game.PeerId);
@@ -274,7 +315,7 @@ public partial class WorldObjectManager : Node {
         _game.PlayerParent.AddChild(player, true);
         _players.Add(peerId, player);
     }
-    
+
     private void EnableObjectsInRegion(List<IntVector> region) {
         Array<WorldObject> objects = GetObjectsInRegion(region);
         foreach (WorldObject worldObject in objects) {
@@ -314,7 +355,7 @@ public partial class WorldObjectManager : Node {
         Player player = _players[_game.PeerId];
         player.ActionController.GatherAction.OnAfterGatherSuccess();
     }
-    
+
     private void OnLocalPlayerBuildBlockAction(
         Player player, Item item, IntVector coords) {
         RpcId(SceneManager.HostId,
@@ -379,7 +420,7 @@ public partial class WorldObjectManager : Node {
         Player player = _players[_game.PeerId];
         player.Inventory.OnAfterBuildSuccess(item);
     }
-    
+
     [Rpc]
     private void RpcWorldObjectCreate(Dictionary data) {
         WorldObject worldObject = WorldObject.FromDictionary(data);

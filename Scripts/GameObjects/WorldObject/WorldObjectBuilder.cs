@@ -16,6 +16,7 @@ public partial class WorldObject {
             "block" => New(coords).AsBlock(item).Build(),
             "tree" => New(coords).AsTree(item).Build(),
             "pickup" => New(coords).AsPickup(item).Build(),
+            "prop" => New(coords).AsProp(item).Build(),
             _ => throw new ArgumentException($"Unknown WorldObject type: {dictionary["Type"]}")
         };
     }

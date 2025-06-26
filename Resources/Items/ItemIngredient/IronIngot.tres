@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemIngredient" load_steps=2 format=3 uid="uid://bdmvio3pq2fwx"]
+
+[ext_resource type="Script" uid="uid://dp8bgot75ojla" path="res://Scripts/Resources/Item/ItemIngredient.cs" id="1_dk7xx"]
+
+[resource]
+script = ExtResource("1_dk7xx")
+IngredientType = 0
+Quality = 0.0
+Name = "Iron Ingot"
+metadata/_custom_type_script = "uid://dp8bgot75ojla"

@@ -1,0 +1,54 @@
+[gd_resource type="Resource" script_class="Recipe" load_steps=12 format=3 uid="uid://ddtqt2b03evss"]
+
+[ext_resource type="Texture2D" uid="uid://cargd8drjeywp" path="res://Assets/Images/ingotPlaceholder.png" id="1_ce5fw"]
+[ext_resource type="Script" uid="uid://fn1nx4h2shbl" path="res://Scripts/Resources/Recipes/RecipeIngredientSlot.cs" id="2_bpo3q"]
+[ext_resource type="Script" uid="uid://plnguuoirtxu" path="res://Scripts/Resources/Recipes/RecipePropertyMaps/RecipePropertyMapMultiplier.cs" id="3_bg1ae"]
+[ext_resource type="Script" uid="uid://coiqlucu73qbu" path="res://Scripts/Resources/Recipes/RecipePropertyMaps/IngredientNameToOutputNameMap.cs" id="3_qu7sl"]
+[ext_resource type="Script" uid="uid://dtjaxrcrr2rk5" path="res://Scripts/Resources/Recipes/RecipePropertyMaps/RecipePropertyMapString.cs" id="4_bg1ae"]
+[ext_resource type="Resource" uid="uid://cif2w0im58ikd" path="res://Resources/Items/ItemIngredient/IronOre.tres" id="4_rnfks"]
+[ext_resource type="Script" uid="uid://bg8jhsljipuqc" path="res://Scripts/Resources/Recipes/Recipe.cs" id="5_rnfks"]
+
+[sub_resource type="Resource" id="Resource_io610"]
+script = ExtResource("2_bpo3q")
+RecipeSlot = "ore"
+IngredientType = 1
+Amount = 1
+Icon = ExtResource("1_ce5fw")
+Required = true
+metadata/_custom_type_script = "uid://fn1nx4h2shbl"
+
+[sub_resource type="Resource" id="Resource_4t72s"]
+script = ExtResource("3_bg1ae")
+_base = 2.0
+_multiplier = 0.0
+_ingredientName = ""
+metadata/_custom_type_script = "uid://plnguuoirtxu"
+
+[sub_resource type="Resource" id="Resource_qa7w5"]
+script = ExtResource("3_qu7sl")
+Map = Dictionary[Object, String]({
+ExtResource("4_rnfks"): "Iron"
+})
+metadata/_custom_type_script = "uid://coiqlucu73qbu"
+
+[sub_resource type="Resource" id="Resource_1n0lc"]
+script = ExtResource("4_bg1ae")
+_stringTemplate = "{ore} Ingot"
+_ingredientNameMaps = {
+"ore": SubResource("Resource_qa7w5")
+}
+metadata/_custom_type_script = "uid://dtjaxrcrr2rk5"
+
+[resource]
+script = ExtResource("5_rnfks")
+CraftingStationType = 2
+Name = "Metal Ingot"
+IngredientSlots = Dictionary[String, Object]({
+"ore": SubResource("Resource_io610")
+})
+ResultNameMap = SubResource("Resource_1n0lc")
+InventorySpace = SubResource("Resource_4t72s")
+IsStackable = true
+ItemProperties = Array[Object]([])
+ResultIcon = ExtResource("1_ce5fw")
+metadata/_custom_type_script = "uid://bg8jhsljipuqc"

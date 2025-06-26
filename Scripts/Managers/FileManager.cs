@@ -26,7 +26,6 @@ public static class FileManager {
         string worldBasicString = worldBasicInfoDictionary.ToString();
         fileBasicData.StoreString(worldBasicString);
         fileBasicData.Dispose();
-
         FileAccess file = FileAccess.Open(
             $"{WorldDir}/{name}/world.txt", FileAccess.ModeFlags.Write);
         file.StoreString(worldString);

@@ -1,0 +1,93 @@
+[gd_resource type="Resource" script_class="Recipe" load_steps=19 format=3 uid="uid://ckqr5ku8p7dl2"]
+
+[ext_resource type="Texture2D" uid="uid://wrf00jfy174v" path="res://Assets/Images/woodPlaceholder.png" id="1_h1pe8"]
+[ext_resource type="Script" uid="uid://bg8jhsljipuqc" path="res://Scripts/Resources/Recipes/Recipe.cs" id="1_plyoi"]
+[ext_resource type="Script" uid="uid://fn1nx4h2shbl" path="res://Scripts/Resources/Recipes/RecipeIngredientSlot.cs" id="2_dv4pt"]
+[ext_resource type="Texture2D" uid="uid://cargd8drjeywp" path="res://Assets/Images/ingotPlaceholder.png" id="3_horbn"]
+[ext_resource type="Script" uid="uid://plnguuoirtxu" path="res://Scripts/Resources/Recipes/RecipePropertyMaps/RecipePropertyMapMultiplier.cs" id="4_j0wk0"]
+[ext_resource type="Script" uid="uid://or84jndjr3lh" path="res://Scripts/Resources/Recipes/ItemMiningPropertyOutputTemplate.cs" id="5_8ps8u"]
+[ext_resource type="Resource" uid="uid://bdmvio3pq2fwx" path="res://Resources/Items/ItemIngredient/IronIngot.tres" id="6_qxgmt"]
+[ext_resource type="Script" uid="uid://coiqlucu73qbu" path="res://Scripts/Resources/Recipes/RecipePropertyMaps/IngredientNameToOutputNameMap.cs" id="7_aap8g"]
+[ext_resource type="Script" uid="uid://dtjaxrcrr2rk5" path="res://Scripts/Resources/Recipes/RecipePropertyMaps/RecipePropertyMapString.cs" id="8_t6yms"]
+
+[sub_resource type="Resource" id="Resource_hw3lt"]
+script = ExtResource("2_dv4pt")
+RecipeSlot = "handle"
+IngredientType = 2
+Amount = 10
+Icon = ExtResource("1_h1pe8")
+Required = true
+metadata/_custom_type_script = "uid://fn1nx4h2shbl"
+
+[sub_resource type="Resource" id="Resource_ioiwj"]
+script = ExtResource("2_dv4pt")
+RecipeSlot = "head"
+IngredientType = 0
+Amount = 8
+Icon = ExtResource("3_horbn")
+Required = true
+metadata/_custom_type_script = "uid://fn1nx4h2shbl"
+
+[sub_resource type="Resource" id="Resource_c4h0g"]
+script = ExtResource("4_j0wk0")
+_base = 3.0
+_multiplier = 0.0
+_ingredientName = ""
+metadata/_custom_type_script = "uid://plnguuoirtxu"
+
+[sub_resource type="Resource" id="Resource_03xxo"]
+script = ExtResource("4_j0wk0")
+_base = 10.0
+_multiplier = 0.0
+_ingredientName = ""
+metadata/_custom_type_script = "uid://plnguuoirtxu"
+
+[sub_resource type="Resource" id="Resource_6ddfn"]
+script = ExtResource("4_j0wk0")
+_base = 8.0
+_multiplier = 0.0
+_ingredientName = ""
+metadata/_custom_type_script = "uid://plnguuoirtxu"
+
+[sub_resource type="Resource" id="Resource_1gjk7"]
+script = ExtResource("4_j0wk0")
+_base = 1.0
+_multiplier = 0.0
+_ingredientName = ""
+metadata/_custom_type_script = "uid://plnguuoirtxu"
+
+[sub_resource type="Resource" id="Resource_7jvv0"]
+script = ExtResource("5_8ps8u")
+Speed = SubResource("Resource_1gjk7")
+Range = SubResource("Resource_6ddfn")
+Power = SubResource("Resource_03xxo")
+metadata/_custom_type_script = "uid://or84jndjr3lh"
+
+[sub_resource type="Resource" id="Resource_erykj"]
+script = ExtResource("7_aap8g")
+Map = Dictionary[Object, String]({
+ExtResource("6_qxgmt"): "Iron"
+})
+metadata/_custom_type_script = "uid://coiqlucu73qbu"
+
+[sub_resource type="Resource" id="Resource_6gymk"]
+script = ExtResource("8_t6yms")
+_stringTemplate = "{head} Pickaxe"
+_ingredientNameMaps = {
+"head": SubResource("Resource_erykj")
+}
+metadata/_custom_type_script = "uid://dtjaxrcrr2rk5"
+
+[resource]
+script = ExtResource("1_plyoi")
+CraftingStationType = 2
+Name = "Pickaxe"
+IngredientSlots = Dictionary[String, Object]({
+"handle": SubResource("Resource_hw3lt"),
+"head": SubResource("Resource_ioiwj")
+})
+ResultNameMap = SubResource("Resource_6gymk")
+InventorySpace = SubResource("Resource_c4h0g")
+IsStackable = false
+ItemProperties = Array[Object]([SubResource("Resource_7jvv0")])
+metadata/_custom_type_script = "uid://bg8jhsljipuqc"

@@ -30,7 +30,7 @@ public partial class SceneManager : Node {
         _game = Game.Create();
         AddChild(_game);
         
-        _game.Interface.GameMenu.ExitGameButtonDown += ExitGame;
+        _game.WorldObjectManager.ExitGameProcessed += ExitGame;
     }
 
     private void OnMainMenuHostClickedEnterWorld(Dictionary world, Dictionary playerInfo) {
