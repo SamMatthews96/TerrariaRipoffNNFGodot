@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Recipe" load_steps=20 format=3 uid="uid://dvdl1vdj600ck"]
+[gd_resource type="Resource" script_class="Recipe" load_steps=22 format=3 uid="uid://dvdl1vdj600ck"]
 
 [ext_resource type="Texture2D" uid="uid://wrf00jfy174v" path="res://Assets/Images/woodPlaceholder.png" id="1_htv7l"]
 [ext_resource type="Script" uid="uid://bg8jhsljipuqc" path="res://Scripts/Resources/Recipes/Recipe.cs" id="1_kse5l"]
@@ -9,16 +9,8 @@
 [ext_resource type="Texture2D" uid="uid://bixfe4w2g8q3s" path="res://Assets/Images/placedFurnace.png" id="6_dnip1"]
 [ext_resource type="Script" uid="uid://yd4u7trnr176" path="res://Scripts/Resources/Recipes/ItemPlaceablePropertyOutputTemplate.cs" id="7_g6aax"]
 [ext_resource type="Texture2D" uid="uid://cp78grj0a5nrv" path="res://Assets/Images/furnaceIcon.png" id="8_ew4ru"]
+[ext_resource type="Script" uid="uid://cleomv3k1ji4u" path="res://Scripts/Resources/Recipes/ItemCraftStationOutputTemplate.cs" id="8_ou3xu"]
 [ext_resource type="Script" uid="uid://dtjaxrcrr2rk5" path="res://Scripts/Resources/Recipes/RecipePropertyMaps/RecipePropertyMapString.cs" id="9_mkqw4"]
-
-[sub_resource type="Resource" id="Resource_s5vwq"]
-script = ExtResource("2_ojqyo")
-RecipeSlot = "wood"
-IngredientType = 2
-Amount = 5
-Icon = ExtResource("1_htv7l")
-Required = true
-metadata/_custom_type_script = "uid://fn1nx4h2shbl"
 
 [sub_resource type="Resource" id="Resource_boihl"]
 script = ExtResource("2_ojqyo")
@@ -26,6 +18,15 @@ RecipeSlot = "stone"
 IngredientType = 3
 Amount = 10
 Icon = ExtResource("3_r7nb5")
+Required = true
+metadata/_custom_type_script = "uid://fn1nx4h2shbl"
+
+[sub_resource type="Resource" id="Resource_s5vwq"]
+script = ExtResource("2_ojqyo")
+RecipeSlot = "wood"
+IngredientType = 2
+Amount = 5
+Icon = ExtResource("1_htv7l")
 Required = true
 metadata/_custom_type_script = "uid://fn1nx4h2shbl"
 
@@ -67,6 +68,11 @@ OccupiedCells = Array[Object]([SubResource("Resource_ylu6s"), SubResource("Resou
 Type = 1
 metadata/_custom_type_script = "uid://yd4u7trnr176"
 
+[sub_resource type="Resource" id="Resource_pdopp"]
+script = ExtResource("8_ou3xu")
+Type = 2
+metadata/_custom_type_script = "uid://cleomv3k1ji4u"
+
 [sub_resource type="Resource" id="Resource_datbr"]
 script = ExtResource("9_mkqw4")
 _stringTemplate = "Furnace"
@@ -75,7 +81,7 @@ metadata/_custom_type_script = "uid://dtjaxrcrr2rk5"
 
 [resource]
 script = ExtResource("1_kse5l")
-CraftingStationType = 2
+CraftingStationType = 1
 Name = "Furnace"
 IngredientSlots = Dictionary[String, Object]({
 "stone": SubResource("Resource_boihl"),
@@ -84,6 +90,6 @@ IngredientSlots = Dictionary[String, Object]({
 ResultNameMap = SubResource("Resource_datbr")
 InventorySpace = SubResource("Resource_xasl8")
 IsStackable = false
-ItemProperties = Array[Object]([SubResource("Resource_exjux")])
+ItemProperties = Array[Object]([SubResource("Resource_exjux"), SubResource("Resource_pdopp")])
 ResultIcon = ExtResource("8_ew4ru")
 metadata/_custom_type_script = "uid://bg8jhsljipuqc"

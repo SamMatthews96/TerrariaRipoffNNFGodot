@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://c7dpe04jscc5f"]
+[gd_scene load_steps=11 format=3 uid="uid://c7dpe04jscc5f"]
 
 [ext_resource type="Script" uid="uid://c1d21p320xi1u" path="res://Scripts/Data/Data.cs" id="1_f38oj"]
 [ext_resource type="Resource" uid="uid://dllhhokx2wkse" path="res://Resources/Data/PackedScenes.tres" id="2_4ri16"]
@@ -6,6 +6,7 @@
 [ext_resource type="Resource" uid="uid://b4pasm3pwpyq2" path="res://Resources/Data/Items.tres" id="4_esico"]
 [ext_resource type="Script" uid="uid://dsma6rw4bm7vo" path="res://Scripts/Resources/CraftingStation.cs" id="5_iy35j"]
 [ext_resource type="Texture2D" uid="uid://cyllurh0pjf8q" path="res://Assets/Images/ItemIcons/bench.png" id="6_3tc8q"]
+[ext_resource type="Texture2D" uid="uid://cp78grj0a5nrv" path="res://Assets/Images/furnaceIcon.png" id="7_iy35j"]
 
 [sub_resource type="Resource" id="Resource_om11x"]
 script = ExtResource("5_iy35j")
@@ -19,11 +20,18 @@ Type = 1
 Icon = ExtResource("6_3tc8q")
 metadata/_custom_type_script = "uid://dsma6rw4bm7vo"
 
+[sub_resource type="Resource" id="Resource_3tc8q"]
+script = ExtResource("5_iy35j")
+Type = 2
+Icon = ExtResource("7_iy35j")
+metadata/_custom_type_script = "uid://dsma6rw4bm7vo"
+
 [node name="Data" type="Node"]
 script = ExtResource("1_f38oj")
 _packedScenes = ExtResource("2_4ri16")
 _items = ExtResource("4_esico")
 _craftingStations = Dictionary[int, Object]({
 0: SubResource("Resource_om11x"),
-1: SubResource("Resource_i7kqy")
+1: SubResource("Resource_i7kqy"),
+2: SubResource("Resource_3tc8q")
 })
