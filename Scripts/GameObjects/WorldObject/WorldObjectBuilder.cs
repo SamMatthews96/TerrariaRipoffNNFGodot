@@ -28,7 +28,7 @@ public partial class WorldObject {
             { "yPosition", Coords.Y }
         };
         dictionary["item"] = Type switch {
-            "block" or "tree" or "prop"
+            "block" or "tree" or "prop" or "wall"
                 => GetProperty<ObjectSpawnOnDeath>().Item.ToDictionary(),
             "pickup" => GetProperty<ObjectCanPickup>().Item.ToDictionary(),
             _ => throw new ArgumentException($"Unknown WorldObject type: {Type}")

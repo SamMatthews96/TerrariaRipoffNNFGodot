@@ -89,8 +89,7 @@ public partial class WorldObjectManager : Node {
             new Array { _defaultSpawnPosition.x, _defaultSpawnPosition.y });
         Array savedWorldObjects = new();
 
-        // @todo will be faster if they are serialized as they
-        // are changed
+        // @todo will be faster if they're serialized as they change
         for (int x = 0; x < _game.Width; x++) {
             for (int y = 0; y < _game.Height; y++) {
                 if (_activeWorldObjects[x, y] is null) {

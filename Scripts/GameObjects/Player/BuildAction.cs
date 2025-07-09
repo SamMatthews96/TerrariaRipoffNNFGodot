@@ -45,7 +45,7 @@ public partial class BuildAction : PlayerAction {
 
         float range = 8;
         if (_blockItem is null) return;
-        if (range > IntVector.Distance(coords, Player.Coords)) return;
+        if (IntVector.Distance(coords, Player.Coords) > range) return;
         if (_blockItem.HasProperty<ItemPlaceable>()) {
             BuildWallActionAttempted?.Invoke(Player, _blockItem, coords);
         }
