@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://cargd8drjeywp" path="res://Assets/Images/ingotPlaceholder.png" id="1_1ng8f"]
 [ext_resource type="Script" uid="uid://dacawjtd5i8dr" path="res://Scripts/Interface/Game/Crafting/SelectIngredientMouseover.cs" id="2_npnb2"]
 
-[node name="RecipeIngredientSlotTexture" type="TextureRect"]
+[node name="RecipeIngredientSlotTexture" type="TextureRect" node_paths=PackedStringArray("_quantityLabel")]
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
@@ -15,3 +15,12 @@ size_flags_horizontal = 4
 size_flags_vertical = 0
 texture = ExtResource("1_1ng8f")
 script = ExtResource("2_npnb2")
+_quantityLabel = NodePath("Label")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_right = 128.0
+offset_bottom = 128.0
+text = "100"
+horizontal_alignment = 1
+vertical_alignment = 2

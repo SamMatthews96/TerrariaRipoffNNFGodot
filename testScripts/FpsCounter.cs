@@ -20,5 +20,7 @@ public partial class FpsCounter : Label {
 
     private void ResetLowestFps() {
         _lowestFps = double.MaxValue;
+        
+        
     }
 }

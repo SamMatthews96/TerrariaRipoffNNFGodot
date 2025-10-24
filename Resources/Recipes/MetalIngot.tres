@@ -35,9 +35,9 @@ metadata/_custom_type_script = "uid://coiqlucu73qbu"
 [sub_resource type="Resource" id="Resource_7gxnm"]
 script = ExtResource("4_bg1ae")
 _stringTemplate = "{ore}"
-_ingredientNameMaps = {
+_ingredientNameMaps = Dictionary[String, ExtResource("3_qu7sl")]({
 "ore": SubResource("Resource_rnfks")
-}
+})
 metadata/_custom_type_script = "uid://dtjaxrcrr2rk5"
 
 [sub_resource type="Resource" id="Resource_butkw"]
