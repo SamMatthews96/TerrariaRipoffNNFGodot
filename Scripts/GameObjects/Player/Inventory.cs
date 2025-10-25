@@ -7,7 +7,7 @@ using Array = Godot.Collections.Array;
 namespace TerrariaRipoffNNF;
 
 public partial class Inventory : Node {
-    public float MaximumSpace { get; private set; } = 50;
+    public float MaximumSpace { get; private set; } = 100;
     public float UsedSpace { get; private set; }
 
     public List<StackedItems> StackedItemsList => _inventoryItemsList;

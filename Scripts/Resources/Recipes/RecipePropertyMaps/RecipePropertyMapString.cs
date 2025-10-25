@@ -27,13 +27,15 @@ public partial class RecipePropertyMapString : RecipePropertyMap<string> {
 
             Item item = suppliedIngredients[recipeSlotName];
             ItemIngredient itemIngredient = item.GetProperty<ItemIngredient>();
-            string templateSubstitute = _ingredientNameMaps.TryGetValue(
+            
+            bool hasNameMapForIngredient = _ingredientNameMaps.TryGetValue(
                 recipeSlotName,
                 out IngredientNameToOutputNameMap ingredientNameMap
-            )
+            );
+                
+            string templateSubstitute = hasNameMapForIngredient
                 ? ingredientNameMap.Map[itemIngredient]
                 : itemIngredient.Name;
-
             currentTemplate = currentTemplate.Replace("{" + recipeSlotName + "}", templateSubstitute);
         }
 
