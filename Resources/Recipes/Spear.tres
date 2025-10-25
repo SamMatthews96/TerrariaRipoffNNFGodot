@@ -6,7 +6,7 @@
 [ext_resource type="Script" uid="uid://coiqlucu73qbu" path="res://Scripts/Resources/Recipes/RecipePropertyMaps/IngredientNameToOutputNameMap.cs" id="3_454v5"]
 [ext_resource type="Script" uid="uid://plnguuoirtxu" path="res://Scripts/Resources/Recipes/RecipePropertyMaps/RecipePropertyMapMultiplier.cs" id="3_mh7sg"]
 [ext_resource type="Script" uid="uid://dtjaxrcrr2rk5" path="res://Scripts/Resources/Recipes/RecipePropertyMaps/RecipePropertyMapString.cs" id="4_mh7sg"]
-[ext_resource type="Texture2D" uid="uid://bpdgo62ad65vu" path="res://Assets/Images/ItemIcons/spear.png" id="4_vyn1a"]
+[ext_resource type="Texture2D" uid="uid://3mp4qibtswyy" path="res://Assets/Images/ItemIcons/spearPlaceholder.png" id="4_vyn1a"]
 [ext_resource type="Resource" uid="uid://bolojhwxf18dq" path="res://Resources/Items/ItemIngredient/Wood.tres" id="5_0wkxb"]
 
 [sub_resource type="Resource" id="Resource_vyn1a"]
@@ -43,13 +43,13 @@ metadata/_custom_type_script = "uid://dtjaxrcrr2rk5"
 [resource]
 script = ExtResource("1_j74q1")
 CraftingStationType = 1
-Name = "Spear"
 IngredientSlots = Dictionary[String, Object]({
 "shaft": SubResource("Resource_vyn1a")
 })
+Name = "Spear"
+IsStackable = false
 ResultNameMap = SubResource("Resource_ebpsf")
 InventorySpace = SubResource("Resource_iyklt")
-IsStackable = false
 ItemProperties = Array[Object]([])
 ResultIcon = ExtResource("4_vyn1a")
 metadata/_custom_type_script = "uid://bg8jhsljipuqc"
