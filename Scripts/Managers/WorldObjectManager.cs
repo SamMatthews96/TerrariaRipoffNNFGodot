@@ -287,8 +287,7 @@ public partial class WorldObjectManager : Node {
 
     private void SpawnLocalPlayer() {
         // @todo consider making players a type of WorldObject
-        Player player = Player.Create(_game.PeerId,
-            new IntVector(5, 5));
+        Player player = Player.Create(_game.PeerId, new IntVector(5, 5));
         player.InitAsLocal(_game, _localPlayerData);
         _game.PlayerParent.AddChild(player, true);
         _players.Add(_game.PeerId, player);

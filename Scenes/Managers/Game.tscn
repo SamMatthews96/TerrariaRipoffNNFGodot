@@ -1,23 +1,17 @@
-[gd_scene load_steps=6 format=3 uid="uid://d3hhhiiydcfft"]
+[gd_scene load_steps=5 format=3 uid="uid://d3hhhiiydcfft"]
 
 [ext_resource type="Script" uid="uid://crhglubj8pdob" path="res://Scripts/Managers/Game.cs" id="1_6kfdr"]
-[ext_resource type="Script" uid="uid://cfatvsnqilhmh" path="res://Scripts/Managers/Region.cs" id="3_8fqtf"]
 [ext_resource type="Script" uid="uid://cq6y2tgmtv8jf" path="res://Scripts/Managers/InputManager.cs" id="4_lvxpj"]
 [ext_resource type="PackedScene" uid="uid://cakmoct7fr7qe" path="res://Scenes/Managers/WorldObjectManager.tscn" id="5_ivcmo"]
 [ext_resource type="PackedScene" uid="uid://javhx4rej0q4" path="res://Scenes/Interface/Game/GameInterface.tscn" id="5_mn7lu"]
 
-[node name="Game" type="Node" node_paths=PackedStringArray("BlockParent", "PlayerParent", "Region", "Interface", "InputManager", "WorldObjectManager")]
+[node name="Game" type="Node" node_paths=PackedStringArray("BlockParent", "PlayerParent", "Interface", "InputManager", "WorldObjectManager")]
 script = ExtResource("1_6kfdr")
 BlockParent = NodePath("BlockParent")
 PlayerParent = NodePath("PlayerParent")
-Region = NodePath("Region")
 Interface = NodePath("GameInterface")
 InputManager = NodePath("InputManager")
 WorldObjectManager = NodePath("WorldObjectManager")
-
-[node name="Region" type="Node" parent="." node_paths=PackedStringArray("_game")]
-script = ExtResource("3_8fqtf")
-_game = NodePath("..")
 
 [node name="BlockParent" type="Node" parent="."]
 

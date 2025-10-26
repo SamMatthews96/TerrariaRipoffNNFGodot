@@ -15,7 +15,7 @@ public partial class Recipe : Resource {
     [Export] public RecipePropertyMapString ResultNameMap { get; private set; }
     [Export] public RecipePropertyMapMultiplier InventorySpace { get; private set; }
     [Export] public Array<ItemPropertyOutputTemplate> ItemProperties { get; private set; }
-    // @todo add a map for the resultant texture
+    
     [Export] public Texture2D ResultIcon { get; private set; }
 
     public StackedItems Build(Dictionary<string, Item> suppliedIngredients) {
