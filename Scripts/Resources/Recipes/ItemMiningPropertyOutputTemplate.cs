@@ -14,9 +14,9 @@ public partial class ItemMiningPropertyOutputTemplate : ItemPropertyOutputTempla
         Dictionary<string, RecipeIngredientSlot> ingredientSlots
     ) {
         return ItemMining.Create(
-            speed: Speed.ResolveTemplate(suppliedIngredients, ingredientSlots),
-            range: Range.ResolveTemplate(suppliedIngredients, ingredientSlots),
-            power: Power.ResolveTemplate(suppliedIngredients, ingredientSlots)
+            speed: Speed.ResolveTemplate(suppliedIngredients),
+            range: Range.ResolveTemplate(suppliedIngredients),
+            power: Power.ResolveTemplate(suppliedIngredients)
         );
     }
 }

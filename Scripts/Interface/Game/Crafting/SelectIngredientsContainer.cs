@@ -47,7 +47,7 @@ public partial class SelectIngredientsContainer : Container {
 
     private void OnSelectedIngredientsChanged(StackedItems newItems) {
         _resultItemIcon.Texture = newItems is null
-            ? _selectedRecipe.ResultIcon
+            ? _selectedRecipe.TemplateIcon
             : newItems.Item.IconTexture;
     }
 
@@ -78,7 +78,7 @@ public partial class SelectIngredientsContainer : Container {
             _ingredientContainer.AddChild(newIngredientMouseover);
         }
 
-        _resultItemIcon.Texture = recipe.ResultIcon;
+        _resultItemIcon.Texture = recipe.TemplateIcon;
         Show();
     }
 

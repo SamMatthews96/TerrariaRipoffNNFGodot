@@ -13,10 +13,10 @@ public partial class Recipe : Resource {
     [Export] public string Name { get; private set; }
     [Export] public bool IsStackable { get; private set; }
     [Export] public RecipePropertyMapString ResultNameMap { get; private set; }
-    [Export] public RecipePropertyMapMultiplier InventorySpace { get; private set; }
+    [Export] public RecipePropertyMapMultiplier InventorySpaceMap { get; private set; }
     [Export] public Array<ItemPropertyOutputTemplate> ItemProperties { get; private set; }
-    
-    [Export] public Texture2D ResultIcon { get; private set; }
+    [Export] public RecipePropertyMapTexture ResultTextureMap { get; private set; }
+    [Export] public Texture2D TemplateIcon { get; private set; }
 
     public StackedItems Build(Dictionary<string, Item> suppliedIngredients) {
         if (IngredientSlots.Keys.Any(key => !suppliedIngredients.ContainsKey(key))) {
@@ -31,12 +31,15 @@ public partial class Recipe : Resource {
                 = itemPropertyOutputTemplate.Build(suppliedIngredients, IngredientSlots);
             newItemProperties.Add(newItemProperty);
         }
-
+        
+        string name = ResultNameMap.ResolveTemplate(suppliedIngredients);
+        Texture2D iconTexture = ResultTextureMap.ResolveTemplate(suppliedIngredients);
+        float inventorySpace = InventorySpaceMap.ResolveTemplate(suppliedIngredients);
 
         Item item = Item.Create(
-            name: ResultNameMap.ResolveTemplate(suppliedIngredients, IngredientSlots),
-            iconTexture: ResultIcon,
-            inventorySpace: InventorySpace.ResolveTemplate(suppliedIngredients, IngredientSlots),
+            name: name,
+            iconTexture: iconTexture,
+            inventorySpace: inventorySpace,
             isStackable: IsStackable,
             itemProperties: newItemProperties
         );

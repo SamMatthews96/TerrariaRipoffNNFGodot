@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemIngredient" load_steps=2 format=3 uid="uid://dcjva8vmrmyt3"]
+
+[ext_resource type="Script" uid="uid://dp8bgot75ojla" path="res://Scripts/Resources/Item/ItemIngredient.cs" id="1_onumc"]
+
+[resource]
+script = ExtResource("1_onumc")
+IngredientType = 3
+Quality = 1.0
+Name = "stone"
+metadata/_custom_type_script = "uid://dp8bgot75ojla"

@@ -12,7 +12,7 @@ public partial class SelectRecipeButton : TextureButton {
             Data.PackedScenes.SelectRecipeButton
                 .Instantiate<SelectRecipeButton>();
         button._recipe = recipe;
-        button.TextureNormal = recipe.ResultIcon;
+        button.TextureNormal = recipe.TemplateIcon;
         return button;
     }
     

@@ -6,14 +6,14 @@ using Godot.Collections;
 namespace TerrariaRipoffNNF;
 
 [GlobalClass]
-public partial class RecipePropertyMapString : RecipePropertyMap<string> {
+public partial class RecipePropertyMapString
+    : Resource, IRecipePropertyMap<string> {
     [Export] private string _stringTemplate;
 
     [Export] private Dictionary<string, IngredientNameToOutputNameMap> _ingredientNameMaps = new();
 
-    public override string ResolveTemplate(
-        Dictionary<string, Item> suppliedIngredients,
-        Dictionary<string, RecipeIngredientSlot> ingredientSlots
+    public string ResolveTemplate(
+        Dictionary<string, Item> suppliedIngredients
     ) {
         MatchCollection templateVariables = TemplateVariableRegex().Matches(_stringTemplate);
         string currentTemplate = _stringTemplate;
@@ -27,12 +27,12 @@ public partial class RecipePropertyMapString : RecipePropertyMap<string> {
 
             Item item = suppliedIngredients[recipeSlotName];
             ItemIngredient itemIngredient = item.GetProperty<ItemIngredient>();
-            
+
             bool hasNameMapForIngredient = _ingredientNameMaps.TryGetValue(
                 recipeSlotName,
                 out IngredientNameToOutputNameMap ingredientNameMap
             );
-                
+
             string templateSubstitute = hasNameMapForIngredient
                 ? ingredientNameMap.Map[itemIngredient]
                 : itemIngredient.Name;

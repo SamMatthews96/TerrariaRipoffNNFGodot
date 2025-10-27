@@ -1,9 +1,9 @@
-[gd_resource type="Resource" script_class="Item" load_steps=8 format=3 uid="uid://bqshlfwn0tksb"]
+[gd_resource type="Resource" script_class="Item" load_steps=7 format=3 uid="uid://bqshlfwn0tksb"]
 
 [ext_resource type="Texture2D" uid="uid://des01kpji7vcu" path="res://Assets/Images/Stone.png" id="1_q3xiv"]
 [ext_resource type="Script" uid="uid://jsfs7spy0f5g" path="res://Scripts/Resources/Item/ItemProperty.cs" id="2_llwlh"]
 [ext_resource type="Script" uid="uid://ctwdtjjrpbdwg" path="res://Scripts/Resources/Item/ItemPlaceable.cs" id="3_x64jl"]
-[ext_resource type="Script" uid="uid://dp8bgot75ojla" path="res://Scripts/Resources/Item/ItemIngredient.cs" id="4_x64jl"]
+[ext_resource type="Resource" uid="uid://dcjva8vmrmyt3" path="res://Resources/Items/ItemIngredient/stone.tres" id="4_x64jl"]
 [ext_resource type="Script" uid="uid://bavg183x82165" path="res://Scripts/Resources/Item/Item.cs" id="5_dpu6g"]
 
 [sub_resource type="Resource" id="Resource_xwkr0"]
@@ -12,18 +12,11 @@ Type = 0
 OccupiedCells = null
 metadata/_custom_type_script = "uid://ctwdtjjrpbdwg"
 
-[sub_resource type="Resource" id="Resource_bm8tl"]
-script = ExtResource("4_x64jl")
-IngredientType = 3
-Quality = 1.0
-Name = "stone"
-metadata/_custom_type_script = "uid://dp8bgot75ojla"
-
 [resource]
 script = ExtResource("5_dpu6g")
 Name = "Stone"
 InventorySpace = 1.0
 IsStackable = true
 IconTexture = ExtResource("1_q3xiv")
-_itemProperties = Array[ExtResource("2_llwlh")]([SubResource("Resource_xwkr0"), SubResource("Resource_bm8tl")])
+_itemProperties = Array[ExtResource("2_llwlh")]([SubResource("Resource_xwkr0"), ExtResource("4_x64jl")])
 metadata/_custom_type_script = "uid://bavg183x82165"

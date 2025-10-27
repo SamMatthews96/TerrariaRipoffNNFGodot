@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Recipe" load_steps=15 format=3 uid="uid://b4ycwedskwd1y"]
+[gd_resource type="Resource" script_class="Recipe" load_steps=22 format=3 uid="uid://b4ycwedskwd1y"]
 
 [ext_resource type="Texture2D" uid="uid://wrf00jfy174v" path="res://Assets/Images/woodPlaceholder.png" id="1_3o6yf"]
 [ext_resource type="Script" uid="uid://bg8jhsljipuqc" path="res://Scripts/Resources/Recipes/Recipe.cs" id="1_kuw5n"]
@@ -8,7 +8,12 @@
 [ext_resource type="Texture2D" uid="uid://dom0h6yhambyh" path="res://Assets/Images/placedTorch.png" id="5_36n6r"]
 [ext_resource type="Script" uid="uid://dtjaxrcrr2rk5" path="res://Scripts/Resources/Recipes/RecipePropertyMaps/RecipePropertyMapString.cs" id="6_kmpu0"]
 [ext_resource type="Script" uid="uid://yd4u7trnr176" path="res://Scripts/Resources/Recipes/ItemPlaceablePropertyOutputTemplate.cs" id="6_tar2b"]
+[ext_resource type="Script" uid="uid://coiqlucu73qbu" path="res://Scripts/Resources/Recipes/RecipePropertyMaps/IngredientNameToOutputNameMap.cs" id="6_txx5t"]
 [ext_resource type="Texture2D" uid="uid://bvrvvypvm4i1u" path="res://Assets/Images/ItemIcons/torchPlaceholder.png" id="7_qv3ni"]
+[ext_resource type="Script" uid="uid://bhgxggq1f0xhs" path="res://Scripts/Resources/Recipes/RecipePropertyMaps/IngredientToOutputTextureMap.cs" id="8_fvne4"]
+[ext_resource type="Resource" uid="uid://bolojhwxf18dq" path="res://Resources/Items/ItemIngredient/Wood.tres" id="9_fvne4"]
+[ext_resource type="Script" uid="uid://bwl3i0ngge60e" path="res://Scripts/Resources/Recipes/RecipePropertyMaps/RecipePropertyMapTexture.cs" id="9_lvwr2"]
+[ext_resource type="Texture2D" uid="uid://da0geb6ew751" path="res://Assets/Images/ItemIcons/torch.png" id="10_lvwr2"]
 
 [sub_resource type="Resource" id="Resource_txx5t"]
 script = ExtResource("2_o6jgq")
@@ -42,8 +47,21 @@ metadata/_custom_type_script = "uid://yd4u7trnr176"
 [sub_resource type="Resource" id="Resource_lvwr2"]
 script = ExtResource("6_kmpu0")
 _stringTemplate = "Torch"
-_ingredientNameMaps = {}
+_ingredientNameMaps = Dictionary[String, ExtResource("6_txx5t")]({})
 metadata/_custom_type_script = "uid://dtjaxrcrr2rk5"
+
+[sub_resource type="Resource" id="Resource_ujdo5"]
+script = ExtResource("8_fvne4")
+Map = Dictionary[Object, Texture2D]({
+ExtResource("9_fvne4"): ExtResource("10_lvwr2")
+})
+metadata/_custom_type_script = "uid://bhgxggq1f0xhs"
+
+[sub_resource type="Resource" id="Resource_xw716"]
+script = ExtResource("9_lvwr2")
+_ingredientName = "wood"
+_ingredientToTextureMap = SubResource("Resource_ujdo5")
+metadata/_custom_type_script = "uid://bwl3i0ngge60e"
 
 [resource]
 script = ExtResource("1_kuw5n")
@@ -54,7 +72,8 @@ IngredientSlots = Dictionary[String, Object]({
 Name = "Torch"
 IsStackable = true
 ResultNameMap = SubResource("Resource_lvwr2")
-InventorySpace = SubResource("Resource_fvne4")
+InventorySpaceMap = SubResource("Resource_fvne4")
 ItemProperties = Array[Object]([SubResource("Resource_4qauq")])
-ResultIcon = ExtResource("7_qv3ni")
+ResultTextureMap = SubResource("Resource_xw716")
+TemplateIcon = ExtResource("7_qv3ni")
 metadata/_custom_type_script = "uid://bg8jhsljipuqc"
