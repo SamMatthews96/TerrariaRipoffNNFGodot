@@ -1,4 +1,3 @@
-using System;
 using Godot;
 using Godot.Collections;
 
@@ -6,8 +5,7 @@ namespace TerrariaRipoffNNF;
 
 public partial class Game : Node {
     public const int BlockSize = 32;
-
-
+    
     [Export] public Node BlockParent { get; private set; }
     [Export] public Node PlayerParent { get; private set; }
 

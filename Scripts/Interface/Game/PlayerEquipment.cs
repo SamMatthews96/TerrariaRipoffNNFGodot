@@ -11,16 +11,23 @@ public partial class PlayerEquipment : Container {
         Player.LocalPlayerSpawned += OnLocalPlayerSpawned;
         
         _gameInterface.GameManager.InputManager.ToggleInventoryPressed += OnInputManagerToggleInventoryPressed;
-        
+        _gameInterface.GameManager.InputManager.EscapePressed += OnEscapePressed;
     }
     
     public override void _ExitTree() {
         Player.LocalPlayerSpawned -= OnLocalPlayerSpawned;
         _gameInterface.GameManager.InputManager.ToggleInventoryPressed -= OnInputManagerToggleInventoryPressed;
+        _gameInterface.GameManager.InputManager.EscapePressed -= OnEscapePressed;
     }
 
     private void OnInputManagerToggleInventoryPressed() {
         Visible = !Visible;
+    }
+    
+    private void OnEscapePressed() {
+        if (Visible) {
+            Visible = false;
+        }
     }
 
     private void OnLocalPlayerSpawned(Player player) {

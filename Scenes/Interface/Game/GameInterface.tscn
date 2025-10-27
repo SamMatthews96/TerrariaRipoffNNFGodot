@@ -17,13 +17,14 @@
 [ext_resource type="Script" uid="uid://627w8say0mt" path="res://Scripts/Interface/Game/GameMenu.cs" id="11_22hm5"]
 [ext_resource type="PackedScene" uid="uid://ctrvvlegklp1a" path="res://Scenes/Interface/Game/ItemTooltip.tscn" id="21_luabj"]
 
-[node name="GameInterface" type="CanvasLayer" node_paths=PackedStringArray("InventoryUi", "ActionBar", "BuildUi", "GameMenu", "CraftingInterface")]
+[node name="GameInterface" type="CanvasLayer" node_paths=PackedStringArray("InventoryUi", "ActionBar", "BuildUi", "GameMenu", "CraftingInterface", "PlayerEquipment")]
 script = ExtResource("1_d56as")
 InventoryUi = NodePath("HBoxContainer/VBoxContainer/Inventory")
 ActionBar = NodePath("ActionBar")
 BuildUi = NodePath("Build")
 GameMenu = NodePath("GameMenu")
 CraftingInterface = NodePath("HBoxContainer/VBoxContainer/Crafting")
+PlayerEquipment = NodePath("PlayerEquipment")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 offset_right = 40.0
@@ -65,40 +66,6 @@ columns = 10
 [node name="Crafting" parent="HBoxContainer/VBoxContainer" node_paths=PackedStringArray("_gameInterface") instance=ExtResource("4_cmjhl")]
 layout_mode = 2
 _gameInterface = NodePath("../../..")
-
-[node name="PlayerEquipment" type="PanelContainer" parent="HBoxContainer" node_paths=PackedStringArray("_pickaxeIcon", "_gameInterface")]
-custom_minimum_size = Vector2(400, 500)
-layout_mode = 2
-script = ExtResource("5_w3fsj")
-_pickaxeIcon = NodePath("ToolContainer/PickaxeSlot")
-_gameInterface = NodePath("../..")
-
-[node name="WeaponContainer" type="HBoxContainer" parent="HBoxContainer/PlayerEquipment"]
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 8
-
-[node name="WeaponSlot1" type="TextureRect" parent="HBoxContainer/PlayerEquipment/WeaponContainer"]
-layout_mode = 2
-texture = ExtResource("8_y013w")
-
-[node name="ArmourContainer" type="VBoxContainer" parent="HBoxContainer/PlayerEquipment"]
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 0
-
-[node name="ChestArmourSlot" type="TextureRect" parent="HBoxContainer/PlayerEquipment/ArmourContainer"]
-layout_mode = 2
-texture = ExtResource("6_fl6gc")
-
-[node name="ToolContainer" type="VBoxContainer" parent="HBoxContainer/PlayerEquipment"]
-layout_mode = 2
-size_flags_horizontal = 8
-size_flags_vertical = 0
-
-[node name="PickaxeSlot" type="TextureRect" parent="HBoxContainer/PlayerEquipment/ToolContainer"]
-layout_mode = 2
-texture = ExtResource("7_pka7h")
 
 [node name="ActionBar" type="PanelContainer" parent="." node_paths=PackedStringArray("_buttons")]
 custom_minimum_size = Vector2(384, 128)
@@ -234,3 +201,44 @@ size_flags_horizontal = 3
 [node name="ItemTooltip" parent="." node_paths=PackedStringArray("_inventory") instance=ExtResource("21_luabj")]
 visible = false
 _inventory = NodePath("../HBoxContainer/VBoxContainer/Inventory")
+
+[node name="PlayerEquipment" type="PanelContainer" parent="." node_paths=PackedStringArray("_pickaxeIcon", "_gameInterface")]
+custom_minimum_size = Vector2(400, 500)
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -400.0
+offset_bottom = 500.0
+grow_horizontal = 0
+size_flags_horizontal = 8
+size_flags_vertical = 0
+script = ExtResource("5_w3fsj")
+_pickaxeIcon = NodePath("ToolContainer/PickaxeSlot")
+_gameInterface = NodePath("..")
+
+[node name="WeaponContainer" type="HBoxContainer" parent="PlayerEquipment"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+
+[node name="WeaponSlot1" type="TextureRect" parent="PlayerEquipment/WeaponContainer"]
+layout_mode = 2
+texture = ExtResource("8_y013w")
+
+[node name="ArmourContainer" type="VBoxContainer" parent="PlayerEquipment"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="ChestArmourSlot" type="TextureRect" parent="PlayerEquipment/ArmourContainer"]
+layout_mode = 2
+texture = ExtResource("6_fl6gc")
+
+[node name="ToolContainer" type="VBoxContainer" parent="PlayerEquipment"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+
+[node name="PickaxeSlot" type="TextureRect" parent="PlayerEquipment/ToolContainer"]
+layout_mode = 2
+texture = ExtResource("7_pka7h")

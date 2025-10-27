@@ -13,14 +13,21 @@ public partial class Crafting : Control {
 
     public override void _Ready() {
         Hide();
-        _gameInterface.GameManager.InputManager.CraftMenuPressed += OnCraftMenuPressed;
+        _gameInterface.GameManager.InputManager.ToggleInventoryPressed += OnToggleInventoryPressed;
+        _gameInterface.GameManager.InputManager.EscapePressed += OnEscapePressed;
     }
 
-    private void OnCraftMenuPressed() {
+    private void OnToggleInventoryPressed() {
         if (Visible) {
             Hide();
         } else {
             Show();
+        }
+    }
+    
+    private void OnEscapePressed() {
+        if (Visible) {
+            Hide();
         }
     }
 }

@@ -25,6 +25,14 @@ public partial class GameMenu : Control {
     }
 
     private void OnEscapePressed() {
+        if (
+            _gameInterface.CraftingInterface.Visible ||
+            _gameInterface.InventoryUi.Visible ||
+            _gameInterface.PlayerEquipment.Visible
+        ) {
+            return;
+        }
+
         if (Visible) {
             Hide();
         } else {
