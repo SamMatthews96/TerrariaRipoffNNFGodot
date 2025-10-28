@@ -10,6 +10,7 @@ public partial class Game : CanvasLayer {
     [Export] public GameMenu GameMenu { get; private set; }
     [Export] public Crafting CraftingInterface { get; private set; }
     [Export] public PlayerEquipment PlayerEquipment { get; private set; }
+    [Export] public DevTools DevTools { get; private set; }
     
     public override void _Ready() {
         Hide();

@@ -244,7 +244,7 @@ size_flags_vertical = 0
 layout_mode = 2
 texture = ExtResource("7_pka7h")
 
-[node name="DevTools" type="PanelContainer" parent="." node_paths=PackedStringArray("_gameInterface")]
+[node name="DevTools" type="PanelContainer" parent="." node_paths=PackedStringArray("_gameInterface", "_spawnButton")]
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
@@ -256,6 +256,7 @@ grow_horizontal = 0
 grow_vertical = 0
 script = ExtResource("17_qdqra")
 _gameInterface = NodePath("..")
+_spawnButton = NodePath("GridContainer/Button")
 
 [node name="GridContainer" type="GridContainer" parent="DevTools"]
 layout_mode = 2

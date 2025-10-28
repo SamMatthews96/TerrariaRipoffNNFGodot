@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://d3hhhiiydcfft"]
+[gd_scene load_steps=6 format=3 uid="uid://d3hhhiiydcfft"]
 
 [ext_resource type="Script" uid="uid://crhglubj8pdob" path="res://Scripts/Managers/Game.cs" id="1_6kfdr"]
 [ext_resource type="Script" uid="uid://cq6y2tgmtv8jf" path="res://Scripts/Managers/InputManager.cs" id="4_lvxpj"]
 [ext_resource type="PackedScene" uid="uid://cakmoct7fr7qe" path="res://Scenes/Managers/WorldObjectManager.tscn" id="5_ivcmo"]
 [ext_resource type="PackedScene" uid="uid://javhx4rej0q4" path="res://Scenes/Interface/Game/GameInterface.tscn" id="5_mn7lu"]
+[ext_resource type="Script" path="res://Scripts/Managers/NpcManager.cs" id="5_yl3e8"]
 
 [node name="Game" type="Node" node_paths=PackedStringArray("BlockParent", "PlayerParent", "Interface", "InputManager", "WorldObjectManager")]
 script = ExtResource("1_6kfdr")
@@ -27,3 +28,6 @@ _node2D = NodePath("Node2D")
 GameManager = NodePath("..")
 
 [node name="WorldObjectManager" parent="." instance=ExtResource("5_ivcmo")]
+
+[node name="NpcManager" type="Node" parent="."]
+script = ExtResource("5_yl3e8")
