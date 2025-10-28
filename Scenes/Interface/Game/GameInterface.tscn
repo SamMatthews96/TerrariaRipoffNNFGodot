@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://javhx4rej0q4"]
+[gd_scene load_steps=18 format=3 uid="uid://javhx4rej0q4"]
 
 [ext_resource type="Script" uid="uid://c85r67x6sd5pf" path="res://Scripts/Interface/Game/Game.cs" id="1_d56as"]
 [ext_resource type="Script" uid="uid://b51idn102wdah" path="res://Scripts/Interface/Game/Inventory.cs" id="2_wmh4y"]
@@ -15,6 +15,7 @@
 [ext_resource type="Script" uid="uid://csmp4sl63hylg" path="res://Scripts/Interface/Game/Build.cs" id="9_jhyas"]
 [ext_resource type="PackedScene" uid="uid://dsp7h2dpxh0i6" path="res://Scenes/Interface/Game/BlockTypeButton.tscn" id="10_gomyk"]
 [ext_resource type="Script" uid="uid://627w8say0mt" path="res://Scripts/Interface/Game/GameMenu.cs" id="11_22hm5"]
+[ext_resource type="Script" uid="uid://frr7gic5v6dd" path="res://Scripts/Interface/Game/DevTools/DevTools.cs" id="17_qdqra"]
 [ext_resource type="PackedScene" uid="uid://ctrvvlegklp1a" path="res://Scenes/Interface/Game/ItemTooltip.tscn" id="21_luabj"]
 
 [node name="GameInterface" type="CanvasLayer" node_paths=PackedStringArray("InventoryUi", "ActionBar", "BuildUi", "GameMenu", "CraftingInterface", "PlayerEquipment")]
@@ -242,3 +243,23 @@ size_flags_vertical = 0
 [node name="PickaxeSlot" type="TextureRect" parent="PlayerEquipment/ToolContainer"]
 layout_mode = 2
 texture = ExtResource("7_pka7h")
+
+[node name="DevTools" type="PanelContainer" parent="." node_paths=PackedStringArray("_gameInterface")]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -538.0
+offset_top = -375.0
+grow_horizontal = 0
+grow_vertical = 0
+script = ExtResource("17_qdqra")
+_gameInterface = NodePath("..")
+
+[node name="GridContainer" type="GridContainer" parent="DevTools"]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="DevTools/GridContainer"]
+layout_mode = 2
+text = "Spawn Enemy"

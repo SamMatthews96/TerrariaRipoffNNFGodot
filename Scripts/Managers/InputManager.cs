@@ -14,6 +14,7 @@ public partial class InputManager : Node {
     private const string BuildMode = "buildMode";
     private const string GatherMode = "gatherMode";
     private const string Escape = "escape";
+    private const string ToggleDevTools = "toggleDevTools";
     
     [Export] private Node2D _node2D;
 
@@ -27,6 +28,7 @@ public partial class InputManager : Node {
     public event Action ToggleInventoryPressed;
     public event Action<PlayerActionType> PlayerActionModeChanged;
     public event Action EscapePressed;
+    public event Action ToggleDevToolsPressed;
     
     public override void _UnhandledInput(InputEvent e) {
         switch (e) {
@@ -100,6 +102,10 @@ public partial class InputManager : Node {
         
         if (Input.IsActionJustPressed(Escape)) {
             EscapePressed?.Invoke();
+        }
+        
+        if (Input.IsActionJustPressed(ToggleDevTools)) {
+            ToggleDevToolsPressed?.Invoke();
         }
         
         
