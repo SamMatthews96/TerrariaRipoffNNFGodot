@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=3 uid="uid://b2jynpjxk8k06"]
+
+[ext_resource type="Texture2D" uid="uid://3mp4qibtswyy" path="res://Assets/Images/ItemIcons/spearPlaceholder.png" id="1_1knae"]
+[ext_resource type="Script" uid="uid://grnulx3obxgd" path="res://Scripts/GameObjects/EnemyNpc/EnemyNpc.cs" id="1_gti2g"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_gti2g"]
+size = Vector2(38, 38)
+
+[node name="EnemyNpc" type="CharacterBody2D"]
+script = ExtResource("1_gti2g")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_gti2g")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("1_1knae")

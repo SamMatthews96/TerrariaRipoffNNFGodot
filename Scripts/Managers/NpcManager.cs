@@ -1,4 +1,5 @@
 ﻿using Godot;
+using TerrariaRipoffNNF.Scripts.GameObjects.EnemyNpc;
 
 namespace TerrariaRipoffNNF;
 
@@ -6,7 +7,6 @@ public partial class NpcManager : Node {
     [Export] private Game _game;
     
     public override void _Ready() {
-        // listen to dev tool event
         _game.Interface.DevTools.SpawnPressed += OnSpawnPressed;
     }
 
@@ -15,6 +15,7 @@ public partial class NpcManager : Node {
     }
 
     private void OnSpawnPressed() {
-        throw new System.NotImplementedException();
+        EnemyNpc enemyNpc = EnemyNpc.Create(new IntVector(5,5));
+        _game.PlayerParent.AddChild(enemyNpc, true);
     }
 }

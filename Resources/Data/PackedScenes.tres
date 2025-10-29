@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="PackedScenes" load_steps=21 format=3 uid="uid://dllhhokx2wkse"]
+[gd_resource type="Resource" script_class="PackedScenes" load_steps=22 format=3 uid="uid://dllhhokx2wkse"]
 
 [ext_resource type="Script" uid="uid://btjjbewbkdhw8" path="res://Scripts/Data/PackedScenes.cs" id="1_tombv"]
 [ext_resource type="PackedScene" uid="uid://cdxpjclstgoxa" path="res://Scenes/GameObjects/CraftStationArea.tscn" id="2_5ayme"]
@@ -19,11 +19,13 @@
 [ext_resource type="PackedScene" uid="uid://dmru6hdxblhh5" path="res://Scenes/GameObjects/WorldSolid.tscn" id="13_5ayme"]
 [ext_resource type="PackedScene" uid="uid://bdiv1g7jn5iao" path="res://Scenes/GameObjects/WorldPickup.tscn" id="13_h7xbu"]
 [ext_resource type="PackedScene" uid="uid://cakmoct7fr7qe" path="res://Scenes/Managers/WorldObjectManager.tscn" id="14_mase3"]
+[ext_resource type="PackedScene" uid="uid://b2jynpjxk8k06" path="res://Scenes/GameObjects/EnemyNpc.tscn" id="15_jmu7e"]
 [ext_resource type="PackedScene" uid="uid://brp1yudav7inr" path="res://Scenes/GameObjects/WorldStatic.tscn" id="16_vwj2m"]
 
 [resource]
 script = ExtResource("1_tombv")
 Player = ExtResource("6_12bmn")
+TestNpc = ExtResource("15_jmu7e")
 PlayerActionController = ExtResource("8_7uyj2")
 PlayerPickupArea = ExtResource("9_n06ho")
 PlayerCrafting = ExtResource("9_dslwf")

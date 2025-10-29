@@ -5,6 +5,7 @@ namespace TerrariaRipoffNNF;
 [GlobalClass]
 public partial class PackedScenes : Resource {
     [Export] public PackedScene Player { get; private set; }
+    [Export] public PackedScene TestNpc { get; private set; }
     [Export] public PackedScene PlayerActionController { get; private set; }
     [Export] public PackedScene PlayerPickupArea { get; private set; }
     [Export] public PackedScene PlayerCrafting { get; private set; }

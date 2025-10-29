@@ -18,7 +18,7 @@
 [ext_resource type="Script" uid="uid://frr7gic5v6dd" path="res://Scripts/Interface/Game/DevTools/DevTools.cs" id="17_qdqra"]
 [ext_resource type="PackedScene" uid="uid://ctrvvlegklp1a" path="res://Scenes/Interface/Game/ItemTooltip.tscn" id="21_luabj"]
 
-[node name="GameInterface" type="CanvasLayer" node_paths=PackedStringArray("InventoryUi", "ActionBar", "BuildUi", "GameMenu", "CraftingInterface", "PlayerEquipment")]
+[node name="GameInterface" type="CanvasLayer" node_paths=PackedStringArray("InventoryUi", "ActionBar", "BuildUi", "GameMenu", "CraftingInterface", "PlayerEquipment", "DevTools")]
 script = ExtResource("1_d56as")
 InventoryUi = NodePath("HBoxContainer/VBoxContainer/Inventory")
 ActionBar = NodePath("ActionBar")
@@ -26,6 +26,7 @@ BuildUi = NodePath("Build")
 GameMenu = NodePath("GameMenu")
 CraftingInterface = NodePath("HBoxContainer/VBoxContainer/Crafting")
 PlayerEquipment = NodePath("PlayerEquipment")
+DevTools = NodePath("DevTools")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 offset_right = 40.0
