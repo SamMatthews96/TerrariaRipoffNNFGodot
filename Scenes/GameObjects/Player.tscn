@@ -16,9 +16,9 @@ size = Vector2(44, 93)
 
 [sub_resource type="Resource" id="Resource_7vd2l"]
 script = ExtResource("9_pqpyq")
-Speed = 5.0
-Range = 5.0
-Power = 5.0
+Speed = 0.0
+Range = 0.0
+Power = 0.0
 metadata/_custom_type_script = "uid://dfb4kfm2jhuiq"
 
 [node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("PlayerEquipment", "_positionSynchronizer", "_camera")]

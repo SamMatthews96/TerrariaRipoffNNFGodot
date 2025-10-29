@@ -31,7 +31,7 @@ public partial class Player : CharacterBody2D {
     public IntVector SpawnCoords { get; private set; }
 
 
-    private Game _game;
+    public Game Game { get; private set; }
     private int _horizontalInput;
     private bool _isFalling;
     private float _xVelocity;
@@ -74,7 +74,7 @@ public partial class Player : CharacterBody2D {
     }
 
     public void InitAsLocal(Game game, Dictionary playerData) {
-        if (_game is not null) {
+        if (Game is not null) {
             throw new Exception("[20250104.0137.1] Game already set");
         }
         
@@ -82,23 +82,23 @@ public partial class Player : CharacterBody2D {
         ActionController = ActionController.Create(game, this);
         Crafting = Crafting.Create(game, this);
         PickupArea = PickupArea.Create(this);
+        Game = game;
         
         AddChild(Inventory);
         AddChild(ActionController);
         AddChild(Crafting);
         AddChild(PickupArea);
         
-        PlayerEquipment.InitAsLocal();
+        PlayerEquipment.InitAsLocal(this);
 
-        _game = game;
-        _game.InputManager.HorizontalInputChanged += OnHorizontalInputChanged;
-        _game.InputManager.JumpPressed += OnJumpPressed;
+        Game.InputManager.HorizontalInputChanged += OnHorizontalInputChanged;
+        Game.InputManager.JumpPressed += OnJumpPressed;
 
         _characterName = playerData["Name"].ToString();
 
         TreeExiting += () => {
-            _game.InputManager.HorizontalInputChanged -= OnHorizontalInputChanged;
-            _game.InputManager.JumpPressed -= OnJumpPressed;
+            Game.InputManager.HorizontalInputChanged -= OnHorizontalInputChanged;
+            Game.InputManager.JumpPressed -= OnJumpPressed;
             SavePlayerData();
         };
         
