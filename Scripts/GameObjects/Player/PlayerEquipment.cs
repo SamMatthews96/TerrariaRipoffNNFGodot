@@ -8,7 +8,6 @@ public partial class PlayerEquipment : Node {
     [Export] public ItemMining Pickaxe { get; private set; }
     [Export] public ItemWeapon Weapon { get; private set; }
 
-
     public event Action<Item> ItemEquipped;
 
     public void InitAsLocal(Player player) {
