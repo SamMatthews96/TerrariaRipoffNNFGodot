@@ -13,6 +13,7 @@ public partial class InputManager : Node {
     private const string ToggleInventory = "toggleInventory";
     private const string BuildMode = "buildMode";
     private const string GatherMode = "gatherMode";
+    private const string WeaponMode = "weaponMode";
     private const string Escape = "escape";
     private const string ToggleDevTools = "toggleDevTools";
     
@@ -98,6 +99,10 @@ public partial class InputManager : Node {
 
         if (Input.IsActionJustPressed(BuildMode)) {
             PlayerActionModeChanged?.Invoke(PlayerActionType.Build);
+        }
+
+        if (Input.IsActionJustPressed(WeaponMode)) {
+            PlayerActionModeChanged?.Invoke(PlayerActionType.Weapon);
         }
         
         if (Input.IsActionJustPressed(Escape)) {

@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="PackedScenes" load_steps=22 format=3 uid="uid://dllhhokx2wkse"]
+[gd_resource type="Resource" script_class="PackedScenes" load_steps=23 format=3 uid="uid://dllhhokx2wkse"]
 
 [ext_resource type="Script" uid="uid://btjjbewbkdhw8" path="res://Scripts/Data/PackedScenes.cs" id="1_tombv"]
 [ext_resource type="PackedScene" uid="uid://cdxpjclstgoxa" path="res://Scenes/GameObjects/CraftStationArea.tscn" id="2_5ayme"]
@@ -20,6 +20,7 @@
 [ext_resource type="PackedScene" uid="uid://bdiv1g7jn5iao" path="res://Scenes/GameObjects/WorldPickup.tscn" id="13_h7xbu"]
 [ext_resource type="PackedScene" uid="uid://cakmoct7fr7qe" path="res://Scenes/Managers/WorldObjectManager.tscn" id="14_mase3"]
 [ext_resource type="PackedScene" uid="uid://b2jynpjxk8k06" path="res://Scenes/GameObjects/EnemyNpc.tscn" id="15_jmu7e"]
+[ext_resource type="PackedScene" uid="uid://oqop40vb15di" path="res://Scenes/GameObjects/TestProjectile.tscn" id="16_bc68h"]
 [ext_resource type="PackedScene" uid="uid://brp1yudav7inr" path="res://Scenes/GameObjects/WorldStatic.tscn" id="16_vwj2m"]
 
 [resource]
@@ -45,3 +46,4 @@ ItemTooltipPropertyGroup = ExtResource("5_8fovs")
 SelectIngredientButton = ExtResource("11_tftwe")
 LoadingScreen = ExtResource("4_y0gj7")
 WorldObjectManager = ExtResource("14_mase3")
+TestProjectile = ExtResource("16_bc68h")

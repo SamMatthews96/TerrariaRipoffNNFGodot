@@ -10,7 +10,8 @@ public partial class ActionController : Node {
 
     [Export] public GatherAction GatherAction { get; private set; }
     [Export] public BuildAction BuildAction { get; private set; }
-
+    [Export] public WeaponAction WeaponAction { get; private set; }
+    
     public event Action<PlayerActionType> ActionChanged;
 
     public static ActionController Create(Game game, Player player) {
@@ -64,7 +65,7 @@ public partial class ActionController : Node {
         _currentPlayerAction = state switch {
             PlayerActionType.Gather => GatherAction,
             PlayerActionType.Build => BuildAction,
-            PlayerActionType.Weapon => throw new NotImplementedException(),
+            PlayerActionType.Weapon => WeaponAction,
             _ => throw new ArgumentOutOfRangeException(nameof(state), state, null)
         };
 

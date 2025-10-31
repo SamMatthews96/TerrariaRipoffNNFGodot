@@ -1,5 +1,6 @@
 ﻿using Godot;
 using Godot.Collections;
+using TerrariaRipoffNNF.Scripts.GameObjects.WeaponSprites;
 
 namespace TerrariaRipoffNNF;
 
@@ -7,13 +8,17 @@ namespace TerrariaRipoffNNF;
 public sealed partial class ItemWeapon : ItemEquipment {
     [Export] public float Speed { get; private set; }
     [Export] public float Power { get; private set; }
-
+    [Export] public PackedScene TestProjectile { get; private set; }
+    
     public static ItemWeapon Create(float speed, float power) {
         return new ItemWeapon {
             Speed = speed,
             Power = power
         };
     }
+
+    
+    
 
     public override Dictionary GetTooltipAttributes() {
         Dictionary tooltipAttributes = new();

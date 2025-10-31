@@ -1,8 +1,10 @@
-[gd_scene load_steps=9 format=3 uid="uid://bx6lgpicpfal4"]
+[gd_scene load_steps=12 format=3 uid="uid://bx6lgpicpfal4"]
 
 [ext_resource type="Script" uid="uid://b11uqw4ifwmss" path="res://Scripts/GameObjects/Player/Player.cs" id="1_hx4ms"]
 [ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://Assets/Images/icon.svg" id="2_5yc1a"]
 [ext_resource type="PackedScene" uid="uid://c8u386chg2fea" path="res://Scenes/GameObjects/PickupArea.tscn" id="3_om7r2"]
+[ext_resource type="PackedScene" uid="uid://oqop40vb15di" path="res://Scenes/GameObjects/TestProjectile.tscn" id="6_4qtyd"]
+[ext_resource type="Script" uid="uid://ckpwfs63s24tq" path="res://Scripts/Resources/Item/ItemWeapon.cs" id="6_entsh"]
 [ext_resource type="Script" uid="uid://b43ui7yk16ekk" path="res://Scripts/GameObjects/Player/PlayerEquipment.cs" id="7_in65p"]
 [ext_resource type="Script" uid="uid://dfb4kfm2jhuiq" path="res://Scripts/Resources/Item/ItemMining.cs" id="9_pqpyq"]
 
@@ -20,6 +22,13 @@ Speed = 0.0
 Range = 0.0
 Power = 0.0
 metadata/_custom_type_script = "uid://dfb4kfm2jhuiq"
+
+[sub_resource type="Resource" id="Resource_4qtyd"]
+script = ExtResource("6_entsh")
+Speed = 0.0
+Power = 0.0
+TestProjectile = ExtResource("6_4qtyd")
+metadata/_custom_type_script = "uid://ckpwfs63s24tq"
 
 [node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("PlayerEquipment", "_positionSynchronizer", "_camera")]
 collision_mask = 2
@@ -53,3 +62,4 @@ position_smoothing_speed = 25.0
 script = ExtResource("7_in65p")
 _player = NodePath("..")
 Pickaxe = SubResource("Resource_7vd2l")
+Weapon = SubResource("Resource_4qtyd")
