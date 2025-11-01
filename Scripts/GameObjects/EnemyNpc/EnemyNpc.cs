@@ -22,7 +22,7 @@ public partial class EnemyNpc : CharacterBody2D {
     }
 
     private void OnAreaEntered(Area2D area) {
-        if (area is TestProjectile projectile) {
+        if (area is WeaponAttackProjectile projectile) {
             
         }
     }

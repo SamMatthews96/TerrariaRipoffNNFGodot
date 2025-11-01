@@ -9,17 +9,16 @@ public partial class WeaponAction : PlayerAction {
     public override void _Ready() {
         Player = ActionController.Player;
         Game = ActionController.Game;
-        
-        // listen to weapon changes
-        // when weapon changes, set Weapon
-        // 
     }
 
     public override void LeftMouseAction(Vector2 mouseWorldPosition) {
         if (!_weaponCooldown.IsStopped()) return;
-        PackedScene sprite = Player.PlayerEquipment.Weapon.TestProjectile;
-        TestProjectile proj = TestProjectile.Create(
-            sprite, Player.Position, mouseWorldPosition);
+        // temporarily just reach through the tree,
+        // listen to weapon changes
+        // when weapon changes, set Weapon
+
+        WeaponAttackNode proj = WeaponAttackNode.Create(
+            Player.PlayerEquipment.Weapon, Player, mouseWorldPosition);
         Game.PlayerParent.AddChild(proj);
         _weaponCooldown.Start();
     }

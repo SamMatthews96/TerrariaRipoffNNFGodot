@@ -7,28 +7,26 @@ namespace TerrariaRipoffNNF;
 [GlobalClass]
 public sealed partial class ItemWeapon : ItemEquipment {
     [Export] public float Speed { get; private set; }
-    [Export] public float Power { get; private set; }
-    [Export] public PackedScene TestProjectile { get; private set; }
-    
-    public static ItemWeapon Create(float speed, float power) {
+    [Export] public float Damage { get; private set; }
+    [Export] public Texture2D Texture { get; private set; }
+    [Export] public PackedScene PackedWeaponAttackNode { get; private set; }
+
+    public static ItemWeapon Create(
+        float speed, float damage, Texture2D texture, PackedScene packedScene) {
         return new ItemWeapon {
             Speed = speed,
-            Power = power
+            Damage = damage,
+            Texture = texture,
+            PackedWeaponAttackNode = packedScene
         };
-        /*
-         * This has all the information required for the weapon sprite
-         * that spawns. 
-         */
     }
 
-    
-    
 
     public override Dictionary GetTooltipAttributes() {
         Dictionary tooltipAttributes = new();
         tooltipAttributes.Add("PropertyName", "Weapon");
         tooltipAttributes.Add("Speed", Speed);
-        tooltipAttributes.Add("Power", Power);
+        tooltipAttributes.Add("Damage", Damage);
         return tooltipAttributes;
     }
 }

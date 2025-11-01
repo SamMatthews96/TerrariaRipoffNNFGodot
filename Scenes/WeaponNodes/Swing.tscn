@@ -1,0 +1,29 @@
+[gd_scene load_steps=4 format=3 uid="uid://dyxoinb1s88j3"]
+
+[ext_resource type="Script" uid="uid://dsag5oyqjb3k2" path="res://Scripts/GameObjects/WeaponSprites/WeaponAttackSwing.cs" id="1_ges3g"]
+[ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://Assets/Images/icon.svg" id="2_rcbg3"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jjyfn"]
+size = Vector2(132, 26)
+
+[node name="WeaponSwing" type="Area2D" node_paths=PackedStringArray("_timer")]
+collision_layer = 16
+collision_mask = 34
+script = ExtResource("1_ges3g")
+_timer = NodePath("Timer")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(91, 1.90735e-06)
+shape = SubResource("RectangleShape2D_jjyfn")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(90.5, 0.132814)
+scale = Vector2(1.02344, 0.0760498)
+texture = ExtResource("2_rcbg3")
+
+[node name="Sprite2D2" type="Sprite2D" parent="."]
+position = Vector2(44, 1.87755e-06)
+scale = Vector2(0.078125, 0.203125)
+texture = ExtResource("2_rcbg3")
+
+[node name="Timer" type="Timer" parent="."]

@@ -20,7 +20,7 @@
 [ext_resource type="PackedScene" uid="uid://bdiv1g7jn5iao" path="res://Scenes/GameObjects/WorldPickup.tscn" id="13_h7xbu"]
 [ext_resource type="PackedScene" uid="uid://cakmoct7fr7qe" path="res://Scenes/Managers/WorldObjectManager.tscn" id="14_mase3"]
 [ext_resource type="PackedScene" uid="uid://b2jynpjxk8k06" path="res://Scenes/GameObjects/EnemyNpc.tscn" id="15_jmu7e"]
-[ext_resource type="PackedScene" uid="uid://oqop40vb15di" path="res://Scenes/GameObjects/TestProjectile.tscn" id="16_bc68h"]
+[ext_resource type="PackedScene" uid="uid://oqop40vb15di" path="res://Scenes/WeaponNodes/Projectile.tscn" id="16_bc68h"]
 [ext_resource type="PackedScene" uid="uid://brp1yudav7inr" path="res://Scenes/GameObjects/WorldStatic.tscn" id="16_vwj2m"]
 
 [resource]
