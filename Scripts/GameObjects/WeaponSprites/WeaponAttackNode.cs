@@ -4,7 +4,7 @@ using Godot;
 namespace TerrariaRipoffNNF.Scripts.GameObjects.WeaponSprites;
 
 public partial class WeaponAttackNode : Area2D {
-    protected ItemWeapon Weapon { get; private set; }
+    public ItemWeapon Weapon { get; private set; }
     protected Player Player { get; private set; }
     protected Vector2 TargetPosition { get; private set; }
 

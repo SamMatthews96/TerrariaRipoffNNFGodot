@@ -22,8 +22,8 @@ public partial class EnemyNpc : CharacterBody2D {
     }
 
     private void OnAreaEntered(Area2D area) {
-        if (area is WeaponAttackProjectile projectile) {
-            
+        if (area is WeaponAttackNode weaponAttackNode) {
+            GD.Print("hit", weaponAttackNode.Weapon.Damage);
         }
     }
 }

@@ -26,7 +26,7 @@ metadata/_custom_type_script = "uid://dfb4kfm2jhuiq"
 [sub_resource type="Resource" id="Resource_4qtyd"]
 script = ExtResource("6_entsh")
 Speed = 0.0
-Damage = 0.0
+Damage = 15.0
 Texture = ExtResource("2_5yc1a")
 PackedWeaponAttackNode = ExtResource("6_4qtyd")
 metadata/_custom_type_script = "uid://ckpwfs63s24tq"
