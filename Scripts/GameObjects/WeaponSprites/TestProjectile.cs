@@ -17,7 +17,7 @@ public partial class TestProjectile : Area2D {
         double direction = Math.Atan2(delta.Y, delta.X);
         projectile.Rotation = (float)direction;
 
-        float speed = 1500;
+        float speed = 1000;
         float xVelocity = speed * (float)Math.Cos(direction);
         float yVelocity = speed * (float)Math.Sin(direction);
         projectile._velocity = new Vector2(xVelocity, yVelocity);

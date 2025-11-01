@@ -4,10 +4,13 @@
 [ext_resource type="Script" uid="uid://grnulx3obxgd" path="res://Scripts/GameObjects/EnemyNpc/EnemyNpc.cs" id="1_gti2g"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_gti2g"]
-size = Vector2(38, 38)
+size = Vector2(94, 88)
 
-[node name="EnemyNpc" type="CharacterBody2D"]
+[node name="EnemyNpc" type="CharacterBody2D" node_paths=PackedStringArray("_hitbox")]
+collision_layer = 32
+collision_mask = 18
 script = ExtResource("1_gti2g")
+_hitbox = NodePath("HitBox")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_gti2g")
@@ -15,3 +18,10 @@ shape = SubResource("RectangleShape2D_gti2g")
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.3, 0.3)
 texture = ExtResource("1_1knae")
+
+[node name="HitBox" type="Area2D" parent="."]
+collision_layer = 32
+collision_mask = 16
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitBox"]
+shape = SubResource("RectangleShape2D_gti2g")
