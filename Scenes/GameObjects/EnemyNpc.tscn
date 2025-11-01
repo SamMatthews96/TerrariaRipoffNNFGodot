@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://grnulx3obxgd" path="res://Scripts/GameObjects/EnemyNpc/EnemyNpc.cs" id="1_gti2g"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_gti2g"]
-size = Vector2(94, 88)
+size = Vector2(38, 38)
 
 [node name="EnemyNpc" type="CharacterBody2D" node_paths=PackedStringArray("_hitbox")]
 collision_layer = 32

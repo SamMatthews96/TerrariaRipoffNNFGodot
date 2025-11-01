@@ -1,13 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://oqop40vb15di"]
+[gd_scene load_steps=4 format=3 uid="uid://oqop40vb15di"]
 
 [ext_resource type="Script" uid="uid://cmta4gpw8nvqr" path="res://Scripts/GameObjects/WeaponSprites/TestProjectile.cs" id="1_x4jom"]
 [ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://Assets/Images/icon.svg" id="2_70xko"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jjyfn"]
 size = Vector2(68, 8)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_x4jom"]
-size = Vector2(198, 122)
 
 [node name="TestProjectile" type="Area2D" node_paths=PackedStringArray("_timer")]
 collision_layer = 16
@@ -24,10 +21,3 @@ texture = ExtResource("2_70xko")
 
 [node name="Timer" type="Timer" parent="."]
 wait_time = 4.0
-
-[node name="StaticBody2D" type="StaticBody2D" parent="."]
-collision_layer = 16
-collision_mask = 32
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
-shape = SubResource("RectangleShape2D_x4jom")

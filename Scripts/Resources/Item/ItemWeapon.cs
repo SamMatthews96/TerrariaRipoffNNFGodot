@@ -15,6 +15,10 @@ public sealed partial class ItemWeapon : ItemEquipment {
             Speed = speed,
             Power = power
         };
+        /*
+         * This has all the information required for the weapon sprite
+         * that spawns. 
+         */
     }
 
     
