@@ -4,10 +4,11 @@
 [ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://Assets/Images/icon.svg" id="2_70xko"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jjyfn"]
-size = Vector2(120, 12)
+size = Vector2(68, 8)
 
-[node name="TestProjectile" type="RigidBody2D" node_paths=PackedStringArray("_timer")]
-lock_rotation = true
+[node name="TestProjectile" type="Area2D" node_paths=PackedStringArray("_timer")]
+collision_layer = 16
+collision_mask = 34
 script = ExtResource("1_x4jom")
 _timer = NodePath("Timer")
 
@@ -15,7 +16,7 @@ _timer = NodePath("Timer")
 shape = SubResource("RectangleShape2D_jjyfn")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-scale = Vector2(0.921875, 0.09375)
+scale = Vector2(0.53125, 0.0625)
 texture = ExtResource("2_70xko")
 
 [node name="Timer" type="Timer" parent="."]

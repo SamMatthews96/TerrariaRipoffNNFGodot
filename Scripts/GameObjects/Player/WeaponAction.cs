@@ -9,6 +9,10 @@ public partial class WeaponAction : PlayerAction {
     public override void _Ready() {
         Player = ActionController.Player;
         Game = ActionController.Game;
+        
+        // listen to weapon changes
+        // when weapon changes, set Weapon
+        // 
     }
 
     public override void LeftMouseAction(Vector2 mouseWorldPosition) {
