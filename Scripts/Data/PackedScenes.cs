@@ -30,4 +30,5 @@ public partial class PackedScenes : Resource {
     // WeaponSprites
     [Export] public PackedScene WeaponProjectile { get; private set; }
     [Export] public PackedScene WeaponSwing { get; private set; }
+    [Export] public PackedScene PickaxeSwing { get; private set; }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using Godot;
+using TerrariaRipoffNNF.Scripts.GameObjects.WeaponSprites;
 
 namespace TerrariaRipoffNNF;
 
@@ -36,6 +37,8 @@ public partial class GatherAction : PlayerAction {
         _isGathering = true;
         if (_gatherCooldown.IsStopped()) {
             AttemptGather();
+            MiningAnimation miningAnimation = MiningAnimation.Create();
+            Player.AddChild(miningAnimation);
         }
     }
 

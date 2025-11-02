@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://7jmwho8ry8c0"]
+
+[ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://Assets/Images/icon.svg" id="1_a1c0y"]
+[ext_resource type="Script" uid="uid://uym5blhbhmd6" path="res://Scripts/GameObjects/WeaponSprites/MiningAnimation.cs" id="1_em4v6"]
+
+[node name="Pickaxe" type="Node2D" node_paths=PackedStringArray("_timer")]
+script = ExtResource("1_em4v6")
+_timer = NodePath("Timer")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(79, 0.132814)
+scale = Vector2(0.8125, 0.0760498)
+texture = ExtResource("1_a1c0y")
+
+[node name="Sprite2D2" type="Sprite2D" parent="."]
+position = Vector2(122, 0)
+scale = Vector2(0.078125, 0.734375)
+texture = ExtResource("1_a1c0y")
+
+[node name="Timer" type="Timer" parent="."]

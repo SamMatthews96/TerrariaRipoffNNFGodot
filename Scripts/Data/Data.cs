@@ -1,4 +1,4 @@
-﻿global using CraftingStations = Godot.Collections.Dictionary<
+global using CraftingStations = Godot.Collections.Dictionary<
     TerrariaRipoffNNF.CraftingStationType,
     TerrariaRipoffNNF.CraftingStation>;
 using Godot;

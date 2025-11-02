@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="PackedScenes" load_steps=24 format=3 uid="uid://dllhhokx2wkse"]
+[gd_resource type="Resource" script_class="PackedScenes" load_steps=25 format=3 uid="uid://dllhhokx2wkse"]
 
 [ext_resource type="Script" uid="uid://btjjbewbkdhw8" path="res://Scripts/Data/PackedScenes.cs" id="1_tombv"]
 [ext_resource type="PackedScene" uid="uid://cdxpjclstgoxa" path="res://Scenes/GameObjects/CraftStationArea.tscn" id="2_5ayme"]
@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://bx6lgpicpfal4" path="res://Scenes/GameObjects/Player.tscn" id="6_12bmn"]
 [ext_resource type="PackedScene" uid="uid://bawlysyg56da3" path="res://Scenes/Interface/Game/Crafting/RecipeIngredientSlotTexture.tscn" id="7_6ykcs"]
 [ext_resource type="PackedScene" uid="uid://0tlymjajesh" path="res://Scenes/Interface/Game/Crafting/SelectCraftStationButton.tscn" id="7_eocek"]
+[ext_resource type="PackedScene" uid="uid://7jmwho8ry8c0" path="res://Scenes/WeaponNodes/Pickaxe.tscn" id="7_w7gg7"]
 [ext_resource type="PackedScene" uid="uid://cn7bp5sib73p6" path="res://Scenes/GameObjects/ActionController.tscn" id="8_7uyj2"]
 [ext_resource type="PackedScene" uid="uid://dgm8a81v4g6g3" path="res://Scenes/Interface/Game/Crafting/SelectRecipeButton.tscn" id="8_bwf4d"]
 [ext_resource type="PackedScene" uid="uid://dpvw8x6fjjkkg" path="res://Scenes/GameObjects/Crafting.tscn" id="9_dslwf"]
@@ -49,3 +50,4 @@ LoadingScreen = ExtResource("4_y0gj7")
 WorldObjectManager = ExtResource("14_mase3")
 WeaponProjectile = ExtResource("16_p2brr")
 WeaponSwing = ExtResource("17_w7gg7")
+PickaxeSwing = ExtResource("7_w7gg7")
