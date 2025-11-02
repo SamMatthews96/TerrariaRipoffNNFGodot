@@ -7,8 +7,7 @@ namespace TerrariaRipoffNNF;
 public partial class ItemCraftStationOutputTemplate : ItemPropertyOutputTemplate {
     [Export] public CraftingStationType Type { get; private set; }
     
-    public override ItemProperty Build(Dictionary<string, Item> suppliedIngredients,
-        Dictionary<string, RecipeIngredientSlot> ingredientSlots) {
+    public override ItemProperty Build(Dictionary<string, Item> suppliedIngredients) {
         return new ItemCraftStation(Type);
     }
 }

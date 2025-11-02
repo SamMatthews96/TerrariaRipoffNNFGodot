@@ -93,9 +93,9 @@ public sealed partial class Crafting : Node {
 
     private List<StackedItems> GetTotalSelectedIngredients() {
         List<StackedItems> totalIngredients = new();
-        foreach (string key in _selectedRecipe.IngredientSlots.Keys) {
+        foreach (string key in _selectedRecipe.RecipeIngredients.Keys) {
             if (!_selectedIngredients.TryGetValue(key, out Item item)) continue;
-            int amount = _selectedRecipe.IngredientSlots[key].Amount;
+            int amount = _selectedRecipe.RecipeIngredients[key].Amount;
             totalIngredients.Add(new StackedItems(item, amount));
         }
 

@@ -17,7 +17,7 @@ public partial class Recipes : Resource {
 
         Array<Recipe> recipes = new();
         foreach (Recipe recipe in _recipes) {
-            if (recipe.CraftingStationType == craftingStationType) {
+            if (recipe.RequiredCraftingStation == craftingStationType) {
                 recipes.Add(recipe);
             }
         }

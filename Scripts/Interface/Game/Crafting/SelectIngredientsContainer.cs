@@ -62,14 +62,14 @@ public partial class SelectIngredientsContainer : Container {
 
     private void OnRecipeButtonClicked(Recipe recipe) {
         _selectedRecipe = recipe;
-        _recipeNameButton.Text = recipe.Name;
+        _recipeNameButton.Text = recipe.RecipeName;
         foreach (Node node in _ingredientContainer.GetChildren()) {
             node.QueueFree();
         }
 
         _selectIngredientMouseovers.Clear();
 
-        foreach ((string slotName, RecipeIngredientSlot ingredientSlot) in recipe.IngredientSlots) {
+        foreach ((string slotName, RecipeIngredientSlot ingredientSlot) in recipe.RecipeIngredients) {
             SelectIngredientMouseover newIngredientMouseover
                 = SelectIngredientMouseover.Create(ingredientSlot);
             _selectIngredientMouseovers.Add(slotName, newIngredientMouseover);

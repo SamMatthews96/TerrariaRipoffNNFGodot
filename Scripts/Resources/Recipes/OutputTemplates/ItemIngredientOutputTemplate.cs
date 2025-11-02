@@ -4,12 +4,11 @@ using Godot.Collections;
 namespace TerrariaRipoffNNF;
 
 [GlobalClass]
-public partial class ItemIngredientPropertyOutputTemplate : ItemPropertyOutputTemplate {
+public partial class ItemIngredientOutputTemplate : ItemPropertyOutputTemplate {
     [Export] public ItemIngredient Output { get; private set; }
 
     public override ItemProperty Build(
-        Dictionary<string, Item> suppliedIngredients,
-        Dictionary<string, RecipeIngredientSlot> ingredientSlots
+        Dictionary<string, Item> suppliedIngredients
     ) {
         return Output;
     }

@@ -5,13 +5,12 @@ using Godot.Collections;
 namespace TerrariaRipoffNNF;
 
 [GlobalClass]
-public partial class RecipePropertyMapMultiplier
-    : Resource, IRecipePropertyMap<float> {
+public partial class RecipeFieldMapMultiplier : RecipeFieldMapFloat {
     [Export] private float _base;
     [Export] private float _multiplier;
     [Export] private string _ingredientName;
 
-    public float ResolveTemplate(
+    public override float ResolveTemplate(
         Dictionary<string, Item> suppliedIngredients
     ) {
         if (_multiplier == 0) {

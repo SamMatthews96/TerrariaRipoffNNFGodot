@@ -6,35 +6,34 @@ namespace TerrariaRipoffNNF;
 
 [GlobalClass]
 public partial class Recipe : Resource {
-    [Export] public CraftingStationType CraftingStationType { get; private set; }
-    [Export] public Dictionary<string, RecipeIngredientSlot> IngredientSlots { get; private set; }
-
-    // Output qualities
-    [Export] public string Name { get; private set; }
-    [Export] public bool IsStackable { get; private set; }
-    [Export] public RecipePropertyMapString ResultNameMap { get; private set; }
-    [Export] public RecipePropertyMapMultiplier InventorySpaceMap { get; private set; }
-    [Export] public Array<ItemPropertyOutputTemplate> ItemProperties { get; private set; }
-    [Export] public RecipePropertyMapTexture ResultTextureMap { get; private set; }
+    [Export] public string RecipeName { get; private set; }
+    [Export] public CraftingStationType RequiredCraftingStation { get; private set; }
+    [Export] public Dictionary<string, RecipeIngredientSlot> RecipeIngredients { get; private set; }
     [Export] public Texture2D TemplateIcon { get; private set; }
 
+    [Export] public bool IsStackable { get; private set; }
+    [Export] public RecipeFieldMapString ResultNameMap { get; private set; }
+    [Export] public RecipeFieldMapFloat ResultInventorySpaceMap { get; private set; }
+    [Export] public RecipeFieldMapTexture ResultTextureSingleMap { get; private set; }
+    [Export] public Array<ItemPropertyOutputTemplate> ResultItemProperties { get; private set; }
+
     public StackedItems Build(Dictionary<string, Item> suppliedIngredients) {
-        if (IngredientSlots.Keys.Any(key => !suppliedIngredients.ContainsKey(key))) {
+        if (RecipeIngredients.Keys.Any(key => !suppliedIngredients.ContainsKey(key))) {
             return null;
         }
 
         Array<ItemProperty> newItemProperties = new() {
             new ItemCrafted(this, suppliedIngredients)
         };
-        foreach (ItemPropertyOutputTemplate itemPropertyOutputTemplate in ItemProperties) {
+        foreach (ItemPropertyOutputTemplate itemPropertyOutputTemplate in ResultItemProperties) {
             ItemProperty newItemProperty
-                = itemPropertyOutputTemplate.Build(suppliedIngredients, IngredientSlots);
+                = itemPropertyOutputTemplate.Build(suppliedIngredients);
             newItemProperties.Add(newItemProperty);
         }
-        
+
         string name = ResultNameMap.ResolveTemplate(suppliedIngredients);
-        Texture2D iconTexture = ResultTextureMap.ResolveTemplate(suppliedIngredients);
-        float inventorySpace = InventorySpaceMap.ResolveTemplate(suppliedIngredients);
+        Texture2D iconTexture = ResultTextureSingleMap.ResolveTemplate(suppliedIngredients);
+        float inventorySpace = ResultInventorySpaceMap.ResolveTemplate(suppliedIngredients);
 
         Item item = Item.Create(
             name: name,

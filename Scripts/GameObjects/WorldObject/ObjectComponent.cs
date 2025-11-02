@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TerrariaRipoffNNF;
+﻿namespace TerrariaRipoffNNF;
 
 public class ObjectComponent : ObjectProperty {
     private readonly WorldObject _main;

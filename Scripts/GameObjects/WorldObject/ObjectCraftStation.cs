@@ -1,6 +1,4 @@
-﻿using Godot;
-
-namespace TerrariaRipoffNNF;
+﻿namespace TerrariaRipoffNNF;
 
 public partial class ObjectCraftStation : ObjectProperty {
     public CraftingStationType Type { get; private set; }

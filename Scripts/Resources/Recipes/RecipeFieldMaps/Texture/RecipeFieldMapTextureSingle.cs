@@ -4,12 +4,11 @@ using Godot.Collections;
 namespace TerrariaRipoffNNF;
 
 [GlobalClass]
-public partial class RecipePropertyMapTexture
-    : Resource, IRecipePropertyMap<Texture2D> {
+public partial class RecipeFieldMapTextureSingle : RecipeFieldMapTexture {
     [Export] private string _ingredientName;
     [Export] private IngredientToOutputTextureMap _ingredientToTextureMap;
 
-    public Texture2D ResolveTemplate(
+    public override Texture2D ResolveTemplate(
         Dictionary<string, Item> suppliedIngredients) {
         Item ingredient = suppliedIngredients[_ingredientName];
         ItemIngredient itemIngredient = ingredient.GetProperty<ItemIngredient>();
