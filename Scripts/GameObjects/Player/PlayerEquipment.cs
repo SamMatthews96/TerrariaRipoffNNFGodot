@@ -27,11 +27,11 @@ public partial class PlayerEquipment : Node {
     }
 
     private void OnUnequipPickaxeClicked() {
-        Pickaxe = new ItemMining();
+        Pickaxe = null;
     }
 
     private void OnUnequipWeaponClicked() {
-        Weapon = new ItemWeapon();
+        Weapon = null;
     }
 
     private void OnEquipItemClicked(Item item) {
@@ -41,7 +41,7 @@ public partial class PlayerEquipment : Node {
                 Pickaxe = item.GetProperty<ItemMining>();
                 break;
             case EquipmentSlot.Weapon:
-
+                Weapon = item.GetProperty<ItemWeapon>();
                 break;
         }
 

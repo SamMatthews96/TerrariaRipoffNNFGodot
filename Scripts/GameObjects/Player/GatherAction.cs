@@ -32,6 +32,7 @@ public partial class GatherAction : PlayerAction {
     }
 
     public override void LeftMouseAction(Vector2 mouseWorldPosition) {
+        if (Player.PlayerEquipment.Pickaxe is null) return;
         _isGathering = true;
         if (_gatherCooldown.IsStopped()) {
             AttemptGather();

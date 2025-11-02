@@ -16,7 +16,8 @@ public sealed partial class ItemWeapon : ItemEquipment {
             Speed = speed,
             Damage = damage,
             Texture = texture,
-            WeaponType = weaponType
+            WeaponType = weaponType,
+            Slot = EquipmentSlot.Weapon
         };
     }
 

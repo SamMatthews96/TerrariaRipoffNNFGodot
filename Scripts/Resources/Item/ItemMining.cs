@@ -13,7 +13,8 @@ public sealed partial class ItemMining : ItemEquipment {
         return new ItemMining {
             Speed = speed,
             Range = range,
-            Power = power
+            Power = power,
+            Slot = EquipmentSlot.Mining
         };
     }
 

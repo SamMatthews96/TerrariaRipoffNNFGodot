@@ -12,6 +12,7 @@ public partial class WeaponAction : PlayerAction {
     }
 
     public override void LeftMouseAction(Vector2 mouseWorldPosition) {
+        if (Player.PlayerEquipment.Weapon is null) return;
         if (!_weaponCooldown.IsStopped()) return;
         // temporarily just reach through the tree,
         // listen to weapon changes

@@ -14,10 +14,14 @@ public partial class ItemWeaponPropertyOutputTemplate : ItemPropertyOutputTempla
         Dictionary<string, Item> suppliedIngredients,
         Dictionary<string, RecipeIngredientSlot> ingredientSlots
     ) {
+        float speed = Speed.ResolveTemplate(suppliedIngredients);
+        float damage = Damage.ResolveTemplate(suppliedIngredients);
+        Texture2D texture = Texture.ResolveTemplate(suppliedIngredients);
+        
         return ItemWeapon.Create(
-            speed: Speed.ResolveTemplate(suppliedIngredients),
-            damage: Damage.ResolveTemplate(suppliedIngredients),
-            texture: Texture.ResolveTemplate(suppliedIngredients),
+            speed: speed,
+            damage: damage,
+            texture: texture,
             weaponType: WeaponType
         );
     }
