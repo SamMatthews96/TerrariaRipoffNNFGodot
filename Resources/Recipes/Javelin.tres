@@ -1,0 +1,74 @@
+[gd_resource type="Resource" script_class="Recipe" load_steps=18 format=3 uid="uid://cjcooqtd3pkha"]
+
+[ext_resource type="Script" uid="uid://bg8jhsljipuqc" path="res://Scripts/Resources/Recipes/Recipe.cs" id="1_nsi0m"]
+[ext_resource type="Texture2D" uid="uid://wrf00jfy174v" path="res://Assets/Images/woodPlaceholder.png" id="1_qeow4"]
+[ext_resource type="Script" uid="uid://fn1nx4h2shbl" path="res://Scripts/Resources/Recipes/RecipeIngredientSlot.cs" id="2_fd5g7"]
+[ext_resource type="Script" uid="uid://plnguuoirtxu" path="res://Scripts/Resources/Recipes/RecipePropertyMaps/RecipePropertyMapMultiplier.cs" id="3_8wor2"]
+[ext_resource type="Script" uid="uid://coiqlucu73qbu" path="res://Scripts/Resources/Recipes/RecipePropertyMaps/IngredientNameToOutputNameMap.cs" id="4_sdtgx"]
+[ext_resource type="Resource" uid="uid://bolojhwxf18dq" path="res://Resources/Items/ItemIngredient/Wood.tres" id="5_mdlxp"]
+[ext_resource type="Script" uid="uid://dtjaxrcrr2rk5" path="res://Scripts/Resources/Recipes/RecipePropertyMaps/RecipePropertyMapString.cs" id="6_nwv75"]
+[ext_resource type="Texture2D" uid="uid://bpdgo62ad65vu" path="res://Assets/Images/ItemIcons/spear.png" id="7_ccure"]
+[ext_resource type="Script" uid="uid://bhgxggq1f0xhs" path="res://Scripts/Resources/Recipes/RecipePropertyMaps/IngredientToOutputTextureMap.cs" id="8_y3lnx"]
+[ext_resource type="Script" uid="uid://bwl3i0ngge60e" path="res://Scripts/Resources/Recipes/RecipePropertyMaps/RecipePropertyMapTexture.cs" id="9_snchn"]
+[ext_resource type="Texture2D" uid="uid://3mp4qibtswyy" path="res://Assets/Images/ItemIcons/spearPlaceholder.png" id="10_s8qsk"]
+
+[sub_resource type="Resource" id="Resource_uo5my"]
+resource_name = "wood"
+script = ExtResource("2_fd5g7")
+RecipeSlot = "wood"
+IngredientType = 2
+Amount = 10
+Icon = ExtResource("1_qeow4")
+Required = true
+metadata/_custom_type_script = "uid://fn1nx4h2shbl"
+
+[sub_resource type="Resource" id="Resource_32i6g"]
+script = ExtResource("3_8wor2")
+_base = 3.0
+_multiplier = 0.0
+_ingredientName = ""
+metadata/_custom_type_script = "uid://plnguuoirtxu"
+
+[sub_resource type="Resource" id="Resource_cshgs"]
+resource_name = "wood"
+script = ExtResource("4_sdtgx")
+Map = Dictionary[Object, String]({
+ExtResource("5_mdlxp"): "Wooden"
+})
+metadata/_custom_type_script = "uid://coiqlucu73qbu"
+
+[sub_resource type="Resource" id="Resource_cfkih"]
+script = ExtResource("6_nwv75")
+_stringTemplate = "{wood} Javelin"
+_ingredientNameMaps = Dictionary[String, ExtResource("4_sdtgx")]({
+"wood": SubResource("Resource_cshgs")
+})
+metadata/_custom_type_script = "uid://dtjaxrcrr2rk5"
+
+[sub_resource type="Resource" id="Resource_d1k8b"]
+script = ExtResource("8_y3lnx")
+Map = Dictionary[Object, Texture2D]({
+ExtResource("5_mdlxp"): ExtResource("7_ccure")
+})
+metadata/_custom_type_script = "uid://bhgxggq1f0xhs"
+
+[sub_resource type="Resource" id="Resource_27vcd"]
+script = ExtResource("9_snchn")
+_ingredientName = "wood"
+_ingredientToTextureMap = SubResource("Resource_d1k8b")
+metadata/_custom_type_script = "uid://bwl3i0ngge60e"
+
+[resource]
+script = ExtResource("1_nsi0m")
+CraftingStationType = 1
+IngredientSlots = Dictionary[String, Object]({
+"wood": SubResource("Resource_uo5my")
+})
+Name = "Javelin"
+IsStackable = false
+ResultNameMap = SubResource("Resource_cfkih")
+InventorySpaceMap = SubResource("Resource_32i6g")
+ItemProperties = Array[Object]([])
+ResultTextureMap = SubResource("Resource_27vcd")
+TemplateIcon = ExtResource("10_s8qsk")
+metadata/_custom_type_script = "uid://bg8jhsljipuqc"

@@ -1,9 +1,8 @@
-[gd_scene load_steps=12 format=3 uid="uid://bx6lgpicpfal4"]
+[gd_scene load_steps=11 format=3 uid="uid://bx6lgpicpfal4"]
 
 [ext_resource type="Script" uid="uid://b11uqw4ifwmss" path="res://Scripts/GameObjects/Player/Player.cs" id="1_hx4ms"]
 [ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://Assets/Images/icon.svg" id="2_5yc1a"]
 [ext_resource type="PackedScene" uid="uid://c8u386chg2fea" path="res://Scenes/GameObjects/PickupArea.tscn" id="3_om7r2"]
-[ext_resource type="PackedScene" uid="uid://dyxoinb1s88j3" path="res://Scenes/WeaponNodes/Swing.tscn" id="6_4qtyd"]
 [ext_resource type="Script" uid="uid://ckpwfs63s24tq" path="res://Scripts/Resources/Item/ItemWeapon.cs" id="6_entsh"]
 [ext_resource type="Script" uid="uid://b43ui7yk16ekk" path="res://Scripts/GameObjects/Player/PlayerEquipment.cs" id="7_in65p"]
 [ext_resource type="Script" uid="uid://dfb4kfm2jhuiq" path="res://Scripts/Resources/Item/ItemMining.cs" id="9_pqpyq"]
@@ -28,7 +27,7 @@ script = ExtResource("6_entsh")
 Speed = 0.0
 Damage = 15.0
 Texture = ExtResource("2_5yc1a")
-PackedWeaponAttackNode = ExtResource("6_4qtyd")
+WeaponType = 0
 metadata/_custom_type_script = "uid://ckpwfs63s24tq"
 
 [node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("PlayerEquipment", "_positionSynchronizer", "_camera")]

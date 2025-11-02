@@ -9,12 +9,16 @@ public partial class WeaponAttackNode : Area2D {
     protected Vector2 TargetPosition { get; private set; }
 
     public static WeaponAttackNode Create(
-        ItemWeapon weapon, // damage, and other potential properties
-        Player player, // spawn position
-        Vector2 targetPosition // target position) {
+        ItemWeapon weapon, Player player, Vector2 targetPosition
     ) {
-        WeaponAttackNode newNode =
-            weapon.PackedWeaponAttackNode.Instantiate<WeaponAttackNode>();
+        WeaponAttackNode newNode = weapon.WeaponType switch {
+            WeaponType.MeleeSwing =>
+                Data.PackedScenes.WeaponSwing.Instantiate<WeaponAttackNode>(),
+            WeaponType.Projectile =>
+                Data.PackedScenes.WeaponProjectile.Instantiate<WeaponAttackNode>(),
+            _ => throw new ArgumentOutOfRangeException(nameof(weapon))
+        };
+
         newNode.Weapon = weapon;
         newNode.Player = player;
         newNode.TargetPosition = targetPosition;

@@ -28,5 +28,6 @@ public partial class PackedScenes : Resource {
     [Export] public PackedScene WorldObjectManager { get; private set; }
     
     // WeaponSprites
-    [Export] public PackedScene TestProjectile { get; private set; }
+    [Export] public PackedScene WeaponProjectile { get; private set; }
+    [Export] public PackedScene WeaponSwing { get; private set; }
 }

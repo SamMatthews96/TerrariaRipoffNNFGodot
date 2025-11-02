@@ -8,9 +8,10 @@ public partial class WeaponAttackSwing : WeaponAttackNode {
     private float _swingSize = (float)Math.PI * 0.7f;
     private int _swingDirection;
     [Export] private Timer _timer;
+    private Vector2 _centerOffset = new(22, -50);
 
     public override void _Ready() {
-        Position = Player.Position + new Vector2(22, -50);
+        Position = Player.Position + _centerOffset;
 
         Vector2 delta = TargetPosition - Position;
         float swingMiddle = (float)Math.Atan2(delta.Y, delta.X);
@@ -28,7 +29,7 @@ public partial class WeaponAttackSwing : WeaponAttackNode {
     }
 
     public override void _PhysicsProcess(double delta) {
-        Position = Player.Position + new Vector2(22, -50);
+        Position = Player.Position + _centerOffset;
         Rotation += _rotationSpeed * _swingDirection * (float)delta;
     }
 }

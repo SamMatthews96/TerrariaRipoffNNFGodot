@@ -1,6 +1,5 @@
 ﻿using Godot;
 using Godot.Collections;
-using TerrariaRipoffNNF.Scripts.GameObjects.WeaponSprites;
 
 namespace TerrariaRipoffNNF;
 
@@ -9,15 +8,15 @@ public sealed partial class ItemWeapon : ItemEquipment {
     [Export] public float Speed { get; private set; }
     [Export] public float Damage { get; private set; }
     [Export] public Texture2D Texture { get; private set; }
-    [Export] public PackedScene PackedWeaponAttackNode { get; private set; }
+    [Export] public WeaponType WeaponType { get; private set; }
 
     public static ItemWeapon Create(
-        float speed, float damage, Texture2D texture, PackedScene packedScene) {
+        float speed, float damage, Texture2D texture, WeaponType weaponType) {
         return new ItemWeapon {
             Speed = speed,
             Damage = damage,
             Texture = texture,
-            PackedWeaponAttackNode = packedScene
+            WeaponType = weaponType
         };
     }
 
