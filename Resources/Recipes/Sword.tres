@@ -1,0 +1,108 @@
+[gd_resource type="Resource" script_class="Recipe" load_steps=24 format=3 uid="uid://bl874n6xjpd3j"]
+
+[ext_resource type="Texture2D" uid="uid://cargd8drjeywp" path="res://Assets/Images/ingotPlaceholder.png" id="1_py0n2"]
+[ext_resource type="Script" uid="uid://fn1nx4h2shbl" path="res://Scripts/Resources/Recipes/RecipeIngredientSlot.cs" id="2_py0n2"]
+[ext_resource type="Script" uid="uid://plnguuoirtxu" path="res://Scripts/Resources/Recipes/RecipePropertyMaps/RecipePropertyMapMultiplier.cs" id="3_fkwd6"]
+[ext_resource type="Script" uid="uid://bhgxggq1f0xhs" path="res://Scripts/Resources/Recipes/RecipePropertyMaps/IngredientToOutputTextureMap.cs" id="6_6l4v4"]
+[ext_resource type="Script" uid="uid://bwl3i0ngge60e" path="res://Scripts/Resources/Recipes/RecipePropertyMaps/RecipePropertyMapTexture.cs" id="7_dp181"]
+[ext_resource type="Script" uid="uid://c6jyj842ux7cg" path="res://Scripts/Resources/Recipes/ItemWeaponPropertyOutputTemplate.cs" id="8_65mua"]
+[ext_resource type="Script" uid="uid://coiqlucu73qbu" path="res://Scripts/Resources/Recipes/RecipePropertyMaps/IngredientNameToOutputNameMap.cs" id="9_r00yo"]
+[ext_resource type="Script" uid="uid://dtjaxrcrr2rk5" path="res://Scripts/Resources/Recipes/RecipePropertyMaps/RecipePropertyMapString.cs" id="10_5g0m8"]
+[ext_resource type="Resource" uid="uid://bdmvio3pq2fwx" path="res://Resources/Items/ItemIngredient/IronIngot.tres" id="10_fkwd6"]
+[ext_resource type="Texture2D" uid="uid://cuqlbxe8h2730" path="res://Assets/Images/ItemIcons/swordPlaceholder.png" id="12_1ahdr"]
+[ext_resource type="Script" uid="uid://bg8jhsljipuqc" path="res://Scripts/Resources/Recipes/Recipe.cs" id="12_3i5v4"]
+[ext_resource type="Texture2D" uid="uid://u8jt5m3erl56" path="res://Assets/Images/ItemIcons/ironSword.png" id="12_fkwd6"]
+
+[sub_resource type="Resource" id="Resource_641m5"]
+script = ExtResource("2_py0n2")
+RecipeSlot = "metal"
+IngredientType = 0
+Amount = 8
+Icon = ExtResource("1_py0n2")
+Required = true
+metadata/_custom_type_script = "uid://fn1nx4h2shbl"
+
+[sub_resource type="Resource" id="Resource_32i6g"]
+script = ExtResource("3_fkwd6")
+_base = 3.0
+_multiplier = 0.0
+_ingredientName = ""
+metadata/_custom_type_script = "uid://plnguuoirtxu"
+
+[sub_resource type="Resource" id="Resource_fd5g7"]
+script = ExtResource("3_fkwd6")
+_base = 10.0
+_multiplier = 0.0
+_ingredientName = ""
+metadata/_custom_type_script = "uid://plnguuoirtxu"
+
+[sub_resource type="Resource" id="Resource_sdtgx"]
+script = ExtResource("3_fkwd6")
+_base = 2.0
+_multiplier = 0.0
+_ingredientName = ""
+metadata/_custom_type_script = "uid://plnguuoirtxu"
+
+[sub_resource type="Resource" id="Resource_nwv75"]
+script = ExtResource("6_6l4v4")
+Map = Dictionary[Object, Texture2D]({
+ExtResource("10_fkwd6"): ExtResource("12_fkwd6")
+})
+metadata/_custom_type_script = "uid://bhgxggq1f0xhs"
+
+[sub_resource type="Resource" id="Resource_mdlxp"]
+script = ExtResource("7_dp181")
+_ingredientName = "metal"
+_ingredientToTextureMap = SubResource("Resource_nwv75")
+metadata/_custom_type_script = "uid://bwl3i0ngge60e"
+
+[sub_resource type="Resource" id="Resource_8wor2"]
+script = ExtResource("8_65mua")
+Speed = SubResource("Resource_sdtgx")
+Damage = SubResource("Resource_fd5g7")
+Texture = SubResource("Resource_mdlxp")
+WeaponType = 1
+metadata/_custom_type_script = "uid://c6jyj842ux7cg"
+
+[sub_resource type="Resource" id="Resource_6l4v4"]
+script = ExtResource("9_r00yo")
+Map = Dictionary[Object, String]({
+ExtResource("10_fkwd6"): "Iron"
+})
+metadata/_custom_type_script = "uid://coiqlucu73qbu"
+
+[sub_resource type="Resource" id="Resource_cfkih"]
+script = ExtResource("10_5g0m8")
+_stringTemplate = "{metal} Sword"
+_ingredientNameMaps = Dictionary[String, ExtResource("9_r00yo")]({
+"metal": SubResource("Resource_6l4v4")
+})
+metadata/_custom_type_script = "uid://dtjaxrcrr2rk5"
+
+[sub_resource type="Resource" id="Resource_d1k8b"]
+script = ExtResource("6_6l4v4")
+Map = Dictionary[Object, Texture2D]({
+ExtResource("10_fkwd6"): ExtResource("12_fkwd6")
+})
+metadata/_custom_type_script = "uid://bhgxggq1f0xhs"
+
+[sub_resource type="Resource" id="Resource_27vcd"]
+script = ExtResource("7_dp181")
+_ingredientName = "metal"
+_ingredientToTextureMap = SubResource("Resource_d1k8b")
+metadata/_custom_type_script = "uid://bwl3i0ngge60e"
+
+[resource]
+script = ExtResource("12_3i5v4")
+CraftingStationType = 2
+IngredientSlots = Dictionary[String, Object]({
+"metal": SubResource("Resource_641m5")
+})
+Name = "Sword"
+IsStackable = false
+ResultNameMap = SubResource("Resource_cfkih")
+InventorySpaceMap = SubResource("Resource_32i6g")
+ItemProperties = Array[Object]([SubResource("Resource_8wor2")])
+ResultTextureMap = SubResource("Resource_27vcd")
+TemplateIcon = ExtResource("12_1ahdr")
+metadata/_custom_type_script = "uid://bg8jhsljipuqc"

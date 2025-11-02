@@ -23,7 +23,6 @@ public partial class EnemyNpc : CharacterBody2D {
 
     private void OnAreaEntered(Area2D area) {
         if (area is WeaponAttackNode weaponAttackNode) {
-            GD.Print("hit", weaponAttackNode.Weapon.Damage);
             _health -= weaponAttackNode.Weapon.Damage;
             if (_health <= 0) {
                 QueueFree();
