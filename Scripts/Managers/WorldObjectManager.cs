@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Godot;
 using Godot.Collections;
@@ -13,16 +12,13 @@ public partial class WorldObjectManager : Node {
 
     private Game _game;
     private Array<WorldObject>[,] _activeWorldObjects;
-    private int _currentLoadCellCount;
     private string _worldName;
-
-    private bool _isStartAreaLoading;
-    private bool _isWorldLoading;
 
     private Array<Dictionary>[,] _unspawnedWorldObjects;
     private List<(int x, int y)> _loadingQueue;
     private int _worldSpawnThreshold;
     private (int x, int y) _defaultSpawnPosition;
+    private WorldObjectLoader _worldObjectLoader;
 
     private Dictionary _localPlayerData;
 
@@ -63,8 +59,7 @@ public partial class WorldObjectManager : Node {
             ].Add(dictionary);
         }
 
-        _isStartAreaLoading = true;
-        _isWorldLoading = true;
+        InitializeWorldObjectLoader();
 
         _game.Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
     }
@@ -231,8 +226,21 @@ public partial class WorldObjectManager : Node {
             }
         }
 
-        _isStartAreaLoading = true;
-        _isWorldLoading = true;
+        InitializeWorldObjectLoader();
+    }
+    
+    private void InitializeWorldObjectLoader() {
+        _worldObjectLoader = new WorldObjectLoader();
+        _worldObjectLoader.Initialize(_loadingQueue, _unspawnedWorldObjects, _worldSpawnThreshold);
+        _worldObjectLoader.OnWorldObjectAdd = AddWorldObject;
+        _worldObjectLoader.OnCellLoadStart = (x, y) => {
+            _activeWorldObjects[x, y] = new Array<WorldObject>();
+        };
+        _worldObjectLoader.OnStartAreaLoaded = () => {
+            SpawnLocalPlayer();
+            WorldLoadedLocally?.Invoke();
+        };
+        AddChild(_worldObjectLoader);
     }
 
 
@@ -246,42 +254,6 @@ public partial class WorldObjectManager : Node {
                new Array<WorldObject>();
     }
 
-    public override void _Process(double delta) {
-        if (_isWorldLoading) {
-            ProcessLoadWorld(16);
-        }
-    }
-
-    private void ProcessLoadWorld(float timeout) {
-        Stopwatch stopwatch = new();
-        stopwatch.Start();
-        while (
-            _currentLoadCellCount < _loadingQueue.Count &&
-            stopwatch.ElapsedMilliseconds < timeout
-        ) {
-            (int x, int y) coords = _loadingQueue[_currentLoadCellCount];
-            Array<Dictionary> cellObjects =
-                _unspawnedWorldObjects[coords.x, coords.y];
-            _activeWorldObjects[coords.x, coords.y] =
-                new Array<WorldObject>();
-            foreach (Dictionary dictionary in cellObjects) {
-                WorldObject worldObject =
-                    WorldObject.FromDictionary(dictionary);
-                AddWorldObject(worldObject);
-            }
-
-            _currentLoadCellCount++;
-        }
-
-        if (_isStartAreaLoading &&
-            _currentLoadCellCount >= _worldSpawnThreshold) {
-            _isStartAreaLoading = false;
-            SpawnLocalPlayer();
-            WorldLoadedLocally?.Invoke();
-        }
-
-        _isWorldLoading = _currentLoadCellCount < _loadingQueue.Count;
-    }
 
     private void SpawnLocalPlayer() {
         // @todo consider making players a type of WorldObject
