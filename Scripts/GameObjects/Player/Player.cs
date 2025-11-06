@@ -50,6 +50,7 @@ public partial class Player : CharacterBody2D {
     public event Action<Dictionary> MovedCell;
 
     public event Action<Player> PlayerDespawned;
+    public static event Action PlayerSaved;
 
     public override void _EnterTree() {
         _positionSynchronizer.SetMultiplayerAuthority(PeerId);
@@ -93,16 +94,26 @@ public partial class Player : CharacterBody2D {
 
         Game.InputManager.HorizontalInputChanged += OnHorizontalInputChanged;
         Game.InputManager.JumpPressed += OnJumpPressed;
+        Game.Interface.GameMenu.ExitGameButtonDown += OnExitClicked;
 
         _characterName = playerData["Name"].ToString();
 
         TreeExiting += () => {
             Game.InputManager.HorizontalInputChanged -= OnHorizontalInputChanged;
             Game.InputManager.JumpPressed -= OnJumpPressed;
-            SavePlayerData();
+            Game.Interface.GameMenu.ExitGameButtonDown -= OnExitClicked;
         };
         
         LocalPlayerSpawned?.Invoke(this);
+    }
+
+    private void OnExitClicked() {
+        Dictionary playerData = new() {
+            {"Name", _characterName},
+            { "Inventory", Inventory.ToDictionary() },
+        };
+        FileManager.SavePlayer(playerData);
+        PlayerSaved?.Invoke();
     }
 
     private void OnHorizontalInputChanged(int newInput) {
@@ -145,14 +156,6 @@ public partial class Player : CharacterBody2D {
         MovedCell?.Invoke(positionChange);
     }
 
-    private void SavePlayerData() {
-        Dictionary playerData = new() {
-            {"Name", _characterName},
-            { "Inventory", Inventory.ToDictionary() },
-        };
-        FileManager.SavePlayer(playerData);
-    }
-    
     public void Disable() {
         ProcessMode = ProcessModeEnum.Disabled;
         Visible = false;

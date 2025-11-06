@@ -1,3 +1,4 @@
+using System;
 using Godot;
 using Godot.Collections;
 
@@ -5,7 +6,9 @@ namespace TerrariaRipoffNNF;
 
 public partial class Game : Node {
     public const int BlockSize = 32;
-    
+
+    public event Action ExitGameFinished;
+
     [Export] public Node BlockParent { get; private set; }
     [Export] public Node PlayerParent { get; private set; }
 
@@ -24,6 +27,9 @@ public partial class Game : Node {
     private MultiplayerClient _multiplayerClient;
 
     private Dictionary _playerData;
+
+    private bool _isPlayerSaved;
+    private bool _isWorldSaved;
 
     [Export] public WorldObjectManager WorldObjectManager { get; private set; }
 
@@ -64,6 +70,42 @@ public partial class Game : Node {
             worldData["DefaultSpawnPosition"].AsGodotArray()[1].AsInt32());
 
         _playerData = FileManager.LoadPlayer(playerData);
+    }
+
+    public override void _Ready() {
+        Interface.GameMenu.ExitGameButtonDown += OnExitClicked;
+    }
+
+    public override void _ExitTree() {
+        Interface.GameMenu.ExitGameButtonDown -= OnExitClicked;
+    }
+
+    private void OnExitClicked() {
+        
+        // Save World (done)
+        // remember that we don't need to save the world on the client
+        // Save Player (done)
+        // Start clearing up worldObjects (todo)
+        Player.PlayerSaved += OnPlayerSaved;
+        WorldObjectManager.WorldSaved += OnWorldSaved;
+        // once all are done, QueueFree() and load main menu
+
+    }
+
+    private void OnWorldSaved() {
+        _isWorldSaved = true;
+        TryExitGame();
+    }
+
+    private void OnPlayerSaved() {
+        _isPlayerSaved = true;
+        TryExitGame();
+    }
+
+    private void TryExitGame() {
+        if (_isPlayerSaved && _isWorldSaved) {
+            ExitGameFinished?.Invoke();
+        }
     }
 
     public bool IsInBounds(IntVector intVector) {

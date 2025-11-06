@@ -29,8 +29,15 @@ public partial class SceneManager : Node {
         AddChild(_loadingScreen);
         _game = Game.Create();
         AddChild(_game);
-        
-        _game.WorldObjectManager.ExitGameProcessed += ExitGame;
+
+        _game.Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
+        _game.ExitGameFinished += ExitGame;
+    }
+
+    private void OnExitGameClicked() {
+        _loadingScreen = Data.PackedScenes.LoadingScreen.Instantiate();
+        AddChild(_loadingScreen);
+        _game.Interface.GameMenu.ExitGameButtonDown -= OnExitGameClicked;
     }
 
     private void OnMainMenuHostClickedEnterWorld(Dictionary world, Dictionary playerInfo) {
@@ -52,8 +59,11 @@ public partial class SceneManager : Node {
 
     private void ExitGame() {
         CreateMainMenu();
-        _game.Interface.GameMenu.ExitGameButtonDown -= ExitGame;
+        _game.ExitGameFinished -= ExitGame;
         _game.QueueFree();
+
+        _loadingScreen.QueueFree();
+        _loadingScreen = null;
     }
 
     private void CreateMainMenu() {

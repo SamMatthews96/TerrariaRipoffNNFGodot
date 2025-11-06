@@ -29,7 +29,7 @@ public partial class WorldObjectManager : Node {
     private Godot.Collections.Dictionary<int, Player> _players = new();
 
     public event Action WorldLoadedLocally;
-    public event Action ExitGameProcessed;
+    public event Action WorldSaved;
 
     public void SetGameAsHost(Game game, Dictionary worldData, Dictionary playerData) {
         if (_game is not null) throw new Exception("[20250529.2332.1] Game already set");
@@ -79,7 +79,7 @@ public partial class WorldObjectManager : Node {
 
     private void OnExitGameClicked() {
         _game.Interface.GameMenu.ExitGameButtonDown -= OnExitGameClicked;
-        // if this is the host, save game
+        
         Dictionary worldData = new();
         worldData.Add("Name", _worldName);
         worldData.Add("Width", _game.Width);
@@ -89,7 +89,6 @@ public partial class WorldObjectManager : Node {
             new Array { _defaultSpawnPosition.x, _defaultSpawnPosition.y });
         Array savedWorldObjects = new();
 
-        // @todo will be faster if they're serialized as they change
         for (int x = 0; x < _game.Width; x++) {
             for (int y = 0; y < _game.Height; y++) {
                 if (_activeWorldObjects[x, y] is null) {
@@ -103,14 +102,13 @@ public partial class WorldObjectManager : Node {
                         savedWorldObjects.Add(worldObject.ToDictionary());
                     }
                 }
-                
             }
         }
 
         worldData.Add("SavedWorldObjects", savedWorldObjects);
         FileManager.SaveWorld(worldData);
 
-        ExitGameProcessed?.Invoke();
+        WorldSaved?.Invoke();
     }
 
     private void OnLocalPlayerSpawned(Player player) {
