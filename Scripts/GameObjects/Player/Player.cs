@@ -108,6 +108,7 @@ public partial class Player : CharacterBody2D {
     }
 
     private void OnExitClicked() {
+        _camera.Enabled = false;
         Dictionary playerData = new() {
             {"Name", _characterName},
             { "Inventory", Inventory.ToDictionary() },

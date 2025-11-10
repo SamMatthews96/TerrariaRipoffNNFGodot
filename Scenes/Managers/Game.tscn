@@ -6,17 +6,11 @@
 [ext_resource type="PackedScene" uid="uid://javhx4rej0q4" path="res://Scenes/Interface/Game/GameInterface.tscn" id="5_mn7lu"]
 [ext_resource type="Script" uid="uid://cgq337a6wtcr5" path="res://Scripts/Managers/NpcManager.cs" id="5_yl3e8"]
 
-[node name="Game" type="Node" node_paths=PackedStringArray("BlockParent", "PlayerParent", "Interface", "InputManager", "WorldObjectManager")]
+[node name="Game" type="Node" node_paths=PackedStringArray("Interface", "InputManager", "WorldObjectManager")]
 script = ExtResource("1_6kfdr")
-BlockParent = NodePath("BlockParent")
-PlayerParent = NodePath("PlayerParent")
 Interface = NodePath("GameInterface")
 InputManager = NodePath("InputManager")
 WorldObjectManager = NodePath("WorldObjectManager")
-
-[node name="BlockParent" type="Node" parent="."]
-
-[node name="PlayerParent" type="Node" parent="."]
 
 [node name="InputManager" type="Node" parent="." node_paths=PackedStringArray("_node2D")]
 script = ExtResource("4_lvxpj")

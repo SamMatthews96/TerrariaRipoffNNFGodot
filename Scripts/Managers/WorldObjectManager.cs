@@ -7,7 +7,7 @@ using Array = Godot.Collections.Array;
 
 namespace TerrariaRipoffNNF;
 
-public partial class WorldObjectManager : Node {
+public partial class WorldObjectManager : Node2D {
     private const int BlockSpawnDistance = 20;
 
     private Game _game;
@@ -65,6 +65,7 @@ public partial class WorldObjectManager : Node {
     }
 
     public override void _Ready() {
+        Visible = false;
         Player.LocalPlayerSpawned += OnLocalPlayerSpawned;
     }
 
@@ -74,9 +75,10 @@ public partial class WorldObjectManager : Node {
 
     private void OnExitGameClicked() {
         GetTree().Paused = true;
+        Visible = false;
         _game.Interface.GameMenu.ExitGameButtonDown -= OnExitGameClicked;
         
-        WorldObjectUnloader unloader = new WorldObjectUnloader();
+        WorldObjectUnloader unloader = new();
         unloader.Initialize(
             _game.Width,
             _game.Height,
@@ -99,7 +101,7 @@ public partial class WorldObjectManager : Node {
             OnLocalPlayerBuildWallAction;
         player.Inventory.PickupLooted += OnLocalPlayerPickupLooted;
 
-        // when player is deleted, unsubscribe from all events
+        // when the player is deleted, unsubscribe from all events
     }
 
     private List<(int x, int y)> CreateLoadingQueue((int x, int y) loadingOrigin) {
@@ -221,6 +223,8 @@ public partial class WorldObjectManager : Node {
         };
         _worldObjectLoader.OnStartAreaLoaded = () => {
             SpawnLocalPlayer();
+            ProcessMode = ProcessModeEnum.Disabled;
+            Visible = true;
             WorldLoadedLocally?.Invoke();
         };
         AddChild(_worldObjectLoader);
@@ -242,7 +246,7 @@ public partial class WorldObjectManager : Node {
         // @todo consider making players a type of WorldObject
         Player player = Player.Create(_game.PeerId, new IntVector(5, 5));
         player.InitAsLocal(_game, _localPlayerData);
-        _game.PlayerParent.AddChild(player, true);
+        AddChild(player, true);
         _players.Add(_game.PeerId, player);
 
         Rpc(nameof(RpcOnNewPlayerJoining), _game.PeerId);
@@ -251,7 +255,7 @@ public partial class WorldObjectManager : Node {
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
     private void RpcOnNewPlayerJoining(int newPeerId) {
         Player player = Player.Create(newPeerId, new IntVector(5, 5));
-        _game.PlayerParent.AddChild(player, true);
+        AddChild(player, true);
         _players.Add(newPeerId, player);
 
         _players[_game.PeerId].AddPeerToSynchronizer(newPeerId);
@@ -263,7 +267,7 @@ public partial class WorldObjectManager : Node {
     private void SpawnRemoteExistingPlayer(int peerId) {
         Player player = Player.Create(peerId,
             new IntVector(5, 5));
-        _game.PlayerParent.AddChild(player, true);
+        AddChild(player, true);
         _players.Add(peerId, player);
     }
 
@@ -433,7 +437,7 @@ public partial class WorldObjectManager : Node {
     private void AddWorldObject(WorldObject worldObject) {
         _activeWorldObjects[worldObject.Coords.X, worldObject.Coords.Y]
             .Add(worldObject);
-        _game.BlockParent.AddChild(worldObject, true);
+        AddChild(worldObject, true);
         worldObject.Destroyed += OnWorldObjectDestroyed;
         worldObject.Enable();
     }

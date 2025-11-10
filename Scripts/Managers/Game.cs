@@ -9,8 +9,8 @@ public partial class Game : Node {
 
     public event Action ExitGameFinished;
 
-    [Export] public Node BlockParent { get; private set; }
-    [Export] public Node PlayerParent { get; private set; }
+    // [Export] public Node BlockParent { get; private set; }
+    // [Export] public Node PlayerParent { get; private set; }
 
     [Export] public Interface.Game Interface { get; private set; }
 
