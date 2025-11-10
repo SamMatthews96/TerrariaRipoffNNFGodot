@@ -73,37 +73,20 @@ public partial class WorldObjectManager : Node {
     }
 
     private void OnExitGameClicked() {
+        GetTree().Paused = true;
         _game.Interface.GameMenu.ExitGameButtonDown -= OnExitGameClicked;
         
-        Dictionary worldData = new();
-        worldData.Add("Name", _worldName);
-        worldData.Add("Width", _game.Width);
-        worldData.Add("Height", _game.Height);
-        worldData.Add("PlayerPositions", new Array());
-        worldData.Add("DefaultSpawnPosition",
-            new Array { _defaultSpawnPosition.x, _defaultSpawnPosition.y });
-        Array savedWorldObjects = new();
-
-        for (int x = 0; x < _game.Width; x++) {
-            for (int y = 0; y < _game.Height; y++) {
-                if (_activeWorldObjects[x, y] is null) {
-                    foreach (Dictionary worldObjectData in _unspawnedWorldObjects[x, y]) {
-                        if (worldObjectData["type"].ToString() == "component") continue;
-                        savedWorldObjects.Add(worldObjectData);
-                    }
-                } else {
-                    foreach (WorldObject worldObject in _activeWorldObjects[x, y]) {
-                        if (worldObject.Type == "component") continue;
-                        savedWorldObjects.Add(worldObject.ToDictionary());
-                    }
-                }
-            }
-        }
-
-        worldData.Add("SavedWorldObjects", savedWorldObjects);
-        FileManager.SaveWorld(worldData);
-
-        WorldSaved?.Invoke();
+        WorldObjectUnloader unloader = new WorldObjectUnloader();
+        unloader.Initialize(
+            _game.Width,
+            _game.Height,
+            _worldName,
+            _defaultSpawnPosition,
+            _activeWorldObjects,
+            _unspawnedWorldObjects
+        );
+        unloader.OnWorldSaved = () => WorldSaved?.Invoke();
+        AddChild(unloader);
     }
 
     private void OnLocalPlayerSpawned(Player player) {

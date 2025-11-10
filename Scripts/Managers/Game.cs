@@ -94,18 +94,21 @@ public partial class Game : Node {
 
     private void OnWorldSaved() {
         _isWorldSaved = true;
+        WorldObjectManager.WorldSaved -= OnWorldSaved;
         TryExitGame();
     }
 
     private void OnPlayerSaved() {
         _isPlayerSaved = true;
+        Player.PlayerSaved -= OnPlayerSaved;
         TryExitGame();
     }
 
     private void TryExitGame() {
-        if (_isPlayerSaved && _isWorldSaved) {
-            ExitGameFinished?.Invoke();
-        }
+        if (!_isPlayerSaved || !_isWorldSaved) return;
+        GetTree().Paused = false;
+        
+        ExitGameFinished?.Invoke();
     }
 
     public bool IsInBounds(IntVector intVector) {
