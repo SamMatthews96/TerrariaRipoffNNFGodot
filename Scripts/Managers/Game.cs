@@ -9,9 +9,6 @@ public partial class Game : Node {
 
     public event Action ExitGameFinished;
 
-    // [Export] public Node BlockParent { get; private set; }
-    // [Export] public Node PlayerParent { get; private set; }
-
     [Export] public Interface.Game Interface { get; private set; }
 
     [Export] public InputManager InputManager { get; private set; }
@@ -51,7 +48,7 @@ public partial class Game : Node {
 
     public void InitAsClient(Dictionary playerData) {
         _playerData = FileManager.LoadPlayer(playerData);
-        _multiplayerClient = new MultiplayerClient();
+        _multiplayerClient = new MultiplayerClient(this);
         AddChild(_multiplayerClient);
 
         Multiplayer.ConnectedToServer += () => {
@@ -81,7 +78,9 @@ public partial class Game : Node {
     }
 
     private void OnExitClicked() {
-        
+        if (_multiplayerClient is not null) {
+            
+        }
         // Save World (done)
         // remember that we don't need to save the world on the client
         // Save Player (done)
@@ -105,9 +104,9 @@ public partial class Game : Node {
     }
 
     private void TryExitGame() {
-        if (!_isPlayerSaved || !_isWorldSaved) return;
+        if (!_isPlayerSaved) return;
+        if (_multiplayerClient is null && !_isWorldSaved) return;
         GetTree().Paused = false;
-        
         ExitGameFinished?.Invoke();
     }
 

@@ -17,9 +17,11 @@ public partial class PlayerEquipment : Node {
             OnUnequipWeaponClicked;
         _player.Game.Interface.PlayerEquipment.ClickedUnequipPickaxe +=
             OnUnequipPickaxeClicked;
+        TreeExiting += OnTreeExiting;
     }
 
-    public override void _ExitTree() {
+    private void OnTreeExiting() {
+        TreeExiting -= OnTreeExiting;
         _player.Game.Interface.PlayerEquipment.ClickedUnequipWeapon -=
             OnUnequipWeaponClicked;
         _player.Game.Interface.PlayerEquipment.ClickedUnequipPickaxe -=

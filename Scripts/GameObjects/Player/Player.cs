@@ -43,7 +43,7 @@ public partial class Player : CharacterBody2D {
     public IntVector Coords => new(Position / Game.BlockSize);
 
     public int PeerId => Name.ToString().ToInt();
-    public bool IsLocalPlayer => Multiplayer.GetUniqueId() == PeerId;
+    private bool _isLocalPlayer;
 
 
     public static event Action<Player> LocalPlayerSpawned;
@@ -54,7 +54,8 @@ public partial class Player : CharacterBody2D {
 
     public override void _EnterTree() {
         _positionSynchronizer.SetMultiplayerAuthority(PeerId);
-        if (IsLocalPlayer) {
+        _isLocalPlayer = Multiplayer.GetUniqueId() == PeerId;
+        if (_isLocalPlayer) {
             _camera.Enabled = true;
         }
     }
@@ -128,7 +129,7 @@ public partial class Player : CharacterBody2D {
     }
 
     public override void _PhysicsProcess(double delta) {
-        if (!IsLocalPlayer) return;
+        if (!_isLocalPlayer) return;
 
         _previousCoords = Coords;
         _isFalling = !TestMove(Transform, new Vector2(0, 0.1f));

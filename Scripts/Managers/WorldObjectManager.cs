@@ -74,7 +74,6 @@ public partial class WorldObjectManager : Node2D {
     }
 
     private void OnExitGameClicked() {
-        GetTree().Paused = true;
         Visible = false;
         _game.Interface.GameMenu.ExitGameButtonDown -= OnExitGameClicked;
         
@@ -223,7 +222,6 @@ public partial class WorldObjectManager : Node2D {
         };
         _worldObjectLoader.OnStartAreaLoaded = () => {
             SpawnLocalPlayer();
-            ProcessMode = ProcessModeEnum.Disabled;
             Visible = true;
             WorldLoadedLocally?.Invoke();
         };

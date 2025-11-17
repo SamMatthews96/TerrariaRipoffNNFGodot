@@ -26,6 +26,8 @@ window/size/viewport_height=1080
 window/size/initial_position_type=2
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
+window/size/viewport_width_override=0
+window/size/viewport_height_override=0
 
 [dotnet]
 
