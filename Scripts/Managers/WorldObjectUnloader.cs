@@ -9,7 +9,7 @@ namespace TerrariaRipoffNNF;
 
 public partial class WorldObjectUnloader : Node {
     // Limit the number of QueueFree calls per frame to prevent deletion spikes after _Process
-    private const int MaxQueueFreePerFrame = 50;
+    private int _maxQueueFreePerFrame = 300;
     
     private int _currentX;
     private int _currentY;
@@ -52,7 +52,7 @@ public partial class WorldObjectUnloader : Node {
         
         while (
             _currentX < _width &&
-            queueFreeCount < MaxQueueFreePerFrame
+            queueFreeCount < _maxQueueFreePerFrame
         ) {
             if (_activeWorldObjects[_currentX, _currentY] is null) {
                 // Handle unspawned objects - no QueueFree needed, just serialize
@@ -72,7 +72,7 @@ public partial class WorldObjectUnloader : Node {
                     // The while loop condition ensures we don't exceed MaxQueueFreePerFrame
                     // but we need to check here to avoid processing more objects in this cell
                     // if we've already hit the limit (prevents advancing to next cell prematurely)
-                    if (queueFreeCount >= MaxQueueFreePerFrame) {
+                    if (queueFreeCount >= _maxQueueFreePerFrame) {
                         // Stop processing this frame to prevent deletion spike
                         // The remaining objects in this cell will be processed next frame
                         return;

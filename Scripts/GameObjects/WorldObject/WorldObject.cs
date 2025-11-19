@@ -4,7 +4,7 @@ using Godot;
 
 namespace TerrariaRipoffNNF;
 
-public partial class WorldObject : Node {
+public partial class WorldObject : Node2D {
     public IntVector Coords { get; private set; }
 
     public Node2D ParentNode {
