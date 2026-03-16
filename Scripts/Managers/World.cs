@@ -7,7 +7,7 @@ using Array = Godot.Collections.Array;
 
 namespace TerrariaRipoffNNF;
 
-public partial class WorldObjectManager : Node2D {
+public partial class World : Node2D {
     private const int BlockSpawnDistance = 20;
 
     private Game _game;

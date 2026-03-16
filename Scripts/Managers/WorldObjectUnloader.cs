@@ -55,31 +55,19 @@ public partial class WorldObjectUnloader : Node {
             queueFreeCount < _maxQueueFreePerFrame
         ) {
             if (_activeWorldObjects[_currentX, _currentY] is null) {
-                // Handle unspawned objects - no QueueFree needed, just serialize
                 foreach (Dictionary worldObjectData in _unspawnedWorldObjects[_currentX, _currentY]) {
                     if (worldObjectData["type"].ToString() == "component") continue;
                     _savedWorldObjects.Add(worldObjectData);
                 }
             } else {
-                // Handle active objects - serialize and remove
                 Array<WorldObject> cellObjects = _activeWorldObjects[_currentX, _currentY];
-                // Create a copy of the list to iterate over since we'll be modifying it
                 var objectsToProcess = new List<WorldObject>(cellObjects);
                 
                 foreach (WorldObject worldObject in objectsToProcess) {
                     if (worldObject.Type == "component") continue;
-                    
-                    // The while loop condition ensures we don't exceed MaxQueueFreePerFrame
-                    // but we need to check here to avoid processing more objects in this cell
-                    // if we've already hit the limit (prevents advancing to next cell prematurely)
-                    if (queueFreeCount >= _maxQueueFreePerFrame) {
-                        // Stop processing this frame to prevent deletion spike
-                        // The remaining objects in this cell will be processed next frame
-                        return;
-                    }
+                    if (queueFreeCount >= _maxQueueFreePerFrame) return;
                     
                     _savedWorldObjects.Add(worldObject.ToDictionary());
-                    // Remove from active objects and free
                     _activeWorldObjects[_currentX, _currentY].Remove(worldObject);
                     worldObject.QueueFree();
                     queueFreeCount++;

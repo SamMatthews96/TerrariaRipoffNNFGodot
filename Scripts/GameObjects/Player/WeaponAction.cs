@@ -20,7 +20,7 @@ public partial class WeaponAction : PlayerAction {
 
         WeaponAttackNode proj = WeaponAttackNode.Create(
             Player.PlayerEquipment.Weapon, Player, mouseWorldPosition);
-        Game.WorldObjectManager.AddChild(proj);
+        Game.World.AddChild(proj);
         _weaponCooldown.Start();
     }
 

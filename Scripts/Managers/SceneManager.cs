@@ -20,7 +20,7 @@ public partial class SceneManager : Node {
     private void OnMainMenuSinglePlayerClickedEnterWorld(Dictionary worldData, Dictionary playerData) {
         CreateGame();
         _game.InitAsSinglePlayer(worldData, playerData);
-        _game.WorldObjectManager.WorldLoadedLocally += OnWorldLoadedLocally;
+        _game.World.WorldLoadedLocally += OnWorldLoadedLocally;
     }
 
     private void CreateGame() {
@@ -43,7 +43,7 @@ public partial class SceneManager : Node {
     private void OnMainMenuHostClickedEnterWorld(Dictionary world, Dictionary playerInfo) {
         CreateGame();
         _game.InitAsHost(world, playerInfo);
-        _game.WorldObjectManager.WorldLoadedLocally += OnWorldLoadedLocally;
+        _game.World.WorldLoadedLocally += OnWorldLoadedLocally;
     }
 
     private void OnWorldLoadedLocally() {
@@ -54,7 +54,7 @@ public partial class SceneManager : Node {
     private void OnMainMenuClientClickedEnterWorld(string ip, Dictionary playerInfo) {
         CreateGame();
         _game.InitAsClient(playerInfo);
-        _game.WorldObjectManager.WorldLoadedLocally += OnWorldLoadedLocally;
+        _game.World.WorldLoadedLocally += OnWorldLoadedLocally;
     }
 
     private void ExitGame() {

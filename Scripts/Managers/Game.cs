@@ -28,7 +28,7 @@ public partial class Game : Node {
     private bool _isPlayerSaved;
     private bool _isWorldSaved;
 
-    [Export] public WorldObjectManager WorldObjectManager { get; private set; }
+    [Export] public World World { get; private set; }
 
 
     public static Game Create() {
@@ -52,7 +52,7 @@ public partial class Game : Node {
         AddChild(_multiplayerClient);
 
         Multiplayer.ConnectedToServer += () => {
-            WorldObjectManager.SetGameAsClient(this, playerData);
+            World.SetGameAsClient(this, playerData);
             DefaultSpawnPosition = new IntVector(5, 5);
         };
     }
@@ -60,7 +60,7 @@ public partial class Game : Node {
     private void CreateWorld(Dictionary worldData, Dictionary playerData) {
         Width = (int)worldData["Width"];
         Height = (int)worldData["Height"];
-        WorldObjectManager.SetGameAsHost(this, worldData, playerData);
+        World.SetGameAsHost(this, worldData, playerData);
 
         DefaultSpawnPosition = new IntVector(
             worldData["DefaultSpawnPosition"].AsGodotArray()[0].AsInt32(),
@@ -86,14 +86,14 @@ public partial class Game : Node {
         // Save Player (done)
         // Start clearing up worldObjects (todo)
         Player.PlayerSaved += OnPlayerSaved;
-        WorldObjectManager.WorldSaved += OnWorldSaved;
+        World.WorldSaved += OnWorldSaved;
         // once all are done, QueueFree() and load main menu
 
     }
 
     private void OnWorldSaved() {
         _isWorldSaved = true;
-        WorldObjectManager.WorldSaved -= OnWorldSaved;
+        World.WorldSaved -= OnWorldSaved;
         TryExitGame();
     }
 

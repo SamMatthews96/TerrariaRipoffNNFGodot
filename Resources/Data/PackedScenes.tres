@@ -19,11 +19,11 @@
 [ext_resource type="PackedScene" uid="uid://dfd3nx6gn2gr4" path="res://Scenes/GameObjects/WorldObject.tscn" id="12_h7xbu"]
 [ext_resource type="PackedScene" uid="uid://dmru6hdxblhh5" path="res://Scenes/GameObjects/WorldSolid.tscn" id="13_5ayme"]
 [ext_resource type="PackedScene" uid="uid://bdiv1g7jn5iao" path="res://Scenes/GameObjects/WorldPickup.tscn" id="13_h7xbu"]
-[ext_resource type="PackedScene" uid="uid://cakmoct7fr7qe" path="res://Scenes/Managers/WorldObjectManager.tscn" id="14_mase3"]
 [ext_resource type="PackedScene" uid="uid://b2jynpjxk8k06" path="res://Scenes/GameObjects/EnemyNpc.tscn" id="15_jmu7e"]
 [ext_resource type="PackedScene" uid="uid://oqop40vb15di" path="res://Scenes/WeaponNodes/Projectile.tscn" id="16_p2brr"]
 [ext_resource type="PackedScene" uid="uid://brp1yudav7inr" path="res://Scenes/GameObjects/WorldStatic.tscn" id="16_vwj2m"]
 [ext_resource type="PackedScene" uid="uid://dyxoinb1s88j3" path="res://Scenes/WeaponNodes/Swing.tscn" id="17_w7gg7"]
+[ext_resource type="PackedScene" uid="uid://cakmoct7fr7qe" path="res://Scenes/Managers/World.tscn" id="19_w7gg7"]
 
 [resource]
 script = ExtResource("1_tombv")
@@ -47,7 +47,7 @@ BlockTypeButton = ExtResource("4_rx88w")
 ItemTooltipPropertyGroup = ExtResource("5_8fovs")
 SelectIngredientButton = ExtResource("11_tftwe")
 LoadingScreen = ExtResource("4_y0gj7")
-WorldObjectManager = ExtResource("14_mase3")
+World = ExtResource("19_w7gg7")
 WeaponProjectile = ExtResource("16_p2brr")
 WeaponSwing = ExtResource("17_w7gg7")
 PickaxeSwing = ExtResource("7_w7gg7")

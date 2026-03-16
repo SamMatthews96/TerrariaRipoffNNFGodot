@@ -25,7 +25,7 @@ public partial class PackedScenes : Resource {
     [Export] public PackedScene SelectIngredientButton { get; private set; }
     // Managers
     [Export] public PackedScene LoadingScreen { get; private set; }
-    [Export] public PackedScene WorldObjectManager { get; private set; }
+    [Export] public PackedScene World { get; private set; }
     
     // WeaponSprites
     [Export] public PackedScene WeaponProjectile { get; private set; }
