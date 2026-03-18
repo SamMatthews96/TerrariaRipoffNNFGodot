@@ -25,7 +25,8 @@ public partial class Inventory : Node {
     public event Action<StackedItems> ItemStackChangedSize;
     public event Action<StackedItems> AddedItemStack;
     public event Action<StackedItems> RemovedItemStack;
-    public event Action<WorldObject> PickupLooted;
+    // @todo reimplement this
+    // public event Action<WorldObject> PickupLooted;
 
     public event Action<Item> EquipItemClicked;
 
@@ -88,7 +89,8 @@ public partial class Inventory : Node {
         StackedItems items = new(pickup.Item);
 
         AddItems(items);
-        PickupLooted?.Invoke(pickup.WorldObject);
+        // @todo reimplement this
+        // PickupLooted?.Invoke(pickup.WorldObject);
     }
 
     public void OnAfterBuildSuccess(Item item) {

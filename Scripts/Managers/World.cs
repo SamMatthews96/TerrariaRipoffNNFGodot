@@ -98,7 +98,8 @@ public partial class World : Node2D {
             OnLocalPlayerBuildBlockAction;
         player.ActionController.BuildAction.BuildWallActionAttempted +=
             OnLocalPlayerBuildWallAction;
-        player.Inventory.PickupLooted += OnLocalPlayerPickupLooted;
+        // @todo reimplement this
+        // player.Inventory.PickupLooted += OnLocalPlayerPickupLooted;
 
         // when the player is deleted, unsubscribe from all events
     }
@@ -241,7 +242,6 @@ public partial class World : Node2D {
 
 
     private void SpawnLocalPlayer() {
-        // @todo consider making players a type of WorldObject
         Player player = Player.Create(_game.PeerId, new IntVector(5, 5));
         player.InitAsLocal(_game, _localPlayerData);
         AddChild(player, true);
