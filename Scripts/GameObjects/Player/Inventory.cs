@@ -48,7 +48,7 @@ public partial class Inventory : Node {
 
     public override void _Ready() {
         _player.Crafting.ItemCrafted += OnItemCrafted;
-        _player.PickupArea.TouchedItem += OnCollidedWithPickup;
+        // _player.PickupArea.TouchedItem += OnCollidedWithPickup;
         _game.Interface.InventoryUi.ItemActionClicked += OnItemActionClicked;
         
         if (!_playerData.TryGetValue("Inventory", out Variant inventoryData)) return;
@@ -81,17 +81,17 @@ public partial class Inventory : Node {
         }
     }
 
-    private void OnCollidedWithPickup(WorldPickup pickup) {
-        if (pickup.Item.InventorySpace > MaximumSpace - UsedSpace) {
-            return;
-        }
-
-        StackedItems items = new(pickup.Item);
-
-        AddItems(items);
-        // @todo reimplement this
-        // PickupLooted?.Invoke(pickup.WorldObject);
-    }
+    // private void OnCollidedWithPickup(WorldPickup pickup) {
+    //     if (pickup.Item.InventorySpace > MaximumSpace - UsedSpace) {
+    //         return;
+    //     }
+    //
+    //     StackedItems items = new(pickup.Item);
+    //
+    //     AddItems(items);
+    //     // @todo reimplement this
+    //     // PickupLooted?.Invoke(pickup.WorldObject);
+    // }
 
     public void OnAfterBuildSuccess(Item item) {
         StackedItems inventoryItems = new(item, 1);

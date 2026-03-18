@@ -53,11 +53,11 @@ public sealed partial class Crafting : Node {
             throw new Exception("[20250617.1422.1] Crafting area entered by non-crafting area");
         }
 
-        CraftingStationType newType = craftStationArea.CraftStation.Type;
-        if (!LocalCraftStationsAreas.Exists(
-                currentArea => currentArea.CraftStation.Type == newType)) {
-            CraftingStationAdded?.Invoke(newType);
-        }
+        // CraftingStationType newType = craftStationArea.CraftStation.Type;
+        // if (!LocalCraftStationsAreas.Exists(
+        //         currentArea => currentArea.CraftStation.Type == newType)) {
+        //     CraftingStationAdded?.Invoke(newType);
+        // }
 
         LocalCraftStationsAreas.Add(craftStationArea);
     }
@@ -67,12 +67,12 @@ public sealed partial class Crafting : Node {
             throw new Exception("[20250617.1424.1] Crafting area entered by non-crafting area");
         }
 
-        CraftingStationType exitingType = craftStationArea.CraftStation.Type;
-        LocalCraftStationsAreas.Remove(craftStationArea);
-        if (!LocalCraftStationsAreas.Exists(
-                currentArea => currentArea.CraftStation.Type == exitingType)) {
-            CraftingStationRemoved?.Invoke(exitingType);
-        }
+        // CraftingStationType exitingType = craftStationArea.CraftStation.Type;
+        // LocalCraftStationsAreas.Remove(craftStationArea);
+        // if (!LocalCraftStationsAreas.Exists(
+        //         currentArea => currentArea.CraftStation.Type == exitingType)) {
+        //     CraftingStationRemoved?.Invoke(exitingType);
+        // }
     }
 
     private void OnCraftButtonPressed() {

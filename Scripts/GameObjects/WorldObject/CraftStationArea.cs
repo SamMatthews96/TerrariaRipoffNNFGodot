@@ -3,12 +3,12 @@
 namespace TerrariaRipoffNNF;
 
 public partial class CraftStationArea : Area2D {
-    public ObjectCraftStation CraftStation { get; private set; }
+    // public ObjectCraftStation CraftStation { get; private set; }
 
-    public static CraftStationArea Create(ObjectCraftStation craftStation) {
+    public static CraftStationArea Create() {
         CraftStationArea newArea =
             Data.PackedScenes.CraftStationArea.Instantiate<CraftStationArea>();
-        newArea.CraftStation = craftStation;
+        // newArea.CraftStation = craftStation;
         return newArea;
     }
 }

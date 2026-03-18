@@ -27,6 +27,7 @@ script = ExtResource("1_hx4ms")
 PlayerEquipment = NodePath("CurrentEquipment")
 _positionSynchronizer = NodePath("PositionSync")
 _camera = NodePath("Camera2D")
+_gravityCoefficient = 0.0
 
 [node name="PositionSync" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_3bb8o")
