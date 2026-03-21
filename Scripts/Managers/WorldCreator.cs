@@ -37,19 +37,19 @@ public static class WorldCreator {
             }
         }
 
-        Item wood = Data.Items.Wood;
-
-        for (int x = 10; x < 31; x += 10) {
-            for (int y = mid - 10; y < mid; y++) {
-                Dictionary tree = new() {
-                    { "type", "tree" },
-                    { "item", wood.ToDictionary() },
-                    { "xPosition", x },
-                    { "yPosition", y },
-                };
-                savedWorldObjects.Add(tree);
-            }
-        }
+        // Item wood = Data.Items.Wood;
+        //
+        // for (int x = 10; x < 31; x += 10) {
+        //     for (int y = mid - 10; y < mid; y++) {
+        //         Dictionary tree = new() {
+        //             { "type", "tree" },
+        //             { "item", wood.ToDictionary() },
+        //             { "xPosition", x },
+        //             { "yPosition", y },
+        //         };
+        //         savedWorldObjects.Add(tree);
+        //     }
+        // }
 
 
         worldDictionary.Add("SavedWorldObjects", savedWorldObjects);

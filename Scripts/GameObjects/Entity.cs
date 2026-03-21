@@ -2,22 +2,13 @@
 
 namespace TerrariaRipoffNNF.Scripts.GameObjects;
 
-public struct Entity {
-    public Vector2 Position;
-    public EntityType Type;
-    public IEntityComponent Component;
+public interface IEntity {
 }
 
-public enum EntityType {
-    Block, 
-    Wall
-}
 
-public interface IEntityComponent {
-}
-
-public struct EntityBlock : IEntityComponent {
+public struct BlockEntity : IEntity {
+    public Vector2 CellCoordinates;
     public string ResourcePath;
     public float CurrentHealth;
-    
+
 }
