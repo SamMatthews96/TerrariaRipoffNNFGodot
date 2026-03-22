@@ -11,7 +11,7 @@ public partial class SceneManager : Node {
     private MainMenu _mainMenu;
 
     private Game _game;
-    private Node _loadingScreen;
+    // private Node _loadingScreen;
 
     public override void _Ready() {
         CreateMainMenu();
@@ -25,8 +25,8 @@ public partial class SceneManager : Node {
 
     private void CreateGame() {
         _mainMenu.QueueFree();
-        _loadingScreen = Data.PackedScenes.LoadingScreen.Instantiate();
-        AddChild(_loadingScreen);
+        // _loadingScreen = Data.PackedScenes.LoadingScreen.Instantiate();
+        // AddChild(_loadingScreen);
         _game = Game.Create();
         AddChild(_game);
 
@@ -35,8 +35,8 @@ public partial class SceneManager : Node {
     }
 
     private void OnExitGameClicked() {
-        _loadingScreen = Data.PackedScenes.LoadingScreen.Instantiate();
-        AddChild(_loadingScreen);
+        // _loadingScreen = Data.PackedScenes.LoadingScreen.Instantiate();
+        // AddChild(_loadingScreen);
         _game.Interface.GameMenu.ExitGameButtonDown -= OnExitGameClicked;
     }
 
@@ -47,8 +47,8 @@ public partial class SceneManager : Node {
     }
 
     private void OnWorldLoadedLocally() {
-        _loadingScreen.QueueFree();
-        _loadingScreen = null;
+        // _loadingScreen.QueueFree();
+        // _loadingScreen = null;
     }
 
     private void OnMainMenuClientClickedEnterWorld(string ip, Dictionary playerInfo) {
@@ -62,8 +62,8 @@ public partial class SceneManager : Node {
         _game.ExitGameFinished -= ExitGame;
         _game.QueueFree();
 
-        _loadingScreen.QueueFree();
-        _loadingScreen = null;
+        // _loadingScreen.QueueFree();
+        // _loadingScreen = null;
     }
 
     private void CreateMainMenu() {

@@ -7,6 +7,20 @@ using Array = Godot.Collections.Array;
 
 namespace TerrariaRipoffNNF;
 
+/*
+    reworking the node-based world was necessary
+    creating a node for each block was too much overhead
+        
+    But now we need to recreate the lost functionality
+        blocks preventing movement
+            idea 2: manually implement a collision system
+                // the collision logic would be a little bit complex
+                // but potentially much more performant and maintainable
+            
+        blocks being clickable to perform actions
+            we sort of already had this
+ */
+
 public partial class World : Node2D {
     private Game _game;
     private List<IEntity>[,] _entities;
@@ -22,8 +36,6 @@ public partial class World : Node2D {
 
     private Rid _canvas;
 
-    public const int BlockSize = 32;
-    
     public event Action WorldLoadedLocally;
     public event Action WorldSaved;
 
@@ -72,18 +84,14 @@ public partial class World : Node2D {
         _game.Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
     }
 
+    #region Draw World
     public override void _Ready() {
-        // init canvas
         _canvas = RenderingServer.CanvasItemCreate();
         RenderingServer.CanvasItemSetParent(_canvas, GetCanvasItem());
         RenderingServer.CanvasItemSetTransform(_canvas, new Transform2D(0, Vector2.Zero)); 
-        
     }
 
-    private Godot.Collections.Dictionary<string, Rid> _textures;
-    
     public override void _Process(double delta) {
-        // draw the world?
         RenderingServer.CanvasItemClear(_canvas);
         
         int drawPositionXStart = 
@@ -117,41 +125,39 @@ public partial class World : Node2D {
                 }
             }
         }
-        
-
     }
 
     public override void _ExitTree() {
-        // Player.LocalPlayerSpawned -= OnLocalPlayerSpawned;
+        RenderingServer.FreeRid(_canvas);
     }
 
+    #endregion
+    
     private void OnExitGameClicked() {
         Visible = false;
         _game.Interface.GameMenu.ExitGameButtonDown -= OnExitGameClicked;
-        
-  
     }
     
     public void SetGameAsClient(Game game, Dictionary playerData) {
         if (_game is not null) throw new Exception("[20250529.2332.1] Game already set");
         _game = game;
         _localPlayerData = playerData;
-        // if the playerData contains a defaultSpawnPosition, we use that
-        // otherwise, we need to get the information from the server
-        // before we spawn the player
-
-        // RpcId(SceneManager.HostId, nameof(CmdRequestWorldData),
-        //     _game.PeerId, _defaultSpawnPosition.x, _defaultSpawnPosition.y);
     }
 
     private Player SpawnLocalPlayer() {
-        Player player = Player.Create(_game.PeerId, new IntVector(5, 5));
+        Player player = Player.Create(_game.PeerId, new IntVector(10, 14));
         player.InitAsLocal(_game, _localPlayerData);
         AddChild(player, true);
         _players.Add(_game.PeerId, player);
+        player.ActionController.GatherAction.GatherAttempted += OnPlayerGatherAttempted;
 
         Rpc(nameof(RpcOnNewPlayerJoining), _game.PeerId);
         return player;
+    }
+
+    private void OnPlayerGatherAttempted(IntVector coords, Player player) {
+        // depends on the contents at _entities[coords.X, coords.Y]
+        GD.Print(coords);
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
