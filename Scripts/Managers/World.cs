@@ -109,8 +109,8 @@ public partial class World : Node2D {
                 foreach (IEntity entity in cellEntities) {
                     if (entity is BlockEntity blockEntity) {
                         Rect2 drawDimensions = new(
-                            blockEntity.CellCoordinates.X * Game.BlockSize,
-                            blockEntity.CellCoordinates.Y * Game.BlockSize, 
+                            (blockEntity.CellCoordinates.X - 0.5f) * Game.BlockSize,
+                            (blockEntity.CellCoordinates.Y - 0.5f) * Game.BlockSize, 
                             Game.BlockSize, 
                             Game.BlockSize
                         );
@@ -156,8 +156,18 @@ public partial class World : Node2D {
     }
 
     private void OnPlayerGatherAttempted(IntVector coords, Player player) {
-        // depends on the contents at _entities[coords.X, coords.Y]
-        GD.Print(coords);
+        List<IEntity> cellEntities = _entities[coords.X, coords.Y];
+        
+        for (int i = 0; i < cellEntities.Count; i++) {
+            IEntity entity = cellEntities[i];
+            if (entity is BlockEntity blockEntity) {
+                blockEntity.CurrentHealth -= player.PlayerEquipment.Pickaxe.Power;
+                if (blockEntity.CurrentHealth <= 0) {
+                    cellEntities.RemoveAt(i);
+                }
+                break;
+            }
+        }
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
