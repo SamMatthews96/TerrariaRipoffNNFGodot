@@ -4,8 +4,8 @@ using Godot;
 namespace TerrariaRipoffNNF;
 
 public partial class BuildAction : PlayerAction {
-    public event Action<Player, Item, IntVector> BuildBlockActionAttempted;
-    public event Action<Player, Item, IntVector> BuildWallActionAttempted;
+    public event Action<Player, Item, Vector2I> BuildBlockActionAttempted;
+    public event Action<Player, Item, Vector2I> BuildWallActionAttempted;
 
     private Item _blockItem;
 
@@ -26,26 +26,36 @@ public partial class BuildAction : PlayerAction {
     }
 
     public override void LeftMouseAction(Vector2 mouseWorldPosition) {
-        IntVector coords = new(mouseWorldPosition / Game.BlockSize);
+        Vector2 temp = mouseWorldPosition / Game.BlockSize;
+        Vector2I coords = new((int)temp.X, (int)temp.Y);
         if (!Game.IsInBounds(coords)) return;
 
         float range = 8;
         if (_blockItem is null) return;
-        if (IntVector.Distance(coords, Player.Coords) > range) return;
+        // get the distance between coords and Player.Coords
+        float distance = (float)Math.Sqrt(
+            Math.Pow(coords.X - Player.Coords.X, 2) +
+            Math.Pow(coords.Y - Player.Coords.Y, 2)
+        );
+        if (distance > range) return;
         if (_blockItem.HasProperty<ItemPlaceable>()) {
             BuildBlockActionAttempted?.Invoke(Player, _blockItem, coords);
         }
     }
 
 
-
     public override void RightMouseAction(Vector2 mouseWorldPosition) {
-        IntVector coords = new(mouseWorldPosition / Game.BlockSize);
+        Vector2 temp = mouseWorldPosition / Game.BlockSize;
+        Vector2I coords = new((int)temp.X, (int)temp.Y);
         if (!Game.IsInBounds(coords)) return;
 
         float range = 8;
         if (_blockItem is null) return;
-        if (IntVector.Distance(coords, Player.Coords) > range) return;
+        float distance = (float)Math.Sqrt(
+            Math.Pow(coords.X - Player.Coords.X, 2) +
+            Math.Pow(coords.Y - Player.Coords.Y, 2)
+        );
+        if (distance > range) return;
         if (_blockItem.HasProperty<ItemPlaceable>()) {
             BuildWallActionAttempted?.Invoke(Player, _blockItem, coords);
         }

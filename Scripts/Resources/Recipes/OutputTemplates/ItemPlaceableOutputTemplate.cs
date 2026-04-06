@@ -6,7 +6,7 @@ namespace TerrariaRipoffNNF;
 [GlobalClass]
 public partial class ItemPlaceableOutputTemplate : ItemPropertyOutputTemplate {
     [Export] public Texture2D Texture { get; private set; }
-    [Export] public Array<IntVector> OccupiedCells { get; private set; } 
+    [Export] public Array<Vector2I> OccupiedCells { get; private set; } 
     [Export] public PlaceableType Type { get; private set; }
     
 

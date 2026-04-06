@@ -112,8 +112,8 @@ public partial class World : Node2D {
                 foreach (IEntity entity in cellEntities) {
                     if (entity is BlockEntity blockEntity) {
                         Rect2 drawDimensions = new(
-                            (blockEntity.CellCoordinates.X - 0.5f) * Game.BlockSize,
-                            (blockEntity.CellCoordinates.Y - 0.5f) * Game.BlockSize, 
+                            blockEntity.CellCoordinates.X * Game.BlockSize,
+                            blockEntity.CellCoordinates.Y * Game.BlockSize, 
                             Game.BlockSize, 
                             Game.BlockSize
                         );
@@ -148,7 +148,7 @@ public partial class World : Node2D {
     }
 
     private Player SpawnLocalPlayer() {
-        Player player = Player.Create(_game.PeerId, new IntVector(10, 14));
+        Player player = Player.Create(_game.PeerId, new Vector2I(10, 14));
         player.InitAsLocal(_game, _localPlayerData);
         AddChild(player, true);
         _players.Add(_game.PeerId, player);
@@ -158,7 +158,7 @@ public partial class World : Node2D {
         return player;
     }
 
-    private void OnPlayerGatherAttempted(IntVector coords, Player player) {
+    private void OnPlayerGatherAttempted(Vector2I coords, Player player) {
         List<IEntity> cellEntities = Entities[coords.X, coords.Y];
         
         for (int i = 0; i < cellEntities.Count; i++) {
@@ -175,7 +175,7 @@ public partial class World : Node2D {
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
     private void RpcOnNewPlayerJoining(int newPeerId) {
-        Player player = Player.Create(newPeerId, new IntVector(5, 5));
+        Player player = Player.Create(newPeerId, new Vector2I(5, 5));
         AddChild(player, true);
         _players.Add(newPeerId, player);
 
@@ -186,8 +186,7 @@ public partial class World : Node2D {
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
     private void SpawnRemoteExistingPlayer(int peerId) {
-        Player player = Player.Create(peerId,
-            new IntVector(5, 5));
+        Player player = Player.Create(peerId, new Vector2I(5, 5));
         AddChild(player, true);
         _players.Add(peerId, player);
     }

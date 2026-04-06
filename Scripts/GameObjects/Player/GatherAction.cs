@@ -5,7 +5,7 @@ using TerrariaRipoffNNF.Scripts.GameObjects.WeaponSprites;
 namespace TerrariaRipoffNNF;
 
 public partial class GatherAction : PlayerAction {
-    public event Action<IntVector, Player> GatherAttempted;
+    public event Action<Vector2I, Player> GatherAttempted;
 
     private bool _isGathering;
     [Export] private Timer _gatherCooldown;
@@ -47,7 +47,9 @@ public partial class GatherAction : PlayerAction {
     }
 
     private void AttemptGather() {
-        IntVector coords = new(Player.GetGlobalMousePosition() / Game.BlockSize);
+        Vector2 temp = Player.GetGlobalMousePosition() / Game.BlockSize;
+        Vector2I coords = new((int)temp.X, (int)temp.Y);
+        
         if (!Game.IsInBounds(coords)) return;
 
         GatherAttempted?.Invoke(coords, Player);

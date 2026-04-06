@@ -18,7 +18,7 @@ public partial class Game : Node {
     [Export] public int Height { get; private set; } = 100;
     public int PeerId => Multiplayer.GetUniqueId();
 
-    public IntVector DefaultSpawnPosition { get; private set; }
+    public Vector2I DefaultSpawnPosition { get; private set; }
 
     private MultiplayerHost _multiplayerHost;
     private MultiplayerClient _multiplayerClient;
@@ -53,7 +53,7 @@ public partial class Game : Node {
 
         Multiplayer.ConnectedToServer += () => {
             World.SetGameAsClient(this, playerData);
-            DefaultSpawnPosition = new IntVector(5, 5);
+            DefaultSpawnPosition = new Vector2I(5, 5);
         };
     }
 
@@ -62,7 +62,7 @@ public partial class Game : Node {
         Height = (int)worldData["Height"];
         World.SetGameAsHost(this, worldData, playerData);
 
-        DefaultSpawnPosition = new IntVector(
+        DefaultSpawnPosition = new Vector2I(
             worldData["DefaultSpawnPosition"].AsGodotArray()[0].AsInt32(),
             worldData["DefaultSpawnPosition"].AsGodotArray()[1].AsInt32());
 
@@ -110,7 +110,7 @@ public partial class Game : Node {
         ExitGameFinished?.Invoke();
     }
 
-    public bool IsInBounds(IntVector intVector) {
+    public bool IsInBounds(Vector2I intVector) {
         return intVector.X >= 0
                && intVector.X < Width
                && intVector.Y >= 0

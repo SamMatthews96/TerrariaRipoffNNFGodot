@@ -2,9 +2,12 @@
 
 [ext_resource type="Script" uid="uid://be8irq5x65mj" path="res://Scripts/Managers/World.cs" id="1_qmgnr"]
 [ext_resource type="Script" uid="uid://cmtkn73iawf5c" path="res://Scripts/Managers/WorldCollision.cs" id="2_q5vno"]
+[ext_resource type="PackedScene" uid="uid://deinq7tccagkl" path="res://Scenes/GameObjects/CollisionBlock.tscn" id="3_r1w0f"]
 
 [node name="World" type="Node2D" unique_id=318249153]
 script = ExtResource("1_qmgnr")
 
-[node name="WorldCollision" type="Node2D" parent="." unique_id=1267480066]
+[node name="WorldCollision" type="Node2D" parent="." unique_id=1267480066 node_paths=PackedStringArray("_world")]
 script = ExtResource("2_q5vno")
+_collisionBlock = ExtResource("3_r1w0f")
+_world = NodePath("..")

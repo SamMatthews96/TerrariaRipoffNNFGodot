@@ -15,7 +15,7 @@ public partial class NpcManager : Node {
     }
 
     private void OnSpawnPressed() {
-        EnemyNpc enemyNpc = EnemyNpc.Create(new IntVector(5,5));
+        EnemyNpc enemyNpc = EnemyNpc.Create(new Vector2I(5,5));
         _game.World.AddChild(enemyNpc, true);
     }
 }

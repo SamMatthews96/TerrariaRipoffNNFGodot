@@ -5,7 +5,7 @@ using Godot.Collections;
 namespace TerrariaRipoffNNF;
 
 public partial class Player : CharacterBody2D {
-    public static Player Create(int peerId, IntVector spawnCoords) {
+    public static Player Create(int peerId, Vector2I spawnCoords) {
         Player player = Data.PackedScenes.Player.Instantiate<Player>();
         player.Name = peerId.ToString();
         player.SpawnCoords = spawnCoords;
@@ -28,7 +28,7 @@ public partial class Player : CharacterBody2D {
     [Export] private float _gravityCoefficient = 1600;
     [Export] private float _jumpStrength = 800;
     [Export] public Vector2 SpawnPosition { get; private set; }
-    public IntVector SpawnCoords { get; private set; }
+    public Vector2I SpawnCoords { get; private set; }
 
 
     public Game Game { get; private set; }
@@ -38,9 +38,9 @@ public partial class Player : CharacterBody2D {
     private float _yVelocity;
     private string _characterName;
 
-    private IntVector _previousCoords;
+    private Vector2I _previousCoords;
 
-    public IntVector Coords => new(Position / Game.BlockSize);
+    public Vector2I Coords => new((int)(Position.X / Game.BlockSize), (int)(Position.Y / Game.BlockSize));
 
     public int PeerId => Name.ToString().ToInt();
     private bool _isLocalPlayer;
