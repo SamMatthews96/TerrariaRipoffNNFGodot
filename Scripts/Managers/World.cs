@@ -23,7 +23,7 @@ namespace TerrariaRipoffNNF;
 
 public partial class World : Node2D {
     private Game _game;
-    private List<IEntity>[,] _entities;
+    public List<IEntity>[,] Entities;
     private string _worldName;
 
     private (int x, int y) _defaultSpawnPosition;
@@ -35,6 +35,8 @@ public partial class World : Node2D {
     private Godot.Collections.Dictionary<int, Player> _players = new();
 
     private Rid _canvas;
+    
+    public Vector2I WorldSize { get; private set; }
 
     public event Action WorldLoadedLocally;
     public event Action WorldSaved;
@@ -43,11 +45,12 @@ public partial class World : Node2D {
         if (_game is not null) throw new Exception("[20250529.2332.1] Game already set");
         _game = game;
         _localPlayerData = playerData;
+        WorldSize = new Vector2I(_game.Width, _game.Height);
 
-        _entities = new List<IEntity>[_game.Width, _game.Height];
-        for (int x = 0; x < _game.Width; x++) {
-            for (int y = 0; y < _game.Height; y++) {
-                _entities[x, y] = new List<IEntity>();
+        Entities = new List<IEntity>[WorldSize.X, WorldSize.Y];
+        for (int x = 0; x < WorldSize.X; x++) {
+            for (int y = 0; y < WorldSize.Y; y++) {
+                Entities[x, y] = new List<IEntity>();
             }
         }
 
@@ -75,7 +78,7 @@ public partial class World : Node2D {
                         $"[20250529.2332.1] Unknown world object type: {dictionary["type"].ToString()}");
             }
             
-            _entities[x ,y].Add(entity); 
+            Entities[x ,y].Add(entity); 
         }
         
         WorldLoadedLocally?.Invoke();
@@ -105,7 +108,7 @@ public partial class World : Node2D {
 
         for (int x = drawPositionXStart; x < drawPositionXEnd; x++) {
             for (int y = drawPositionYStart; y < drawPositionYEnd; y++) {
-                List<IEntity> cellEntities = _entities[x, y];
+                List<IEntity> cellEntities = Entities[x, y];
                 foreach (IEntity entity in cellEntities) {
                     if (entity is BlockEntity blockEntity) {
                         Rect2 drawDimensions = new(
@@ -156,7 +159,7 @@ public partial class World : Node2D {
     }
 
     private void OnPlayerGatherAttempted(IntVector coords, Player player) {
-        List<IEntity> cellEntities = _entities[coords.X, coords.Y];
+        List<IEntity> cellEntities = Entities[coords.X, coords.Y];
         
         for (int i = 0; i < cellEntities.Count; i++) {
             IEntity entity = cellEntities[i];

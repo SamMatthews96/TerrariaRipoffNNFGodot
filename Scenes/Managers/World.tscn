@@ -1,6 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://cakmoct7fr7qe"]
+[gd_scene format=3 uid="uid://cakmoct7fr7qe"]
 
 [ext_resource type="Script" uid="uid://be8irq5x65mj" path="res://Scripts/Managers/World.cs" id="1_qmgnr"]
+[ext_resource type="Script" uid="uid://cmtkn73iawf5c" path="res://Scripts/Managers/WorldCollision.cs" id="2_q5vno"]
 
-[node name="World" type="Node2D"]
+[node name="World" type="Node2D" unique_id=318249153]
 script = ExtResource("1_qmgnr")
+
+[node name="WorldCollision" type="Node2D" parent="." unique_id=1267480066]
+script = ExtResource("2_q5vno")
