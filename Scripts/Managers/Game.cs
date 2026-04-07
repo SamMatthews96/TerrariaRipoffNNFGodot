@@ -14,8 +14,8 @@ public partial class Game : Node {
     [Export] public InputManager InputManager { get; private set; }
 
     //@todo set these dynamically on peer from worldInfo
-    [Export] public int Width { get; private set; } = 100;
-    [Export] public int Height { get; private set; } = 100;
+    // [Export] public int Width { get; private set; } = 100;
+    // [Export] public int Height { get; private set; } = 100;
     public int PeerId => Multiplayer.GetUniqueId();
 
     public Vector2I DefaultSpawnPosition { get; private set; }
@@ -29,11 +29,6 @@ public partial class Game : Node {
     private bool _isWorldSaved;
 
     [Export] public World World { get; private set; }
-
-
-    public static Game Create() {
-        return Data.PackedScenes.Game.Instantiate<Game>();
-    }
 
     public void InitAsSinglePlayer(Dictionary worldData, Dictionary playerData) {
         CreateWorld(worldData, playerData);
@@ -58,13 +53,12 @@ public partial class Game : Node {
     }
 
     private void CreateWorld(Dictionary worldData, Dictionary playerData) {
-        Width = (int)worldData["Width"];
-        Height = (int)worldData["Height"];
         World.SetGameAsHost(this, worldData, playerData);
 
         DefaultSpawnPosition = new Vector2I(
             worldData["DefaultSpawnPosition"].AsGodotArray()[0].AsInt32(),
-            worldData["DefaultSpawnPosition"].AsGodotArray()[1].AsInt32());
+            worldData["DefaultSpawnPosition"].AsGodotArray()[1].AsInt32()
+        );
 
         _playerData = FileManager.LoadPlayer(playerData);
     }
@@ -110,10 +104,5 @@ public partial class Game : Node {
         ExitGameFinished?.Invoke();
     }
 
-    public bool IsInBounds(Vector2I intVector) {
-        return intVector.X >= 0
-               && intVector.X < Width
-               && intVector.Y >= 0
-               && intVector.Y < Height;
-    }
+
 }

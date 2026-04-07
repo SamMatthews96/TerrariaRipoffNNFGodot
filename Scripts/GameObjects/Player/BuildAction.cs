@@ -28,7 +28,7 @@ public partial class BuildAction : PlayerAction {
     public override void LeftMouseAction(Vector2 mouseWorldPosition) {
         Vector2 temp = mouseWorldPosition / Game.BlockSize;
         Vector2I coords = new((int)temp.X, (int)temp.Y);
-        if (!Game.IsInBounds(coords)) return;
+        if (!Game.World.IsInBounds(coords)) return;
 
         float range = 8;
         if (_blockItem is null) return;
@@ -47,7 +47,7 @@ public partial class BuildAction : PlayerAction {
     public override void RightMouseAction(Vector2 mouseWorldPosition) {
         Vector2 temp = mouseWorldPosition / Game.BlockSize;
         Vector2I coords = new((int)temp.X, (int)temp.Y);
-        if (!Game.IsInBounds(coords)) return;
+        if (!Game.World.IsInBounds(coords)) return;
 
         float range = 8;
         if (_blockItem is null) return;

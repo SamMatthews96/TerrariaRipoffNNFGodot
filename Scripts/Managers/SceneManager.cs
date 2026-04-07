@@ -11,7 +11,6 @@ public partial class SceneManager : Node {
     private MainMenu _mainMenu;
 
     private Game _game;
-    // private Node _loadingScreen;
 
     public override void _Ready() {
         CreateMainMenu();
@@ -20,14 +19,11 @@ public partial class SceneManager : Node {
     private void OnMainMenuSinglePlayerClickedEnterWorld(Dictionary worldData, Dictionary playerData) {
         CreateGame();
         _game.InitAsSinglePlayer(worldData, playerData);
-        _game.World.WorldLoadedLocally += OnWorldLoadedLocally;
     }
 
     private void CreateGame() {
         _mainMenu.QueueFree();
-        // _loadingScreen = Data.PackedScenes.LoadingScreen.Instantiate();
-        // AddChild(_loadingScreen);
-        _game = Game.Create();
+        _game = Data.PackedScenes.Game.Instantiate<Game>();
         AddChild(_game);
 
         _game.Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
@@ -35,26 +31,18 @@ public partial class SceneManager : Node {
     }
 
     private void OnExitGameClicked() {
-        // _loadingScreen = Data.PackedScenes.LoadingScreen.Instantiate();
-        // AddChild(_loadingScreen);
         _game.Interface.GameMenu.ExitGameButtonDown -= OnExitGameClicked;
     }
 
     private void OnMainMenuHostClickedEnterWorld(Dictionary world, Dictionary playerInfo) {
         CreateGame();
         _game.InitAsHost(world, playerInfo);
-        _game.World.WorldLoadedLocally += OnWorldLoadedLocally;
     }
 
-    private void OnWorldLoadedLocally() {
-        // _loadingScreen.QueueFree();
-        // _loadingScreen = null;
-    }
 
     private void OnMainMenuClientClickedEnterWorld(string ip, Dictionary playerInfo) {
         CreateGame();
         _game.InitAsClient(playerInfo);
-        _game.World.WorldLoadedLocally += OnWorldLoadedLocally;
     }
 
     private void ExitGame() {
@@ -62,8 +50,6 @@ public partial class SceneManager : Node {
         _game.ExitGameFinished -= ExitGame;
         _game.QueueFree();
 
-        // _loadingScreen.QueueFree();
-        // _loadingScreen = null;
     }
 
     private void CreateMainMenu() {

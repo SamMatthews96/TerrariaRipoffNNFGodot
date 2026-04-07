@@ -45,7 +45,8 @@ public partial class World : Node2D {
         if (_game is not null) throw new Exception("[20250529.2332.1] Game already set");
         _game = game;
         _localPlayerData = playerData;
-        WorldSize = new Vector2I(_game.Width, _game.Height);
+        
+        WorldSize = new Vector2I((int)worldData["Width"], (int)worldData["Height"]);
 
         Entities = new List<IEntity>[WorldSize.X, WorldSize.Y];
         for (int x = 0; x < WorldSize.X; x++) {
@@ -100,11 +101,11 @@ public partial class World : Node2D {
         int drawPositionXStart = 
             Math.Max(0, _localPlayer.Coords.X - _blockDrawDistance);
         int drawPositionXEnd = 
-            Math.Min(_game.Width, _localPlayer.Coords.X + _blockDrawDistance);
+            Math.Min(WorldSize.X, _localPlayer.Coords.X + _blockDrawDistance);
         int drawPositionYStart = 
             Math.Max(0, _localPlayer.Coords.Y - _blockDrawDistance);
         int drawPositionYEnd = 
-            Math.Min(_game.Height, _localPlayer.Coords.Y + _blockDrawDistance);
+            Math.Min(WorldSize.Y, _localPlayer.Coords.Y + _blockDrawDistance);
 
         for (int x = drawPositionXStart; x < drawPositionXEnd; x++) {
             for (int y = drawPositionYStart; y < drawPositionYEnd; y++) {
@@ -203,5 +204,11 @@ public partial class World : Node2D {
         Player player = _players[_game.PeerId];
         player.Inventory.OnAfterBuildSuccess(item);
     }
-
+    
+    public bool IsInBounds(Vector2I intVector) {
+        return intVector.X >= 0
+               && intVector.X < WorldSize.X
+               && intVector.Y >= 0
+               && intVector.Y < WorldSize.Y;
+    }
 }

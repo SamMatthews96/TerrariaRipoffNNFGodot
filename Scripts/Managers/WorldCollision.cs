@@ -12,6 +12,9 @@ public partial class WorldCollision : Node {
 
     public override void _Ready() {
         _activeCollisionBlocks = new StaticBody2D[_world.WorldSize.X, _world.WorldSize.Y];
+        
+        // listen to every "player moved" event
+        
     }
 
     public void UpdateCollisionBlocks(Vector2I playerPosition, int radius) {

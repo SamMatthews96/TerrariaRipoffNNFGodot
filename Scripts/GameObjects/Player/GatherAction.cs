@@ -50,7 +50,7 @@ public partial class GatherAction : PlayerAction {
         Vector2 temp = Player.GetGlobalMousePosition() / Game.BlockSize;
         Vector2I coords = new((int)temp.X, (int)temp.Y);
         
-        if (!Game.IsInBounds(coords)) return;
+        if (!Game.World.IsInBounds(coords)) return;
 
         GatherAttempted?.Invoke(coords, Player);
     }
