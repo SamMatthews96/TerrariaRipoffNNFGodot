@@ -23,7 +23,7 @@ namespace TerrariaRipoffNNF;
 
 public partial class World : Node2D {
     private Game _game;
-    public List<IEntity>[,] Entities;
+    private List<IEntity>[,] _entities;
     private string _worldName;
 
     private (int x, int y) _defaultSpawnPosition;
@@ -35,6 +35,9 @@ public partial class World : Node2D {
     private Godot.Collections.Dictionary<int, Player> _players = new();
 
     private Rid _canvas;
+
+    [Export] private PackedScene _collisionBlock;
+    private StaticBody2D[,] _activeCollisionBlocks;
     
     public Vector2I WorldSize { get; private set; }
 
@@ -47,11 +50,12 @@ public partial class World : Node2D {
         _localPlayerData = playerData;
         
         WorldSize = new Vector2I((int)worldData["Width"], (int)worldData["Height"]);
+        _activeCollisionBlocks = new StaticBody2D[WorldSize.X, WorldSize.Y];
 
-        Entities = new List<IEntity>[WorldSize.X, WorldSize.Y];
+        _entities = new List<IEntity>[WorldSize.X, WorldSize.Y];
         for (int x = 0; x < WorldSize.X; x++) {
             for (int y = 0; y < WorldSize.Y; y++) {
-                Entities[x, y] = new List<IEntity>();
+                _entities[x, y] = new List<IEntity>();
             }
         }
 
@@ -79,11 +83,12 @@ public partial class World : Node2D {
                         $"[20250529.2332.1] Unknown world object type: {dictionary["type"].ToString()}");
             }
             
-            Entities[x ,y].Add(entity); 
+            _entities[x ,y].Add(entity); 
         }
         
         WorldLoadedLocally?.Invoke();
         _localPlayer = SpawnLocalPlayer();
+        _localPlayer.MovedCell += OnLocalPlayerMovedCell;
             
         _game.Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
     }
@@ -109,7 +114,7 @@ public partial class World : Node2D {
 
         for (int x = drawPositionXStart; x < drawPositionXEnd; x++) {
             for (int y = drawPositionYStart; y < drawPositionYEnd; y++) {
-                List<IEntity> cellEntities = Entities[x, y];
+                List<IEntity> cellEntities = _entities[x, y];
                 foreach (IEntity entity in cellEntities) {
                     if (entity is BlockEntity blockEntity) {
                         Rect2 drawDimensions = new(
@@ -133,6 +138,9 @@ public partial class World : Node2D {
 
     public override void _ExitTree() {
         RenderingServer.FreeRid(_canvas);
+        
+        _localPlayer.MovedCell -= OnLocalPlayerMovedCell;
+        
     }
 
     #endregion
@@ -160,7 +168,7 @@ public partial class World : Node2D {
     }
 
     private void OnPlayerGatherAttempted(Vector2I coords, Player player) {
-        List<IEntity> cellEntities = Entities[coords.X, coords.Y];
+        List<IEntity> cellEntities = _entities[coords.X, coords.Y];
         
         for (int i = 0; i < cellEntities.Count; i++) {
             IEntity entity = cellEntities[i];
@@ -211,4 +219,62 @@ public partial class World : Node2D {
                && intVector.Y >= 0
                && intVector.Y < WorldSize.Y;
     }
+
+    private void OnLocalPlayerMovedCell(Vector2I playerPosition) {
+        int radius = 3;
+        int startX = Mathf.Max(0, playerPosition.X - radius);
+        int endX = Mathf.Min(WorldSize.X - 1, playerPosition.X + radius);
+        int startY = Mathf.Max(0, playerPosition.Y - radius);
+        int endY = Mathf.Min(WorldSize.Y - 1, playerPosition.Y + radius);
+
+        // Create collision blocks within radius where blocks exist
+        for (int x = startX; x <= endX; x++) {
+            for (int y = startY; y <= endY; y++) {
+                if (_activeCollisionBlocks[x, y] == null && HasBlockEntity(x, y)) {
+                    CreateCollisionBlock(x, y);
+                }
+            }
+        }
+    }
+
+    private bool HasBlockEntity(int x, int y) {
+        List<IEntity> entities = _entities[x, y];
+        if (entities == null) return false;
+
+        foreach (IEntity entity in entities) {
+            if (entity is BlockEntity) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void CreateCollisionBlock(int x, int y) {
+        var block = _collisionBlock.Instantiate<StaticBody2D>();
+        block.Position = new Vector2(x * Game.BlockSize, y * Game.BlockSize);
+        AddChild(block);
+
+        _activeCollisionBlocks[x, y] = block;
+    }
+
+    // private void RemoveCollisionBlockAt(int x, int y) {
+    //     if (x >= 0 && x < _activeCollisionBlocks.GetLength(0) &&
+    //         y >= 0 && y < _activeCollisionBlocks.GetLength(1) &&
+    //         _activeCollisionBlocks[x, y] != null) {
+    //         _activeCollisionBlocks[x, y].QueueFree();
+    //         _activeCollisionBlocks[x, y] = null;
+    //     }
+    // }
+
+    // private void ClearAllCollisionBlocks() {
+    //     for (int x = 0; x < _activeCollisionBlocks.GetLength(0); x++) {
+    //         for (int y = 0; y < _activeCollisionBlocks.GetLength(1); y++) {
+    //             if (_activeCollisionBlocks[x, y] != null) {
+    //                 _activeCollisionBlocks[x, y].QueueFree();
+    //                 _activeCollisionBlocks[x, y] = null;
+    //             }
+    //         }
+    //     }
+    // }
 }

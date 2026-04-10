@@ -72,17 +72,8 @@ public partial class Game : Node {
     }
 
     private void OnExitClicked() {
-        if (_multiplayerClient is not null) {
-            
-        }
-        // Save World (done)
-        // remember that we don't need to save the world on the client
-        // Save Player (done)
-        // Start clearing up worldObjects (todo)
         Player.PlayerSaved += OnPlayerSaved;
         World.WorldSaved += OnWorldSaved;
-        // once all are done, QueueFree() and load main menu
-
     }
 
     private void OnWorldSaved() {

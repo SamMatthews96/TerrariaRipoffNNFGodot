@@ -47,7 +47,7 @@ public partial class Player : CharacterBody2D {
 
 
     public static event Action<Player> LocalPlayerSpawned;
-    public event Action<Dictionary> MovedCell;
+    public event Action<Vector2I> MovedCell;
 
     public event Action<Player> PlayerDespawned;
     public static event Action PlayerSaved;
@@ -144,18 +144,12 @@ public partial class Player : CharacterBody2D {
         MoveAndSlide();
 
         if (_previousCoords == Coords) return;
-        Dictionary positionChange = new() {
-            { "X", Coords.X },
-            { "Y", Coords.Y },
-            { "PreviousX", _previousCoords.X },
-            { "PreviousY", _previousCoords.Y }
-        };
-        RpcId(SceneManager.HostId, nameof(ServerMovedCell), positionChange);
+        RpcId(SceneManager.HostId, nameof(ServerMovedCell), Coords);
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    private void ServerMovedCell(Dictionary positionChange) {
-        MovedCell?.Invoke(positionChange);
+    private void ServerMovedCell(Vector2I newPosition) {
+        MovedCell?.Invoke(newPosition);
     }
 
     public void Disable() {
