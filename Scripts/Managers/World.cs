@@ -220,18 +220,33 @@ public partial class World : Node2D {
                && intVector.Y < WorldSize.Y;
     }
 
-    private void OnLocalPlayerMovedCell(Vector2I playerPosition) {
+    private void OnLocalPlayerMovedCell(Vector2I newPosition, Vector2I oldPosition) {
         int radius = 3;
-        int startX = Mathf.Max(0, playerPosition.X - radius);
-        int endX = Mathf.Min(WorldSize.X - 1, playerPosition.X + radius);
-        int startY = Mathf.Max(0, playerPosition.Y - radius);
-        int endY = Mathf.Min(WorldSize.Y - 1, playerPosition.Y + radius);
+        int startX = Mathf.Max(0, newPosition.X - radius);
+        int endX = Mathf.Min(WorldSize.X - 1, newPosition.X + radius);
+        int startY = Mathf.Max(0, newPosition.Y - radius);
+        int endY = Mathf.Min(WorldSize.Y - 1, newPosition.Y + radius);
 
         // Create collision blocks within radius where blocks exist
         for (int x = startX; x <= endX; x++) {
             for (int y = startY; y <= endY; y++) {
                 if (_activeCollisionBlocks[x, y] == null && HasBlockEntity(x, y)) {
                     CreateCollisionBlock(x, y);
+                }
+            }
+        }
+
+        // Delete collision blocks that have left the radius
+        int oldStartX = Mathf.Max(0, oldPosition.X - radius);
+        int oldEndX = Mathf.Min(WorldSize.X - 1, oldPosition.X + radius);
+        int oldStartY = Mathf.Max(0, oldPosition.Y - radius);
+        int oldEndY = Mathf.Min(WorldSize.Y - 1, oldPosition.Y + radius);
+
+        for (int x = oldStartX; x <= oldEndX; x++) {
+            for (int y = oldStartY; y <= oldEndY; y++) {
+                // Check if this cell is outside the new radius
+                if (x < startX || x > endX || y < startY || y > endY) {
+                    RemoveCollisionBlockAt(x, y);
                 }
             }
         }
@@ -251,30 +266,19 @@ public partial class World : Node2D {
     }
 
     private void CreateCollisionBlock(int x, int y) {
-        var block = _collisionBlock.Instantiate<StaticBody2D>();
+        StaticBody2D block = _collisionBlock.Instantiate<StaticBody2D>();
         block.Position = new Vector2(x * Game.BlockSize, y * Game.BlockSize);
         AddChild(block);
 
         _activeCollisionBlocks[x, y] = block;
     }
 
-    // private void RemoveCollisionBlockAt(int x, int y) {
-    //     if (x >= 0 && x < _activeCollisionBlocks.GetLength(0) &&
-    //         y >= 0 && y < _activeCollisionBlocks.GetLength(1) &&
-    //         _activeCollisionBlocks[x, y] != null) {
-    //         _activeCollisionBlocks[x, y].QueueFree();
-    //         _activeCollisionBlocks[x, y] = null;
-    //     }
-    // }
-
-    // private void ClearAllCollisionBlocks() {
-    //     for (int x = 0; x < _activeCollisionBlocks.GetLength(0); x++) {
-    //         for (int y = 0; y < _activeCollisionBlocks.GetLength(1); y++) {
-    //             if (_activeCollisionBlocks[x, y] != null) {
-    //                 _activeCollisionBlocks[x, y].QueueFree();
-    //                 _activeCollisionBlocks[x, y] = null;
-    //             }
-    //         }
-    //     }
-    // }
+    private void RemoveCollisionBlockAt(int x, int y) {
+        if (x >= 0 && x < _activeCollisionBlocks.GetLength(0) &&
+            y >= 0 && y < _activeCollisionBlocks.GetLength(1) &&
+            _activeCollisionBlocks[x, y] != null) {
+            _activeCollisionBlocks[x, y].QueueFree();
+            _activeCollisionBlocks[x, y] = null;
+        }
+    }
 }

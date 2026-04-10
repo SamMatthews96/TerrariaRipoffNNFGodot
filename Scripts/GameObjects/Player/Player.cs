@@ -21,7 +21,7 @@ public partial class Player : CharacterBody2D {
     public Crafting Crafting { get; private set; }
     public PickupArea PickupArea { get; private set; }
     [Export] public PlayerEquipment PlayerEquipment { get; private set; }
-    
+
     [Export] private MultiplayerSynchronizer _positionSynchronizer;
     [Export] private Camera2D _camera;
     [Export] private float _speed = 300f;
@@ -38,8 +38,6 @@ public partial class Player : CharacterBody2D {
     private float _yVelocity;
     private string _characterName;
 
-    private Vector2I _previousCoords;
-
     public Vector2I Coords => new((int)(Position.X / Game.BlockSize), (int)(Position.Y / Game.BlockSize));
 
     public int PeerId => Name.ToString().ToInt();
@@ -47,7 +45,7 @@ public partial class Player : CharacterBody2D {
 
 
     public static event Action<Player> LocalPlayerSpawned;
-    public event Action<Vector2I> MovedCell;
+    public event Action<Vector2I, Vector2I> MovedCell;
 
     public event Action<Player> PlayerDespawned;
     public static event Action PlayerSaved;
@@ -66,7 +64,7 @@ public partial class Player : CharacterBody2D {
             _positionSynchronizer.SetVisibilityFor(peer, true);
         }
     }
-    
+
     public void AddPeerToSynchronizer(int peerId) {
         _positionSynchronizer.SetVisibilityFor(peerId, true);
     }
@@ -79,18 +77,18 @@ public partial class Player : CharacterBody2D {
         if (Game is not null) {
             throw new Exception("[20250104.0137.1] Game already set");
         }
-        
+
         Inventory = Inventory.Create(game, playerData, this);
         ActionController = ActionController.Create(game, this);
         Crafting = Crafting.Create(game, this);
         PickupArea = PickupArea.Create(this);
         Game = game;
-        
+
         AddChild(Inventory);
         AddChild(ActionController);
         AddChild(Crafting);
         AddChild(PickupArea);
-        
+
         PlayerEquipment.InitAsLocal(this);
 
         Game.InputManager.HorizontalInputChanged += OnHorizontalInputChanged;
@@ -104,14 +102,14 @@ public partial class Player : CharacterBody2D {
             Game.InputManager.JumpPressed -= OnJumpPressed;
             Game.Interface.GameMenu.ExitGameButtonDown -= OnExitClicked;
         };
-        
+
         LocalPlayerSpawned?.Invoke(this);
     }
 
     private void OnExitClicked() {
         _camera.Enabled = false;
         Dictionary playerData = new() {
-            {"Name", _characterName},
+            { "Name", _characterName },
             { "Inventory", Inventory.ToDictionary() },
         };
         FileManager.SavePlayer(playerData);
@@ -131,7 +129,7 @@ public partial class Player : CharacterBody2D {
     public override void _PhysicsProcess(double delta) {
         if (!_isLocalPlayer) return;
 
-        _previousCoords = Coords;
+        Vector2I previousCoords = Coords;
         _isFalling = !TestMove(Transform, new Vector2(0, 0.1f));
         _xVelocity = _speed * _horizontalInput;
         if (_isFalling) {
@@ -143,13 +141,17 @@ public partial class Player : CharacterBody2D {
         Velocity = new Vector2(_xVelocity, _yVelocity);
         MoveAndSlide();
 
-        if (_previousCoords == Coords) return;
-        RpcId(SceneManager.HostId, nameof(ServerMovedCell), Coords);
+        if (previousCoords == Coords) return;
+        RpcId(SceneManager.HostId,
+            nameof(ServerMovedCell),
+            Coords,
+            previousCoords
+        );
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    private void ServerMovedCell(Vector2I newPosition) {
-        MovedCell?.Invoke(newPosition);
+    private void ServerMovedCell(Vector2I newPosition, Vector2I oldPosition) {
+        MovedCell?.Invoke(newPosition, oldPosition);
     }
 
     public void Disable() {
