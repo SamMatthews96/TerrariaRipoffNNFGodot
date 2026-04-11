@@ -7,26 +7,9 @@ using Array = Godot.Collections.Array;
 
 namespace TerrariaRipoffNNF;
 
-/*
-    reworking the node-based world was necessary
-    creating a node for each block was too much overhead
-        
-    But now we need to recreate the lost functionality
-        blocks preventing movement
-            idea 2: manually implement a collision system
-                // the collision logic would be a little bit complex
-                // but potentially much more performant and maintainable
-            
-        blocks being clickable to perform actions
-            we sort of already had this
- */
-
 public partial class World : Node2D {
     private Game _game;
     private List<IEntity>[,] _entities;
-    private string _worldName;
-
-    private (int x, int y) _defaultSpawnPosition;
 
     private Dictionary _localPlayerData;
     private Player _localPlayer;
@@ -37,7 +20,12 @@ public partial class World : Node2D {
     private Rid _canvas;
 
     [Export] private PackedScene _collisionBlock;
-    private StaticBody2D[,] _activeCollisionBlocks;
+    private WorldCollision _worldCollision;
+
+    // World sync constants
+    private const int ChunkSize = 50;
+    private bool _isReceivingWorldData = false;
+    private List<Dictionary> _bufferedChunks = new();
     
     public Vector2I WorldSize { get; private set; }
 
@@ -48,21 +36,13 @@ public partial class World : Node2D {
         if (_game is not null) throw new Exception("[20250529.2332.1] Game already set");
         _game = game;
         _localPlayerData = playerData;
-        
         WorldSize = new Vector2I((int)worldData["Width"], (int)worldData["Height"]);
-        _activeCollisionBlocks = new StaticBody2D[WorldSize.X, WorldSize.Y];
-
         _entities = new List<IEntity>[WorldSize.X, WorldSize.Y];
         for (int x = 0; x < WorldSize.X; x++) {
             for (int y = 0; y < WorldSize.Y; y++) {
                 _entities[x, y] = new List<IEntity>();
             }
         }
-
-        _worldName = worldData["Name"].ToString();
-        Array defaultSpawnPos = worldData["DefaultSpawnPosition"].AsGodotArray();
-        _defaultSpawnPosition =
-            ((int)defaultSpawnPos[0], (int)defaultSpawnPos[1]);
 
         Array allWorldObjects = worldData["SavedWorldObjects"].AsGodotArray();
         foreach (Dictionary dictionary in allWorldObjects) {
@@ -87,9 +67,11 @@ public partial class World : Node2D {
         }
         
         WorldLoadedLocally?.Invoke();
+        _worldCollision = new WorldCollision(
+            _entities, _collisionBlock, this, WorldSize);
         _localPlayer = SpawnLocalPlayer();
-        _localPlayer.MovedCell += OnLocalPlayerMovedCell;
-            
+        _localPlayer.MovedCell += _worldCollision.OnPlayerMovedCell;
+
         _game.Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
     }
 
@@ -101,6 +83,9 @@ public partial class World : Node2D {
     }
 
     public override void _Process(double delta) {
+        if (_isReceivingWorldData) return;
+        if (_localPlayer is null) return;
+        
         RenderingServer.CanvasItemClear(_canvas);
         
         int drawPositionXStart = 
@@ -138,9 +123,10 @@ public partial class World : Node2D {
 
     public override void _ExitTree() {
         RenderingServer.FreeRid(_canvas);
-        
-        _localPlayer.MovedCell -= OnLocalPlayerMovedCell;
-        
+
+        if (_localPlayer != null && _worldCollision != null) {
+            _localPlayer.MovedCell -= _worldCollision.OnPlayerMovedCell;
+        }
     }
 
     #endregion
@@ -154,6 +140,9 @@ public partial class World : Node2D {
         if (_game is not null) throw new Exception("[20250529.2332.1] Game already set");
         _game = game;
         _localPlayerData = playerData;
+
+        _isReceivingWorldData = true;
+        RpcId(1, nameof(RpcRequestWorldData));
     }
 
     private Player SpawnLocalPlayer() {
@@ -220,65 +209,152 @@ public partial class World : Node2D {
                && intVector.Y < WorldSize.Y;
     }
 
-    private void OnLocalPlayerMovedCell(Vector2I newPosition, Vector2I oldPosition) {
-        int radius = 3;
-        int startX = Mathf.Max(0, newPosition.X - radius);
-        int endX = Mathf.Min(WorldSize.X - 1, newPosition.X + radius);
-        int startY = Mathf.Max(0, newPosition.Y - radius);
-        int endY = Mathf.Min(WorldSize.Y - 1, newPosition.Y + radius);
+    #region World Synchronization
 
-        // Create collision blocks within radius where blocks exist
-        for (int x = startX; x <= endX; x++) {
-            for (int y = startY; y <= endY; y++) {
-                if (_activeCollisionBlocks[x, y] == null && HasBlockEntity(x, y)) {
-                    CreateCollisionBlock(x, y);
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    private void RpcRequestWorldData() {
+        int requestingPeerId = Multiplayer.GetRemoteSenderId();
+        GD.Print($"[Host] Received world data request from peer {requestingPeerId}");
+
+        // Send world metadata first
+        Dictionary metadata = new Dictionary {
+            ["Width"] = WorldSize.X,
+            ["Height"] = WorldSize.Y
+        };
+        RpcId(requestingPeerId, nameof(RpcReceiveWorldMetadata), metadata);
+
+        // Calculate chunks
+        int chunksX = (int)Math.Ceiling((double)WorldSize.X / ChunkSize);
+        int chunksY = (int)Math.Ceiling((double)WorldSize.Y / ChunkSize);
+        int totalChunks = chunksX * chunksY;
+
+        GD.Print($"[Host] Sending {totalChunks} chunks ({chunksX}x{chunksY}) to peer {requestingPeerId}");
+
+        // Send chunks
+        int chunkIndex = 0;
+        for (int chunkX = 0; chunkX < chunksX; chunkX++) {
+            for (int chunkY = 0; chunkY < chunksY; chunkY++) {
+                Array chunkData = SerializeChunk(chunkX, chunkY);
+
+                Dictionary chunkPacket = new Dictionary {
+                    ["chunkX"] = chunkX,
+                    ["chunkY"] = chunkY,
+                    ["chunkIndex"] = chunkIndex,
+                    ["totalChunks"] = totalChunks,
+                    ["entities"] = chunkData
+                };
+
+                RpcId(requestingPeerId, nameof(RpcReceiveWorldChunk), chunkPacket);
+                chunkIndex++;
+            }
+        }
+    }
+
+    private Array SerializeChunk(int chunkX, int chunkY) {
+        Array chunkEntities = new Array();
+
+        int startX = chunkX * ChunkSize;
+        int startY = chunkY * ChunkSize;
+        int endX = Math.Min(startX + ChunkSize, WorldSize.X);
+        int endY = Math.Min(startY + ChunkSize, WorldSize.Y);
+
+        for (int x = startX; x < endX; x++) {
+            for (int y = startY; y < endY; y++) {
+                foreach (IEntity entity in _entities[x, y]) {
+                    if (entity is BlockEntity blockEntity) {
+                        Dictionary entityData = new Dictionary {
+                            ["type"] = "block",
+                            ["x"] = x,
+                            ["y"] = y,
+                            ["health"] = blockEntity.CurrentHealth,
+                            ["path"] = blockEntity.ResourcePath
+                        };
+                        chunkEntities.Add(entityData);
+                    }
                 }
             }
         }
 
-        // Delete collision blocks that have left the radius
-        int oldStartX = Mathf.Max(0, oldPosition.X - radius);
-        int oldEndX = Mathf.Min(WorldSize.X - 1, oldPosition.X + radius);
-        int oldStartY = Mathf.Max(0, oldPosition.Y - radius);
-        int oldEndY = Mathf.Min(WorldSize.Y - 1, oldPosition.Y + radius);
-
-        for (int x = oldStartX; x <= oldEndX; x++) {
-            for (int y = oldStartY; y <= oldEndY; y++) {
-                // Check if this cell is outside the new radius
-                if (x < startX || x > endX || y < startY || y > endY) {
-                    RemoveCollisionBlockAt(x, y);
-                }
-            }
-        }
+        return chunkEntities;
     }
 
-    private bool HasBlockEntity(int x, int y) {
-        List<IEntity> entities = _entities[x, y];
-        if (entities == null) return false;
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    private void RpcReceiveWorldMetadata(Dictionary metadata) {
+        GD.Print($"[Client] Receiving world metadata: {metadata["Width"]}x{metadata["Height"]}");
 
-        foreach (IEntity entity in entities) {
-            if (entity is BlockEntity) {
-                return true;
+        WorldSize = new Vector2I((int)metadata["Width"], (int)metadata["Height"]);
+        _entities = new List<IEntity>[WorldSize.X, WorldSize.Y];
+
+        for (int x = 0; x < WorldSize.X; x++) {
+            for (int y = 0; y < WorldSize.Y; y++) {
+                _entities[x, y] = new List<IEntity>();
             }
         }
 
-        return false;
-    }
-
-    private void CreateCollisionBlock(int x, int y) {
-        StaticBody2D block = _collisionBlock.Instantiate<StaticBody2D>();
-        block.Position = new Vector2(x * Game.BlockSize, y * Game.BlockSize);
-        AddChild(block);
-
-        _activeCollisionBlocks[x, y] = block;
-    }
-
-    private void RemoveCollisionBlockAt(int x, int y) {
-        if (x >= 0 && x < _activeCollisionBlocks.GetLength(0) &&
-            y >= 0 && y < _activeCollisionBlocks.GetLength(1) &&
-            _activeCollisionBlocks[x, y] != null) {
-            _activeCollisionBlocks[x, y].QueueFree();
-            _activeCollisionBlocks[x, y] = null;
+        // Process any buffered chunks that arrived before metadata
+        if (_bufferedChunks.Count > 0) {
+            foreach (Dictionary bufferedChunk in _bufferedChunks) {
+                ProcessWorldChunk(bufferedChunk);
+            }
+            _bufferedChunks.Clear();
         }
     }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    private void RpcReceiveWorldChunk(Dictionary chunkPacket) {
+        // If metadata hasn't arrived yet, buffer this chunk
+        if (_entities == null) {
+            _bufferedChunks.Add(chunkPacket);
+            return;
+        }
+
+        ProcessWorldChunk(chunkPacket);
+    }
+
+    private void ProcessWorldChunk(Dictionary chunkPacket) {
+        int chunkIndex = (int)chunkPacket["chunkIndex"];
+        int totalChunks = (int)chunkPacket["totalChunks"];
+        Array entities = chunkPacket["entities"].AsGodotArray();
+
+
+        // Deserialize entities into the world
+        foreach (Dictionary entityData in entities) {
+            int x = (int)entityData["x"];
+            int y = (int)entityData["y"];
+
+            IEntity entity;
+            switch (entityData["type"].ToString()) {
+                case "block":
+                    entity = new BlockEntity() {
+                        CellCoordinates = new Vector2(x, y),
+                        CurrentHealth = (float)entityData["health"],
+                        ResourcePath = entityData["path"].ToString()
+                    };
+                    break;
+                default:
+                    throw new Exception($"[Client] Unknown entity type: {entityData["type"]}");
+            }
+
+            _entities[x, y].Add(entity);
+        }
+
+        // Check if this is the last chunk
+        if (chunkIndex == totalChunks - 1) {
+            OnWorldSyncComplete();
+        }
+    }
+
+    private void OnWorldSyncComplete() {
+        _isReceivingWorldData = false;
+
+        WorldLoadedLocally?.Invoke();
+        _worldCollision = new WorldCollision(_entities, _collisionBlock, this, WorldSize);
+        _localPlayer = SpawnLocalPlayer();
+        _localPlayer.MovedCell += _worldCollision.OnPlayerMovedCell;
+
+        _game.Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
+    }
+
+    #endregion
+
 }

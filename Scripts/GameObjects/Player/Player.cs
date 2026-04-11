@@ -142,16 +142,8 @@ public partial class Player : CharacterBody2D {
         MoveAndSlide();
 
         if (previousCoords == Coords) return;
-        RpcId(SceneManager.HostId,
-            nameof(ServerMovedCell),
-            Coords,
-            previousCoords
-        );
-    }
-
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    private void ServerMovedCell(Vector2I newPosition, Vector2I oldPosition) {
-        MovedCell?.Invoke(newPosition, oldPosition);
+        MovedCell?.Invoke(Coords, previousCoords);
+        
     }
 
     public void Disable() {
