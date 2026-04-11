@@ -6,7 +6,7 @@ public interface IEntity {
 }
 
 public struct BlockEntity : IEntity {
-    public Vector2 CellCoordinates;
+    public Vector2I CellCoordinates;
     public string ResourcePath;
     public float CurrentHealth;
 

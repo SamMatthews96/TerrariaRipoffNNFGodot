@@ -164,7 +164,7 @@ public partial class World : Node2D {
                 blockEntity.CurrentHealth -= player.PlayerEquipment.Pickaxe.Power;
                 if (blockEntity.CurrentHealth <= 0) {
                     cellEntities.RemoveAt(i);
-                    // 
+                    BlockDestroyed?.Invoke(coords);
                 }
                 break;
             }
