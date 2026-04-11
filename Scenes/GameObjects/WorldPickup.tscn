@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://bdiv1g7jn5iao"]
+[gd_scene format=3 uid="uid://bdiv1g7jn5iao"]
 
 [ext_resource type="Script" uid="uid://drkaekemewc6l" path="res://Scripts/GameObjects/WorldObject/WorldPickup.cs" id="1_je82m"]
 

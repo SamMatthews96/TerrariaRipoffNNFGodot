@@ -19,8 +19,7 @@ public partial class World : Node2D {
 
     private Rid _canvas;
 
-    [Export] private PackedScene _collisionBlock;
-    private WorldCollision _worldCollision;
+    [Export] private WorldCollision _worldCollision;
 
     // World sync constants
     private const int ChunkSize = 50;
@@ -29,8 +28,8 @@ public partial class World : Node2D {
     
     public Vector2I WorldSize { get; private set; }
 
-    public event Action WorldLoadedLocally;
-    public event Action WorldSaved;
+    public event Action WorldLoaded;
+    public event Action<Vector2I> BlockDestroyed;
 
     public void SetGameAsHost(Game game, Dictionary worldData, Dictionary playerData) {
         if (_game is not null) throw new Exception("[20250529.2332.1] Game already set");
@@ -53,7 +52,7 @@ public partial class World : Node2D {
             switch (dictionary["type"].ToString()) {
                 case "block":
                     entity = new BlockEntity() {
-                        CellCoordinates = new Vector2(x,y),
+                        CellCoordinates = new Vector2I(x,y),
                         CurrentHealth = 1,
                         ResourcePath = dictionary["item"].AsGodotDictionary()["ResourcePath"].ToString(),
                     };
@@ -66,9 +65,8 @@ public partial class World : Node2D {
             _entities[x ,y].Add(entity); 
         }
         
-        WorldLoadedLocally?.Invoke();
-        _worldCollision = new WorldCollision(
-            _entities, _collisionBlock, this, WorldSize);
+        WorldLoaded?.Invoke();
+        _worldCollision.Init(_entities, WorldSize);
         _localPlayer = SpawnLocalPlayer();
         _localPlayer.MovedCell += _worldCollision.OnPlayerMovedCell;
 
@@ -166,6 +164,7 @@ public partial class World : Node2D {
                 blockEntity.CurrentHealth -= player.PlayerEquipment.Pickaxe.Power;
                 if (blockEntity.CurrentHealth <= 0) {
                     cellEntities.RemoveAt(i);
+                    // 
                 }
                 break;
             }
@@ -327,7 +326,7 @@ public partial class World : Node2D {
             switch (entityData["type"].ToString()) {
                 case "block":
                     entity = new BlockEntity() {
-                        CellCoordinates = new Vector2(x, y),
+                        CellCoordinates = new Vector2I(x, y),
                         CurrentHealth = (float)entityData["health"],
                         ResourcePath = entityData["path"].ToString()
                     };
@@ -348,8 +347,8 @@ public partial class World : Node2D {
     private void OnWorldSyncComplete() {
         _isReceivingWorldData = false;
 
-        WorldLoadedLocally?.Invoke();
-        _worldCollision = new WorldCollision(_entities, _collisionBlock, this, WorldSize);
+        WorldLoaded?.Invoke();
+        _worldCollision.Init(_entities, WorldSize);
         _localPlayer = SpawnLocalPlayer();
         _localPlayer.MovedCell += _worldCollision.OnPlayerMovedCell;
 

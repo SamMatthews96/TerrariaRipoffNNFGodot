@@ -4,8 +4,6 @@ using Godot.Collections;
 namespace TerrariaRipoffNNF;
 
 public partial class SceneManager : Node {
-    public const int HostId = 1;
-
     [Export] private int _port = 8910;
     [Export] private string _address = "127.0.0.1";
     private MainMenu _mainMenu;

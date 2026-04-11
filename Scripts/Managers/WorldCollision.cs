@@ -4,19 +4,32 @@ using TerrariaRipoffNNF.Scripts.GameObjects;
 
 namespace TerrariaRipoffNNF;
 
-public class WorldCollision {
-    private readonly List<IEntity>[,] _entities;
-    private readonly StaticBody2D[,] _activeCollisionBlocks;
-    private readonly PackedScene _collisionBlockScene;
-    private readonly Node2D _parentNode;
-    private readonly Vector2I _worldSize;
+public partial class WorldCollision : Node2D {
+    // when blocks are spawned / despawned, this needs to check
+    
+    [Export] private World _world;
+    [Export] private PackedScene _collisionBlockScene;
+    
+    private List<IEntity>[,] _entities;
+    private StaticBody2D[,] _activeCollisionBlocks;
+    private Vector2I _worldSize;
 
-    public WorldCollision(List<IEntity>[,] entities, PackedScene collisionBlockScene, Node2D parentNode, Vector2I worldSize) {
+    public void Init(List<IEntity>[,] entities, Vector2I worldSize) {
         _entities = entities;
-        _collisionBlockScene = collisionBlockScene;
-        _parentNode = parentNode;
         _worldSize = worldSize;
         _activeCollisionBlocks = new StaticBody2D[worldSize.X, worldSize.Y];
+    }
+
+    public override void _Ready() {
+        _world.BlockDestroyed += OnBlockDestoyed;
+    }
+    
+    public override void _ExitTree() {
+        _world.BlockDestroyed -= OnBlockDestoyed;
+    }
+
+    private void OnBlockDestoyed(Vector2I position) {
+        RemoveCollisionBlockAt(position.X, position.Y);
     }
 
     public void OnPlayerMovedCell(Vector2I newPosition, Vector2I oldPosition) {
@@ -64,7 +77,7 @@ public class WorldCollision {
     private void CreateCollisionBlock(int x, int y) {
         StaticBody2D block = _collisionBlockScene.Instantiate<StaticBody2D>();
         block.Position = new Vector2(x * Game.BlockSize, y * Game.BlockSize);
-        _parentNode.AddChild(block);
+        _world.AddChild(block);
 
         _activeCollisionBlocks[x, y] = block;
     }

@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=3 uid="uid://dmru6hdxblhh5"]
+[gd_scene format=3 uid="uid://dmru6hdxblhh5"]
 
 [ext_resource type="Script" uid="uid://3vcn7nbmtd44" path="res://Scripts/GameObjects/WorldObject/WorldSolid.cs" id="1_d8haj"]
 
