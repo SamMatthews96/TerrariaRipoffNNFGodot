@@ -24,8 +24,8 @@ public partial class World : Node2D {
 
     // World sync constants
     private const int ChunkSize = 50;
-    private bool _isReceivingWorldData = false;
-    private List<Dictionary> _bufferedChunks = new();
+    private bool _isReceivingWorldData;
+    private readonly List<Dictionary> _bufferedChunks = new();
     
     public Vector2I WorldSize { get; private set; }
 
@@ -134,6 +134,7 @@ public partial class World : Node2D {
     private void OnExitGameClicked() {
         Visible = false;
         _game.Interface.GameMenu.ExitGameButtonDown -= OnExitGameClicked;
+        QueueFree();
     }
     
     public void SetGameAsClient(Game game, Dictionary playerData) {

@@ -145,14 +145,4 @@ public partial class Player : CharacterBody2D {
         MovedCell?.Invoke(Coords, previousCoords);
         
     }
-
-    public void Disable() {
-        ProcessMode = ProcessModeEnum.Disabled;
-        Visible = false;
-    }
-
-    public void Enable() {
-        ProcessMode = ProcessModeEnum.Inherit;
-        Visible = true;
-    }
 }

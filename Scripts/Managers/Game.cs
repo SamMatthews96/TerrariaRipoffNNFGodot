@@ -61,36 +61,11 @@ public partial class Game : Node {
     }
 
     public override void _Ready() {
-        Interface.GameMenu.ExitGameButtonDown += OnExitClicked;
+        Interface.GameMenu.ExitGameButtonDown += OnExitGameButtonDown;
     }
-
-    public override void _ExitTree() {
-        Interface.GameMenu.ExitGameButtonDown -= OnExitClicked;
-    }
-
-    private void OnExitClicked() {
-        Player.PlayerSaved += OnPlayerSaved;
-        World.WorldSaved += OnWorldSaved;
-    }
-
-    private void OnWorldSaved() {
-        _isWorldSaved = true;
-        World.WorldSaved -= OnWorldSaved;
-        TryExitGame();
-    }
-
-    private void OnPlayerSaved() {
-        _isPlayerSaved = true;
-        Player.PlayerSaved -= OnPlayerSaved;
-        TryExitGame();
-    }
-
-    private void TryExitGame() {
-        if (!_isPlayerSaved) return;
-        if (_multiplayerClient is null && !_isWorldSaved) return;
-        GetTree().Paused = false;
+    
+    private void OnExitGameButtonDown() {
+        Interface.GameMenu.ExitGameButtonDown -= OnExitGameButtonDown;
         ExitGameFinished?.Invoke();
     }
-
-
 }

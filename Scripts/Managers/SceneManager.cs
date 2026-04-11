@@ -26,13 +26,10 @@ public partial class SceneManager : Node {
         _game = Data.PackedScenes.Game.Instantiate<Game>();
         AddChild(_game);
 
-        _game.Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
         _game.ExitGameFinished += ExitGame;
     }
 
-    private void OnExitGameClicked() {
-        _game.Interface.GameMenu.ExitGameButtonDown -= OnExitGameClicked;
-    }
+   
 
     private void OnMainMenuHostClickedEnterWorld(Dictionary world, Dictionary playerInfo) {
         CreateGame();
@@ -49,7 +46,6 @@ public partial class SceneManager : Node {
         CreateMainMenu();
         _game.ExitGameFinished -= ExitGame;
         _game.QueueFree();
-
     }
 
     private void CreateMainMenu() {
