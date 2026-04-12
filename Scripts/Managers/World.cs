@@ -68,9 +68,11 @@ public partial class World : Node2D {
         }
 
         WorldLoaded?.Invoke();
-        _worldCollision.Init(_entities, WorldSize);
+        _worldCollision.InitAsHost(_entities, WorldSize);
         _localPlayer = SpawnLocalPlayer();
-        _localPlayer.MovedCell += _worldCollision.OnPlayerMovedCell;
+        
+        _worldCollision.IncrementObserverCounts(_localPlayer.Coords);
+        _localPlayer.MovedCell += _worldCollision.MoveObserver;
 
         _game.Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
     }
@@ -126,7 +128,6 @@ public partial class World : Node2D {
         RenderingServer.FreeRid(_canvas);
 
         if (_localPlayer != null) {
-            _localPlayer.MovedCell -= _worldCollision.OnPlayerMovedCell;
             _localPlayer.ActionController.GatherAction.GatherAttempted -= 
                 OnLocalPlayerGatherAttempted;
         }
@@ -196,7 +197,6 @@ public partial class World : Node2D {
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void RpcOnPlayerBuildBlockAttempted(Vector2I coords, string resourcePath) {
         List<IEntity> cellEntities = _entities[coords.X, coords.Y];
-        // check if a block is in there
         if (cellEntities.OfType<BlockEntity>().Any()) return;
 
         Rpc(nameof(RpcCreateBlock), coords, resourcePath);
@@ -257,7 +257,6 @@ public partial class World : Node2D {
     private void RpcRequestWorldData() {
         int requestingPeerId = Multiplayer.GetRemoteSenderId();
 
-        // Send world metadata first
         Dictionary metadata = new() {
             ["Width"] = WorldSize.X,
             ["Height"] = WorldSize.Y
@@ -386,9 +385,8 @@ public partial class World : Node2D {
         _isReceivingWorldData = false;
 
         WorldLoaded?.Invoke();
-        _worldCollision.Init(_entities, WorldSize);
         _localPlayer = SpawnLocalPlayer();
-        _localPlayer.MovedCell += _worldCollision.OnPlayerMovedCell;
+        _worldCollision.InitAsClient(WorldSize);
 
         _game.Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
     }
