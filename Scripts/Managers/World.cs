@@ -25,7 +25,7 @@ public partial class World : Node2D {
     private const int ChunkSize = 50;
     private bool _isReceivingWorldData;
     private readonly List<Dictionary> _bufferedChunks = new();
-    
+
     public Vector2I WorldSize { get; private set; }
 
     public event Action WorldLoaded;
@@ -52,7 +52,7 @@ public partial class World : Node2D {
             switch (dictionary["type"].ToString()) {
                 case "block":
                     entity = new BlockEntity() {
-                        CellCoordinates = new Vector2I(x,y),
+                        CellCoordinates = new Vector2I(x, y),
                         CurrentHealth = 1,
                         ResourcePath = dictionary["item"].AsGodotDictionary()["ResourcePath"].ToString(),
                     };
@@ -61,10 +61,10 @@ public partial class World : Node2D {
                     throw new Exception(
                         $"[20250529.2332.1] Unknown world object type: {dictionary["type"].ToString()}");
             }
-            
-            _entities[x ,y].Add(entity); 
+
+            _entities[x, y].Add(entity);
         }
-        
+
         WorldLoaded?.Invoke();
         _worldCollision.Init(_entities, WorldSize);
         _localPlayer = SpawnLocalPlayer();
@@ -74,25 +74,26 @@ public partial class World : Node2D {
     }
 
     #region Draw World
+
     public override void _Ready() {
         _canvas = RenderingServer.CanvasItemCreate();
         RenderingServer.CanvasItemSetParent(_canvas, GetCanvasItem());
-        RenderingServer.CanvasItemSetTransform(_canvas, new Transform2D(0, Vector2.Zero)); 
+        RenderingServer.CanvasItemSetTransform(_canvas, new Transform2D(0, Vector2.Zero));
     }
 
     public override void _Process(double delta) {
         if (_isReceivingWorldData) return;
         if (_localPlayer is null) return;
-        
+
         RenderingServer.CanvasItemClear(_canvas);
-        
-        int drawPositionXStart = 
+
+        int drawPositionXStart =
             Math.Max(0, _localPlayer.Coords.X - _blockDrawDistance);
-        int drawPositionXEnd = 
+        int drawPositionXEnd =
             Math.Min(WorldSize.X, _localPlayer.Coords.X + _blockDrawDistance);
-        int drawPositionYStart = 
+        int drawPositionYStart =
             Math.Max(0, _localPlayer.Coords.Y - _blockDrawDistance);
-        int drawPositionYEnd = 
+        int drawPositionYEnd =
             Math.Min(WorldSize.Y, _localPlayer.Coords.Y + _blockDrawDistance);
 
         for (int x = drawPositionXStart; x < drawPositionXEnd; x++) {
@@ -102,15 +103,15 @@ public partial class World : Node2D {
                     if (entity is BlockEntity blockEntity) {
                         Rect2 drawDimensions = new(
                             blockEntity.CellCoordinates.X * Game.BlockSize,
-                            blockEntity.CellCoordinates.Y * Game.BlockSize, 
-                            Game.BlockSize, 
+                            blockEntity.CellCoordinates.Y * Game.BlockSize,
+                            Game.BlockSize,
                             Game.BlockSize
                         );
                         Item item = ResourceLoader.Load<Item>(blockEntity.ResourcePath);
-                    
+
                         RenderingServer.CanvasItemAddTextureRect(
                             _canvas,
-                            drawDimensions, 
+                            drawDimensions,
                             item.IconTexture.GetRid()
                         );
                     }
@@ -128,13 +129,13 @@ public partial class World : Node2D {
     }
 
     #endregion
-    
+
     private void OnExitGameClicked() {
         Visible = false;
         _game.Interface.GameMenu.ExitGameButtonDown -= OnExitGameClicked;
         QueueFree();
     }
-    
+
     public void SetGameAsClient(Game game, Dictionary playerData) {
         if (_game is not null) throw new Exception("[20250529.2332.1] Game already set");
         _game = game;
@@ -149,26 +150,38 @@ public partial class World : Node2D {
         player.InitAsLocal(_game, _localPlayerData);
         AddChild(player, true);
         _players.Add(_game.PeerId, player);
-        player.ActionController.GatherAction.GatherAttempted += OnPlayerGatherAttempted;
+        player.ActionController.GatherAction.GatherAttempted += OnLocalPlayerGatherAttempted;
 
         Rpc(nameof(RpcOnNewPlayerJoining), _game.PeerId);
         return player;
     }
 
-    private void OnPlayerGatherAttempted(Vector2I coords, Player player) {
+    private void OnLocalPlayerGatherAttempted(Vector2I coords, Player player) {
+        RpcId(1, nameof(RpcOnPlayerGatherAttempted),
+            coords, player.PlayerEquipment.Pickaxe.Power);
+    }
+
+    
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+    private void RpcOnPlayerGatherAttempted(Vector2I coords, float power) {
         List<IEntity> cellEntities = _entities[coords.X, coords.Y];
-        
+
         for (int i = 0; i < cellEntities.Count; i++) {
             IEntity entity = cellEntities[i];
             if (entity is BlockEntity blockEntity) {
-                blockEntity.CurrentHealth -= player.PlayerEquipment.Pickaxe.Power;
+                blockEntity.CurrentHealth -= power;
                 if (blockEntity.CurrentHealth <= 0) {
-                    cellEntities.RemoveAt(i);
-                    BlockDestroyed?.Invoke(coords);
+                    Rpc(nameof(RpcBlockDestroyed), coords, i);
                 }
                 break;
             }
         }
+    }
+
+    [Rpc(CallLocal = true)]
+    private void RpcBlockDestroyed(Vector2I coords, int i) {
+        _entities[coords.X, coords.Y].RemoveAt(i);
+        BlockDestroyed?.Invoke(coords);
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
@@ -201,7 +214,7 @@ public partial class World : Node2D {
         Player player = _players[_game.PeerId];
         player.Inventory.OnAfterBuildSuccess(item);
     }
-    
+
     public bool IsInBounds(Vector2I intVector) {
         return intVector.X >= 0
                && intVector.X < WorldSize.X
@@ -296,6 +309,7 @@ public partial class World : Node2D {
             foreach (Dictionary bufferedChunk in _bufferedChunks) {
                 ProcessWorldChunk(bufferedChunk);
             }
+
             _bufferedChunks.Clear();
         }
     }
@@ -356,5 +370,4 @@ public partial class World : Node2D {
     }
 
     #endregion
-
 }
