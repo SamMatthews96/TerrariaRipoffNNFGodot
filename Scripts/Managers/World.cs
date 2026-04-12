@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
 using Godot.Collections;
 using TerrariaRipoffNNF.Scripts.GameObjects;
@@ -30,6 +31,7 @@ public partial class World : Node2D {
 
     public event Action WorldLoaded;
     public event Action<Vector2I> BlockDestroyed;
+    public event Action<Vector2I> BlockCreated;
 
     public void SetGameAsHost(Game game, Dictionary worldData, Dictionary playerData) {
         if (_game is not null) throw new Exception("[20250529.2332.1] Game already set");
@@ -123,8 +125,10 @@ public partial class World : Node2D {
     public override void _ExitTree() {
         RenderingServer.FreeRid(_canvas);
 
-        if (_localPlayer != null && _worldCollision != null) {
+        if (_localPlayer != null) {
             _localPlayer.MovedCell -= _worldCollision.OnPlayerMovedCell;
+            _localPlayer.ActionController.GatherAction.GatherAttempted -= 
+                OnLocalPlayerGatherAttempted;
         }
     }
 
@@ -151,7 +155,8 @@ public partial class World : Node2D {
         AddChild(player, true);
         _players.Add(_game.PeerId, player);
         player.ActionController.GatherAction.GatherAttempted += OnLocalPlayerGatherAttempted;
-
+        player.ActionController.BuildAction.BuildBlockActionAttempted += OnLocalPlayerBuildBlockAttempted;
+        
         Rpc(nameof(RpcOnNewPlayerJoining), _game.PeerId);
         return player;
     }
@@ -160,7 +165,6 @@ public partial class World : Node2D {
         RpcId(1, nameof(RpcOnPlayerGatherAttempted),
             coords, player.PlayerEquipment.Pickaxe.Power);
     }
-
     
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void RpcOnPlayerGatherAttempted(Vector2I coords, float power) {
@@ -182,6 +186,31 @@ public partial class World : Node2D {
     private void RpcBlockDestroyed(Vector2I coords, int i) {
         _entities[coords.X, coords.Y].RemoveAt(i);
         BlockDestroyed?.Invoke(coords);
+    }
+    
+    private void OnLocalPlayerBuildBlockAttempted(Player player, Item item, Vector2I coords) {
+        RpcId(1, nameof(RpcOnPlayerBuildBlockAttempted),
+            coords, item.ResourcePath);
+    }
+    
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+    private void RpcOnPlayerBuildBlockAttempted(Vector2I coords, string resourcePath) {
+        List<IEntity> cellEntities = _entities[coords.X, coords.Y];
+        // check if a block is in there
+        if (cellEntities.OfType<BlockEntity>().Any()) return;
+
+        Rpc(nameof(RpcCreateBlock), coords, resourcePath);
+    }
+
+    [Rpc(CallLocal = true)]
+    private void RpcCreateBlock(Vector2I coords, string resourcePath) {
+        BlockEntity block = new() {
+            CellCoordinates = coords,
+            CurrentHealth = 1,
+            ResourcePath = resourcePath
+        };
+        _entities[coords.X, coords.Y].Add(block);
+        BlockCreated?.Invoke(coords);
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
@@ -227,10 +256,9 @@ public partial class World : Node2D {
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
     private void RpcRequestWorldData() {
         int requestingPeerId = Multiplayer.GetRemoteSenderId();
-        GD.Print($"[Host] Received world data request from peer {requestingPeerId}");
 
         // Send world metadata first
-        Dictionary metadata = new Dictionary {
+        Dictionary metadata = new() {
             ["Width"] = WorldSize.X,
             ["Height"] = WorldSize.Y
         };
@@ -240,8 +268,6 @@ public partial class World : Node2D {
         int chunksX = (int)Math.Ceiling((double)WorldSize.X / ChunkSize);
         int chunksY = (int)Math.Ceiling((double)WorldSize.Y / ChunkSize);
         int totalChunks = chunksX * chunksY;
-
-        GD.Print($"[Host] Sending {totalChunks} chunks ({chunksX}x{chunksY}) to peer {requestingPeerId}");
 
         // Send chunks
         int chunkIndex = 0;
@@ -264,7 +290,7 @@ public partial class World : Node2D {
     }
 
     private Array SerializeChunk(int chunkX, int chunkY) {
-        Array chunkEntities = new Array();
+        Array chunkEntities = new();
 
         int startX = chunkX * ChunkSize;
         int startY = chunkY * ChunkSize;
@@ -275,7 +301,7 @@ public partial class World : Node2D {
             for (int y = startY; y < endY; y++) {
                 foreach (IEntity entity in _entities[x, y]) {
                     if (entity is BlockEntity blockEntity) {
-                        Dictionary entityData = new Dictionary {
+                        Dictionary entityData = new() {
                             ["type"] = "block",
                             ["x"] = x,
                             ["y"] = y,
@@ -293,8 +319,6 @@ public partial class World : Node2D {
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
     private void RpcReceiveWorldMetadata(Dictionary metadata) {
-        GD.Print($"[Client] Receiving world metadata: {metadata["Width"]}x{metadata["Height"]}");
-
         WorldSize = new Vector2I((int)metadata["Width"], (int)metadata["Height"]);
         _entities = new List<IEntity>[WorldSize.X, WorldSize.Y];
 
@@ -368,6 +392,6 @@ public partial class World : Node2D {
 
         _game.Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
     }
-
+    
     #endregion
 }

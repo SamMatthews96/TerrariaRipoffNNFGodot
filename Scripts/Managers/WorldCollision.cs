@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Godot;
 using TerrariaRipoffNNF.Scripts.GameObjects;
 
@@ -63,15 +64,7 @@ public partial class WorldCollision : Node2D {
 
     private bool HasBlockEntity(int x, int y) {
         List<IEntity> entities = _entities[x, y];
-        if (entities == null) return false;
-
-        foreach (IEntity entity in entities) {
-            if (entity is BlockEntity) {
-                return true;
-            }
-        }
-
-        return false;
+        return entities != null && entities.OfType<BlockEntity>().Any();
     }
 
     private void CreateCollisionBlock(int x, int y) {
