@@ -2,6 +2,6 @@
 
 namespace TerrariaRipoffNNF;
 
-public partial class WorldSolid : StaticBody2D {
+public partial class PickupEntity : Node2D {
     
 }
