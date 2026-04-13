@@ -16,8 +16,6 @@ public partial class World : Node2D {
     private Player _localPlayer;
     private int _blockDrawDistance = 20;
 
-    private Godot.Collections.Dictionary<int, Player> _players = new();
-
     private Rid _canvas;
 
     [Export] private WorldCollision _worldCollision;
@@ -154,12 +152,33 @@ public partial class World : Node2D {
         Player player = Player.Create(_game.PeerId, new Vector2I(4, 14));
         player.InitAsLocal(_game, _localPlayerData);
         AddChild(player, true);
-        _players.Add(_game.PeerId, player);
         player.ActionController.GatherAction.GatherAttempted += OnLocalPlayerGatherAttempted;
         player.ActionController.BuildAction.BuildBlockActionAttempted += OnLocalPlayerBuildBlockAttempted;
         
         Rpc(nameof(RpcOnNewPlayerJoining));
         return player;
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    private void RpcOnNewPlayerJoining() {
+        int newPeerId = Multiplayer.GetRemoteSenderId();
+        Player player = Player.Create(newPeerId, new Vector2I(4, 14));
+        AddChild(player, true);
+
+        if (Multiplayer.IsServer()) {
+            _worldCollision.IncrementObserverCounts(player.Coords);
+            player.MovedCell += _worldCollision.MoveObserver;
+        }
+
+        _localPlayer.AddPeerToSynchronizer(newPeerId);
+
+        RpcId(newPeerId, nameof(SpawnRemoteExistingPlayer), _game.PeerId);
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    private void SpawnRemoteExistingPlayer(int peerId) {
+        Player player = Player.Create(peerId, new Vector2I(4, 14));
+        AddChild(player, true);
     }
 
     private void OnLocalPlayerGatherAttempted(Vector2I coords, Player player) {
@@ -211,41 +230,6 @@ public partial class World : Node2D {
         };
         _entities[coords.X, coords.Y].Add(block);
         BlockCreated?.Invoke(coords);
-    }
-
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
-    private void RpcOnNewPlayerJoining() {
-        int newPeerId = Multiplayer.GetRemoteSenderId();
-        Player player = Player.Create(newPeerId, new Vector2I(4, 14));
-        AddChild(player, true);
-        _players.Add(newPeerId, player);
-        
-        _worldCollision.IncrementObserverCounts(player.Coords);
-        player.MovedCell += _worldCollision.MoveObserver;
-        
-        _players[_game.PeerId].AddPeerToSynchronizer(newPeerId);
-
-        RpcId(newPeerId, nameof(SpawnRemoteExistingPlayer), _game.PeerId);
-    }
-
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
-    private void SpawnRemoteExistingPlayer(int peerId) {
-        Player player = Player.Create(peerId, new Vector2I(4, 14));
-        AddChild(player, true);
-        _players.Add(peerId, player);
-    }
-
-    [Rpc(CallLocal = true)]
-    private void RpcGatherSuccess() {
-        Player player = _players[_game.PeerId];
-        player.ActionController.GatherAction.OnAfterGatherSuccess();
-    }
-
-    [Rpc(CallLocal = true)]
-    private void RpcBuildSuccess(Dictionary data) {
-        Item item = Item.FromDictionary(data);
-        Player player = _players[_game.PeerId];
-        player.Inventory.OnAfterBuildSuccess(item);
     }
 
     public bool IsInBounds(Vector2I intVector) {

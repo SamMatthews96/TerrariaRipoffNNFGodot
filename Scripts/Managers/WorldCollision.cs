@@ -47,11 +47,13 @@ public partial class WorldCollision : Node2D {
     }
 
     public override void _Ready() {
+        if (!Multiplayer.IsServer()) return; 
         _world.BlockDestroyed += OnBlockDestroyed;
         _world.BlockCreated += OnBlockCreated;
     }
 
     public override void _ExitTree() {
+        if (!Multiplayer.IsServer()) return; 
         _world.BlockDestroyed -= OnBlockDestroyed;
         _world.BlockCreated -= OnBlockCreated;
     }
@@ -62,7 +64,7 @@ public partial class WorldCollision : Node2D {
     }
 
     public void IncrementObserverCounts(Vector2I position) {
-        GD.Print("Incrementing observer counts at: " + position + "");
+        if (!Multiplayer.IsServer()) return;
         int startX = Mathf.Max(0, position.X - _observerRadius);
         int endX = Mathf.Min(_worldSize.X - 1, position.X + _observerRadius);
         int startY = Mathf.Max(0, position.Y - _observerRadius);
@@ -79,6 +81,7 @@ public partial class WorldCollision : Node2D {
     }
     
     public void DecrementObserverCounts(Vector2I position) {
+        if (!Multiplayer.IsServer()) return;
         int startX = Mathf.Max(0, position.X - _observerRadius);
         int endX = Mathf.Min(_worldSize.X - 1, position.X + _observerRadius);
         int startY = Mathf.Max(0, position.Y - _observerRadius);
@@ -95,6 +98,7 @@ public partial class WorldCollision : Node2D {
     }
 
     private void OnBlockDestroyed(Vector2I position) {
+        if (!Multiplayer.IsServer()) return;
         Rpc(nameof(RpcRemoveCollisionBlock), position.X, position.Y);
     }
 
