@@ -62,6 +62,7 @@ public partial class WorldCollision : Node2D {
     }
 
     public void IncrementObserverCounts(Vector2I position) {
+        GD.Print("Incrementing observer counts at: " + position + "");
         int startX = Mathf.Max(0, position.X - _observerRadius);
         int endX = Mathf.Min(_worldSize.X - 1, position.X + _observerRadius);
         int startY = Mathf.Max(0, position.Y - _observerRadius);

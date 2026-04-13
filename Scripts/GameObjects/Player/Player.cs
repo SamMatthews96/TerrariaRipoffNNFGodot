@@ -142,7 +142,11 @@ public partial class Player : CharacterBody2D {
         MoveAndSlide();
 
         if (previousCoords == Coords) return;
-        MovedCell?.Invoke(Coords, previousCoords);
-        
+        RpcId(1, nameof(RpcMovedCell), Coords, previousCoords);
+    }
+    
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+    private void RpcMovedCell(Vector2I newCoords, Vector2I oldCoords) {
+        MovedCell?.Invoke(newCoords, oldCoords);
     }
 }

@@ -151,14 +151,14 @@ public partial class World : Node2D {
     }
 
     private Player SpawnLocalPlayer() {
-        Player player = Player.Create(_game.PeerId, new Vector2I(10, 14));
+        Player player = Player.Create(_game.PeerId, new Vector2I(4, 14));
         player.InitAsLocal(_game, _localPlayerData);
         AddChild(player, true);
         _players.Add(_game.PeerId, player);
         player.ActionController.GatherAction.GatherAttempted += OnLocalPlayerGatherAttempted;
         player.ActionController.BuildAction.BuildBlockActionAttempted += OnLocalPlayerBuildBlockAttempted;
         
-        Rpc(nameof(RpcOnNewPlayerJoining), _game.PeerId);
+        Rpc(nameof(RpcOnNewPlayerJoining));
         return player;
     }
 
@@ -214,11 +214,15 @@ public partial class World : Node2D {
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
-    private void RpcOnNewPlayerJoining(int newPeerId) {
-        Player player = Player.Create(newPeerId, new Vector2I(5, 5));
+    private void RpcOnNewPlayerJoining() {
+        int newPeerId = Multiplayer.GetRemoteSenderId();
+        Player player = Player.Create(newPeerId, new Vector2I(4, 14));
         AddChild(player, true);
         _players.Add(newPeerId, player);
-
+        
+        _worldCollision.IncrementObserverCounts(player.Coords);
+        player.MovedCell += _worldCollision.MoveObserver;
+        
         _players[_game.PeerId].AddPeerToSynchronizer(newPeerId);
 
         RpcId(newPeerId, nameof(SpawnRemoteExistingPlayer), _game.PeerId);
@@ -226,7 +230,7 @@ public partial class World : Node2D {
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
     private void SpawnRemoteExistingPlayer(int peerId) {
-        Player player = Player.Create(peerId, new Vector2I(5, 5));
+        Player player = Player.Create(peerId, new Vector2I(4, 14));
         AddChild(player, true);
         _players.Add(peerId, player);
     }
