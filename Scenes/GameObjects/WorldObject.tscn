@@ -1,6 +1,0 @@
-[gd_scene format=3 uid="uid://dfd3nx6gn2gr4"]
-
-[ext_resource type="Script" uid="uid://dibjk3xoywbyo" path="res://Scripts/GameObjects/WorldObject/WorldObject.cs" id="1_1535c"]
-
-[node name="WorldObject" type="Node2D"]
-script = ExtResource("1_1535c")
