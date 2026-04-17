@@ -14,11 +14,9 @@ public partial class World : Node2D {
 
     private Dictionary _localPlayerData;
     private Player _localPlayer;
-    private int _blockDrawDistance = 20;
-
-    private Rid _canvas;
 
     [Export] private WorldCollision _worldCollision;
+    [Export] private WorldRenderer _worldRenderer;
 
     // World sync constants
     private const int ChunkSize = 50;
@@ -68,70 +66,20 @@ public partial class World : Node2D {
         WorldLoaded?.Invoke();
         _worldCollision.InitAsHost(_entities, WorldSize);
         _localPlayer = SpawnLocalPlayer();
-        
+
         _worldCollision.IncrementObserverCounts(_localPlayer.Coords);
         _localPlayer.MovedCell += _worldCollision.MoveObserver;
-
+        _worldRenderer = WorldRenderer.Create(_entities, WorldSize, _localPlayer);
+        AddChild(_worldRenderer);
         _game.Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
     }
 
-    #region Draw World
-
-    public override void _Ready() {
-        _canvas = RenderingServer.CanvasItemCreate();
-        RenderingServer.CanvasItemSetParent(_canvas, GetCanvasItem());
-        RenderingServer.CanvasItemSetTransform(_canvas, new Transform2D(0, Vector2.Zero));
-    }
-
-    public override void _Process(double delta) {
-        if (_isReceivingWorldData) return;
-        if (_localPlayer is null) return;
-
-        RenderingServer.CanvasItemClear(_canvas);
-
-        int drawPositionXStart =
-            Math.Max(0, _localPlayer.Coords.X - _blockDrawDistance);
-        int drawPositionXEnd =
-            Math.Min(WorldSize.X, _localPlayer.Coords.X + _blockDrawDistance);
-        int drawPositionYStart =
-            Math.Max(0, _localPlayer.Coords.Y - _blockDrawDistance);
-        int drawPositionYEnd =
-            Math.Min(WorldSize.Y, _localPlayer.Coords.Y + _blockDrawDistance);
-
-        for (int x = drawPositionXStart; x < drawPositionXEnd; x++) {
-            for (int y = drawPositionYStart; y < drawPositionYEnd; y++) {
-                List<IEntity> cellEntities = _entities[x, y];
-                foreach (IEntity entity in cellEntities) {
-                    if (entity is BlockEntity blockEntity) {
-                        Rect2 drawDimensions = new(
-                            blockEntity.CellCoordinates.X * Game.BlockSize,
-                            blockEntity.CellCoordinates.Y * Game.BlockSize,
-                            Game.BlockSize,
-                            Game.BlockSize
-                        );
-                        Item item = ResourceLoader.Load<Item>(blockEntity.ResourcePath);
-
-                        RenderingServer.CanvasItemAddTextureRect(
-                            _canvas,
-                            drawDimensions,
-                            item.IconTexture.GetRid()
-                        );
-                    }
-                }
-            }
-        }
-    }
-
     public override void _ExitTree() {
-        RenderingServer.FreeRid(_canvas);
-
         if (_localPlayer != null) {
-            _localPlayer.ActionController.GatherAction.GatherAttempted -= 
+            _localPlayer.ActionController.GatherAction.GatherAttempted -=
                 OnLocalPlayerGatherAttempted;
         }
     }
-
-    #endregion
 
     private void OnExitGameClicked() {
         Visible = false;
@@ -262,7 +210,7 @@ public partial class World : Node2D {
             for (int chunkY = 0; chunkY < chunksY; chunkY++) {
                 Array chunkData = SerializeChunk(chunkX, chunkY);
 
-                Dictionary chunkPacket = new Dictionary {
+                Dictionary chunkPacket = new() {
                     ["chunkX"] = chunkX,
                     ["chunkY"] = chunkY,
                     ["chunkIndex"] = chunkIndex,
@@ -341,7 +289,6 @@ public partial class World : Node2D {
         int totalChunks = (int)chunkPacket["totalChunks"];
         Array entities = chunkPacket["entities"].AsGodotArray();
 
-
         // Deserialize entities into the world
         foreach (Dictionary entityData in entities) {
             int x = (int)entityData["x"];
@@ -375,6 +322,8 @@ public partial class World : Node2D {
         WorldLoaded?.Invoke();
         _localPlayer = SpawnLocalPlayer();
         _worldCollision.InitAsClient(WorldSize);
+        _worldRenderer = WorldRenderer.Create(_entities, WorldSize, _localPlayer);
+        AddChild(_worldRenderer);
 
         _game.Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
     }
