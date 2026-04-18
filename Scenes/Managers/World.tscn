@@ -15,9 +15,6 @@ script = ExtResource("3_r1w0f")
 _world = NodePath("..")
 _collisionBlockScene = ExtResource("2_q5vno")
 
-[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="WorldCollision" unique_id=2038855234]
-spawn_path = NodePath("..")
-
 [node name="PickupManager" type="Node2D" parent="." unique_id=626485641 node_paths=PackedStringArray("_world")]
 script = ExtResource("4_ybhg6")
 _world = NodePath("..")

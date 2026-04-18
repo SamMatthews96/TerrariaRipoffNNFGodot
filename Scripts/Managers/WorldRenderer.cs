@@ -30,7 +30,6 @@ public partial class WorldRenderer : Node2D {
 
     public override void _Process(double delta) {
         RenderingServer.CanvasItemClear(_canvas);
-        return;
         int playerX = _localPlayer.Coords.X;
         int playerY = _localPlayer.Coords.Y;
         int drawPositionXStart = Math.Max(0, playerX - BlockDrawDistance);

@@ -8,9 +8,15 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_je82m"]
 size = Vector2(26, 26)
 
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_d35os"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+
 [node name="PickupEntity" type="RigidBody2D" unique_id=1218108558 node_paths=PackedStringArray("_sprite")]
 collision_layer = 4
 collision_mask = 2
+gravity_scale = 0.0
 script = ExtResource("1_d35os")
 _sprite = NodePath("Sprite2D")
 
@@ -26,3 +32,6 @@ texture = ExtResource("1_bbh42")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1173420822]
 shape = SubResource("RectangleShape2D_je82m")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=1168216898]
+replication_config = SubResource("SceneReplicationConfig_d35os")

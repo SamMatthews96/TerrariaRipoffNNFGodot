@@ -8,29 +8,45 @@ namespace TerrariaRipoffNNF;
 public partial class PickupManager : Node2D {
     private readonly List<PickupEntity> _activePickups = new();
     [Export] private World _world;
+    private int _pickupCount = 0;
 
     public override void _Ready() {
-        _world.BlockDestroyed += OnBlockDestroyed;
+        if (!Multiplayer.IsServer()) return;
+        _world.BlockDestroyed += ServerOnBlockDestroyed;
     }
 
     public override void _ExitTree() {
-        _world.BlockDestroyed -= OnBlockDestroyed;
+        if (!Multiplayer.IsServer()) return;
+        _world.BlockDestroyed -= ServerOnBlockDestroyed;
     }
 
-    private void OnBlockDestroyed(Vector2I coords, string resourcePath) {
-        Vector2 worldPosition = new(
-            coords.X * Game.BlockSize + Game.BlockSize / 2f,
-            coords.Y * Game.BlockSize + Game.BlockSize / 2f
+    private void ServerOnBlockDestroyed(Vector2I coords, string resourcePath) {
+        if (!Multiplayer.IsServer()) return;
+        
+        Vector2 position = new(
+            (coords.X + 0.5f) * Game.BlockSize,
+            (coords.Y + 0.5f) * Game.BlockSize
         );
+        _pickupCount++;
+        string name = $"Pickup{_pickupCount}";
 
-        PickupEntity pickup = PickupEntity.Create(resourcePath, worldPosition);
-        _activePickups.Add(pickup);
+        Rpc(nameof(RpcAllCreatePickup), position, resourcePath, name);
+    }
+
+    [Rpc(CallLocal = true)]
+    private void RpcAllCreatePickup(Vector2 position, string resourcePath, string name) {
+        PickupEntity pickup = 
+            Data.PackedScenes.Pickup.Instantiate<PickupEntity>();
+        Item item = ResourceLoader.Load<Item>(resourcePath);
+        pickup.Position = position;
+        pickup.Item = item;
+        pickup.Name = name;
         AddChild(pickup);
+        _activePickups.Add(pickup);
     }
 
     public override void _PhysicsProcess(double delta) {
         foreach (PickupEntity pickup in _activePickups) {
-            GD.Print(pickup.LinearVelocity);
         }
     }
 }

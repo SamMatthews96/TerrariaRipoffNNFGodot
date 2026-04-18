@@ -39,7 +39,7 @@ public partial class WorldCollision : Node2D {
         foreach (Vector2I pos in positions) {
             StaticBody2D block = _collisionBlockScene.Instantiate<StaticBody2D>();
             block.Position = new Vector2(pos.X * Game.BlockSize, pos.Y * Game.BlockSize);
-            _world.AddChild(block);
+            AddChild(block);
             _activeCollisionBlocks[pos] = block;
         }
     }
@@ -114,7 +114,7 @@ public partial class WorldCollision : Node2D {
     private void RpcCreateCollisionBlock(int x, int y) {
         StaticBody2D block = _collisionBlockScene.Instantiate<StaticBody2D>();
         block.Position = new Vector2(x * Game.BlockSize, y * Game.BlockSize);
-        _world.AddChild(block);
+        AddChild(block);
 
         _activeCollisionBlocks[new Vector2I(x, y)] = block;
     }
