@@ -120,42 +120,42 @@ public partial class World : Node2D {
     }
 
     private void OnLocalPlayerGatherAttempted(Vector2I coords, Player player) {
-        RpcId(1, nameof(RpcOnPlayerGatherAttempted),
+        RpcId(1, nameof(RpcHostPlayerGatherAttempted),
             coords, player.PlayerEquipment.Pickaxe.Power);
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    private void RpcOnPlayerGatherAttempted(Vector2I coords, float power) {
+    private void RpcHostPlayerGatherAttempted(Vector2I coords, float power) {
         Block block = _blocks[coords.X, coords.Y];
         if (block is null) return;
 
         block.CurrentHealth -= power;
         if (block.CurrentHealth <= 0) {
-            Rpc(nameof(RpcBlockDestroyed), coords, block.ResourcePath);
+            Rpc(nameof(RpcAllBlockDestroyed), coords, block.ResourcePath);
         }
     }
 
     [Rpc(CallLocal = true)]
-    private void RpcBlockDestroyed(Vector2I coords, string resourcePath) {
+    private void RpcAllBlockDestroyed(Vector2I coords, string resourcePath) {
         _blocks[coords.X, coords.Y] = null;
         BlockDestroyed?.Invoke(coords, resourcePath);
     }
 
     private void OnLocalPlayerBuildBlockAttempted(Player player, Item item, Vector2I coords) {
-        RpcId(1, nameof(RpcOnPlayerBuildBlockAttempted),
+        RpcId(1, nameof(RpcHostPlayerBuildBlockAttempted),
             coords, item.ResourcePath);
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    private void RpcOnPlayerBuildBlockAttempted(Vector2I coords, string resourcePath) {
+    private void RpcHostPlayerBuildBlockAttempted(Vector2I coords, string resourcePath) {
         if (_blocks[coords.X, coords.Y] != null) return;
 
-        Rpc(nameof(RpcCreateBlock), coords, resourcePath);
+        Rpc(nameof(RpcAllCreateBlock), coords, resourcePath);
     }
 
     [Rpc(CallLocal = true)]
-    private void RpcCreateBlock(Vector2I coords, string resourcePath) {
-        _blocks[coords.X, coords.Y] = new Block() {
+    private void RpcAllCreateBlock(Vector2I coords, string resourcePath) {
+        _blocks[coords.X, coords.Y] = new Block {
             CurrentHealth = 1,
             ResourcePath = resourcePath
         };

@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://t472ordp001d"]
+
+[ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://Assets/Images/icon.svg" id="1_f6j83"]
+[ext_resource type="Script" uid="uid://bmbfgivqhe8ta" path="res://testScripts/Network/NetworkTestScene.cs" id="1_jjhdw"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_f6j83"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+
+[node name="NetworkTestScene" type="Node2D" unique_id=590817040]
+script = ExtResource("1_jjhdw")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1385009184]
+position = Vector2(95, 98)
+texture = ExtResource("1_f6j83")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=1589563934]
+replication_config = SubResource("SceneReplicationConfig_f6j83")

@@ -23,19 +23,14 @@ public partial class PickupManager : Node2D {
             coords.Y * Game.BlockSize + Game.BlockSize / 2f
         );
 
-        Item item = ResourceLoader.Load<Item>(resourcePath);
-        if (item is null) {
-            throw new Exception($"Failed to load item from {resourcePath}");
-        }
-
-        PickupEntity pickup = PickupEntity.Create(item, worldPosition);
+        PickupEntity pickup = PickupEntity.Create(resourcePath, worldPosition);
         _activePickups.Add(pickup);
         AddChild(pickup);
     }
 
     public override void _PhysicsProcess(double delta) {
         foreach (PickupEntity pickup in _activePickups) {
-            
+            GD.Print(pickup.LinearVelocity);
         }
     }
 }
