@@ -16,14 +16,13 @@ public partial class World : Node2D {
     private Player _localPlayer;
 
     [Export] private WorldCollision _worldCollision;
-    [Export] private WorldRenderer _worldRenderer;
+    private WorldRenderer _worldRenderer;
 
     // World sync constants
     private const int ChunkSize = 50;
-    private bool _isReceivingWorldData;
     private readonly List<Dictionary> _bufferedChunks = new();
 
-    public Vector2I WorldSize { get; private set; }
+    private Vector2I _worldSize;
 
     public event Action WorldLoaded;
     public event Action<Vector2I> BlockDestroyed;
@@ -33,10 +32,10 @@ public partial class World : Node2D {
         if (_game is not null) throw new Exception("[20250529.2332.1] Game already set");
         _game = game;
         _localPlayerData = playerData;
-        WorldSize = new Vector2I((int)worldData["Width"], (int)worldData["Height"]);
-        _entities = new List<IEntity>[WorldSize.X, WorldSize.Y];
-        for (int x = 0; x < WorldSize.X; x++) {
-            for (int y = 0; y < WorldSize.Y; y++) {
+        _worldSize = new Vector2I((int)worldData["Width"], (int)worldData["Height"]);
+        _entities = new List<IEntity>[_worldSize.X, _worldSize.Y];
+        for (int x = 0; x < _worldSize.X; x++) {
+            for (int y = 0; y < _worldSize.Y; y++) {
                 _entities[x, y] = new List<IEntity>();
             }
         }
@@ -64,12 +63,12 @@ public partial class World : Node2D {
         }
 
         WorldLoaded?.Invoke();
-        _worldCollision.InitAsHost(_entities, WorldSize);
+        _worldCollision.InitAsHost(_entities, _worldSize);
         _localPlayer = SpawnLocalPlayer();
 
         _worldCollision.IncrementObserverCounts(_localPlayer.Coords);
         _localPlayer.MovedCell += _worldCollision.MoveObserver;
-        _worldRenderer = WorldRenderer.Create(_entities, WorldSize, _localPlayer);
+        _worldRenderer = WorldRenderer.Create(_entities, _worldSize, _localPlayer);
         AddChild(_worldRenderer);
         _game.Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
     }
@@ -92,7 +91,6 @@ public partial class World : Node2D {
         _game = game;
         _localPlayerData = playerData;
 
-        _isReceivingWorldData = true;
         RpcId(1, nameof(RpcRequestWorldData));
     }
 
@@ -182,9 +180,9 @@ public partial class World : Node2D {
 
     public bool IsInBounds(Vector2I intVector) {
         return intVector.X >= 0
-               && intVector.X < WorldSize.X
+               && intVector.X < _worldSize.X
                && intVector.Y >= 0
-               && intVector.Y < WorldSize.Y;
+               && intVector.Y < _worldSize.Y;
     }
 
     #region World Synchronization
@@ -194,14 +192,14 @@ public partial class World : Node2D {
         int requestingPeerId = Multiplayer.GetRemoteSenderId();
 
         Dictionary metadata = new() {
-            ["Width"] = WorldSize.X,
-            ["Height"] = WorldSize.Y
+            ["Width"] = _worldSize.X,
+            ["Height"] = _worldSize.Y
         };
         RpcId(requestingPeerId, nameof(RpcReceiveWorldMetadata), metadata);
 
         // Calculate chunks
-        int chunksX = (int)Math.Ceiling((double)WorldSize.X / ChunkSize);
-        int chunksY = (int)Math.Ceiling((double)WorldSize.Y / ChunkSize);
+        int chunksX = (int)Math.Ceiling((double)_worldSize.X / ChunkSize);
+        int chunksY = (int)Math.Ceiling((double)_worldSize.Y / ChunkSize);
         int totalChunks = chunksX * chunksY;
 
         // Send chunks
@@ -229,8 +227,8 @@ public partial class World : Node2D {
 
         int startX = chunkX * ChunkSize;
         int startY = chunkY * ChunkSize;
-        int endX = Math.Min(startX + ChunkSize, WorldSize.X);
-        int endY = Math.Min(startY + ChunkSize, WorldSize.Y);
+        int endX = Math.Min(startX + ChunkSize, _worldSize.X);
+        int endY = Math.Min(startY + ChunkSize, _worldSize.Y);
 
         for (int x = startX; x < endX; x++) {
             for (int y = startY; y < endY; y++) {
@@ -254,11 +252,11 @@ public partial class World : Node2D {
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
     private void RpcReceiveWorldMetadata(Dictionary metadata) {
-        WorldSize = new Vector2I((int)metadata["Width"], (int)metadata["Height"]);
-        _entities = new List<IEntity>[WorldSize.X, WorldSize.Y];
+        _worldSize = new Vector2I((int)metadata["Width"], (int)metadata["Height"]);
+        _entities = new List<IEntity>[_worldSize.X, _worldSize.Y];
 
-        for (int x = 0; x < WorldSize.X; x++) {
-            for (int y = 0; y < WorldSize.Y; y++) {
+        for (int x = 0; x < _worldSize.X; x++) {
+            for (int y = 0; y < _worldSize.Y; y++) {
                 _entities[x, y] = new List<IEntity>();
             }
         }
@@ -317,12 +315,10 @@ public partial class World : Node2D {
     }
 
     private void OnWorldSyncComplete() {
-        _isReceivingWorldData = false;
-
         WorldLoaded?.Invoke();
         _localPlayer = SpawnLocalPlayer();
-        _worldCollision.InitAsClient(WorldSize);
-        _worldRenderer = WorldRenderer.Create(_entities, WorldSize, _localPlayer);
+        _worldCollision.InitAsClient(_worldSize);
+        _worldRenderer = WorldRenderer.Create(_entities, _worldSize, _localPlayer);
         AddChild(_worldRenderer);
 
         _game.Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;

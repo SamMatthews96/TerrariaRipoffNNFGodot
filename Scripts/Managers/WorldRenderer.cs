@@ -31,15 +31,12 @@ public partial class WorldRenderer : Node2D {
 
     public override void _Process(double delta) {
         RenderingServer.CanvasItemClear(_canvas);
-
-        int drawPositionXStart =
-            Math.Max(0, _localPlayer.Coords.X - BlockDrawDistance);
-        int drawPositionXEnd =
-            Math.Min(_worldSize.X, _localPlayer.Coords.X + BlockDrawDistance);
-        int drawPositionYStart =
-            Math.Max(0, _localPlayer.Coords.Y - BlockDrawDistance);
-        int drawPositionYEnd =
-            Math.Min(_worldSize.Y, _localPlayer.Coords.Y + BlockDrawDistance);
+        int playerX = _localPlayer.Coords.X;
+        int playerY = _localPlayer.Coords.Y;
+        int drawPositionXStart = Math.Max(0, playerX - BlockDrawDistance);
+        int drawPositionXEnd = Math.Min(_worldSize.X, playerX + BlockDrawDistance);
+        int drawPositionYStart = Math.Max(0, playerY - BlockDrawDistance);
+        int drawPositionYEnd = Math.Min(_worldSize.Y, playerY + BlockDrawDistance);
 
         for (int x = drawPositionXStart; x < drawPositionXEnd; x++) {
             for (int y = drawPositionYStart; y < drawPositionYEnd; y++) {
