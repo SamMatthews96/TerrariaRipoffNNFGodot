@@ -32,7 +32,7 @@ public partial class World : Node2D {
         _game = game;
         _localPlayerData = playerData;
         _worldSize = new Vector2I((int)worldData["Width"], (int)worldData["Height"]);
-        _blocks = new Block?[_worldSize.X, _worldSize.Y];
+        _blocks = new Block[_worldSize.X, _worldSize.Y];
 
         Array allWorldObjects = worldData["SavedWorldObjects"].AsGodotArray();
         foreach (Dictionary dictionary in allWorldObjects) {
@@ -90,7 +90,7 @@ public partial class World : Node2D {
         AddChild(player, true);
         player.ActionController.GatherAction.GatherAttempted += OnLocalPlayerGatherAttempted;
         player.ActionController.BuildAction.BuildBlockActionAttempted += OnLocalPlayerBuildBlockAttempted;
-        
+
         Rpc(nameof(RpcOnNewPlayerJoining));
         return player;
     }
@@ -121,15 +121,15 @@ public partial class World : Node2D {
         RpcId(1, nameof(RpcOnPlayerGatherAttempted),
             coords, player.PlayerEquipment.Pickaxe.Power);
     }
-    
+
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void RpcOnPlayerGatherAttempted(Vector2I coords, float power) {
-        Block? block = _blocks[coords.X, coords.Y];
-        if (block != null) {
-            block.CurrentHealth -= power;
-            if (block.CurrentHealth <= 0) {
-                Rpc(nameof(RpcBlockDestroyed), coords);
-            }
+        Block block = _blocks[coords.X, coords.Y];
+        if (block is null) return;
+
+        block.CurrentHealth -= power;
+        if (block.CurrentHealth <= 0) {
+            Rpc(nameof(RpcBlockDestroyed), coords);
         }
     }
 
@@ -138,12 +138,12 @@ public partial class World : Node2D {
         _blocks[coords.X, coords.Y] = null;
         BlockDestroyed?.Invoke(coords);
     }
-    
+
     private void OnLocalPlayerBuildBlockAttempted(Player player, Item item, Vector2I coords) {
         RpcId(1, nameof(RpcOnPlayerBuildBlockAttempted),
             coords, item.ResourcePath);
     }
-    
+
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void RpcOnPlayerBuildBlockAttempted(Vector2I coords, string resourcePath) {
         if (_blocks[coords.X, coords.Y] != null) return;
@@ -214,17 +214,16 @@ public partial class World : Node2D {
 
         for (int x = startX; x < endX; x++) {
             for (int y = startY; y < endY; y++) {
-                Block? block = _blocks[x, y];
-                if (block != null) {
-                    Dictionary entityData = new() {
-                        ["type"] = "block",
-                        ["x"] = x,
-                        ["y"] = y,
-                        ["health"] = block.CurrentHealth,
-                        ["path"] = block.ResourcePath
-                    };
-                    chunkEntities.Add(entityData);
-                }
+                Block block = _blocks[x, y];
+                if (block is null) continue;
+                Dictionary entityData = new() {
+                    ["type"] = "block",
+                    ["x"] = x,
+                    ["y"] = y,
+                    ["health"] = block.CurrentHealth,
+                    ["path"] = block.ResourcePath
+                };
+                chunkEntities.Add(entityData);
             }
         }
 
@@ -234,7 +233,7 @@ public partial class World : Node2D {
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
     private void RpcReceiveWorldMetadata(Dictionary metadata) {
         _worldSize = new Vector2I((int)metadata["Width"], (int)metadata["Height"]);
-        _blocks = new Block?[_worldSize.X, _worldSize.Y];
+        _blocks = new Block[_worldSize.X, _worldSize.Y];
 
         // Process any buffered chunks that arrived before metadata
         if (_bufferedChunks.Count > 0) {
@@ -294,6 +293,6 @@ public partial class World : Node2D {
 
         _game.Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
     }
-    
+
     #endregion
 }

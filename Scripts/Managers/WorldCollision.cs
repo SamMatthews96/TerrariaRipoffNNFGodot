@@ -14,7 +14,7 @@ public partial class WorldCollision : Node2D {
     private int[,] _observerCounts; // Track how many observers are near each cell
     private Vector2I _worldSize;
 
-    public void InitAsHost(Block?[,] blocks, Vector2I worldSize) {
+    public void InitAsHost(Block[,] blocks, Vector2I worldSize) {
         _blocks = blocks;
         _worldSize = worldSize;
         _activeCollisionBlocks = new Dictionary<Vector2I, StaticBody2D>();
