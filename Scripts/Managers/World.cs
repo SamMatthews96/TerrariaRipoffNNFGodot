@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Godot;
 using Godot.Collections;
 using TerrariaRipoffNNF.Scripts.GameObjects;
@@ -10,7 +9,7 @@ namespace TerrariaRipoffNNF;
 
 public partial class World : Node2D {
     private Game _game;
-    private List<IEntity>[,] _entities;
+    private Block[,] _blocks;
 
     private Dictionary _localPlayerData;
     private Player _localPlayer;
@@ -33,23 +32,16 @@ public partial class World : Node2D {
         _game = game;
         _localPlayerData = playerData;
         _worldSize = new Vector2I((int)worldData["Width"], (int)worldData["Height"]);
-        _entities = new List<IEntity>[_worldSize.X, _worldSize.Y];
-        for (int x = 0; x < _worldSize.X; x++) {
-            for (int y = 0; y < _worldSize.Y; y++) {
-                _entities[x, y] = new List<IEntity>();
-            }
-        }
+        _blocks = new Block?[_worldSize.X, _worldSize.Y];
 
         Array allWorldObjects = worldData["SavedWorldObjects"].AsGodotArray();
         foreach (Dictionary dictionary in allWorldObjects) {
             int x = (int)dictionary["xPosition"].ToString().ToFloat();
             int y = (int)dictionary["yPosition"].ToString().ToFloat();
 
-            IEntity entity;
             switch (dictionary["type"].ToString()) {
                 case "block":
-                    entity = new BlockEntity() {
-                        CellCoordinates = new Vector2I(x, y),
+                    _blocks[x, y] = new Block() {
                         CurrentHealth = 1,
                         ResourcePath = dictionary["item"].AsGodotDictionary()["ResourcePath"].ToString(),
                     };
@@ -58,17 +50,15 @@ public partial class World : Node2D {
                     throw new Exception(
                         $"[20250529.2332.1] Unknown world object type: {dictionary["type"].ToString()}");
             }
-
-            _entities[x, y].Add(entity);
         }
 
         WorldLoaded?.Invoke();
-        _worldCollision.InitAsHost(_entities, _worldSize);
+        _worldCollision.InitAsHost(_blocks, _worldSize);
         _localPlayer = SpawnLocalPlayer();
 
         _worldCollision.IncrementObserverCounts(_localPlayer.Coords);
         _localPlayer.MovedCell += _worldCollision.MoveObserver;
-        _worldRenderer = WorldRenderer.Create(_entities, _worldSize, _localPlayer);
+        _worldRenderer = WorldRenderer.Create(_blocks, _worldSize, _localPlayer);
         AddChild(_worldRenderer);
         _game.Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
     }
@@ -134,23 +124,18 @@ public partial class World : Node2D {
     
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void RpcOnPlayerGatherAttempted(Vector2I coords, float power) {
-        List<IEntity> cellEntities = _entities[coords.X, coords.Y];
-
-        for (int i = 0; i < cellEntities.Count; i++) {
-            IEntity entity = cellEntities[i];
-            if (entity is BlockEntity blockEntity) {
-                blockEntity.CurrentHealth -= power;
-                if (blockEntity.CurrentHealth <= 0) {
-                    Rpc(nameof(RpcBlockDestroyed), coords, i);
-                }
-                break;
+        Block? block = _blocks[coords.X, coords.Y];
+        if (block != null) {
+            block.CurrentHealth -= power;
+            if (block.CurrentHealth <= 0) {
+                Rpc(nameof(RpcBlockDestroyed), coords);
             }
         }
     }
 
     [Rpc(CallLocal = true)]
-    private void RpcBlockDestroyed(Vector2I coords, int i) {
-        _entities[coords.X, coords.Y].RemoveAt(i);
+    private void RpcBlockDestroyed(Vector2I coords) {
+        _blocks[coords.X, coords.Y] = null;
         BlockDestroyed?.Invoke(coords);
     }
     
@@ -161,20 +146,17 @@ public partial class World : Node2D {
     
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void RpcOnPlayerBuildBlockAttempted(Vector2I coords, string resourcePath) {
-        List<IEntity> cellEntities = _entities[coords.X, coords.Y];
-        if (cellEntities.OfType<BlockEntity>().Any()) return;
+        if (_blocks[coords.X, coords.Y] != null) return;
 
         Rpc(nameof(RpcCreateBlock), coords, resourcePath);
     }
 
     [Rpc(CallLocal = true)]
     private void RpcCreateBlock(Vector2I coords, string resourcePath) {
-        BlockEntity block = new() {
-            CellCoordinates = coords,
+        _blocks[coords.X, coords.Y] = new Block() {
             CurrentHealth = 1,
             ResourcePath = resourcePath
         };
-        _entities[coords.X, coords.Y].Add(block);
         BlockCreated?.Invoke(coords);
     }
 
@@ -232,17 +214,16 @@ public partial class World : Node2D {
 
         for (int x = startX; x < endX; x++) {
             for (int y = startY; y < endY; y++) {
-                foreach (IEntity entity in _entities[x, y]) {
-                    if (entity is BlockEntity blockEntity) {
-                        Dictionary entityData = new() {
-                            ["type"] = "block",
-                            ["x"] = x,
-                            ["y"] = y,
-                            ["health"] = blockEntity.CurrentHealth,
-                            ["path"] = blockEntity.ResourcePath
-                        };
-                        chunkEntities.Add(entityData);
-                    }
+                Block? block = _blocks[x, y];
+                if (block != null) {
+                    Dictionary entityData = new() {
+                        ["type"] = "block",
+                        ["x"] = x,
+                        ["y"] = y,
+                        ["health"] = block.CurrentHealth,
+                        ["path"] = block.ResourcePath
+                    };
+                    chunkEntities.Add(entityData);
                 }
             }
         }
@@ -253,13 +234,7 @@ public partial class World : Node2D {
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
     private void RpcReceiveWorldMetadata(Dictionary metadata) {
         _worldSize = new Vector2I((int)metadata["Width"], (int)metadata["Height"]);
-        _entities = new List<IEntity>[_worldSize.X, _worldSize.Y];
-
-        for (int x = 0; x < _worldSize.X; x++) {
-            for (int y = 0; y < _worldSize.Y; y++) {
-                _entities[x, y] = new List<IEntity>();
-            }
-        }
+        _blocks = new Block?[_worldSize.X, _worldSize.Y];
 
         // Process any buffered chunks that arrived before metadata
         if (_bufferedChunks.Count > 0) {
@@ -274,7 +249,7 @@ public partial class World : Node2D {
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
     private void RpcReceiveWorldChunk(Dictionary chunkPacket) {
         // If metadata hasn't arrived yet, buffer this chunk
-        if (_entities == null) {
+        if (_blocks == null) {
             _bufferedChunks.Add(chunkPacket);
             return;
         }
@@ -292,11 +267,9 @@ public partial class World : Node2D {
             int x = (int)entityData["x"];
             int y = (int)entityData["y"];
 
-            IEntity entity;
             switch (entityData["type"].ToString()) {
                 case "block":
-                    entity = new BlockEntity() {
-                        CellCoordinates = new Vector2I(x, y),
+                    _blocks[x, y] = new Block() {
                         CurrentHealth = (float)entityData["health"],
                         ResourcePath = entityData["path"].ToString()
                     };
@@ -304,8 +277,6 @@ public partial class World : Node2D {
                 default:
                     throw new Exception($"[Client] Unknown entity type: {entityData["type"]}");
             }
-
-            _entities[x, y].Add(entity);
         }
 
         // Check if this is the last chunk
@@ -318,7 +289,7 @@ public partial class World : Node2D {
         WorldLoaded?.Invoke();
         _localPlayer = SpawnLocalPlayer();
         _worldCollision.InitAsClient(_worldSize);
-        _worldRenderer = WorldRenderer.Create(_entities, _worldSize, _localPlayer);
+        _worldRenderer = WorldRenderer.Create(_blocks, _worldSize, _localPlayer);
         AddChild(_worldRenderer);
 
         _game.Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;

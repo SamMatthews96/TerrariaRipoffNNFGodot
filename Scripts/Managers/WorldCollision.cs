@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Godot;
-using TerrariaRipoffNNF.Scripts.GameObjects;
 using GodotCollections = Godot.Collections;
 
 namespace TerrariaRipoffNNF;
@@ -11,13 +9,13 @@ public partial class WorldCollision : Node2D {
     [Export] private PackedScene _collisionBlockScene;
     [Export] private int _observerRadius = 3;
 
-    private List<IEntity>[,] _entities;
+    private Block[,] _blocks;
     private Dictionary<Vector2I, StaticBody2D> _activeCollisionBlocks;
     private int[,] _observerCounts; // Track how many observers are near each cell
     private Vector2I _worldSize;
 
-    public void InitAsHost(List<IEntity>[,] entities, Vector2I worldSize) {
-        _entities = entities;
+    public void InitAsHost(Block?[,] blocks, Vector2I worldSize) {
+        _blocks = blocks;
         _worldSize = worldSize;
         _activeCollisionBlocks = new Dictionary<Vector2I, StaticBody2D>();
         _observerCounts = new int[worldSize.X, worldSize.Y];
@@ -109,8 +107,7 @@ public partial class WorldCollision : Node2D {
     }
     
     private bool HasBlockEntity(int x, int y) {
-        List<IEntity> entities = _entities[x, y];
-        return entities != null && entities.OfType<BlockEntity>().Any();
+        return _blocks[x, y] != null;
     }
 
     [Rpc(CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
