@@ -10,7 +10,7 @@ public partial class PackedScenes : Resource {
     [Export] public PackedScene PlayerPickupArea { get; private set; }
     [Export] public PackedScene PlayerCrafting { get; private set; }
     [Export] public PackedScene WorldObject { get; private set; }
-    [Export] public PackedScene WorldPickup { get; private set; }
+    [Export] public PackedScene Pickup { get; private set; }
     [Export] public PackedScene WorldSolid { get; private set; }
     [Export] public PackedScene WorldStatic { get; private set; }
     [Export] public PackedScene CraftStationArea { get; private set; }

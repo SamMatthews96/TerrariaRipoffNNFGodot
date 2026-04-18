@@ -95,7 +95,7 @@ public partial class WorldCollision : Node2D {
         }
     }
 
-    private void OnBlockDestroyed(Vector2I position) {
+    private void OnBlockDestroyed(Vector2I position, string _) {
         if (!Multiplayer.IsServer()) return;
         Rpc(nameof(RpcRemoveCollisionBlock), position.X, position.Y);
     }

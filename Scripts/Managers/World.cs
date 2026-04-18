@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Godot;
 using Godot.Collections;
-using TerrariaRipoffNNF.Scripts.GameObjects;
 using Array = Godot.Collections.Array;
 
 namespace TerrariaRipoffNNF;
@@ -15,6 +14,7 @@ public partial class World : Node2D {
     private Player _localPlayer;
 
     [Export] private WorldCollision _worldCollision;
+    [Export] private PickupManager _pickupManager;
     private WorldRenderer _worldRenderer;
 
     // World sync constants
@@ -24,7 +24,7 @@ public partial class World : Node2D {
     private Vector2I _worldSize;
 
     public event Action WorldLoaded;
-    public event Action<Vector2I> BlockDestroyed;
+    public event Action<Vector2I, string> BlockDestroyed; // coords, resourcePath
     public event Action<Vector2I> BlockCreated;
 
     public void SetGameAsHost(Game game, Dictionary worldData, Dictionary playerData) {
@@ -60,6 +60,8 @@ public partial class World : Node2D {
         _localPlayer.MovedCell += _worldCollision.MoveObserver;
         _worldRenderer = WorldRenderer.Create(_blocks, _worldSize, _localPlayer);
         AddChild(_worldRenderer);
+
+
         _game.Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
     }
 
@@ -129,14 +131,14 @@ public partial class World : Node2D {
 
         block.CurrentHealth -= power;
         if (block.CurrentHealth <= 0) {
-            Rpc(nameof(RpcBlockDestroyed), coords);
+            Rpc(nameof(RpcBlockDestroyed), coords, block.ResourcePath);
         }
     }
 
     [Rpc(CallLocal = true)]
-    private void RpcBlockDestroyed(Vector2I coords) {
+    private void RpcBlockDestroyed(Vector2I coords, string resourcePath) {
         _blocks[coords.X, coords.Y] = null;
-        BlockDestroyed?.Invoke(coords);
+        BlockDestroyed?.Invoke(coords, resourcePath);
     }
 
     private void OnLocalPlayerBuildBlockAttempted(Player player, Item item, Vector2I coords) {
@@ -290,6 +292,7 @@ public partial class World : Node2D {
         _worldCollision.InitAsClient(_worldSize);
         _worldRenderer = WorldRenderer.Create(_blocks, _worldSize, _localPlayer);
         AddChild(_worldRenderer);
+
 
         _game.Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
     }

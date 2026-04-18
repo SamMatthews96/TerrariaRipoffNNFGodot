@@ -7,13 +7,13 @@ namespace TerrariaRipoffNNF;
 public partial class WorldRenderer : Node2D {
     private const int BlockDrawDistance = 20;
 
-    private Block?[,] _blocks;
+    private Block[,] _blocks;
     private Player _localPlayer;
     private Vector2I _worldSize;
     private Rid _canvas;
 
     public static WorldRenderer Create(
-        Block?[,] blocks, Vector2I worldSize, Player localPlayer
+        Block[,] blocks, Vector2I worldSize, Player localPlayer
     ) {
         WorldRenderer renderer = new();
         renderer._blocks = blocks;
