@@ -6,7 +6,7 @@ namespace TerrariaRipoffNNF;
 public partial class ServerPickupArea : Area2D {
     private Player _player;
     
-    public event Action<Item> PickupCollected;
+    public event Action<PickupEntity> PickupCollected;
     
     public static ServerPickupArea Create(Player player) {
         ServerPickupArea serverPickupArea = Data.PackedScenes.PlayerPickupArea
@@ -25,8 +25,8 @@ public partial class ServerPickupArea : Area2D {
 
     private void OnCollidedWithPickup(Node2D node) {
         if (node is not PickupEntity pickup) return;
-        if (_player.Inventory.UsedSpace + pickup.Item.InventorySpace >
-            _player.Inventory.MaximumSpace) return;
-        PickupCollected?.Invoke(pickup.Item);
+        // if (_player.Inventory.UsedSpace + pickup.Item.InventorySpace >
+        //     _player.Inventory.MaximumSpace) return;
+        PickupCollected?.Invoke(pickup);
     }
 }

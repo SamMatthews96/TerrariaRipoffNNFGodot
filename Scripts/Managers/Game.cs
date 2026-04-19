@@ -13,10 +13,6 @@ public partial class Game : Node {
 
     [Export] public InputManager InputManager { get; private set; }
 
-    public int PeerId => Multiplayer.GetUniqueId();
-
-    public Vector2I DefaultSpawnPosition { get; private set; }
-
     private MultiplayerHost _multiplayerHost;
     private MultiplayerClient _multiplayerClient;
 
@@ -45,18 +41,12 @@ public partial class Game : Node {
 
         Multiplayer.ConnectedToServer += () => {
             World.SetGameAsClient(this, playerData);
-            DefaultSpawnPosition = new Vector2I(5, 5);
         };
+        
     }
 
     private void CreateWorld(Dictionary worldData, Dictionary playerData) {
         World.SetGameAsHost(this, worldData, playerData);
-
-        DefaultSpawnPosition = new Vector2I(
-            worldData["DefaultSpawnPosition"].AsGodotArray()[0].AsInt32(),
-            worldData["DefaultSpawnPosition"].AsGodotArray()[1].AsInt32()
-        );
-
         _playerData = FileManager.LoadPlayer(playerData);
     }
 

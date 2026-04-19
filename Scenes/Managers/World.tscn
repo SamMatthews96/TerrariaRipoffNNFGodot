@@ -4,11 +4,13 @@
 [ext_resource type="PackedScene" uid="uid://deinq7tccagkl" path="res://Scenes/GameObjects/CollisionBlock.tscn" id="2_q5vno"]
 [ext_resource type="Script" uid="uid://bom06xinv44vo" path="res://Scripts/Managers/WorldCollision.cs" id="3_r1w0f"]
 [ext_resource type="Script" uid="uid://c5rinix73qqlc" path="res://Scripts/Managers/PickupManager.cs" id="4_ybhg6"]
+[ext_resource type="Script" uid="uid://cabj7p8n6wbva" path="res://Scripts/Managers/PlayerManager.cs" id="5_2qn38"]
 
-[node name="World" type="Node2D" unique_id=318249153 node_paths=PackedStringArray("WorldCollision", "PickupManager")]
+[node name="World" type="Node2D" unique_id=318249153 node_paths=PackedStringArray("WorldCollision", "PickupManager", "PlayerManager")]
 script = ExtResource("1_qmgnr")
 WorldCollision = NodePath("WorldCollision")
 PickupManager = NodePath("PickupManager")
+PlayerManager = NodePath("PlayerManager")
 
 [node name="WorldCollision" type="Node2D" parent="." unique_id=1252720866 node_paths=PackedStringArray("_world")]
 script = ExtResource("3_r1w0f")
@@ -18,3 +20,6 @@ _collisionBlockScene = ExtResource("2_q5vno")
 [node name="PickupManager" type="Node2D" parent="." unique_id=626485641 node_paths=PackedStringArray("_world")]
 script = ExtResource("4_ybhg6")
 _world = NodePath("..")
+
+[node name="PlayerManager" type="Node2D" parent="." unique_id=179624163]
+script = ExtResource("5_2qn38")

@@ -7,7 +7,7 @@ using Array = Godot.Collections.Array;
 namespace TerrariaRipoffNNF;
 
 public partial class World : Node2D {
-    private Game _game;
+    public Game Game { get; private set; }
     private Block[,] _blocks;
 
     private Dictionary _localPlayerData;
@@ -15,6 +15,8 @@ public partial class World : Node2D {
 
     [Export] public WorldCollision WorldCollision { get; private set; }
     [Export] public PickupManager PickupManager { get; private set; }
+    [Export] public PlayerManager PlayerManager { get; private set; }
+    
     private WorldRenderer _worldRenderer;
 
     // World sync constants
@@ -28,8 +30,8 @@ public partial class World : Node2D {
     public event Action<Vector2I> BlockCreated;
 
     public void SetGameAsHost(Game game, Dictionary worldData, Dictionary playerData) {
-        if (_game is not null) throw new Exception("[20250529.2332.1] Game already set");
-        _game = game;
+        if (Game is not null) throw new Exception("[20250529.2332.1] Game already set");
+        Game = game;
         _localPlayerData = playerData;
         _worldSize = new Vector2I((int)worldData["Width"], (int)worldData["Height"]);
         _blocks = new Block[_worldSize.X, _worldSize.Y];
@@ -62,7 +64,7 @@ public partial class World : Node2D {
         AddChild(_worldRenderer);
 
 
-        _game.Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
+        Game.Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
     }
 
     public override void _ExitTree() {
@@ -74,24 +76,28 @@ public partial class World : Node2D {
 
     private void OnExitGameClicked() {
         Visible = false;
-        _game.Interface.GameMenu.ExitGameButtonDown -= OnExitGameClicked;
+        Game.Interface.GameMenu.ExitGameButtonDown -= OnExitGameClicked;
         QueueFree();
     }
 
     public void SetGameAsClient(Game game, Dictionary playerData) {
-        if (_game is not null) throw new Exception("[20250529.2332.1] Game already set");
-        _game = game;
+        if (Game is not null) throw new Exception("[20250529.2332.1] Game already set");
+        Game = game;
         _localPlayerData = playerData;
 
         RpcId(1, nameof(RpcRequestWorldData));
     }
 
     private Player SpawnLocalPlayer() {
-        Player player = Player.Create(_game.PeerId, new Vector2I(4, 14));
-        player.InitAsLocal(_game, _localPlayerData);
+        int peerId = Multiplayer.GetUniqueId();
+        
+        Player player = Player.Create(peerId, new Vector2I(4, 14));
+        player.InitAsLocal(Game, _localPlayerData);
         AddChild(player, true);
-        player.ActionController.GatherAction.GatherAttempted += OnLocalPlayerGatherAttempted;
-        player.ActionController.BuildAction.BuildBlockActionAttempted += OnLocalPlayerBuildBlockAttempted;
+        player.ActionController.GatherAction.GatherAttempted += 
+            OnLocalPlayerGatherAttempted;
+        player.ActionController.BuildAction.BuildBlockActionAttempted += 
+            OnLocalPlayerBuildBlockAttempted;
 
         Rpc(nameof(RpcOnNewPlayerJoining));
         return player;
@@ -99,6 +105,7 @@ public partial class World : Node2D {
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
     private void RpcOnNewPlayerJoining() {
+        int peerId = Multiplayer.GetUniqueId();
         int newPeerId = Multiplayer.GetRemoteSenderId();
         Player player = Player.Create(newPeerId, new Vector2I(4, 14));
         AddChild(player, true);
@@ -109,8 +116,8 @@ public partial class World : Node2D {
         }
 
         _localPlayer.AddPeerToSynchronizer(newPeerId);
-
-        RpcId(newPeerId, nameof(SpawnRemoteExistingPlayer), _game.PeerId);
+        
+        RpcId(newPeerId, nameof(SpawnRemoteExistingPlayer), peerId);
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
@@ -294,7 +301,7 @@ public partial class World : Node2D {
         AddChild(_worldRenderer);
 
 
-        _game.Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
+        Game.Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
     }
 
     #endregion

@@ -63,6 +63,11 @@ public partial class Player : CharacterBody2D {
         foreach (int peer in Multiplayer.GetPeers()) {
             _positionSynchronizer.SetVisibilityFor(peer, true);
         }
+
+        if (Multiplayer.IsServer()) {
+            ServerPickupArea = ServerPickupArea.Create(this);
+            AddChild(ServerPickupArea);
+        }
     }
 
     public void AddPeerToSynchronizer(int peerId) {
@@ -81,13 +86,11 @@ public partial class Player : CharacterBody2D {
         Inventory = Inventory.Create(game, playerData, this);
         ActionController = ActionController.Create(game, this);
         Crafting = Crafting.Create(game, this);
-        ServerPickupArea = ServerPickupArea.Create(this);
         Game = game;
 
         AddChild(Inventory);
         AddChild(ActionController);
         AddChild(Crafting);
-        AddChild(ServerPickupArea);
 
         PlayerEquipment.InitAsLocal(this);
 
@@ -144,7 +147,7 @@ public partial class Player : CharacterBody2D {
         if (previousCoords == Coords) return;
         RpcId(1, nameof(RpcMovedCell), Coords, previousCoords);
     }
-    
+
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void RpcMovedCell(Vector2I newCoords, Vector2I oldCoords) {
         MovedCell?.Invoke(newCoords, oldCoords);
