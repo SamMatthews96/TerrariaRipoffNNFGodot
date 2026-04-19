@@ -30,7 +30,6 @@ public partial class Player : CharacterBody2D {
     [Export] public Vector2 SpawnPosition { get; private set; }
     public Vector2I SpawnCoords { get; private set; }
 
-
     public Game Game { get; private set; }
     private int _horizontalInput;
     private bool _isFalling;
@@ -45,7 +44,8 @@ public partial class Player : CharacterBody2D {
 
 
     public static event Action<Player> LocalPlayerSpawned;
-    public event Action<Vector2I, Vector2I> MovedCell;
+    public delegate void CellMovedDelegate(Vector2I newCoords, Vector2I oldCoords);
+    public event CellMovedDelegate MovedCell;
 
     public event Action<Player> PlayerDespawned;
     public static event Action PlayerSaved;

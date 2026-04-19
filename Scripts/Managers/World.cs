@@ -13,8 +13,8 @@ public partial class World : Node2D {
     private Dictionary _localPlayerData;
     private Player _localPlayer;
 
-    [Export] private WorldCollision _worldCollision;
-    [Export] private PickupManager _pickupManager;
+    [Export] public WorldCollision WorldCollision { get; private set; }
+    [Export] public PickupManager PickupManager { get; private set; }
     private WorldRenderer _worldRenderer;
 
     // World sync constants
@@ -53,11 +53,11 @@ public partial class World : Node2D {
         }
 
         WorldLoaded?.Invoke();
-        _worldCollision.InitAsHost(_blocks, _worldSize);
+        WorldCollision.InitAsHost(_blocks, _worldSize);
         _localPlayer = SpawnLocalPlayer();
 
-        _worldCollision.IncrementObserverCounts(_localPlayer.Coords);
-        _localPlayer.MovedCell += _worldCollision.MoveObserver;
+        WorldCollision.IncrementObserverCounts(_localPlayer.Coords);
+        _localPlayer.MovedCell += WorldCollision.MoveObserver;
         _worldRenderer = WorldRenderer.Create(_blocks, _worldSize, _localPlayer);
         AddChild(_worldRenderer);
 
@@ -104,8 +104,8 @@ public partial class World : Node2D {
         AddChild(player, true);
 
         if (Multiplayer.IsServer()) {
-            _worldCollision.IncrementObserverCounts(player.Coords);
-            player.MovedCell += _worldCollision.MoveObserver;
+            WorldCollision.IncrementObserverCounts(player.Coords);
+            player.MovedCell += WorldCollision.MoveObserver;
         }
 
         _localPlayer.AddPeerToSynchronizer(newPeerId);
@@ -289,7 +289,7 @@ public partial class World : Node2D {
     private void OnWorldSyncComplete() {
         WorldLoaded?.Invoke();
         _localPlayer = SpawnLocalPlayer();
-        _worldCollision.InitAsClient(_worldSize);
+        WorldCollision.InitAsClient(_worldSize);
         _worldRenderer = WorldRenderer.Create(_blocks, _worldSize, _localPlayer);
         AddChild(_worldRenderer);
 

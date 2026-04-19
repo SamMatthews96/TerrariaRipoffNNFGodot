@@ -5,10 +5,10 @@
 [ext_resource type="Script" uid="uid://bom06xinv44vo" path="res://Scripts/Managers/WorldCollision.cs" id="3_r1w0f"]
 [ext_resource type="Script" uid="uid://c5rinix73qqlc" path="res://Scripts/Managers/PickupManager.cs" id="4_ybhg6"]
 
-[node name="World" type="Node2D" unique_id=318249153 node_paths=PackedStringArray("_worldCollision", "_pickupManager")]
+[node name="World" type="Node2D" unique_id=318249153 node_paths=PackedStringArray("WorldCollision", "PickupManager")]
 script = ExtResource("1_qmgnr")
-_worldCollision = NodePath("WorldCollision")
-_pickupManager = NodePath("PickupManager")
+WorldCollision = NodePath("WorldCollision")
+PickupManager = NodePath("PickupManager")
 
 [node name="WorldCollision" type="Node2D" parent="." unique_id=1252720866 node_paths=PackedStringArray("_world")]
 script = ExtResource("3_r1w0f")

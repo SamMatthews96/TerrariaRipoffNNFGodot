@@ -20,7 +20,7 @@ public partial class WorldCollision : Node2D {
         _activeCollisionBlocks = new Dictionary<Vector2I, StaticBody2D>();
         _observerCounts = new int[worldSize.X, worldSize.Y];
     }
-    
+
     public void InitAsClient(Vector2I worldSize) {
         _worldSize = worldSize;
         _activeCollisionBlocks = new Dictionary<Vector2I, StaticBody2D>();
@@ -45,13 +45,16 @@ public partial class WorldCollision : Node2D {
     }
 
     public override void _Ready() {
-        if (!Multiplayer.IsServer()) return; 
+        if (!Multiplayer.IsServer()) return;
         _world.BlockDestroyed += OnBlockDestroyed;
         _world.BlockCreated += OnBlockCreated;
+        _world.PickupManager.ServerPickupCreated += OnPickupCreated;
+        _world.PickupManager.ServerPickupMoved += OnPickupMoved;
+        _world.PickupManager.ServerPickupDestroyed += OnPickupDestroyed;
     }
 
     public override void _ExitTree() {
-        if (!Multiplayer.IsServer()) return; 
+        if (!Multiplayer.IsServer()) return;
         _world.BlockDestroyed -= OnBlockDestroyed;
         _world.BlockCreated -= OnBlockCreated;
     }
@@ -77,7 +80,7 @@ public partial class WorldCollision : Node2D {
             }
         }
     }
-    
+
     public void DecrementObserverCounts(Vector2I position) {
         if (!Multiplayer.IsServer()) return;
         int startX = Mathf.Max(0, position.X - _observerRadius);
@@ -95,15 +98,29 @@ public partial class WorldCollision : Node2D {
         }
     }
 
+    private void OnBlockCreated(Vector2I position) {
+        if (_observerCounts[position.X, position.Y] > 0) {
+            Rpc(nameof(RpcCreateCollisionBlock), position.X, position.Y);
+        }
+    }
+
     private void OnBlockDestroyed(Vector2I position, string _) {
         if (!Multiplayer.IsServer()) return;
         Rpc(nameof(RpcRemoveCollisionBlock), position.X, position.Y);
     }
 
-    private void OnBlockCreated(Vector2I position) {
-        if (_observerCounts[position.X, position.Y] > 0) {
-            Rpc(nameof(RpcCreateCollisionBlock), position.X, position.Y);
-        }
+    private void OnPickupCreated(Vector2I position) {
+        if (!Multiplayer.IsServer()) return;
+        IncrementObserverCounts(position);
+    }
+
+    private void OnPickupMoved(Vector2I newPosition, Vector2I oldPosition) {
+        if (!Multiplayer.IsServer()) return;
+        MoveObserver(newPosition, oldPosition);
+    }
+    
+    private void OnPickupDestroyed(Vector2I position) {
+        DecrementObserverCounts(position);
     }
     
     private bool HasBlockEntity(int x, int y) {

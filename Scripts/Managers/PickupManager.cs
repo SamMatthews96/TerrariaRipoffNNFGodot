@@ -8,7 +8,12 @@ namespace TerrariaRipoffNNF;
 public partial class PickupManager : Node2D {
     private readonly List<PickupEntity> _activePickups = new();
     [Export] private World _world;
-    private int _pickupCount = 0;
+    private int _pickupCount;
+
+    public event Action<Vector2I> ServerPickupCreated;
+    public delegate void CellMovedDelegate(Vector2I newCoords, Vector2I oldCoords);
+    public event CellMovedDelegate ServerPickupMoved;
+    public event Action<Vector2I> ServerPickupDestroyed;
 
     public override void _Ready() {
         if (!Multiplayer.IsServer()) return;
@@ -29,8 +34,8 @@ public partial class PickupManager : Node2D {
         );
         _pickupCount++;
         string name = $"Pickup{_pickupCount}";
-
         Rpc(nameof(RpcAllCreatePickup), position, resourcePath, name);
+        ServerPickupCreated?.Invoke(coords);
     }
 
     [Rpc(CallLocal = true)]
@@ -39,6 +44,10 @@ public partial class PickupManager : Node2D {
             Data.PackedScenes.Pickup.Instantiate<PickupEntity>();
         Item item = ResourceLoader.Load<Item>(resourcePath);
         pickup.Position = position;
+        pickup.Coords = new Vector2I(
+            (int)(position.X / Game.BlockSize - 0.5f),
+            (int)(position.Y / Game.BlockSize - 0.5f)
+        );
         pickup.Item = item;
         pickup.Name = name;
         AddChild(pickup);
@@ -46,7 +55,17 @@ public partial class PickupManager : Node2D {
     }
 
     public override void _PhysicsProcess(double delta) {
+        if (!Multiplayer.IsServer()) return;
+        
         foreach (PickupEntity pickup in _activePickups) {
+            Vector2I newCoords = new(
+                (int)(pickup.Position.X / Game.BlockSize - 0.5f),
+                (int)(pickup.Position.Y / Game.BlockSize - 0.5f)
+            );
+            if (pickup.Coords == newCoords) continue;
+            
+            ServerPickupMoved?.Invoke(newCoords, pickup.Coords);
+            pickup.Coords = newCoords;
         }
     }
 }
