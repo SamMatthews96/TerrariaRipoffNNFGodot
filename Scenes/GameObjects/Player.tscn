@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://b11uqw4ifwmss" path="res://Scripts/GameObjects/Player/Player.cs" id="1_hx4ms"]
 [ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://Assets/Images/icon.svg" id="2_5yc1a"]
-[ext_resource type="PackedScene" uid="uid://c8u386chg2fea" path="res://Scenes/GameObjects/PickupArea.tscn" id="3_om7r2"]
 [ext_resource type="Script" uid="uid://b43ui7yk16ekk" path="res://Scripts/GameObjects/Player/PlayerEquipment.cs" id="7_in65p"]
 [ext_resource type="Script" uid="uid://dfb4kfm2jhuiq" path="res://Scripts/Resources/Item/ItemMining.cs" id="9_pqpyq"]
 
@@ -46,8 +45,6 @@ shape = SubResource("RectangleShape2D_raw6a")
 enabled = false
 position_smoothing_enabled = true
 position_smoothing_speed = 25.0
-
-[node name="PickupArea" parent="." unique_id=1305066003 instance=ExtResource("3_om7r2")]
 
 [node name="CurrentEquipment" type="Node" parent="." unique_id=810167592 node_paths=PackedStringArray("_player")]
 script = ExtResource("7_in65p")

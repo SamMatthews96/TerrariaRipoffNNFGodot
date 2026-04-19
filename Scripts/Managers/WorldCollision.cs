@@ -57,6 +57,9 @@ public partial class WorldCollision : Node2D {
         if (!Multiplayer.IsServer()) return;
         _world.BlockDestroyed -= OnBlockDestroyed;
         _world.BlockCreated -= OnBlockCreated;
+        _world.PickupManager.ServerPickupCreated -= OnPickupCreated;
+        _world.PickupManager.ServerPickupMoved -= OnPickupMoved;
+        _world.PickupManager.ServerPickupDestroyed -= OnPickupDestroyed;
     }
 
     public void MoveObserver(Vector2I newPosition, Vector2I oldPosition) {

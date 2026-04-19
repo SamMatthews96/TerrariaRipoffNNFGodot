@@ -19,7 +19,7 @@ public partial class Player : CharacterBody2D {
     public Inventory Inventory { get; private set; }
     public ActionController ActionController { get; private set; }
     public Crafting Crafting { get; private set; }
-    public PickupArea PickupArea { get; private set; }
+    public ServerPickupArea ServerPickupArea { get; private set; }
     [Export] public PlayerEquipment PlayerEquipment { get; private set; }
 
     [Export] private MultiplayerSynchronizer _positionSynchronizer;
@@ -81,13 +81,13 @@ public partial class Player : CharacterBody2D {
         Inventory = Inventory.Create(game, playerData, this);
         ActionController = ActionController.Create(game, this);
         Crafting = Crafting.Create(game, this);
-        PickupArea = PickupArea.Create(this);
+        ServerPickupArea = ServerPickupArea.Create(this);
         Game = game;
 
         AddChild(Inventory);
         AddChild(ActionController);
         AddChild(Crafting);
-        AddChild(PickupArea);
+        AddChild(ServerPickupArea);
 
         PlayerEquipment.InitAsLocal(this);
 
