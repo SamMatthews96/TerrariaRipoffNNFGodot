@@ -11,7 +11,7 @@ public partial class World : Node2D {
     private Block[,] _blocks;
 
     private Dictionary _localPlayerData;
-    private Player _localPlayer;
+    // private Player _localPlayer;
 
     [Export] public WorldCollision WorldCollision { get; private set; }
     [Export] public PickupManager PickupManager { get; private set; }
@@ -56,23 +56,15 @@ public partial class World : Node2D {
 
         WorldLoaded?.Invoke();
         WorldCollision.InitAsHost(_blocks, _worldSize);
-        _localPlayer = SpawnLocalPlayer();
+        
+        PlayerManager.SpawnHostPlayer(playerData);
 
-        WorldCollision.IncrementObserverCounts(_localPlayer.Coords);
-        _localPlayer.MovedCell += WorldCollision.MoveObserver;
-        _worldRenderer = WorldRenderer.Create(_blocks, _worldSize, _localPlayer);
-        AddChild(_worldRenderer);
-
+        // _worldRenderer = WorldRenderer.Create(_blocks, _worldSize, _localPlayer);
+        // AddChild(_worldRenderer);
 
         Game.Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
     }
 
-    public override void _ExitTree() {
-        if (_localPlayer != null) {
-            _localPlayer.ActionController.GatherAction.GatherAttempted -=
-                OnLocalPlayerGatherAttempted;
-        }
-    }
 
     private void OnExitGameClicked() {
         Visible = false;
@@ -87,43 +79,20 @@ public partial class World : Node2D {
 
         RpcId(1, nameof(RpcRequestWorldData));
     }
+    
+    public override void _Ready() {
+        PlayerManager.LocalPlayerSpawned += OnLocalPlayerSpawned;
+    }
+    
+    public override void _ExitTree() {
+        PlayerManager.LocalPlayerSpawned -= OnLocalPlayerSpawned;
+    }
 
-    private Player SpawnLocalPlayer() {
-        int peerId = Multiplayer.GetUniqueId();
-        
-        Player player = Player.Create(peerId, new Vector2I(4, 14));
-        player.InitAsLocal(Game, _localPlayerData);
-        AddChild(player, true);
+    private void OnLocalPlayerSpawned(Player player) {
         player.ActionController.GatherAction.GatherAttempted += 
             OnLocalPlayerGatherAttempted;
         player.ActionController.BuildAction.BuildBlockActionAttempted += 
             OnLocalPlayerBuildBlockAttempted;
-
-        Rpc(nameof(RpcOnNewPlayerJoining));
-        return player;
-    }
-
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
-    private void RpcOnNewPlayerJoining() {
-        int peerId = Multiplayer.GetUniqueId();
-        int newPeerId = Multiplayer.GetRemoteSenderId();
-        Player player = Player.Create(newPeerId, new Vector2I(4, 14));
-        AddChild(player, true);
-
-        if (Multiplayer.IsServer()) {
-            WorldCollision.IncrementObserverCounts(player.Coords);
-            player.MovedCell += WorldCollision.MoveObserver;
-        }
-
-        _localPlayer.AddPeerToSynchronizer(newPeerId);
-        
-        RpcId(newPeerId, nameof(SpawnRemoteExistingPlayer), peerId);
-    }
-
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
-    private void SpawnRemoteExistingPlayer(int peerId) {
-        Player player = Player.Create(peerId, new Vector2I(4, 14));
-        AddChild(player, true);
     }
 
     private void OnLocalPlayerGatherAttempted(Vector2I coords, Player player) {
@@ -295,11 +264,11 @@ public partial class World : Node2D {
 
     private void OnWorldSyncComplete() {
         WorldLoaded?.Invoke();
-        _localPlayer = SpawnLocalPlayer();
+        PlayerManager.ClientSpawnPlayers(_localPlayerData);
+        
         WorldCollision.InitAsClient(_worldSize);
-        _worldRenderer = WorldRenderer.Create(_blocks, _worldSize, _localPlayer);
-        AddChild(_worldRenderer);
-
+        // _worldRenderer = WorldRenderer.Create(_blocks, _worldSize, _localPlayer);
+        // AddChild(_worldRenderer);
 
         Game.Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
     }

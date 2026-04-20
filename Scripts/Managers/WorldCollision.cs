@@ -51,6 +51,7 @@ public partial class WorldCollision : Node2D {
         _world.PickupManager.ServerPickupCreated += OnPickupCreated;
         _world.PickupManager.ServerPickupMoved += OnPickupMoved;
         _world.PickupManager.ServerPickupDestroyed += OnPickupDestroyed;
+        _world.PlayerManager.PlayerSpawnedOnServer += OnPlayerSpawnedOnServer;
     }
 
     public override void _ExitTree() {
@@ -62,12 +63,17 @@ public partial class WorldCollision : Node2D {
         _world.PickupManager.ServerPickupDestroyed -= OnPickupDestroyed;
     }
 
-    public void MoveObserver(Vector2I newPosition, Vector2I oldPosition) {
+    private void OnPlayerSpawnedOnServer(Player player) {
+        IncrementObserverCounts(player.Coords);
+        player.MovedCell += MoveObserver;
+    }
+
+    private void MoveObserver(Vector2I newPosition, Vector2I oldPosition) {
         IncrementObserverCounts(newPosition);
         DecrementObserverCounts(oldPosition);
     }
 
-    public void IncrementObserverCounts(Vector2I position) {
+    private void IncrementObserverCounts(Vector2I position) {
         if (!Multiplayer.IsServer()) return;
         int startX = Mathf.Max(0, position.X - _observerRadius);
         int endX = Mathf.Min(_worldSize.X - 1, position.X + _observerRadius);
@@ -84,7 +90,7 @@ public partial class WorldCollision : Node2D {
         }
     }
 
-    public void DecrementObserverCounts(Vector2I position) {
+    private void DecrementObserverCounts(Vector2I position) {
         if (!Multiplayer.IsServer()) return;
         int startX = Mathf.Max(0, position.X - _observerRadius);
         int endX = Mathf.Min(_worldSize.X - 1, position.X + _observerRadius);

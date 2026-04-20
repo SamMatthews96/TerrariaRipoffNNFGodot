@@ -21,5 +21,6 @@ _collisionBlockScene = ExtResource("2_q5vno")
 script = ExtResource("4_ybhg6")
 _world = NodePath("..")
 
-[node name="PlayerManager" type="Node2D" parent="." unique_id=179624163]
+[node name="PlayerManager" type="Node2D" parent="." unique_id=179624163 node_paths=PackedStringArray("_world")]
 script = ExtResource("5_2qn38")
+_world = NodePath("..")
