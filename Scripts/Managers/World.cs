@@ -8,22 +8,19 @@ namespace TerrariaRipoffNNF;
 
 public partial class World : Node2D {
     public Game Game { get; private set; }
-    private Block[,] _blocks;
+    public Block[,] Blocks { get; private set; }
+    public Vector2I WorldSize { get; private set; }
 
     private Dictionary _localPlayerData;
-    // private Player _localPlayer;
 
     [Export] public WorldCollision WorldCollision { get; private set; }
     [Export] public PickupManager PickupManager { get; private set; }
     [Export] public PlayerManager PlayerManager { get; private set; }
-    
-    private WorldRenderer _worldRenderer;
 
     // World sync constants
     private const int ChunkSize = 50;
     private readonly List<Dictionary> _bufferedChunks = new();
 
-    private Vector2I _worldSize;
 
     public event Action WorldLoaded;
     public event Action<Vector2I, string> BlockDestroyed; // coords, resourcePath
@@ -33,8 +30,8 @@ public partial class World : Node2D {
         if (Game is not null) throw new Exception("[20250529.2332.1] Game already set");
         Game = game;
         _localPlayerData = playerData;
-        _worldSize = new Vector2I((int)worldData["Width"], (int)worldData["Height"]);
-        _blocks = new Block[_worldSize.X, _worldSize.Y];
+        WorldSize = new Vector2I((int)worldData["Width"], (int)worldData["Height"]);
+        Blocks = new Block[WorldSize.X, WorldSize.Y];
 
         Array allWorldObjects = worldData["SavedWorldObjects"].AsGodotArray();
         foreach (Dictionary dictionary in allWorldObjects) {
@@ -43,7 +40,7 @@ public partial class World : Node2D {
 
             switch (dictionary["type"].ToString()) {
                 case "block":
-                    _blocks[x, y] = new Block() {
+                    Blocks[x, y] = new Block() {
                         CurrentHealth = 1,
                         ResourcePath = dictionary["item"].AsGodotDictionary()["ResourcePath"].ToString(),
                     };
@@ -55,12 +52,8 @@ public partial class World : Node2D {
         }
 
         WorldLoaded?.Invoke();
-        WorldCollision.InitAsHost(_blocks, _worldSize);
-        
+        WorldCollision.InitAsHost(Blocks, WorldSize);
         PlayerManager.SpawnHostPlayer(playerData);
-
-        // _worldRenderer = WorldRenderer.Create(_blocks, _worldSize, _localPlayer);
-        // AddChild(_worldRenderer);
 
         Game.Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
     }
@@ -102,7 +95,7 @@ public partial class World : Node2D {
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void RpcHostPlayerGatherAttempted(Vector2I coords, float power) {
-        Block block = _blocks[coords.X, coords.Y];
+        Block block = Blocks[coords.X, coords.Y];
         if (block is null) return;
 
         block.CurrentHealth -= power;
@@ -113,7 +106,7 @@ public partial class World : Node2D {
 
     [Rpc(CallLocal = true)]
     private void RpcAllBlockDestroyed(Vector2I coords, string resourcePath) {
-        _blocks[coords.X, coords.Y] = null;
+        Blocks[coords.X, coords.Y] = null;
         BlockDestroyed?.Invoke(coords, resourcePath);
     }
 
@@ -124,14 +117,14 @@ public partial class World : Node2D {
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void RpcHostPlayerBuildBlockAttempted(Vector2I coords, string resourcePath) {
-        if (_blocks[coords.X, coords.Y] != null) return;
+        if (Blocks[coords.X, coords.Y] != null) return;
 
         Rpc(nameof(RpcAllCreateBlock), coords, resourcePath);
     }
 
     [Rpc(CallLocal = true)]
     private void RpcAllCreateBlock(Vector2I coords, string resourcePath) {
-        _blocks[coords.X, coords.Y] = new Block {
+        Blocks[coords.X, coords.Y] = new Block {
             CurrentHealth = 1,
             ResourcePath = resourcePath
         };
@@ -140,9 +133,9 @@ public partial class World : Node2D {
 
     public bool IsInBounds(Vector2I intVector) {
         return intVector.X >= 0
-               && intVector.X < _worldSize.X
+               && intVector.X < WorldSize.X
                && intVector.Y >= 0
-               && intVector.Y < _worldSize.Y;
+               && intVector.Y < WorldSize.Y;
     }
 
     #region World Synchronization
@@ -152,14 +145,14 @@ public partial class World : Node2D {
         int requestingPeerId = Multiplayer.GetRemoteSenderId();
 
         Dictionary metadata = new() {
-            ["Width"] = _worldSize.X,
-            ["Height"] = _worldSize.Y
+            ["Width"] = WorldSize.X,
+            ["Height"] = WorldSize.Y
         };
         RpcId(requestingPeerId, nameof(RpcReceiveWorldMetadata), metadata);
 
         // Calculate chunks
-        int chunksX = (int)Math.Ceiling((double)_worldSize.X / ChunkSize);
-        int chunksY = (int)Math.Ceiling((double)_worldSize.Y / ChunkSize);
+        int chunksX = (int)Math.Ceiling((double)WorldSize.X / ChunkSize);
+        int chunksY = (int)Math.Ceiling((double)WorldSize.Y / ChunkSize);
         int totalChunks = chunksX * chunksY;
 
         // Send chunks
@@ -187,12 +180,12 @@ public partial class World : Node2D {
 
         int startX = chunkX * ChunkSize;
         int startY = chunkY * ChunkSize;
-        int endX = Math.Min(startX + ChunkSize, _worldSize.X);
-        int endY = Math.Min(startY + ChunkSize, _worldSize.Y);
+        int endX = Math.Min(startX + ChunkSize, WorldSize.X);
+        int endY = Math.Min(startY + ChunkSize, WorldSize.Y);
 
         for (int x = startX; x < endX; x++) {
             for (int y = startY; y < endY; y++) {
-                Block block = _blocks[x, y];
+                Block block = Blocks[x, y];
                 if (block is null) continue;
                 Dictionary entityData = new() {
                     ["type"] = "block",
@@ -210,8 +203,8 @@ public partial class World : Node2D {
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
     private void RpcReceiveWorldMetadata(Dictionary metadata) {
-        _worldSize = new Vector2I((int)metadata["Width"], (int)metadata["Height"]);
-        _blocks = new Block[_worldSize.X, _worldSize.Y];
+        WorldSize = new Vector2I((int)metadata["Width"], (int)metadata["Height"]);
+        Blocks = new Block[WorldSize.X, WorldSize.Y];
 
         // Process any buffered chunks that arrived before metadata
         if (_bufferedChunks.Count > 0) {
@@ -226,7 +219,7 @@ public partial class World : Node2D {
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
     private void RpcReceiveWorldChunk(Dictionary chunkPacket) {
         // If metadata hasn't arrived yet, buffer this chunk
-        if (_blocks == null) {
+        if (Blocks == null) {
             _bufferedChunks.Add(chunkPacket);
             return;
         }
@@ -246,7 +239,7 @@ public partial class World : Node2D {
 
             switch (entityData["type"].ToString()) {
                 case "block":
-                    _blocks[x, y] = new Block() {
+                    Blocks[x, y] = new Block() {
                         CurrentHealth = (float)entityData["health"],
                         ResourcePath = entityData["path"].ToString()
                     };
@@ -266,9 +259,7 @@ public partial class World : Node2D {
         WorldLoaded?.Invoke();
         PlayerManager.ClientSpawnPlayers(_localPlayerData);
         
-        WorldCollision.InitAsClient(_worldSize);
-        // _worldRenderer = WorldRenderer.Create(_blocks, _worldSize, _localPlayer);
-        // AddChild(_worldRenderer);
+        WorldCollision.InitAsClient(WorldSize);
 
         Game.Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
     }

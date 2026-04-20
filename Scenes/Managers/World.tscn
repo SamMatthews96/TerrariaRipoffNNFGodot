@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://bom06xinv44vo" path="res://Scripts/Managers/WorldCollision.cs" id="3_r1w0f"]
 [ext_resource type="Script" uid="uid://c5rinix73qqlc" path="res://Scripts/Managers/PickupManager.cs" id="4_ybhg6"]
 [ext_resource type="Script" uid="uid://cabj7p8n6wbva" path="res://Scripts/Managers/PlayerManager.cs" id="5_2qn38"]
+[ext_resource type="Script" uid="uid://cew3r7kpj150k" path="res://Scripts/Managers/WorldRenderer.cs" id="6_wcfbk"]
 
 [node name="World" type="Node2D" unique_id=318249153 node_paths=PackedStringArray("WorldCollision", "PickupManager", "PlayerManager")]
 script = ExtResource("1_qmgnr")
@@ -23,4 +24,9 @@ _world = NodePath("..")
 
 [node name="PlayerManager" type="Node2D" parent="." unique_id=179624163 node_paths=PackedStringArray("_world")]
 script = ExtResource("5_2qn38")
+_world = NodePath("..")
+
+[node name="WorldRenderer" type="Node2D" parent="." unique_id=840519149 node_paths=PackedStringArray("_world")]
+process_mode = 3
+script = ExtResource("6_wcfbk")
 _world = NodePath("..")

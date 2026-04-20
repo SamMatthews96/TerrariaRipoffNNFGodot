@@ -54,6 +54,7 @@ public partial class PlayerManager : Node2D {
         if (peerId == Multiplayer.GetUniqueId()) {
             _localPlayer = player;
             player.InitAsLocal(_world.Game, _playerData);
+            LocalPlayerSpawned?.Invoke(player);
         } else {
             _localPlayer.AddPeerToSynchronizer(peerId);
         }

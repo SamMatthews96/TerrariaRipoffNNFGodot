@@ -61,6 +61,7 @@ public partial class WorldCollision : Node2D {
         _world.PickupManager.ServerPickupCreated -= OnPickupCreated;
         _world.PickupManager.ServerPickupMoved -= OnPickupMoved;
         _world.PickupManager.ServerPickupDestroyed -= OnPickupDestroyed;
+        _world.PlayerManager.PlayerSpawnedOnServer -= OnPlayerSpawnedOnServer;
     }
 
     private void OnPlayerSpawnedOnServer(Player player) {
