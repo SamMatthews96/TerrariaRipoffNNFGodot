@@ -94,16 +94,16 @@ public partial class Player : CharacterBody2D {
 
         PlayerEquipment.InitAsLocal(this);
 
-        Game.InputManager.HorizontalInputChanged += OnHorizontalInputChanged;
-        Game.InputManager.JumpPressed += OnJumpPressed;
-        Game.Interface.GameMenu.ExitGameButtonDown += OnExitClicked;
+        Game.World.InputManager.HorizontalInputChanged += OnHorizontalInputChanged;
+        Game.World.InputManager.JumpPressed += OnJumpPressed;
+        Game.World.Interface.GameMenu.ExitGameButtonDown += OnExitClicked;
 
         _characterName = playerData["Name"].ToString();
 
         TreeExiting += () => {
-            Game.InputManager.HorizontalInputChanged -= OnHorizontalInputChanged;
-            Game.InputManager.JumpPressed -= OnJumpPressed;
-            Game.Interface.GameMenu.ExitGameButtonDown -= OnExitClicked;
+            Game.World.InputManager.HorizontalInputChanged -= OnHorizontalInputChanged;
+            Game.World.InputManager.JumpPressed -= OnJumpPressed;
+            Game.World.Interface.GameMenu.ExitGameButtonDown -= OnExitClicked;
         };
 
         LocalPlayerSpawned?.Invoke(this);

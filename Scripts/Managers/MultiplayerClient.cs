@@ -27,11 +27,11 @@ public partial class MultiplayerClient : Node {
         _peer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
         Multiplayer.MultiplayerPeer = _peer;
 
-        _game.Interface.GameMenu.ExitGameButtonDown += OnExitGameButtonDown;
+        _game.ExitGameFinished += OnExitGameButtonDown;
     }
 
     private void OnExitGameButtonDown() {
-        _game.Interface.GameMenu.ExitGameButtonDown -= OnExitGameButtonDown;
+        _game.ExitGameFinished -= OnExitGameButtonDown;
         _peer.Close();
         QueueFree();
     }

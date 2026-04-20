@@ -24,24 +24,24 @@ public partial class ActionController : Node {
     }
 
     public override void _Ready() {
-        Game.InputManager.LeftMouseUp += OnInputManagerLeftMouseUp;
-        Game.InputManager.LeftMouseDown += OnInputManagerLeftMouseDown;
-        Game.InputManager.RightMouseUp += OnInputManagerRightMouseUp;
-        Game.InputManager.RightMouseDown += OnInputManagerRightMouseDown;
-        Game.InputManager.PlayerActionModeChanged += EquipAction;
-        Game.Interface.ActionBar.ButtonClicked += EquipAction;
+        Game.World.InputManager.LeftMouseUp += OnInputManagerLeftMouseUp;
+        Game.World.InputManager.LeftMouseDown += OnInputManagerLeftMouseDown;
+        Game.World.InputManager.RightMouseUp += OnInputManagerRightMouseUp;
+        Game.World.InputManager.RightMouseDown += OnInputManagerRightMouseDown;
+        Game.World.InputManager.PlayerActionModeChanged += EquipAction;
+        Game.World.Interface.ActionBar.ButtonClicked += EquipAction;
         TreeExiting += OnTreeExiting;
 
         EquipAction(PlayerActionType.Gather);
     }
 
     private void OnTreeExiting() {
-        Game.InputManager.LeftMouseUp -= OnInputManagerLeftMouseUp;
-        Game.InputManager.LeftMouseDown -= OnInputManagerLeftMouseDown;
-        Game.InputManager.RightMouseUp -= OnInputManagerRightMouseUp;
-        Game.InputManager.RightMouseDown -= OnInputManagerRightMouseDown;
-        Game.InputManager.PlayerActionModeChanged -= EquipAction;
-        Game.Interface.ActionBar.ButtonClicked -= EquipAction;
+        Game.World.InputManager.LeftMouseUp -= OnInputManagerLeftMouseUp;
+        Game.World.InputManager.LeftMouseDown -= OnInputManagerLeftMouseDown;
+        Game.World.InputManager.RightMouseUp -= OnInputManagerRightMouseUp;
+        Game.World.InputManager.RightMouseDown -= OnInputManagerRightMouseDown;
+        Game.World.InputManager.PlayerActionModeChanged -= EquipAction;
+        Game.World.Interface.ActionBar.ButtonClicked -= EquipAction;
         TreeExiting -= OnTreeExiting;
     }
 

@@ -3,7 +3,7 @@ using Godot;
 
 namespace TerrariaRipoffNNF;
 
-public partial class InputManager : Node {
+public partial class InputManager : Node2D {
     private const string RunLeft = "runLeft";
     private const string RunRight = "runRight";
     private const string Jump = "jump";
@@ -17,8 +17,6 @@ public partial class InputManager : Node {
     private const string Escape = "escape";
     private const string ToggleDevTools = "toggleDevTools";
     
-    [Export] private Node2D _node2D;
-
     public event Action<Vector2> LeftMouseDown;
     public event Action<Vector2> LeftMouseUp;
     public event Action<Vector2> RightMouseDown;
@@ -43,7 +41,7 @@ public partial class InputManager : Node {
     }
 
     private void HandleMouseEvents() {
-        Vector2 mousePosition = _node2D.GetGlobalMousePosition();
+        Vector2 mousePosition = GetGlobalMousePosition();
 
         if (Input.IsActionJustPressed(LeftMouse)) {
             LeftMouseDown?.Invoke(mousePosition);

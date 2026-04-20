@@ -12,12 +12,12 @@ public partial class GameMenu : Control {
     public override void _Ready() {
         Hide();
         _exitGameButton.ButtonDown += OnExitGameButtonDown;
-        _gameInterface.GameManager.InputManager.EscapePressed += OnEscapePressed;
+        _gameInterface.World.InputManager.EscapePressed += OnEscapePressed;
     }
 
     public override void _ExitTree() {
         _exitGameButton.ButtonDown -= OnExitGameButtonDown;
-        _gameInterface.GameManager.InputManager.EscapePressed -= OnEscapePressed;
+        _gameInterface.World.InputManager.EscapePressed -= OnEscapePressed;
     }
 
     private void OnExitGameButtonDown() {

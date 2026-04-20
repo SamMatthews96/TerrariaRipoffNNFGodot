@@ -11,14 +11,14 @@ public partial class DevTools : PanelContainer {
 
     public override void _Ready() {
         Visible = false;
-        _gameInterface.GameManager.InputManager.ToggleDevToolsPressed +=
+        _gameInterface.World.InputManager.ToggleDevToolsPressed +=
             OnToggleDevToolsPressed;
 
         _spawnButton.Pressed += OnSpawnButtonPressed;
     }
 
     public override void _ExitTree() {
-        _gameInterface.GameManager.InputManager.ToggleDevToolsPressed -=
+        _gameInterface.World.InputManager.ToggleDevToolsPressed -=
             OnToggleDevToolsPressed;
 
         _spawnButton.Pressed -= OnSpawnButtonPressed;

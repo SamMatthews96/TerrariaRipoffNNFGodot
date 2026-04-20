@@ -30,16 +30,16 @@ public partial class Inventory : Control {
 
     public override void _Ready() {
         Visible = false;
-        _gameInterface.GameManager.InputManager.ToggleInventoryPressed += OnInputManagerToggleInventoryPressed;
-        _gameInterface.GameManager.InputManager.EscapePressed += OnEscapePressed;
+        _gameInterface.World.InputManager.ToggleInventoryPressed += OnInputManagerToggleInventoryPressed;
+        _gameInterface.World.InputManager.EscapePressed += OnEscapePressed;
         Player.LocalPlayerSpawned += OnLocalPlayerSpawned;
         
     }
 
     public override void _ExitTree() {
-        _gameInterface.GameManager.InputManager.ToggleInventoryPressed -= OnInputManagerToggleInventoryPressed;
+        _gameInterface.World.InputManager.ToggleInventoryPressed -= OnInputManagerToggleInventoryPressed;
         
-        _gameInterface.GameManager.InputManager.EscapePressed -= OnEscapePressed;
+        _gameInterface.World.InputManager.EscapePressed -= OnEscapePressed;
         Player.LocalPlayerSpawned -= OnLocalPlayerSpawned;
     }
 

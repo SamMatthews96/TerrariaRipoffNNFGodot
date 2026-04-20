@@ -27,7 +27,7 @@ public sealed partial class Crafting : Node {
     }
 
     public override void _Ready() {
-        Interface.Crafting craftingInterface = _game.Interface.CraftingInterface;
+        Interface.Crafting craftingInterface = _game.World.Interface.CraftingInterface;
         craftingInterface.SelectRecipeContainer.RecipeButtonClicked += OnRecipeButtonClicked;
         craftingInterface.SelectIngredientPopup.SelectIngredientButtonClicked += OnSelectIngredientButtonClicked;
         craftingInterface.SelectIngredientsContainer.CraftButtonPressed += OnCraftButtonPressed;
@@ -39,7 +39,7 @@ public sealed partial class Crafting : Node {
     }
 
     public override void _ExitTree() {
-        Interface.Crafting craftingInterface = _game.Interface.CraftingInterface;
+        Interface.Crafting craftingInterface = _game.World.Interface.CraftingInterface;
         craftingInterface.SelectRecipeContainer.RecipeButtonClicked -= OnRecipeButtonClicked;
         craftingInterface.SelectIngredientPopup.SelectIngredientButtonClicked -= OnSelectIngredientButtonClicked;
         craftingInterface.SelectIngredientsContainer.CraftButtonPressed -= OnCraftButtonPressed;

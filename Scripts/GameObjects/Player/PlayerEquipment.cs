@@ -13,18 +13,18 @@ public partial class PlayerEquipment : Node {
     public void InitAsLocal(Player player) {
         _player = player;
         _player.Inventory.EquipItemClicked += OnEquipItemClicked;
-        _player.Game.Interface.PlayerEquipment.ClickedUnequipWeapon +=
+        _player.Game.World.Interface.PlayerEquipment.ClickedUnequipWeapon +=
             OnUnequipWeaponClicked;
-        _player.Game.Interface.PlayerEquipment.ClickedUnequipPickaxe +=
+        _player.Game.World.Interface.PlayerEquipment.ClickedUnequipPickaxe +=
             OnUnequipPickaxeClicked;
         TreeExiting += OnTreeExiting;
     }
 
     private void OnTreeExiting() {
         TreeExiting -= OnTreeExiting;
-        _player.Game.Interface.PlayerEquipment.ClickedUnequipWeapon -=
+        _player.Game.World.Interface.PlayerEquipment.ClickedUnequipWeapon -=
             OnUnequipWeaponClicked;
-        _player.Game.Interface.PlayerEquipment.ClickedUnequipPickaxe -=
+        _player.Game.World.Interface.PlayerEquipment.ClickedUnequipPickaxe -=
             OnUnequipPickaxeClicked;
     }
 

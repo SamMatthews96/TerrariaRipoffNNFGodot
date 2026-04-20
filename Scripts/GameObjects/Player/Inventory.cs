@@ -49,7 +49,7 @@ public partial class Inventory : Node {
     public override void _Ready() {
         _player.Crafting.ItemCrafted += OnItemCrafted;
         // _player.PickupArea.TouchedItem += OnCollidedWithPickup;
-        _game.Interface.InventoryUi.ItemActionClicked += OnItemActionClicked;
+        _game.World.Interface.InventoryUi.ItemActionClicked += OnItemActionClicked;
         
         if (!_playerData.TryGetValue("Inventory", out Variant inventoryData)) return;
         if (!inventoryData.AsGodotDictionary<string, Array>().TryGetValue(
@@ -64,7 +64,7 @@ public partial class Inventory : Node {
     }
 
     public override void _ExitTree() {
-        _game.Interface.InventoryUi.ItemActionClicked -= OnItemActionClicked;
+        _game.World.Interface.InventoryUi.ItemActionClicked -= OnItemActionClicked;
         _player.Crafting.ItemCrafted -= OnItemCrafted;
     }
 

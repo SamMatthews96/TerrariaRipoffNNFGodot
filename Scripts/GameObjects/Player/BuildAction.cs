@@ -12,12 +12,12 @@ public partial class BuildAction : PlayerAction {
     public override void _Ready() {
         Player = ActionController.Player;
         Game = ActionController.Game;
-        Game.Interface.BuildUi.BuildButtonSelected += OnBuildTypeSelected;
+        Game.World.Interface.BuildUi.BuildButtonSelected += OnBuildTypeSelected;
         Player.Inventory.RemovedItemStack += OnInventoryRemovedItemStack;
     }
 
     public override void _ExitTree() {
-        Game.Interface.BuildUi.BuildButtonSelected -= OnBuildTypeSelected;
+        Game.World.Interface.BuildUi.BuildButtonSelected -= OnBuildTypeSelected;
         Player.Inventory.RemovedItemStack -= OnInventoryRemovedItemStack;
     }
 

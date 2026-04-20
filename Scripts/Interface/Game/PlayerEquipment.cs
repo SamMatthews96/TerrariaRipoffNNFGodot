@@ -17,16 +17,16 @@ public partial class PlayerEquipment : Container {
         Visible = false;
         Player.LocalPlayerSpawned += OnLocalPlayerSpawned;
 
-        _gameInterface.GameManager.InputManager.ToggleInventoryPressed += OnInputManagerToggleInventoryPressed;
-        _gameInterface.GameManager.InputManager.EscapePressed += OnEscapePressed;
+        _gameInterface.World.InputManager.ToggleInventoryPressed += OnInputManagerToggleInventoryPressed;
+        _gameInterface.World.InputManager.EscapePressed += OnEscapePressed;
         _weaponIcon.Pressed += OnWeaponIconPressed;
         _pickaxeIcon.Pressed += OnMiningIconPressed;
     }
 
     public override void _ExitTree() {
         Player.LocalPlayerSpawned -= OnLocalPlayerSpawned;
-        _gameInterface.GameManager.InputManager.ToggleInventoryPressed -= OnInputManagerToggleInventoryPressed;
-        _gameInterface.GameManager.InputManager.EscapePressed -= OnEscapePressed;
+        _gameInterface.World.InputManager.ToggleInventoryPressed -= OnInputManagerToggleInventoryPressed;
+        _gameInterface.World.InputManager.EscapePressed -= OnEscapePressed;
         _weaponIcon.Pressed -= OnWeaponIconPressed;
         _pickaxeIcon.Pressed -= OnMiningIconPressed;
     }

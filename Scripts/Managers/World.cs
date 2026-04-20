@@ -16,6 +16,8 @@ public partial class World : Node2D {
     [Export] public WorldCollision WorldCollision { get; private set; }
     [Export] public PickupManager PickupManager { get; private set; }
     [Export] public PlayerManager PlayerManager { get; private set; }
+    [Export] public Interface.Game Interface { get; private set; }
+    [Export] public InputManager InputManager { get; private set; }
 
     // World sync constants
     private const int ChunkSize = 50;
@@ -26,12 +28,12 @@ public partial class World : Node2D {
     public event Action<Vector2I, string> BlockDestroyed; // coords, resourcePath
     public event Action<Vector2I> BlockCreated;
 
-    public void SetGameAsHost(Game game, Dictionary worldData, Dictionary playerData) {
-        if (Game is not null) throw new Exception("[20250529.2332.1] Game already set");
-        Game = game;
-        _localPlayerData = playerData;
-        WorldSize = new Vector2I((int)worldData["Width"], (int)worldData["Height"]);
-        Blocks = new Block[WorldSize.X, WorldSize.Y];
+    public static World CreateAsHost(Game game, Dictionary worldData, Dictionary playerData) {
+        World world = Data.PackedScenes.World.Instantiate<World>();
+        world.WorldSize = new Vector2I((int)worldData["Width"], (int)worldData["Height"]);
+        world.Blocks = new Block[world.WorldSize.X, world.WorldSize.Y];
+        world.Game = game;
+        world._localPlayerData = playerData;
 
         Array allWorldObjects = worldData["SavedWorldObjects"].AsGodotArray();
         foreach (Dictionary dictionary in allWorldObjects) {
@@ -40,7 +42,7 @@ public partial class World : Node2D {
 
             switch (dictionary["type"].ToString()) {
                 case "block":
-                    Blocks[x, y] = new Block() {
+                    world.Blocks[x, y] = new Block() {
                         CurrentHealth = 1,
                         ResourcePath = dictionary["item"].AsGodotDictionary()["ResourcePath"].ToString(),
                     };
@@ -51,29 +53,32 @@ public partial class World : Node2D {
             }
         }
 
-        WorldLoaded?.Invoke();
-        WorldCollision.InitAsHost(Blocks, WorldSize);
-        PlayerManager.SpawnHostPlayer(playerData);
-
-        Game.Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
+        return world;
     }
 
-
+    public static World CreateAsClient(Dictionary metadata, Dictionary playerData, Game game) {
+        World world = Data.PackedScenes.World.Instantiate<World>();
+        world.WorldSize = new Vector2I((int)metadata["Width"], (int)metadata["Height"]);
+        world.Blocks = new Block[world.WorldSize.X, world.WorldSize.Y];
+        world.Game = game;
+        world._localPlayerData = playerData;
+        return world;
+    }
+    
     private void OnExitGameClicked() {
         Visible = false;
-        Game.Interface.GameMenu.ExitGameButtonDown -= OnExitGameClicked;
+        Interface.GameMenu.ExitGameButtonDown -= OnExitGameClicked;
         QueueFree();
-    }
-
-    public void SetGameAsClient(Game game, Dictionary playerData) {
-        if (Game is not null) throw new Exception("[20250529.2332.1] Game already set");
-        Game = game;
-        _localPlayerData = playerData;
-
-        RpcId(1, nameof(RpcRequestWorldData));
     }
     
     public override void _Ready() {
+        if (Multiplayer.IsServer()) {
+            WorldLoaded?.Invoke();
+            PlayerManager.SpawnHostPlayer(_localPlayerData);
+            Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
+        } else {
+            RpcId(1, nameof(RpcRequestWorldData));
+        }
         PlayerManager.LocalPlayerSpawned += OnLocalPlayerSpawned;
     }
     
@@ -259,9 +264,7 @@ public partial class World : Node2D {
         WorldLoaded?.Invoke();
         PlayerManager.ClientSpawnPlayers(_localPlayerData);
         
-        WorldCollision.InitAsClient(WorldSize);
-
-        Game.Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
+        Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
     }
 
     #endregion

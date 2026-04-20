@@ -8,14 +8,10 @@ public partial class WorldRenderer : Node2D {
     private const int BlockDrawDistance = 20;
 
     [Export] private World _world;
-    private Block[,] _blocks;
     private Player _localPlayer;
-    private Vector2I _worldSize;
     private Rid _canvas;
     
     public override void _Ready() {
-        _blocks = _world.Blocks;
-        _worldSize = _world.WorldSize;
         _canvas = RenderingServer.CanvasItemCreate();
         RenderingServer.CanvasItemSetParent(_canvas, GetCanvasItem());
         RenderingServer.CanvasItemSetTransform(_canvas, new Transform2D(0, Vector2.Zero));
