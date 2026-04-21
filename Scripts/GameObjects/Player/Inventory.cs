@@ -18,40 +18,22 @@ public partial class Inventory : Node {
                 return inventoryStackedItems.Count >= stackedItems.Count;
             }
         }
-
         return false;
     }
 
     public event Action<StackedItems> ItemStackChangedSize;
     public event Action<StackedItems> AddedItemStack;
     public event Action<StackedItems> RemovedItemStack;
-    // @todo reimplement this
-    // public event Action<WorldObject> PickupLooted;
-
     public event Action<Item> EquipItemClicked;
 
-    private Player _player;
-    private Game _game;
-    private Dictionary _playerData;
+    [Export] private Player _player;
     private readonly List<StackedItems> _inventoryItemsList = new();
-
-    public static Inventory Create(
-        Game game, Dictionary playerData, Player player
-    ) {
-        Inventory inventory = new();
-        inventory._game = game;
-        inventory._player = player;
-        inventory._playerData = playerData;
-
-        return inventory;
-    }
 
     public override void _Ready() {
         _player.Crafting.ItemCrafted += OnItemCrafted;
-        // _player.PickupArea.TouchedItem += OnCollidedWithPickup;
-        _game.World.Interface.InventoryUi.ItemActionClicked += OnItemActionClicked;
-        
-        if (!_playerData.TryGetValue("Inventory", out Variant inventoryData)) return;
+        _player.World.Interface.InventoryUi.ItemActionClicked += OnItemActionClicked;
+        if (_player.PlayerData is null) return;
+        if (!_player.PlayerData.TryGetValue("Inventory", out Variant inventoryData)) return;
         if (!inventoryData.AsGodotDictionary<string, Array>().TryGetValue(
                 "InventoryItemsList", out Array inventoryItems)) return;
 
@@ -64,7 +46,7 @@ public partial class Inventory : Node {
     }
 
     public override void _ExitTree() {
-        _game.World.Interface.InventoryUi.ItemActionClicked -= OnItemActionClicked;
+        _player.World.Interface.InventoryUi.ItemActionClicked -= OnItemActionClicked;
         _player.Crafting.ItemCrafted -= OnItemCrafted;
     }
 
@@ -80,18 +62,6 @@ public partial class Inventory : Node {
             RemoveItems(ingredient);
         }
     }
-
-    // private void OnCollidedWithPickup(WorldPickup pickup) {
-    //     if (pickup.Item.InventorySpace > MaximumSpace - UsedSpace) {
-    //         return;
-    //     }
-    //
-    //     StackedItems items = new(pickup.Item);
-    //
-    //     AddItems(items);
-    //     // @todo reimplement this
-    //     // PickupLooted?.Invoke(pickup.WorldObject);
-    // }
 
     public void OnAfterBuildSuccess(Item item) {
         StackedItems inventoryItems = new(item, 1);

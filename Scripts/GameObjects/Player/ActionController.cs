@@ -5,43 +5,33 @@ namespace TerrariaRipoffNNF;
 
 public partial class ActionController : Node {
     private PlayerAction _currentPlayerAction;
-    public Player Player { get; private set; }
-    public Game Game { get; private set; }
-
+    [Export] public Player Player { get; private set; }
     [Export] public GatherAction GatherAction { get; private set; }
     [Export] public BuildAction BuildAction { get; private set; }
     [Export] public WeaponAction WeaponAction { get; private set; }
     
     public event Action<PlayerActionType> ActionChanged;
 
-    public static ActionController Create(Game game, Player player) {
-        ActionController newController = Data.PackedScenes.PlayerActionController
-            .Instantiate<ActionController>();
-        newController.Game = game;
-        newController.Player = player;
-
-        return newController;
-    }
 
     public override void _Ready() {
-        Game.World.InputManager.LeftMouseUp += OnInputManagerLeftMouseUp;
-        Game.World.InputManager.LeftMouseDown += OnInputManagerLeftMouseDown;
-        Game.World.InputManager.RightMouseUp += OnInputManagerRightMouseUp;
-        Game.World.InputManager.RightMouseDown += OnInputManagerRightMouseDown;
-        Game.World.InputManager.PlayerActionModeChanged += EquipAction;
-        Game.World.Interface.ActionBar.ButtonClicked += EquipAction;
+        Player.World.InputManager.LeftMouseUp += OnInputManagerLeftMouseUp;
+        Player.World.InputManager.LeftMouseDown += OnInputManagerLeftMouseDown;
+        Player.World.InputManager.RightMouseUp += OnInputManagerRightMouseUp;
+        Player.World.InputManager.RightMouseDown += OnInputManagerRightMouseDown;
+        Player.World.InputManager.PlayerActionModeChanged += EquipAction;
+        Player.World.Interface.ActionBar.ButtonClicked += EquipAction;
         TreeExiting += OnTreeExiting;
 
         EquipAction(PlayerActionType.Gather);
     }
 
     private void OnTreeExiting() {
-        Game.World.InputManager.LeftMouseUp -= OnInputManagerLeftMouseUp;
-        Game.World.InputManager.LeftMouseDown -= OnInputManagerLeftMouseDown;
-        Game.World.InputManager.RightMouseUp -= OnInputManagerRightMouseUp;
-        Game.World.InputManager.RightMouseDown -= OnInputManagerRightMouseDown;
-        Game.World.InputManager.PlayerActionModeChanged -= EquipAction;
-        Game.World.Interface.ActionBar.ButtonClicked -= EquipAction;
+        Player.World.InputManager.LeftMouseUp -= OnInputManagerLeftMouseUp;
+        Player.World.InputManager.LeftMouseDown -= OnInputManagerLeftMouseDown;
+        Player.World.InputManager.RightMouseUp -= OnInputManagerRightMouseUp;
+        Player.World.InputManager.RightMouseDown -= OnInputManagerRightMouseDown;
+        Player.World.InputManager.PlayerActionModeChanged -= EquipAction;
+        Player.World.Interface.ActionBar.ButtonClicked -= EquipAction;
         TreeExiting -= OnTreeExiting;
     }
 

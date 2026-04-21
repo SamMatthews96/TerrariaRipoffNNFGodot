@@ -10,10 +10,7 @@ public partial class World : Node2D {
     public Game Game { get; private set; }
     public Block[,] Blocks { get; private set; }
     public Vector2I WorldSize { get; private set; }
-
-    private Dictionary _localPlayerData;
-
-    [Export] public WorldCollision WorldCollision { get; private set; }
+    public bool IsHost { get; private set; }
     [Export] public PickupManager PickupManager { get; private set; }
     [Export] public PlayerManager PlayerManager { get; private set; }
     [Export] public Interface.Game Interface { get; private set; }
@@ -22,6 +19,8 @@ public partial class World : Node2D {
     // World sync constants
     private const int ChunkSize = 50;
     private readonly List<Dictionary> _bufferedChunks = new();
+    
+    private Dictionary _localPlayerData;
 
     public event Action WorldLoaded;
     public event Action<Vector2I, string> BlockDestroyed; // coords, resourcePath
@@ -29,6 +28,7 @@ public partial class World : Node2D {
 
     public static World CreateAsHost(Game game, Dictionary worldData, Dictionary playerData) {
         World world = Data.PackedScenes.World.Instantiate<World>();
+        world.IsHost = true;
         world.WorldSize = new Vector2I((int)worldData["Width"], (int)worldData["Height"]);
         world.Blocks = new Block[world.WorldSize.X, world.WorldSize.Y];
         world.Game = game;

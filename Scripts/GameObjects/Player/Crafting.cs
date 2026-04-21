@@ -7,27 +7,18 @@ namespace TerrariaRipoffNNF;
 
 public sealed partial class Crafting : Node {
     [Export] private Area2D _craftingArea;
-    private Player _player;
+    [Export] private Player _player;
     private Recipe _selectedRecipe;
 
     private Godot.Collections.Dictionary<string, Item> _selectedIngredients = new();
-    private Game _game;
     public List<CraftStationArea> LocalCraftStationsAreas = new();
     public event Action<CraftingStationType> CraftingStationAdded;
     public event Action<CraftingStationType> CraftingStationRemoved;
     public event Action<StackedItems> SelectedIngredientsChanged;
     public event Action<StackedItems, List<StackedItems>> ItemCrafted;
 
-    public static Crafting Create(Game game, Player player) {
-        Crafting crafting = Data.PackedScenes.PlayerCrafting
-            .Instantiate<Crafting>();
-        crafting._game = game;
-        crafting._player = player;
-        return crafting;
-    }
-
     public override void _Ready() {
-        Interface.Crafting craftingInterface = _game.World.Interface.CraftingInterface;
+        Interface.Crafting craftingInterface = _player.World.Interface.CraftingInterface;
         craftingInterface.SelectRecipeContainer.RecipeButtonClicked += OnRecipeButtonClicked;
         craftingInterface.SelectIngredientPopup.SelectIngredientButtonClicked += OnSelectIngredientButtonClicked;
         craftingInterface.SelectIngredientsContainer.CraftButtonPressed += OnCraftButtonPressed;
@@ -39,7 +30,7 @@ public sealed partial class Crafting : Node {
     }
 
     public override void _ExitTree() {
-        Interface.Crafting craftingInterface = _game.World.Interface.CraftingInterface;
+        Interface.Crafting craftingInterface = _player.World.Interface.CraftingInterface;
         craftingInterface.SelectRecipeContainer.RecipeButtonClicked -= OnRecipeButtonClicked;
         craftingInterface.SelectIngredientPopup.SelectIngredientButtonClicked -= OnSelectIngredientButtonClicked;
         craftingInterface.SelectIngredientsContainer.CraftButtonPressed -= OnCraftButtonPressed;

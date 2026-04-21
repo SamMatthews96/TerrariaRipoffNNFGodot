@@ -5,20 +5,18 @@ using Godot.Collections;
 namespace TerrariaRipoffNNF;
 
 public partial class Player : CharacterBody2D {
-    public static Player Create(int peerId, Vector2I spawnCoords) {
+    public static Player Create(World world, int peerId, Vector2I spawnCoords) {
         Player player = Data.PackedScenes.Player.Instantiate<Player>();
+        player.World = world;
         player.Name = peerId.ToString();
         player.SpawnCoords = spawnCoords;
-        player.SpawnPosition = new Vector2(
-            spawnCoords.X * Game.BlockSize,
-            spawnCoords.Y * Game.BlockSize
-        );
+        player.SpawnPosition = spawnCoords * Game.BlockSize;
         return player;
     }
 
-    public Inventory Inventory { get; private set; }
-    public ActionController ActionController { get; private set; }
-    public Crafting Crafting { get; private set; }
+    [Export] public Inventory Inventory { get; private set; }
+    [Export] public ActionController ActionController { get; private set; }
+    [Export] public Crafting Crafting { get; private set; }
     public ServerPickupArea ServerPickupArea { get; private set; }
     [Export] public PlayerEquipment PlayerEquipment { get; private set; }
 
@@ -30,30 +28,36 @@ public partial class Player : CharacterBody2D {
     [Export] public Vector2 SpawnPosition { get; private set; }
     public Vector2I SpawnCoords { get; private set; }
 
-    public Game Game { get; private set; }
+    public World World { get; private set; }
+    
     private int _horizontalInput;
     private bool _isFalling;
     private float _xVelocity;
     private float _yVelocity;
     private string _characterName;
+    
+    public Dictionary PlayerData { get; private set; }
 
-    public Vector2I Coords => new((int)(Position.X / Game.BlockSize), (int)(Position.Y / Game.BlockSize));
+    public Vector2I Coords => (Vector2I)(Position / Game.BlockSize);
 
-    public int PeerId => Name.ToString().ToInt();
     private bool _isLocalPlayer;
-
 
     public static event Action<Player> LocalPlayerSpawned;
     public delegate void CellMovedDelegate(Vector2I newCoords, Vector2I oldCoords);
     public event CellMovedDelegate LocalPlayerMovedCell;
-
     public event Action<Player> PlayerDespawned;
 
     public override void _EnterTree() {
-        _positionSynchronizer.SetMultiplayerAuthority(PeerId);
-        _isLocalPlayer = Multiplayer.GetUniqueId() == PeerId;
+        int peerId = Name.ToString().ToInt();
+        _positionSynchronizer.SetMultiplayerAuthority(peerId);
+        _isLocalPlayer = Multiplayer.GetUniqueId() == peerId;
         if (_isLocalPlayer) {
             _camera.Enabled = true;
+        }
+
+        if (World.IsHost) {
+            ServerPickupArea = ServerPickupArea.Create(this);
+            AddChild(ServerPickupArea);
         }
     }
 
@@ -63,9 +67,8 @@ public partial class Player : CharacterBody2D {
             _positionSynchronizer.SetVisibilityFor(peer, true);
         }
 
-        if (Multiplayer.IsServer()) {
-            ServerPickupArea = ServerPickupArea.Create(this);
-            AddChild(ServerPickupArea);
+        if (_isLocalPlayer) {
+            LocalPlayerSpawned?.Invoke(this);
         }
     }
 
@@ -77,35 +80,21 @@ public partial class Player : CharacterBody2D {
         PlayerDespawned?.Invoke(this);
     }
 
-    public void InitAsLocal(Game game, Dictionary playerData) {
-        if (Game is not null) {
-            throw new Exception("[20250104.0137.1] Game already set");
-        }
-
-        Inventory = Inventory.Create(game, playerData, this);
-        ActionController = ActionController.Create(game, this);
-        Crafting = Crafting.Create(game, this);
-        Game = game;
-
-        AddChild(Inventory);
-        AddChild(ActionController);
-        AddChild(Crafting);
-
+    public void InitAsLocal(Dictionary playerData) {
+        PlayerData = playerData;
         PlayerEquipment.InitAsLocal(this);
 
-        Game.World.InputManager.HorizontalInputChanged += OnHorizontalInputChanged;
-        Game.World.InputManager.JumpPressed += OnJumpPressed;
-        Game.World.Interface.GameMenu.ExitGameButtonDown += OnExitClicked;
+        World.InputManager.HorizontalInputChanged += OnHorizontalInputChanged;
+        World.InputManager.JumpPressed += OnJumpPressed;
+        World.Interface.GameMenu.ExitGameButtonDown += OnExitClicked;
 
         _characterName = playerData["Name"].ToString();
 
         TreeExiting += () => {
-            Game.World.InputManager.HorizontalInputChanged -= OnHorizontalInputChanged;
-            Game.World.InputManager.JumpPressed -= OnJumpPressed;
-            Game.World.Interface.GameMenu.ExitGameButtonDown -= OnExitClicked;
+            World.InputManager.HorizontalInputChanged -= OnHorizontalInputChanged;
+            World.InputManager.JumpPressed -= OnJumpPressed;
+            World.Interface.GameMenu.ExitGameButtonDown -= OnExitClicked;
         };
-
-        LocalPlayerSpawned?.Invoke(this);
     }
 
     private void OnExitClicked() {

@@ -12,7 +12,6 @@ public partial class GatherAction : PlayerAction {
 
     public override void _Ready() {
         Player = ActionController.Player;
-        Game = ActionController.Game;
         Player.ActionController.ActionChanged += OnActionChanged;
         _gatherCooldown.Timeout += OnGatherCooldownTimeout;
     }
@@ -50,7 +49,7 @@ public partial class GatherAction : PlayerAction {
         Vector2 temp = Player.GetGlobalMousePosition() / Game.BlockSize;
         Vector2I coords = new((int)temp.X, (int)temp.Y);
         
-        if (!Game.World.IsInBounds(coords)) return;
+        if (!Player.World.IsInBounds(coords)) return;
 
         GatherAttempted?.Invoke(coords, Player);
     }

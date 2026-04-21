@@ -11,13 +11,10 @@
 [ext_resource type="PackedScene" uid="uid://0tlymjajesh" path="res://Scenes/Interface/Game/Crafting/SelectCraftStationButton.tscn" id="7_eocek"]
 [ext_resource type="PackedScene" uid="uid://7jmwho8ry8c0" path="res://Scenes/WeaponNodes/Pickaxe.tscn" id="7_w7gg7"]
 [ext_resource type="PackedScene" uid="uid://dgm8a81v4g6g3" path="res://Scenes/Interface/Game/Crafting/SelectRecipeButton.tscn" id="8_bwf4d"]
-[ext_resource type="Script" uid="uid://b11uqw4ifwmss" path="res://Scripts/GameObjects/Player/Player.cs" id="8_wi1ls"]
 [ext_resource type="PackedScene" uid="uid://bdiv1g7jn5iao" path="res://Scenes/GameObjects/PickupEntity.tscn" id="8_x5ejh"]
-[ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://Assets/Images/icon.svg" id="9_x5ejh"]
+[ext_resource type="PackedScene" uid="uid://bx6lgpicpfal4" path="res://Scenes/GameObjects/Player.tscn" id="9_0w4qc"]
 [ext_resource type="Script" uid="uid://cxwnlrso3c8bg" path="res://Scripts/GameObjects/Player/ServerPickupArea.cs" id="10_61b5m"]
-[ext_resource type="Script" uid="uid://b43ui7yk16ekk" path="res://Scripts/GameObjects/Player/PlayerEquipment.cs" id="11_mrcgs"]
 [ext_resource type="PackedScene" uid="uid://d3mhbs8it3b2f" path="res://Scenes/Interface/Game/Crafting/SelectIngredientButton.tscn" id="11_tftwe"]
-[ext_resource type="Script" uid="uid://dfb4kfm2jhuiq" path="res://Scripts/Resources/Item/ItemMining.cs" id="12_4qsbt"]
 [ext_resource type="Script" uid="uid://nkve3tokkn8r" path="res://Scripts/GameObjects/Player/ActionController.cs" id="13_66aqs"]
 [ext_resource type="Script" uid="uid://b2qds2g2sqgyu" path="res://Scripts/GameObjects/Player/GatherAction.cs" id="14_3bl5a"]
 [ext_resource type="Script" uid="uid://dvkkdi1y5ho67" path="res://Scripts/GameObjects/Player/BuildAction.cs" id="15_pfyql"]
@@ -44,54 +41,6 @@ _bundled = {
 "node_paths": [NodePath(".")],
 "nodes": PackedInt32Array(-1, -1, 1, 0, -1, 3, 2, 0, 3, 1, 4, 2, 0, 1073741824, 0, 6, 5, -1, 1, 7, 3, 0),
 "variants": [8, 8, ExtResource("2_brkhy"), SubResource("RectangleShape2D_w2htb")],
-"version": 3
-}
-
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_3bb8o"]
-properties/0/path = NodePath(".:position")
-properties/0/spawn = true
-properties/0/replication_mode = 1
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_raw6a"]
-size = Vector2(44, 93)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_30h5y"]
-size = Vector2(44, 93)
-
-[sub_resource type="PackedScene" id="PackedScene_8dp6f"]
-_bundled = {
-"conn_count": 0,
-"conns": PackedInt32Array(),
-"editable_instances": [],
-"id_paths": [PackedInt32Array()],
-"names": PackedStringArray("PickupArea", "Area2D", "collision_layer", "collision_mask", "script", "_player", "CollisionShape2D", "CollisionShape2D", "position", "shape"),
-"node_count": 2,
-"node_ids": PackedInt32Array(0, 0),
-"node_paths": [NodePath(".")],
-"nodes": PackedInt32Array(-1, -1, 1, 0, -1, 4, 2, 0, 3, 1, 4, 2, 1073741829, 3, 0, 1073741824, 0, 7, 6, -1, 2, 8, 4, 9, 5, 0),
-"variants": [0, 4, ExtResource("10_61b5m"), NodePath(""), Vector2(0, -46.5), SubResource("RectangleShape2D_30h5y")],
-"version": 3
-}
-
-[sub_resource type="Resource" id="Resource_7vd2l"]
-script = ExtResource("12_4qsbt")
-Speed = 4.0
-Range = 4.0
-Power = 4.0
-metadata/_custom_type_script = "uid://dfb4kfm2jhuiq"
-
-[sub_resource type="PackedScene" id="PackedScene_grhx4"]
-_bundled = {
-"conn_count": 0,
-"conns": PackedInt32Array(),
-"editable_instances": [],
-"id_paths": [PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array()],
-"names": PackedStringArray("Player", "CharacterBody2D", "collision_mask", "script", "PlayerEquipment", "_positionSynchronizer", "_camera", "PositionSync", "MultiplayerSynchronizer", "replication_config", "public_visibility", "Sprite2D", "Sprite2D", "position", "scale", "texture", "CollisionShape2D", "CollisionShape2D", "visible", "position", "shape", "Camera2D", "Camera2D", "enabled", "position_smoothing_enabled", "position_smoothing_speed", "PickupArea", "CurrentEquipment", "Node", "script", "_player", "Pickaxe"),
-"node_count": 7,
-"node_ids": PackedInt32Array(943920394, 842846356, 936925100, 1933293113, 886433680, 1305066003, 810167592),
-"node_paths": [NodePath("."), NodePath("."), NodePath("."), NodePath("."), NodePath("."), NodePath(".")],
-"nodes": PackedInt32Array(-1, -1, 1, 0, -1, 5, 2, 0, 3, 1, 1073741828, 2, 1073741829, 3, 1073741830, 4, 0, 1073741824, 0, 8, 7, -1, 2, 9, 5, 10, 6, 0, 1073741825, 0, 12, 11, -1, 3, 13, 7, 14, 8, 15, 9, 0, 1073741826, 0, 17, 16, -1, 3, 18, 10, 19, 11, 20, 12, 0, 1073741827, 0, 22, 21, -1, 3, 23, 13, 24, 14, 25, 15, 0, 1073741828, 0, 2147483647, 26, 16, 0, 0, 1073741829, 0, 28, 27, -1, 3, 29, 17, 1073741854, 18, 31, 19, 0),
-"variants": [2, ExtResource("8_wi1ls"), NodePath("CurrentEquipment"), NodePath("PositionSync"), NodePath("Camera2D"), SubResource("SceneReplicationConfig_3bb8o"), false, Vector2(0, -46), Vector2(0.335, 0.72), ExtResource("9_x5ejh"), false, Vector2(0, -46.5), SubResource("RectangleShape2D_raw6a"), false, true, 25.0, SubResource("PackedScene_8dp6f"), ExtResource("11_mrcgs"), NodePath(".."), SubResource("Resource_7vd2l")],
 "version": 3
 }
 
@@ -128,6 +77,24 @@ _bundled = {
 "version": 3
 }
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_30h5y"]
+size = Vector2(44, 93)
+
+[sub_resource type="PackedScene" id="PackedScene_8dp6f"]
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"id_paths": [PackedInt32Array()],
+"names": PackedStringArray("PickupArea", "Area2D", "collision_layer", "collision_mask", "script", "_player", "CollisionShape2D", "CollisionShape2D", "position", "shape"),
+"node_count": 2,
+"node_ids": PackedInt32Array(0, 0),
+"node_paths": [NodePath(".")],
+"nodes": PackedInt32Array(-1, -1, 1, 0, -1, 4, 2, 0, 3, 1, 4, 2, 1073741829, 3, 0, 1073741824, 0, 7, 6, -1, 2, 8, 4, 9, 5, 0),
+"variants": [0, 4, ExtResource("10_61b5m"), NodePath(""), Vector2(0, -46.5), SubResource("RectangleShape2D_30h5y")],
+"version": 3
+}
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_gti2g"]
 size = Vector2(38, 38)
 
@@ -148,7 +115,7 @@ _bundled = {
 
 [resource]
 script = ExtResource("1_tombv")
-Player = SubResource("PackedScene_grhx4")
+Player = ExtResource("9_0w4qc")
 TestNpc = SubResource("PackedScene_iwy67")
 PlayerActionController = SubResource("PackedScene_58026")
 PlayerPickupArea = SubResource("PackedScene_8dp6f")

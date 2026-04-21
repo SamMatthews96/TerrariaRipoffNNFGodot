@@ -2,6 +2,9 @@
 
 [ext_resource type="Script" uid="uid://b11uqw4ifwmss" path="res://Scripts/GameObjects/Player/Player.cs" id="1_hx4ms"]
 [ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://Assets/Images/icon.svg" id="2_5yc1a"]
+[ext_resource type="Script" uid="uid://de0rc4wpvdrwn" path="res://Scripts/GameObjects/Player/Inventory.cs" id="5_4qtyd"]
+[ext_resource type="PackedScene" uid="uid://cn7bp5sib73p6" path="res://Scenes/GameObjects/ActionController.tscn" id="6_q1p12"]
+[ext_resource type="PackedScene" uid="uid://dpvw8x6fjjkkg" path="res://Scenes/GameObjects/Crafting.tscn" id="7_4qtyd"]
 [ext_resource type="Script" uid="uid://b43ui7yk16ekk" path="res://Scripts/GameObjects/Player/PlayerEquipment.cs" id="7_in65p"]
 [ext_resource type="Script" uid="uid://dfb4kfm2jhuiq" path="res://Scripts/Resources/Item/ItemMining.cs" id="9_pqpyq"]
 
@@ -20,9 +23,12 @@ Range = 4.0
 Power = 4.0
 metadata/_custom_type_script = "uid://dfb4kfm2jhuiq"
 
-[node name="Player" type="CharacterBody2D" unique_id=943920394 node_paths=PackedStringArray("PlayerEquipment", "_positionSynchronizer", "_camera")]
+[node name="Player" type="CharacterBody2D" unique_id=943920394 node_paths=PackedStringArray("Inventory", "ActionController", "Crafting", "PlayerEquipment", "_positionSynchronizer", "_camera")]
 collision_mask = 2
 script = ExtResource("1_hx4ms")
+Inventory = NodePath("Inventory")
+ActionController = NodePath("ActionController")
+Crafting = NodePath("Crafting")
 PlayerEquipment = NodePath("CurrentEquipment")
 _positionSynchronizer = NodePath("PositionSync")
 _camera = NodePath("Camera2D")
@@ -50,3 +56,13 @@ position_smoothing_speed = 25.0
 script = ExtResource("7_in65p")
 _player = NodePath("..")
 Pickaxe = SubResource("Resource_7vd2l")
+
+[node name="Inventory" type="Node" parent="." unique_id=1004616247 node_paths=PackedStringArray("_player")]
+script = ExtResource("5_4qtyd")
+_player = NodePath("..")
+
+[node name="ActionController" parent="." unique_id=1000042214 node_paths=PackedStringArray("Player") instance=ExtResource("6_q1p12")]
+Player = NodePath("..")
+
+[node name="Crafting" parent="." unique_id=287332979 node_paths=PackedStringArray("_player") instance=ExtResource("7_4qtyd")]
+_player = NodePath("..")

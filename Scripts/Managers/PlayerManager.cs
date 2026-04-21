@@ -16,8 +16,8 @@ public partial class PlayerManager : Node2D {
     
     public void SpawnHostPlayer(Dictionary playerData) {
         int peerId = Multiplayer.GetUniqueId();
-        Player player = Player.Create(peerId, new Vector2I(4, 14));
-        player.InitAsLocal(_world.Game, playerData);
+        Player player = Player.Create(_world, peerId, new Vector2I(4, 14));
+        player.InitAsLocal(playerData);
         AddChild(player, true);
         _localPlayer = player;
         _players.Add(player);
@@ -41,19 +41,19 @@ public partial class PlayerManager : Node2D {
     private void RpcNewClientAddExistingPlayers() {
         foreach (int peerId in Multiplayer.GetPeers()) {
             if (peerId == Multiplayer.GetUniqueId()) continue;
-            Player player = Player.Create(peerId, new Vector2I(4, 14));
+            Player player = Player.Create(_world, peerId, new Vector2I(4, 14));
             AddChild(player, true);
         }
     }
 
     [Rpc(CallLocal = true)]
     private void RpcAllAddNewPlayer(int peerId) {
-        Player player = Player.Create(peerId, new Vector2I(4, 14));
+        Player player = Player.Create(_world, peerId, new Vector2I(4, 14));
         AddChild(player, true);
         _players.Add(player);
         if (peerId == Multiplayer.GetUniqueId()) {
             _localPlayer = player;
-            player.InitAsLocal(_world.Game, _playerData);
+            player.InitAsLocal(_playerData);
             LocalPlayerSpawned?.Invoke(player);
         } else {
             _localPlayer.AddPeerToSynchronizer(peerId);

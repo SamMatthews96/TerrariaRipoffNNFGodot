@@ -11,13 +11,12 @@ public partial class BuildAction : PlayerAction {
 
     public override void _Ready() {
         Player = ActionController.Player;
-        Game = ActionController.Game;
-        Game.World.Interface.BuildUi.BuildButtonSelected += OnBuildTypeSelected;
+        Player.World.Interface.BuildUi.BuildButtonSelected += OnBuildTypeSelected;
         Player.Inventory.RemovedItemStack += OnInventoryRemovedItemStack;
     }
 
     public override void _ExitTree() {
-        Game.World.Interface.BuildUi.BuildButtonSelected -= OnBuildTypeSelected;
+        Player.World.Interface.BuildUi.BuildButtonSelected -= OnBuildTypeSelected;
         Player.Inventory.RemovedItemStack -= OnInventoryRemovedItemStack;
     }
 
@@ -28,7 +27,7 @@ public partial class BuildAction : PlayerAction {
     public override void LeftMouseAction(Vector2 mouseWorldPosition) {
         Vector2 temp = mouseWorldPosition / Game.BlockSize;
         Vector2I coords = new((int)temp.X, (int)temp.Y);
-        if (!Game.World.IsInBounds(coords)) return;
+        if (!Player.World.IsInBounds(coords)) return;
 
         float range = 8;
         if (_blockItem is null) return;
@@ -47,7 +46,7 @@ public partial class BuildAction : PlayerAction {
     public override void RightMouseAction(Vector2 mouseWorldPosition) {
         Vector2 temp = mouseWorldPosition / Game.BlockSize;
         Vector2I coords = new((int)temp.X, (int)temp.Y);
-        if (!Game.World.IsInBounds(coords)) return;
+        if (!Player.World.IsInBounds(coords)) return;
 
         float range = 8;
         if (_blockItem is null) return;

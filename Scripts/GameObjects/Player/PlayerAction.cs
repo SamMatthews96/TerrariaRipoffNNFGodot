@@ -6,7 +6,6 @@ public abstract partial class PlayerAction : Node {
     [Export] public PlayerActionType State { get; private set; }
     [Export] protected ActionController ActionController { get; private set; }
     protected Player Player { get; set; }
-    protected Game Game { get; set; }
 
 
     public abstract void LeftMouseAction(Vector2 mouseWorldPosition);

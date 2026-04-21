@@ -16,18 +16,20 @@ public partial class PickupManager : Node2D {
     public event Action<Vector2I> ServerPickupDestroyed;
 
     public override void _Ready() {
-        if (!Multiplayer.IsServer()) return;
-        _world.BlockDestroyed += ServerOnBlockDestroyed;
+        if (_world.IsHost) {
+            _world.BlockDestroyed += ServerOnBlockDestroyed;
+            ProcessMode = ProcessModeEnum.Always;
+        } else {
+            ProcessMode = ProcessModeEnum.Disabled;
+        }
     }
 
     public override void _ExitTree() {
-        if (!Multiplayer.IsServer()) return;
+        if (!_world.IsHost) return;
         _world.BlockDestroyed -= ServerOnBlockDestroyed;
     }
 
     private void ServerOnBlockDestroyed(Vector2I coords, string resourcePath) {
-        if (!Multiplayer.IsServer()) return;
-        
         Vector2 position = new(
             (coords.X + 0.5f) * Game.BlockSize,
             (coords.Y + 0.5f) * Game.BlockSize
@@ -40,7 +42,7 @@ public partial class PickupManager : Node2D {
 
     [Rpc(CallLocal = true)]
     private void RpcAllCreatePickup(Vector2 position, string resourcePath, string name) {
-        PickupEntity pickup = 
+        PickupEntity pickup =
             Data.PackedScenes.Pickup.Instantiate<PickupEntity>();
         Item item = ResourceLoader.Load<Item>(resourcePath);
         pickup.Position = position;
@@ -55,15 +57,13 @@ public partial class PickupManager : Node2D {
     }
 
     public override void _PhysicsProcess(double delta) {
-        if (!Multiplayer.IsServer()) return;
-        
         foreach (PickupEntity pickup in _activePickups) {
             Vector2I newCoords = new(
                 (int)(pickup.Position.X / Game.BlockSize - 0.5f),
                 (int)(pickup.Position.Y / Game.BlockSize - 0.5f)
             );
             if (pickup.Coords == newCoords) continue;
-            
+
             ServerPickupMoved?.Invoke(newCoords, pickup.Coords);
             pickup.Coords = newCoords;
         }
