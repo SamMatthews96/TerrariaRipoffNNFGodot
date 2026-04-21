@@ -9,35 +9,32 @@ public partial class WorldCollision : Node2D {
     [Export] private PackedScene _collisionBlockScene;
     [Export] private int _observerRadius = 3;
 
-    private Block[,] _blocks;
+    // private Block[,] _blocks;
     private readonly Dictionary<Vector2I, StaticBody2D> _activeCollisionBlocks = new();
     private readonly Dictionary<Vector2I, int> _observerCounts = new(); 
     private Vector2I _worldSize;
 
     public override void _Ready() {
+        // _blocks = _world.Blocks;
+        _worldSize = _world.WorldSize;
+        _world.PlayerManager.LocalPlayerSpawned += OnLocalPlayerSpawned;
+        
         if (Multiplayer.IsServer()) {
             InitAsHost();
-        } else {
-            InitAsClient();
         }
+    }
+    
+    public override void _ExitTree() {
+        _world.PlayerManager.LocalPlayerSpawned -= OnLocalPlayerSpawned;
     }
 
     private void InitAsHost() {
-        _blocks = _world.Blocks;
-        _worldSize = _world.WorldSize;
-        
         _world.BlockDestroyed += OnBlockDestroyed;
         _world.BlockCreated += OnBlockCreated;
         _world.PickupManager.ServerPickupCreated += OnPickupCreated;
         _world.PickupManager.ServerPickupMoved += OnPickupMoved;
         _world.PickupManager.ServerPickupDestroyed += OnPickupDestroyed;
-        _world.PlayerManager.PlayerSpawnedOnServer += OnPlayerSpawnedOnServer;
         TreeExiting += HostOnTreeExiting;
-    }
-
-    private void InitAsClient() {
-        _worldSize = _world.WorldSize;
-        RpcId(1, nameof(RpcRequestCollisionBlocks));
     }
     
     private void HostOnTreeExiting() {
@@ -47,29 +44,11 @@ public partial class WorldCollision : Node2D {
         _world.PickupManager.ServerPickupCreated -= OnPickupCreated;
         _world.PickupManager.ServerPickupMoved -= OnPickupMoved;
         _world.PickupManager.ServerPickupDestroyed -= OnPickupDestroyed;
-        _world.PlayerManager.PlayerSpawnedOnServer -= OnPlayerSpawnedOnServer;
     }
 
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    private void RpcRequestCollisionBlocks() {
-        int senderId = Multiplayer.GetRemoteSenderId();
-        GodotCollections.Array<Vector2I> positions = new(_activeCollisionBlocks.Keys);
-        RpcId(senderId, nameof(RpcReceiveCollisionBlocks), positions);
-    }
-
-    [Rpc(CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    private void RpcReceiveCollisionBlocks(GodotCollections.Array<Vector2I> positions) {
-        foreach (Vector2I pos in positions) {
-            StaticBody2D block = _collisionBlockScene.Instantiate<StaticBody2D>();
-            block.Position = new Vector2(pos.X * Game.BlockSize, pos.Y * Game.BlockSize);
-            AddChild(block);
-            _activeCollisionBlocks[pos] = block;
-        }
-    }
-
-    private void OnPlayerSpawnedOnServer(Player player) {
+    private void OnLocalPlayerSpawned(Player player) {
         IncrementObserverCounts(player.Coords);
-        player.MovedCell += MoveObserver;
+        player.LocalPlayerMovedCell += MoveObserver;
     }
 
     private void MoveObserver(Vector2I newPosition, Vector2I oldPosition) {
@@ -78,7 +57,6 @@ public partial class WorldCollision : Node2D {
     }
 
     private void IncrementObserverCounts(Vector2I position) {
-        if (!Multiplayer.IsServer()) return;
         int startX = Mathf.Max(0, position.X - _observerRadius);
         int endX = Mathf.Min(_worldSize.X - 1, position.X + _observerRadius);
         int startY = Mathf.Max(0, position.Y - _observerRadius);
@@ -90,14 +68,13 @@ public partial class WorldCollision : Node2D {
                 int count = _observerCounts.GetValueOrDefault(cell, 0);
                 _observerCounts[cell] = ++count;
                 if (count == 1 && HasBlockEntity(x, y)) {
-                    Rpc(nameof(RpcCreateCollisionBlock), cell);
+                    CreateCollisionBlock(cell);
                 }
             }
         }
     }
 
     private void DecrementObserverCounts(Vector2I position) {
-        if (!Multiplayer.IsServer()) return;
         int startX = Mathf.Max(0, position.X - _observerRadius);
         int endX = Mathf.Min(_worldSize.X - 1, position.X + _observerRadius);
         int startY = Mathf.Max(0, position.Y - _observerRadius);
@@ -110,7 +87,7 @@ public partial class WorldCollision : Node2D {
                 _observerCounts[cell] = --count;
                 if (count == 0 && HasBlockEntity(x, y)) {
                     _observerCounts.Remove(cell);
-                    Rpc(nameof(RpcRemoveCollisionBlock), x, y);
+                    RemoveCollisionBlock(cell);
                 }
             }
         }
@@ -118,22 +95,19 @@ public partial class WorldCollision : Node2D {
 
     private void OnBlockCreated(Vector2I position) {
         if (_observerCounts.TryGetValue(position, out int count) && count > 0) {
-            Rpc(nameof(RpcCreateCollisionBlock), position);
+            CreateCollisionBlock(position);
         }
     }
 
     private void OnBlockDestroyed(Vector2I position, string _) {
-        if (!Multiplayer.IsServer()) return;
-        Rpc(nameof(RpcRemoveCollisionBlock), position.X, position.Y);
+        RemoveCollisionBlock(position);
     }
 
     private void OnPickupCreated(Vector2I position) {
-        if (!Multiplayer.IsServer()) return;
         IncrementObserverCounts(position);
     }
 
     private void OnPickupMoved(Vector2I newPosition, Vector2I oldPosition) {
-        if (!Multiplayer.IsServer()) return;
         MoveObserver(newPosition, oldPosition);
     }
     
@@ -142,11 +116,10 @@ public partial class WorldCollision : Node2D {
     }
     
     private bool HasBlockEntity(int x, int y) {
-        return _blocks[x, y] != null;
+        return _world.Blocks[x, y] != null;
     }
 
-    [Rpc(CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    private void RpcCreateCollisionBlock(Vector2I position) {
+    private void CreateCollisionBlock(Vector2I position) {
         StaticBody2D block = _collisionBlockScene.Instantiate<StaticBody2D>();
         block.Position = position * Game.BlockSize;
         AddChild(block);
@@ -154,12 +127,10 @@ public partial class WorldCollision : Node2D {
         _activeCollisionBlocks[position] = block;
     }
 
-    [Rpc(CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    private void RpcRemoveCollisionBlock(int x, int y) {
-        Vector2I pos = new(x, y);
-        if (_activeCollisionBlocks.TryGetValue(pos, out StaticBody2D block)) {
+    private void RemoveCollisionBlock(Vector2I position) {
+        if (_activeCollisionBlocks.TryGetValue(position, out StaticBody2D block)) {
             block.QueueFree();
-            _activeCollisionBlocks.Remove(pos);
+            _activeCollisionBlocks.Remove(position);
         }
     }
 }
