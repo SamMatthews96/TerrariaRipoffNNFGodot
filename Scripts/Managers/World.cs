@@ -21,7 +21,6 @@ public partial class World : Node2D {
     
     private Dictionary _localPlayerData;
 
-    public event Action WorldLoaded;
     public event Action<Vector2I, string> BlockDestroyed; 
     public event Action<Vector2I> BlockCreated;
 
@@ -73,7 +72,6 @@ public partial class World : Node2D {
         Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
         PlayerManager.LocalPlayerSpawned += OnLocalPlayerSpawned;
         if (Multiplayer.IsServer()) {
-            WorldLoaded?.Invoke();
             PlayerManager.SpawnHostPlayer(_localPlayerData);
         } else {
             RpcId(1, nameof(RpcRequestWorldData));
@@ -228,7 +226,6 @@ public partial class World : Node2D {
     }
 
     private void OnWorldSyncComplete() {
-        WorldLoaded?.Invoke();
         PlayerManager.SpawnPlayersForNewPeer(_localPlayerData);
     }
 

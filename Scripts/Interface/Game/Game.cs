@@ -12,12 +12,4 @@ public partial class Game : CanvasLayer {
     [Export] public DevTools DevTools { get; private set; }
     [Export] public World World { get; private set; }
     
-    public override void _Ready() {
-        Hide();
-        World.WorldLoaded += OnWorldLoaded;
-    }
-
-    private void OnWorldLoaded() {
-        Show();
-    }
 }
