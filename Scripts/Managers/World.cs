@@ -148,12 +148,6 @@ public partial class World : Node2D {
     private void RpcRequestWorldData() {
         int requestingPeerId = Multiplayer.GetRemoteSenderId();
 
-        Dictionary metadata = new() {
-            ["Width"] = WorldSize.X,
-            ["Height"] = WorldSize.Y
-        };
-        RpcId(requestingPeerId, nameof(RpcReceiveWorldMetadata), metadata);
-
         // Calculate chunks
         int chunksX = (int)Math.Ceiling((double)WorldSize.X / ChunkSize);
         int chunksY = (int)Math.Ceiling((double)WorldSize.Y / ChunkSize);
@@ -204,22 +198,7 @@ public partial class World : Node2D {
 
         return chunkEntities;
     }
-
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
-    private void RpcReceiveWorldMetadata(Dictionary metadata) {
-        WorldSize = new Vector2I((int)metadata["Width"], (int)metadata["Height"]);
-        Blocks = new Block[WorldSize.X, WorldSize.Y];
-
-        // Process any buffered chunks that arrived before metadata
-        if (_bufferedChunks.Count > 0) {
-            foreach (Dictionary bufferedChunk in _bufferedChunks) {
-                ProcessWorldChunk(bufferedChunk);
-            }
-
-            _bufferedChunks.Clear();
-        }
-    }
-
+    
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
     private void RpcReceiveWorldChunk(Dictionary chunkPacket) {
         // If metadata hasn't arrived yet, buffer this chunk
@@ -261,7 +240,7 @@ public partial class World : Node2D {
 
     private void OnWorldSyncComplete() {
         WorldLoaded?.Invoke();
-        PlayerManager.ClientSpawnPlayers(_localPlayerData);
+        PlayerManager.SpawnPlayersForNewPeer(_localPlayerData);
     }
 
     #endregion

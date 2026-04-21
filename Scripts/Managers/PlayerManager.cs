@@ -25,13 +25,13 @@ public partial class PlayerManager : Node2D {
         PlayerSpawnedOnServer?.Invoke(player);
     }
 
-    public void ClientSpawnPlayers(Dictionary playerData) {
+    public void SpawnPlayersForNewPeer(Dictionary playerData) {
         _playerData = playerData;
-        RpcId(1, nameof(RpcHostAddPlayer));
+        RpcId(1, nameof(RpcHostSpawnPlayersForNewPeer));
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
-    private void RpcHostAddPlayer() {
+    private void RpcHostSpawnPlayersForNewPeer() {
         int peerId = Multiplayer.GetRemoteSenderId();
         RpcId(peerId, nameof(RpcNewClientAddExistingPlayers));
         Rpc(nameof(RpcAllAddNewPlayer), peerId);
