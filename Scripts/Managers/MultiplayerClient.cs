@@ -16,8 +16,6 @@ public partial class MultiplayerClient : Node {
     public MultiplayerClient() { }
 
     public override void _Ready() {
-        Multiplayer.ConnectedToServer += () => { };
-
         _peer = new ENetMultiplayerPeer();
         Error error = _peer.CreateClient(_ip, _port);
         if (error != Error.Ok) {
@@ -27,12 +25,9 @@ public partial class MultiplayerClient : Node {
         _peer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
         Multiplayer.MultiplayerPeer = _peer;
 
-        _game.ExitGameFinished += OnExitGameButtonDown;
     }
-
-    private void OnExitGameButtonDown() {
-        _game.ExitGameFinished -= OnExitGameButtonDown;
+    
+    public override void _ExitTree() {
         _peer.Close();
-        QueueFree();
     }
 }

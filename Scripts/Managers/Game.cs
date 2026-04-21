@@ -14,6 +14,7 @@ public partial class Game : Node {
     private MultiplayerClient _multiplayerClient;
 
     private Dictionary _playerData;
+    private MultiplayerApi.PeerConnectedEventHandler _peerConnectedHandler;
 
     public void InitAsSinglePlayer(Dictionary worldData, Dictionary playerData) {
         World = World.CreateAsHost(this, worldData, playerData);
@@ -31,12 +32,20 @@ public partial class Game : Node {
         World.Interface.GameMenu.ExitGameButtonDown += OnExitGameButtonDown;
         _playerData = FileManager.LoadPlayer(playerData);
 
-        Multiplayer.PeerConnected += id => {
+        _peerConnectedHandler = id => {
+            GD.Print($"Peer connected: {id}");
             Dictionary metadata = new();
             metadata["Width"] = worldData["Width"];
             metadata["Height"] = worldData["Height"];
             RpcId(id, nameof(RpcClientCreateWorld), metadata);
         };
+        Multiplayer.PeerConnected += _peerConnectedHandler;
+        TreeExiting += HostOnTreeExiting;
+    }
+
+    private void HostOnTreeExiting() {
+        TreeExiting -= HostOnTreeExiting;
+        Multiplayer.PeerConnected -= _peerConnectedHandler;
     }
 
     public void InitAsClient(Dictionary playerData) {

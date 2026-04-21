@@ -23,7 +23,6 @@ public partial class World : Node2D {
     private const int ChunkSize = 50;
     private readonly List<Dictionary> _bufferedChunks = new();
 
-
     public event Action WorldLoaded;
     public event Action<Vector2I, string> BlockDestroyed; // coords, resourcePath
     public event Action<Vector2I> BlockCreated;
