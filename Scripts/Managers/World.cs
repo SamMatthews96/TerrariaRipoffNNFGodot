@@ -22,7 +22,7 @@ public partial class World : Node2D {
     private Dictionary _localPlayerData;
 
     public event Action WorldLoaded;
-    public event Action<Vector2I, string> BlockDestroyed; // coords, resourcePath
+    public event Action<Vector2I, string> BlockDestroyed; 
     public event Action<Vector2I> BlockCreated;
 
     public static World CreateAsHost(Game game, Dictionary worldData, Dictionary playerData) {
@@ -70,14 +70,14 @@ public partial class World : Node2D {
     }
     
     public override void _Ready() {
+        Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
+        PlayerManager.LocalPlayerSpawned += OnLocalPlayerSpawned;
         if (Multiplayer.IsServer()) {
             WorldLoaded?.Invoke();
             PlayerManager.SpawnHostPlayer(_localPlayerData);
         } else {
             RpcId(1, nameof(RpcRequestWorldData));
         }
-        Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
-        PlayerManager.LocalPlayerSpawned += OnLocalPlayerSpawned;
     }
     
     public override void _ExitTree() {

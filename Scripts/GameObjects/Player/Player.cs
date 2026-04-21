@@ -68,22 +68,22 @@ public partial class Player : CharacterBody2D {
             _positionSynchronizer.SetVisibilityFor(peer, true);
         }
 
-        if (_isLocalPlayer) {
-            PlayerEquipment.InitAsLocal(this);
+        if (!_isLocalPlayer) return;
+        
+        PlayerEquipment.InitAsLocal(this);
 
-            World.InputManager.HorizontalInputChanged += OnHorizontalInputChanged;
-            World.InputManager.JumpPressed += OnJumpPressed;
-            World.Interface.GameMenu.ExitGameButtonDown += OnExitClicked;
+        World.InputManager.HorizontalInputChanged += OnHorizontalInputChanged;
+        World.InputManager.JumpPressed += OnJumpPressed;
+        World.Interface.GameMenu.ExitGameButtonDown += OnExitClicked;
 
-            _characterName = PlayerData["Name"].ToString();
+        _characterName = PlayerData["Name"].ToString();
 
-            TreeExiting += () => {
-                World.InputManager.HorizontalInputChanged -= OnHorizontalInputChanged;
-                World.InputManager.JumpPressed -= OnJumpPressed;
-                World.Interface.GameMenu.ExitGameButtonDown -= OnExitClicked;
-            };
-            LocalPlayerSpawned?.Invoke(this);
-        }
+        TreeExiting += () => {
+            World.InputManager.HorizontalInputChanged -= OnHorizontalInputChanged;
+            World.InputManager.JumpPressed -= OnJumpPressed;
+            World.Interface.GameMenu.ExitGameButtonDown -= OnExitClicked;
+        };
+        LocalPlayerSpawned?.Invoke(this);
     }
 
     public void AddPeerToSynchronizer(int peerId) {
