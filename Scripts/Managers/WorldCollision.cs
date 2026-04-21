@@ -9,14 +9,10 @@ public partial class WorldCollision : Node2D {
     [Export] private PackedScene _collisionBlockScene;
     [Export] private int _observerRadius = 3;
 
-    // private Block[,] _blocks;
     private readonly Dictionary<Vector2I, StaticBody2D> _activeCollisionBlocks = new();
     private readonly Dictionary<Vector2I, int> _observerCounts = new(); 
-    private Vector2I _worldSize;
 
     public override void _Ready() {
-        // _blocks = _world.Blocks;
-        _worldSize = _world.WorldSize;
         _world.PlayerManager.LocalPlayerSpawned += OnLocalPlayerSpawned;
         
         if (Multiplayer.IsServer()) {
@@ -58,9 +54,9 @@ public partial class WorldCollision : Node2D {
 
     private void IncrementObserverCounts(Vector2I position) {
         int startX = Mathf.Max(0, position.X - _observerRadius);
-        int endX = Mathf.Min(_worldSize.X - 1, position.X + _observerRadius);
+        int endX = Mathf.Min(_world.WorldSize.X - 1, position.X + _observerRadius);
         int startY = Mathf.Max(0, position.Y - _observerRadius);
-        int endY = Mathf.Min(_worldSize.Y - 1, position.Y + _observerRadius);
+        int endY = Mathf.Min(_world.WorldSize.Y - 1, position.Y + _observerRadius);
 
         for (int x = startX; x <= endX; x++) {
             for (int y = startY; y <= endY; y++) {
@@ -76,9 +72,9 @@ public partial class WorldCollision : Node2D {
 
     private void DecrementObserverCounts(Vector2I position) {
         int startX = Mathf.Max(0, position.X - _observerRadius);
-        int endX = Mathf.Min(_worldSize.X - 1, position.X + _observerRadius);
+        int endX = Mathf.Min(_world.WorldSize.X - 1, position.X + _observerRadius);
         int startY = Mathf.Max(0, position.Y - _observerRadius);
-        int endY = Mathf.Min(_worldSize.Y - 1, position.Y + _observerRadius);
+        int endY = Mathf.Min(_world.WorldSize.Y - 1, position.Y + _observerRadius);
 
         for (int x = startX; x <= endX; x++) {
             for (int y = startY; y <= endY; y++) {
