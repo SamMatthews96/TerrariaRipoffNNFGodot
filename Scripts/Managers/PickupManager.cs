@@ -18,6 +18,7 @@ public partial class PickupManager : Node2D {
     public override void _Ready() {
         if (_world.IsHost) {
             _world.BlockDestroyed += ServerOnBlockDestroyed;
+            _world.PlayerManager.PlayerSpawnedOnServer += OnPlayedSpawnedOnServer;
             ProcessMode = ProcessModeEnum.Always;
         } else {
             ProcessMode = ProcessModeEnum.Disabled;
@@ -27,6 +28,19 @@ public partial class PickupManager : Node2D {
     public override void _ExitTree() {
         if (!_world.IsHost) return;
         _world.BlockDestroyed -= ServerOnBlockDestroyed;
+        _world.PlayerManager.PlayerSpawnedOnServer -= OnPlayedSpawnedOnServer;
+    }
+
+    private void OnPlayedSpawnedOnServer(Player player) {
+        player.ServerPickupArea.CollectedPickup += OnPlayerCollectedPickup;
+        player.TreeExiting += () => {
+            player.ServerPickupArea.CollectedPickup -= OnPlayerCollectedPickup;
+        };
+    }
+
+    private void OnPlayerCollectedPickup(PickupEntity pickup) {
+        _activePickups.Remove(pickup);
+        pickup.QueueFreeAllPeers();
     }
 
     private void ServerOnBlockDestroyed(Vector2I coords, string resourcePath) {
@@ -35,13 +49,13 @@ public partial class PickupManager : Node2D {
             (coords.Y + 0.5f) * Game.BlockSize
         );
         _pickupCount++;
-        string name = $"Pickup{_pickupCount}";
-        Rpc(nameof(RpcAllCreatePickup), position, resourcePath, name);
+        Rpc(nameof(RpcAllCreatePickup), position, resourcePath, _pickupCount);
         ServerPickupCreated?.Invoke(coords);
     }
 
+
     [Rpc(CallLocal = true)]
-    private void RpcAllCreatePickup(Vector2 position, string resourcePath, string name) {
+    private void RpcAllCreatePickup(Vector2 position, string resourcePath, int pickupCount) {
         PickupEntity pickup =
             Data.PackedScenes.Pickup.Instantiate<PickupEntity>();
         Item item = ResourceLoader.Load<Item>(resourcePath);
@@ -51,7 +65,7 @@ public partial class PickupManager : Node2D {
             (int)(position.Y / Game.BlockSize - 0.5f)
         );
         pickup.Item = item;
-        pickup.Name = name;
+        pickup.Name = $"Pickup_{pickupCount}";
         AddChild(pickup);
         _activePickups.Add(pickup);
     }
