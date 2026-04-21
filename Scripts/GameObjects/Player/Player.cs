@@ -5,12 +5,13 @@ using Godot.Collections;
 namespace TerrariaRipoffNNF;
 
 public partial class Player : CharacterBody2D {
-    public static Player Create(World world, int peerId, Vector2I spawnCoords) {
+    public static Player Create(World world, int peerId, Vector2I spawnCoords, Dictionary playerData = null) {
         Player player = Data.PackedScenes.Player.Instantiate<Player>();
         player.World = world;
         player.Name = peerId.ToString();
         player.SpawnCoords = spawnCoords;
         player.SpawnPosition = spawnCoords * Game.BlockSize;
+        player.PlayerData = playerData;
         return player;
     }
 

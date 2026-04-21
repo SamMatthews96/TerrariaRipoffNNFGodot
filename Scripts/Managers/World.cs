@@ -18,7 +18,6 @@ public partial class World : Node2D {
 
     // World sync constants
     private const int ChunkSize = 50;
-    private readonly List<Dictionary> _bufferedChunks = new();
     
     private Dictionary _localPlayerData;
 
@@ -167,7 +166,7 @@ public partial class World : Node2D {
                     ["entities"] = chunkData
                 };
 
-                RpcId(requestingPeerId, nameof(RpcReceiveWorldChunk), chunkPacket);
+                RpcId(requestingPeerId, nameof(RpcProcessWorldChunk), chunkPacket);
                 chunkIndex++;
             }
         }
@@ -200,17 +199,7 @@ public partial class World : Node2D {
     }
     
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
-    private void RpcReceiveWorldChunk(Dictionary chunkPacket) {
-        // If metadata hasn't arrived yet, buffer this chunk
-        if (Blocks == null) {
-            _bufferedChunks.Add(chunkPacket);
-            return;
-        }
-
-        ProcessWorldChunk(chunkPacket);
-    }
-
-    private void ProcessWorldChunk(Dictionary chunkPacket) {
+    private void RpcProcessWorldChunk(Dictionary chunkPacket) {
         int chunkIndex = (int)chunkPacket["chunkIndex"];
         int totalChunks = (int)chunkPacket["totalChunks"];
         Array entities = chunkPacket["entities"].AsGodotArray();
