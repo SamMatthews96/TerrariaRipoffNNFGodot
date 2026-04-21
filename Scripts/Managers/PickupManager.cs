@@ -32,15 +32,16 @@ public partial class PickupManager : Node2D {
     }
 
     private void OnPlayedSpawnedOnServer(Player player) {
-        player.ServerPickupArea.CollectedPickup += OnPlayerCollectedPickup;
+        player.ServerPickupArea.CollectedPickup += ServerOnPlayerCollectedPickup;
         player.TreeExiting += () => {
-            player.ServerPickupArea.CollectedPickup -= OnPlayerCollectedPickup;
+            player.ServerPickupArea.CollectedPickup -= ServerOnPlayerCollectedPickup;
         };
     }
 
-    private void OnPlayerCollectedPickup(PickupEntity pickup) {
+    private void ServerOnPlayerCollectedPickup(PickupEntity pickup) {
         _activePickups.Remove(pickup);
         pickup.QueueFreeAllPeers();
+        ServerPickupDestroyed?.Invoke(pickup.Coords);
     }
 
     private void ServerOnBlockDestroyed(Vector2I coords, string resourcePath) {
