@@ -74,10 +74,10 @@ public partial class World : Node2D {
         if (Multiplayer.IsServer()) {
             WorldLoaded?.Invoke();
             PlayerManager.SpawnHostPlayer(_localPlayerData);
-            Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
         } else {
             RpcId(1, nameof(RpcRequestWorldData));
         }
+        Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
         PlayerManager.LocalPlayerSpawned += OnLocalPlayerSpawned;
     }
     
@@ -262,8 +262,6 @@ public partial class World : Node2D {
     private void OnWorldSyncComplete() {
         WorldLoaded?.Invoke();
         PlayerManager.ClientSpawnPlayers(_localPlayerData);
-        
-        Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
     }
 
     #endregion

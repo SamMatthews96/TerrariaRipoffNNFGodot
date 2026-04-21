@@ -50,7 +50,7 @@ public partial class Game : Node {
 
     public void InitAsClient(Dictionary playerData) {
         _playerData = FileManager.LoadPlayer(playerData);
-        _multiplayerClient = new MultiplayerClient(this);
+        _multiplayerClient = new MultiplayerClient();
         AddChild(_multiplayerClient);
     }
 
