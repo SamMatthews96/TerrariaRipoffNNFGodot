@@ -18,7 +18,6 @@ public partial class PlayerManager : Node2D {
         int peerId = Multiplayer.GetUniqueId();
         Player player = Player.Create(
             _world, peerId, new Vector2I(4, 14), playerData);
-        player.InitAsLocal(playerData);
         AddChild(player, true);
         _localPlayer = player;
         _players.Add(player);
@@ -57,7 +56,6 @@ public partial class PlayerManager : Node2D {
             _players.Add(player);
             
             _localPlayer = player;
-            player.InitAsLocal(_playerData);
             LocalPlayerSpawned?.Invoke(player);
         } else {
             player = Player.Create(_world, peerId, new Vector2I(4, 14));

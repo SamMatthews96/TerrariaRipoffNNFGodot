@@ -21,7 +21,6 @@ public partial class Game : Node {
         AddChild(World);
         World.Interface.GameMenu.ExitGameButtonDown += OnExitGameButtonDown;
         _playerData = FileManager.LoadPlayer(playerData);
-        
     }
 
     public void InitAsHost(Dictionary worldData, Dictionary playerData) {

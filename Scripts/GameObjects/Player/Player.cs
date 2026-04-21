@@ -69,6 +69,19 @@ public partial class Player : CharacterBody2D {
         }
 
         if (_isLocalPlayer) {
+            PlayerEquipment.InitAsLocal(this);
+
+            World.InputManager.HorizontalInputChanged += OnHorizontalInputChanged;
+            World.InputManager.JumpPressed += OnJumpPressed;
+            World.Interface.GameMenu.ExitGameButtonDown += OnExitClicked;
+
+            _characterName = PlayerData["Name"].ToString();
+
+            TreeExiting += () => {
+                World.InputManager.HorizontalInputChanged -= OnHorizontalInputChanged;
+                World.InputManager.JumpPressed -= OnJumpPressed;
+                World.Interface.GameMenu.ExitGameButtonDown -= OnExitClicked;
+            };
             LocalPlayerSpawned?.Invoke(this);
         }
     }
@@ -79,23 +92,6 @@ public partial class Player : CharacterBody2D {
 
     public override void _ExitTree() {
         PlayerDespawned?.Invoke(this);
-    }
-
-    public void InitAsLocal(Dictionary playerData) {
-        PlayerData = playerData;
-        PlayerEquipment.InitAsLocal(this);
-
-        World.InputManager.HorizontalInputChanged += OnHorizontalInputChanged;
-        World.InputManager.JumpPressed += OnJumpPressed;
-        World.Interface.GameMenu.ExitGameButtonDown += OnExitClicked;
-
-        _characterName = playerData["Name"].ToString();
-
-        TreeExiting += () => {
-            World.InputManager.HorizontalInputChanged -= OnHorizontalInputChanged;
-            World.InputManager.JumpPressed -= OnJumpPressed;
-            World.Interface.GameMenu.ExitGameButtonDown -= OnExitClicked;
-        };
     }
 
     private void OnExitClicked() {
