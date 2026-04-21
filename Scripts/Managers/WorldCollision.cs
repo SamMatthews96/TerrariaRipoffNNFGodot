@@ -96,7 +96,7 @@ public partial class WorldCollision : Node2D {
     }
 
     private void OnBlockDestroyed(Vector2I position, string _) {
-        RemoveCollisionBlock(position);
+        Rpc(nameof(RpcAllRemoveCollisionBlock), position);
     }
 
     private void OnPickupCreated(Vector2I position) {
@@ -128,5 +128,10 @@ public partial class WorldCollision : Node2D {
             block.QueueFree();
             _activeCollisionBlocks.Remove(position);
         }
+    }
+
+    [Rpc(CallLocal = true)]
+    private void RpcAllRemoveCollisionBlock(Vector2I position) {
+        RemoveCollisionBlock(position);
     }
 }
