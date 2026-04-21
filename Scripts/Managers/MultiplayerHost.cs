@@ -20,5 +20,6 @@ public partial class MultiplayerHost : Node {
     
     public override void _ExitTree() {
         _peer.Close();
+        Multiplayer.MultiplayerPeer = new OfflineMultiplayerPeer();
     }
 }

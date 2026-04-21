@@ -21,5 +21,6 @@ public partial class MultiplayerClient : Node {
     
     public override void _ExitTree() {
         _peer.Close();
+        Multiplayer.MultiplayerPeer = new OfflineMultiplayerPeer();
     }
 }
