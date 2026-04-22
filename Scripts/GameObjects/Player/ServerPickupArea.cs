@@ -16,7 +16,6 @@ public partial class ServerPickupArea : Area2D {
     }
 
     public override void _Ready() {
-        GD.Print(_player.Name);
         BodyEntered += OnCollidedWithPickup;
     }
 

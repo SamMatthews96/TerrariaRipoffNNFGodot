@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://dw3bqb4pv0cdi"]
+
+[ext_resource type="Script" uid="uid://clm2kpmko0e0" path="res://testScripts/LocalRpcIdTest/LocalRpcIdTest.cs" id="1_7avfo"]
+
+[node name="LocalRpcIdTest" type="Node" unique_id=990397973]
+script = ExtResource("1_7avfo")

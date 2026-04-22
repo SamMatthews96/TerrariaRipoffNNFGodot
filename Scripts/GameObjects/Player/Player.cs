@@ -8,18 +8,22 @@ public partial class Player : CharacterBody2D {
     public static Player Create(World world, int peerId, Vector2I spawnCoords, Dictionary playerData = null) {
         Player player = Data.PackedScenes.Player.Instantiate<Player>();
         player.World = world;
+        player.PeerId = peerId;
         player.Name = peerId.ToString();
         player.SpawnCoords = spawnCoords;
         player.SpawnPosition = spawnCoords * Game.BlockSize;
         player.PlayerData = playerData;
+        GD.Print(peerId, world.IsHost);
+        GD.Print(player.PlayerData);
+        
         return player;
     }
 
     [Export] public Inventory Inventory { get; private set; }
     [Export] public ActionController ActionController { get; private set; }
     [Export] public Crafting Crafting { get; private set; }
-    public ServerPickupArea ServerPickupArea { get; private set; }
     [Export] public PlayerEquipment PlayerEquipment { get; private set; }
+    public ServerPickupArea ServerPickupArea { get; private set; }
 
     [Export] private MultiplayerSynchronizer _positionSynchronizer;
     [Export] private Camera2D _camera;
@@ -30,6 +34,7 @@ public partial class Player : CharacterBody2D {
     public Vector2I SpawnCoords { get; private set; }
 
     public World World { get; private set; }
+    public int PeerId { get; private set; }
     
     private int _horizontalInput;
     private bool _isFalling;
@@ -41,7 +46,7 @@ public partial class Player : CharacterBody2D {
 
     public Vector2I Coords => (Vector2I)(Position / Game.BlockSize);
 
-    private bool _isLocalPlayer;
+    public bool IsLocalPlayer { get; private set; }
 
     public static event Action<Player> LocalPlayerSpawned;
     public delegate void CellMovedDelegate(Vector2I newCoords, Vector2I oldCoords);
@@ -51,14 +56,19 @@ public partial class Player : CharacterBody2D {
     public override void _EnterTree() {
         int peerId = Name.ToString().ToInt();
         _positionSynchronizer.SetMultiplayerAuthority(peerId);
-        _isLocalPlayer = Multiplayer.GetUniqueId() == peerId;
-        if (_isLocalPlayer) {
+        IsLocalPlayer = Multiplayer.GetUniqueId() == peerId;
+        if (IsLocalPlayer) {
             _camera.Enabled = true;
         }
 
         if (World.IsHost) {
             ServerPickupArea = ServerPickupArea.Create(this);
             AddChild(ServerPickupArea);
+        }
+
+        if ((World.IsHost || IsLocalPlayer) && PlayerData == null) {
+            // error is happening on host
+            throw new Exception("PlayerData is null");
         }
     }
 
@@ -68,7 +78,7 @@ public partial class Player : CharacterBody2D {
             _positionSynchronizer.SetVisibilityFor(peer, true);
         }
 
-        if (!_isLocalPlayer) return;
+        if (!IsLocalPlayer) return;
         
         PlayerEquipment.InitAsLocal(this);
 
@@ -114,7 +124,7 @@ public partial class Player : CharacterBody2D {
     }
 
     public override void _PhysicsProcess(double delta) {
-        if (!_isLocalPlayer) return;
+        if (!IsLocalPlayer) return;
 
         Vector2I previousCoords = Coords;
         _isFalling = !TestMove(Transform, new Vector2(0, 0.1f));

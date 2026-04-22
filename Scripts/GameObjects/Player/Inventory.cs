@@ -30,24 +30,29 @@ public partial class Inventory : Node {
     private readonly List<StackedItems> _inventoryItemsList = new();
 
     public override void _Ready() {
-        _player.Crafting.ItemCrafted += OnItemCrafted;
-        _player.World.Interface.InventoryUi.ItemActionClicked += OnItemActionClicked;
-        if (_player.PlayerData is null) return;
-        if (!_player.PlayerData.TryGetValue("Inventory", out Variant inventoryData)) return;
-        if (!inventoryData.AsGodotDictionary<string, Array>().TryGetValue(
-                "InventoryItemsList", out Array inventoryItems)) return;
-
-        foreach (Dictionary savedItem in inventoryItems) {
-            Item newItem = Item.FromDictionary(savedItem["Item"].AsGodotDictionary());
-            int count = (int)savedItem["Count"].ToString().ToFloat();
-            StackedItems newStack = new(newItem, count);
-            AddItems(newStack);
+        if (_player.World.IsHost || _player.IsLocalPlayer) {
+            // load inventory from player data
+            // Godot.Collections.Dictionary<string, Array> inventory = 
+            //     _player.PlayerData["Inventory"].AsGodotDictionary<string, Array>();
+            // Array inventoryItems = inventory["InventoryItemsList"];
+            //
+            // foreach (Dictionary savedItem in inventoryItems) {
+            //     Item newItem = Item.FromDictionary(savedItem["Item"].AsGodotDictionary());
+            //     int count = (int)savedItem["Count"].ToString().ToFloat();
+            //     StackedItems newStack = new(newItem, count);
+            //     AddItems(newStack);
+            // }
         }
-    }
 
-    public override void _ExitTree() {
-        _player.World.Interface.InventoryUi.ItemActionClicked -= OnItemActionClicked;
-        _player.Crafting.ItemCrafted -= OnItemCrafted;
+        if (_player.World.IsHost) {
+            _player.ServerPickupArea.CollectedPickup += HostOnCollectedPickup;
+            TreeExiting += () => {
+                _player.ServerPickupArea.CollectedPickup -= HostOnCollectedPickup;
+            };
+        }
+        
+        // _player.Crafting.ItemCrafted += OnItemCrafted;
+        // _player.World.Interface.InventoryUi.ItemActionClicked += OnItemActionClicked;
     }
 
     private void OnItemActionClicked(StackedItems stackedItems) {
@@ -66,6 +71,19 @@ public partial class Inventory : Node {
     public void OnAfterBuildSuccess(Item item) {
         StackedItems inventoryItems = new(item, 1);
         RemoveItems(inventoryItems);
+    }
+
+    private void HostOnCollectedPickup(PickupEntity pickup) {
+        RpcAddItems(pickup.Item, 1);
+        if (_player.PeerId != Multiplayer.GetUniqueId()) {
+            RpcId(_player.PeerId, nameof(RpcAddItems), pickup.Item, 1);
+        }
+    }
+
+    [Rpc(CallLocal = true)]
+    private void RpcAddItems(Item item, int count) {
+        StackedItems inventoryItems = new(item, count);
+        AddItems(inventoryItems);
     }
 
     private void AddItems(StackedItems inventoryItemsToAdd) {
