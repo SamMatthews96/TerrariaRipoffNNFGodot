@@ -27,6 +27,7 @@ public partial class Player : CharacterBody2D {
     [Export] private float _speed = 300f;
     [Export] private float _gravityCoefficient = 1600;
     [Export] private float _jumpStrength = 800;
+    [Export] private Label _nameLabel;
     [Export] public Vector2 SpawnPosition { get; private set; }
     public Vector2I SpawnCoords { get; private set; }
 
@@ -69,6 +70,8 @@ public partial class Player : CharacterBody2D {
         foreach (int peer in Multiplayer.GetPeers()) {
             _positionSynchronizer.SetVisibilityFor(peer, true);
         }
+        
+        _nameLabel.Text = PeerId == 1 ? "Host" : "Client";
 
         if (!IsLocalPlayer) return;
         

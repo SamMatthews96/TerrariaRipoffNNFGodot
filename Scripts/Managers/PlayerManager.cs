@@ -23,7 +23,6 @@ public partial class PlayerManager : Node2D {
     }
 
     public void SpawnPlayersOnClient(Dictionary playerData) {
-
         int[] peers = Multiplayer.GetPeers();
         foreach (int peer in peers) {
             Player remotePlayer = Player.Create(_world, peer);
