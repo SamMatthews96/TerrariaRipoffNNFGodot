@@ -74,15 +74,20 @@ public partial class Inventory : Node {
     }
 
     private void HostOnCollectedPickup(PickupEntity pickup) {
-        RpcAddItems(pickup.Item, 1);
-        if (_player.PeerId != Multiplayer.GetUniqueId()) {
-            RpcId(_player.PeerId, nameof(RpcAddItems), pickup.Item, 1);
+        StackedItems stackedItems = new(pickup.Item);
+        AddItems(stackedItems);
+        if (_player.PeerId != 1) {
+            Dictionary stackedItemsDict = stackedItems.ToDictionary();
+            GD.Print(stackedItemsDict);
+            RpcId(_player.PeerId, nameof(RpcAddItems), stackedItemsDict);
         }
     }
 
-    [Rpc(CallLocal = true)]
-    private void RpcAddItems(Item item, int count) {
-        StackedItems inventoryItems = new(item, count);
+    [Rpc]
+    private void RpcAddItems(Dictionary stackedItemsDict) {
+        GD.Print("-----");
+        GD.Print(stackedItemsDict);
+        StackedItems inventoryItems = StackedItems.FromDictionary(stackedItemsDict);
         AddItems(inventoryItems);
     }
 
