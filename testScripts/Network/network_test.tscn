@@ -8,4 +8,5 @@ script = ExtResource("1_i3p34")
 _networkTestScene = ExtResource("2_k7328")
 
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="." unique_id=605146523]
+_spawnable_scenes = PackedStringArray("uid://t472ordp001d")
 spawn_path = NodePath("..")

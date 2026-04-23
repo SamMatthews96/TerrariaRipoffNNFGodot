@@ -5,17 +5,14 @@ using Godot.Collections;
 namespace TerrariaRipoffNNF;
 
 public partial class Player : CharacterBody2D {
-    public static Player Create(World world, int peerId, Vector2I spawnCoords, Dictionary playerData = null) {
+    public static Player Create(World world, int peerId, Dictionary playerData = null) {
         Player player = Data.PackedScenes.Player.Instantiate<Player>();
         player.World = world;
         player.PeerId = peerId;
         player.Name = peerId.ToString();
-        player.SpawnCoords = spawnCoords;
-        player.SpawnPosition = spawnCoords * Game.BlockSize;
+        player.SpawnCoords = world.DefaultSpawnPosition;
+        player.SpawnPosition = world.DefaultSpawnPosition * Game.BlockSize;
         player.PlayerData = playerData;
-        GD.Print(peerId, world.IsHost);
-        GD.Print(player.PlayerData);
-        
         return player;
     }
 
@@ -64,11 +61,6 @@ public partial class Player : CharacterBody2D {
         if (World.IsHost) {
             ServerPickupArea = ServerPickupArea.Create(this);
             AddChild(ServerPickupArea);
-        }
-
-        if ((World.IsHost || IsLocalPlayer) && PlayerData == null) {
-            // error is happening on host
-            throw new Exception("PlayerData is null");
         }
     }
 

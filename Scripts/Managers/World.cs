@@ -11,6 +11,7 @@ public partial class World : Node2D {
     public Block[,] Blocks { get; private set; }
     public Vector2I WorldSize { get; private set; }
     public bool IsHost { get; private set; }
+    public Vector2I DefaultSpawnPosition { get; private set; } = new(4, 14);
     [Export] public PickupManager PickupManager { get; private set; }
     [Export] public PlayerManager PlayerManager { get; private set; }
     [Export] public Interface.Game Interface { get; private set; }
@@ -18,7 +19,6 @@ public partial class World : Node2D {
 
     // World sync constants
     private const int ChunkSize = 50;
-    
     private Dictionary _localPlayerData;
 
     public event Action<Vector2I, string> BlockDestroyed; 
@@ -226,7 +226,7 @@ public partial class World : Node2D {
     }
 
     private void OnWorldSyncComplete() {
-        PlayerManager.SpawnPlayersForNewPeer(_localPlayerData);
+        PlayerManager.SpawnPlayersOnClient(_localPlayerData);
     }
 
     #endregion

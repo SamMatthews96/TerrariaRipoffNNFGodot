@@ -15,56 +15,49 @@ public partial class PlayerManager : Node2D {
 
     public void SpawnHostPlayer(Dictionary playerData) {
         int peerId = Multiplayer.GetUniqueId();
-        Player player = Player.Create(
-            _world, peerId, new Vector2I(4, 14), playerData);
+        Player player = Player.Create(_world, peerId, playerData);
         AddChild(player, true);
         _localPlayer = player;
         LocalPlayerSpawned?.Invoke(player);
         PlayerSpawnedOnServer?.Invoke(player);
     }
 
-    public void SpawnPlayersForNewPeer(Dictionary playerData) {
-        _playerData = playerData;
-        RpcId(1, nameof(RpcHostSpawnPlayersForNewPeer), playerData);
+    public void SpawnPlayersOnClient(Dictionary playerData) {
+
+        int[] peers = Multiplayer.GetPeers();
+        foreach (int peer in peers) {
+            Player remotePlayer = Player.Create(_world, peer);
+            AddChild(remotePlayer, true);
+        }
+        
+        int peerId = Multiplayer.GetUniqueId();
+        Player player = Player.Create(_world, peerId, playerData);
+        AddChild(player, true);
+        _localPlayer = player;
+        LocalPlayerSpawned?.Invoke(player);
+        RpcId(1, nameof(RpcHostHandleNewPeer));
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
-    private void RpcHostSpawnPlayersForNewPeer(Dictionary playerData) {
-        int peerId = Multiplayer.GetRemoteSenderId();
-        RpcId(peerId, nameof(RpcNewClientAddExistingPlayers));
-        Rpc(nameof(RpcAllAddNewPlayer), peerId);
+    private void RpcHostHandleNewPeer() {
+        int senderId = Multiplayer.GetRemoteSenderId();
+        
+        Player remotePlayer = Player.Create(_world, senderId);
+        AddChild(remotePlayer, true);
+        _localPlayer.AddPeerToSynchronizer(senderId);
+        PlayerSpawnedOnServer?.Invoke(remotePlayer);
+        
+        int[] peers = Multiplayer.GetPeers();
+        foreach (int peerId in peers) {
+            if (peerId == senderId) continue;
+            RpcId(peerId, nameof(RpcSpawnNewPlayer), senderId);
+        }
+    }
 
-        Player player = Player.Create(
-            _world, peerId, new Vector2I(4, 14), playerData);
-        AddChild(player, true);
+    [Rpc]
+    private void RpcSpawnNewPlayer(int peerId) {
+        Player remotePlayer = Player.Create(_world, peerId);
+        AddChild(remotePlayer, true);
         _localPlayer.AddPeerToSynchronizer(peerId);
-        PlayerSpawnedOnServer?.Invoke(player);
-    }
-
-    [Rpc]
-    private void RpcNewClientAddExistingPlayers() {
-        foreach (int peerId in Multiplayer.GetPeers()) {
-            if (peerId == Multiplayer.GetUniqueId()) continue;
-            Player player = Player.Create(_world, peerId, new Vector2I(4, 14));
-            AddChild(player, true);
-        }
-    }
-
-    [Rpc]
-    private void RpcAllAddNewPlayer(int peerId) {
-        Player player;
-        bool isLocalPlayer = peerId == Multiplayer.GetUniqueId();
-        if (isLocalPlayer) {
-            player = Player.Create(_world, peerId, new Vector2I(4, 14), _playerData);
-            AddChild(player, true);
-
-            _localPlayer = player;
-            LocalPlayerSpawned?.Invoke(player);
-        } else {
-            player = Player.Create(_world, peerId, new Vector2I(4, 14));
-            AddChild(player, true);
-
-            _localPlayer.AddPeerToSynchronizer(peerId);
-        }
     }
 }
