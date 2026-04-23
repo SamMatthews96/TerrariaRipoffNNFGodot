@@ -90,6 +90,11 @@ public partial class WorldCollision : Node2D {
     }
 
     private void OnBlockCreated(Vector2I position) {
+        Rpc(nameof(RpcAllOnBlockCreated), position);
+    }
+
+    [Rpc(CallLocal = true)]
+    private void RpcAllOnBlockCreated(Vector2I position) {
         if (_observerCounts.TryGetValue(position, out int count) && count > 0) {
             CreateCollisionBlock(position);
         }

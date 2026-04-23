@@ -78,15 +78,12 @@ public partial class Inventory : Node {
         AddItems(stackedItems);
         if (_player.PeerId != 1) {
             Dictionary stackedItemsDict = stackedItems.ToDictionary();
-            GD.Print(stackedItemsDict);
             RpcId(_player.PeerId, nameof(RpcAddItems), stackedItemsDict);
         }
     }
 
     [Rpc]
     private void RpcAddItems(Dictionary stackedItemsDict) {
-        GD.Print("-----");
-        GD.Print(stackedItemsDict);
         StackedItems inventoryItems = StackedItems.FromDictionary(stackedItemsDict);
         AddItems(inventoryItems);
     }
