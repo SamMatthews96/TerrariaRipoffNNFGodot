@@ -12,14 +12,29 @@ public partial class GatherAction : PlayerAction {
     public override void _Ready() {
         ProcessMode = ProcessModeEnum.Disabled;
         Player = ActionController.Player;
+        if (Player.World.IsHost) {
+            _gatherCooldown.Timeout += OnGatherTimeoutHost;
+            TreeExiting += () => {
+                _gatherCooldown.Timeout -= OnGatherTimeoutHost;
+            };
+        }
         if (!Player.IsLocalPlayer) return;
         Player.ActionController.ActionChanged += OnActionChanged;
+        _gatherCooldown.Timeout += OnGatherTimeoutClient;
+        TreeExiting += () => {
+            Player.ActionController.ActionChanged -= OnActionChanged;
+            _gatherCooldown.Timeout -= OnGatherTimeoutClient;
+        };
     }
 
-    public override void _ExitTree() {
-        if (!Player.IsLocalPlayer) return;
-        Player.ActionController.ActionChanged -= OnActionChanged;
+    private void OnGatherTimeoutHost() {
+        GD.Print("Host timeout");
     }
+
+    private void OnGatherTimeoutClient() {
+        GD.Print("Client timeout");
+    }
+
 
     private void OnActionChanged(PlayerActionType _) {
         ProcessMode = ProcessModeEnum.Disabled;
@@ -56,7 +71,7 @@ public partial class GatherAction : PlayerAction {
         }
     }
 
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
     private void AttemptGatherOnHost(Vector2I coords) {
         if (!_gatherCooldown.IsStopped()) {
             GD.Print("Host Gather on cooldown");
