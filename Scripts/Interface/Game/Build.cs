@@ -42,6 +42,9 @@ public partial class Build : Container {
     }
 
     private void OnLocalPlayerSpawned(Player player) {
+        foreach (StackedItems stackedItems in player.Inventory.StackedItemsList) {
+            OnInventoryAddedItemStack(stackedItems);    
+        }
         player.ActionController.ActionChanged += OnPlayerActionChanged;
         player.Inventory.AddedItemStack += OnInventoryAddedItemStack;
         player.Inventory.RemovedItemStack += OnInventoryRemovedItemStack;
