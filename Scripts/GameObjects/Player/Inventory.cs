@@ -18,6 +18,7 @@ public partial class Inventory : Node {
                 return inventoryStackedItems.Count >= stackedItems.Count;
             }
         }
+
         return false;
     }
 
@@ -30,11 +31,11 @@ public partial class Inventory : Node {
     private readonly List<StackedItems> _inventoryItemsList = new();
 
     public override void _Ready() {
-        if (_player.IsLocalPlayer) {
-            Godot.Collections.Dictionary<string, Array> inventory = 
+        if (_player.IsLocalPlayer || _player.World.IsHost) {
+            Godot.Collections.Dictionary<string, Array> inventory =
                 _player.PlayerData["Inventory"].AsGodotDictionary<string, Array>();
             Array inventoryItems = inventory["InventoryItemsList"];
-            
+
             foreach (Dictionary savedItem in inventoryItems) {
                 Item newItem = Item.FromDictionary(savedItem["Item"].AsGodotDictionary());
                 int count = (int)savedItem["Count"].ToString().ToFloat();
@@ -44,15 +45,31 @@ public partial class Inventory : Node {
         }
 
         if (_player.World.IsHost) {
-            _player.ServerPickupArea.CollectedPickup += HostOnCollectedPickup;
+            _player.ServerPickupArea.CollectedPickup +=
+                HostOnCollectedPickup;
+            _player.ActionController.BuildAction.HostPlaceBlockAction +=
+                HostOnPlaceBlock;
             TreeExiting += () => {
                 _player.ServerPickupArea.CollectedPickup -= HostOnCollectedPickup;
+                _player.ActionController.BuildAction.HostPlaceBlockAction -=
+                    HostOnPlaceBlock;
             };
         }
-        
+
         // _player.Crafting.ItemCrafted += OnItemCrafted;
         // _player.World.Interface.InventoryUi.ItemActionClicked += OnItemActionClicked;
     }
+
+    private void HostOnPlaceBlock(Item item, Vector2I coords) {
+        StackedItems inventoryItems = new(item);
+        RemoveItems(inventoryItems);
+        
+        if (_player.PeerId != 1) {
+            Dictionary stackedItemsDict = inventoryItems.ToDictionary();
+            RpcId(_player.PeerId, nameof(RpcRemoveItems), stackedItemsDict);
+        }
+    }
+
 
     private void OnItemActionClicked(StackedItems stackedItems) {
         if (stackedItems.Item.HasProperty<ItemEquipment>()) {
@@ -67,11 +84,6 @@ public partial class Inventory : Node {
         }
     }
 
-    public void OnAfterBuildSuccess(Item item) {
-        StackedItems inventoryItems = new(item, 1);
-        RemoveItems(inventoryItems);
-    }
-
     private void HostOnCollectedPickup(PickupEntity pickup) {
         StackedItems stackedItems = new(pickup.Item);
         AddItems(stackedItems);
@@ -81,7 +93,7 @@ public partial class Inventory : Node {
         }
     }
 
-    [Rpc]
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
     private void RpcAddItems(Dictionary stackedItemsDict) {
         StackedItems inventoryItems = StackedItems.FromDictionary(stackedItemsDict);
         AddItems(inventoryItems);
@@ -101,12 +113,19 @@ public partial class Inventory : Node {
             ItemStackChangedSize?.Invoke(_inventoryItemsList[index]);
         }
     }
-
+    
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    private void RpcRemoveItems(Dictionary stackedItemsDict) {
+        StackedItems inventoryItems = StackedItems.FromDictionary(stackedItemsDict);
+        RemoveItems(inventoryItems);
+    }
+    
+    
     private void RemoveItems(StackedItems inventoryItemsToRemove) {
         UsedSpace -= inventoryItemsToRemove.TotalSpace;
 
         int index = _inventoryItemsList.FindIndex(inventoryItems =>
-            Item.AreEqual(inventoryItems.Item,inventoryItemsToRemove.Item));
+            Item.AreEqual(inventoryItems.Item, inventoryItemsToRemove.Item));
 
         if (index == -1) {
             throw new Exception("[20240815.0934.1] Inventory item not found");

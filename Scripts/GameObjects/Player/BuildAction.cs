@@ -6,8 +6,8 @@ namespace TerrariaRipoffNNF;
 
 public partial class BuildAction : PlayerAction {
     public delegate void PlaceBlockDelegate(Item item, Vector2I coords);
-    public event PlaceBlockDelegate ServerPlaceBlockAction;
-    public event PlaceBlockDelegate ServerPlaceWallAction;
+    public event PlaceBlockDelegate HostPlaceBlockAction;
+    public event PlaceBlockDelegate HostPlaceWallAction;
 
     private Item _blockItem;
 
@@ -52,7 +52,7 @@ public partial class BuildAction : PlayerAction {
         if (blockItem is null) return;
         if (!blockItem.HasProperty<ItemPlaceable>()) return;
 
-        ServerPlaceBlockAction?.Invoke(blockItem, coords);
+        HostPlaceBlockAction?.Invoke(blockItem, coords);
     }
 
 
@@ -69,7 +69,7 @@ public partial class BuildAction : PlayerAction {
         );
         if (distance > range) return;
         if (_blockItem.HasProperty<ItemPlaceable>()) {
-            ServerPlaceWallAction?.Invoke(_blockItem, coords);
+            HostPlaceWallAction?.Invoke(_blockItem, coords);
         }
     }
 

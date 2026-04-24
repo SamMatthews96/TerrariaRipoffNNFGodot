@@ -34,14 +34,14 @@ public partial class PlayerManager : Node2D {
         AddChild(player, true);
         _localPlayer = player;
         LocalPlayerSpawned?.Invoke(player);
-        RpcId(1, nameof(RpcHostHandleNewPeer));
+        RpcId(1, nameof(RpcHostHandleNewPeer), playerData);
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
-    private void RpcHostHandleNewPeer() {
+    private void RpcHostHandleNewPeer(Dictionary playerData) {
         int senderId = Multiplayer.GetRemoteSenderId();
         
-        Player remotePlayer = Player.Create(_world, senderId);
+        Player remotePlayer = Player.Create(_world, senderId, playerData);
         AddChild(remotePlayer, true);
         _localPlayer.AddPeerToSynchronizer(senderId);
         PlayerSpawnedOnServer?.Invoke(remotePlayer);

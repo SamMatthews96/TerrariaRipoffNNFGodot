@@ -86,19 +86,19 @@ public partial class World : Node2D {
     }
 
     private void OnPlayerSpawnedOnServer(Player player) {
-        player.ActionController.BuildAction.ServerPlaceBlockAction 
-            += OnServerPlaceBlockAction;
+        player.ActionController.BuildAction.HostPlaceBlockAction 
+            += OnHostPlaceBlockAction;
         player.ActionController.GatherAction.ServerGatherAction
             += OnServerGatherAction;
         player.TreeExiting += () => {
-            player.ActionController.BuildAction.ServerPlaceBlockAction 
-                -= OnServerPlaceBlockAction;
+            player.ActionController.BuildAction.HostPlaceBlockAction 
+                -= OnHostPlaceBlockAction;
             player.ActionController.GatherAction.ServerGatherAction
                 -= OnServerGatherAction;
         };
     }
 
-    private void OnServerPlaceBlockAction(Item item, Vector2I coords) {
+    private void OnHostPlaceBlockAction(Item item, Vector2I coords) {
         Rpc(nameof(RpcAllCreateBlock), item.ResourcePath, coords);
     }
     
