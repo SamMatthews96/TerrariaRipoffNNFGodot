@@ -71,22 +71,47 @@ public partial class World : Node2D {
     public override void _Ready() {
         Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
         PlayerManager.LocalPlayerSpawned += OnLocalPlayerSpawned;
+        PlayerManager.PlayerSpawnedOnServer += OnPlayerSpawnedOnServer;
         if (Multiplayer.IsServer()) {
             PlayerManager.SpawnHostPlayer(_localPlayerData);
         } else {
             RpcId(1, nameof(RpcRequestWorldData));
         }
     }
-    
+
     public override void _ExitTree() {
+        Interface.GameMenu.ExitGameButtonDown -= OnExitGameClicked;
         PlayerManager.LocalPlayerSpawned -= OnLocalPlayerSpawned;
+        PlayerManager.PlayerSpawnedOnServer -= OnPlayerSpawnedOnServer;
+        
+    }
+
+    private void OnPlayerSpawnedOnServer(Player player) {
+        player.ActionController.BuildAction.ServerPlaceBlockAction 
+            += OnServerPlaceBlockAction;
+        player.TreeExiting += () => {
+            player.ActionController.BuildAction.ServerPlaceBlockAction 
+                -= OnServerPlaceBlockAction;
+            
+        };
+    }
+
+    private void OnServerPlaceBlockAction(Item item, Vector2I coords) {
+        Rpc(nameof(RpcAllCreateBlock), item.ResourcePath, coords);
+    }
+    
+    [Rpc(CallLocal = true)]
+    private void RpcAllCreateBlock(string resourcePath, Vector2I coords) {
+        Blocks[coords.X, coords.Y] = new Block {
+            CurrentHealth = 1,
+            ResourcePath = resourcePath
+        };
+        BlockCreated?.Invoke(coords);
     }
 
     private void OnLocalPlayerSpawned(Player player) {
         player.ActionController.GatherAction.GatherAttempted += 
             OnLocalPlayerGatherAttempted;
-        player.ActionController.BuildAction.BuildBlockActionAttempted += 
-            OnLocalPlayerBuildBlockAttempted;
     }
 
     private void OnLocalPlayerGatherAttempted(Vector2I coords, Player player) {
@@ -109,27 +134,6 @@ public partial class World : Node2D {
     private void RpcAllBlockDestroyed(Vector2I coords, string resourcePath) {
         Blocks[coords.X, coords.Y] = null;
         BlockDestroyed?.Invoke(coords, resourcePath);
-    }
-
-    private void OnLocalPlayerBuildBlockAttempted(Player player, Item item, Vector2I coords) {
-        RpcId(1, nameof(RpcHostPlayerBuildBlockAttempted),
-            coords, item.ResourcePath);
-    }
-
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    private void RpcHostPlayerBuildBlockAttempted(Vector2I coords, string resourcePath) {
-        if (Blocks[coords.X, coords.Y] != null) return;
-
-        Rpc(nameof(RpcAllCreateBlock), coords, resourcePath);
-    }
-
-    [Rpc(CallLocal = true)]
-    private void RpcAllCreateBlock(Vector2I coords, string resourcePath) {
-        Blocks[coords.X, coords.Y] = new Block {
-            CurrentHealth = 1,
-            ResourcePath = resourcePath
-        };
-        BlockCreated?.Invoke(coords);
     }
 
     public bool IsInBounds(Vector2I intVector) {

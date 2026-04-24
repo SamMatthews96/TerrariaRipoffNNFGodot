@@ -1,11 +1,13 @@
 ﻿using System;
 using Godot;
+using Godot.Collections;
 
 namespace TerrariaRipoffNNF;
 
 public partial class BuildAction : PlayerAction {
-    public event Action<Player, Item, Vector2I> BuildBlockActionAttempted;
-    public event Action<Player, Item, Vector2I> BuildWallActionAttempted;
+    public delegate void PlaceBlockDelegate(Item item, Vector2I coords);
+    public event PlaceBlockDelegate ServerPlaceBlockAction;
+    public event PlaceBlockDelegate ServerPlaceWallAction;
 
     private Item _blockItem;
 
@@ -25,21 +27,32 @@ public partial class BuildAction : PlayerAction {
     }
 
     public override void LeftMouseAction(Vector2 mouseWorldPosition) {
-        Vector2 temp = mouseWorldPosition / Game.BlockSize;
-        Vector2I coords = new((int)temp.X, (int)temp.Y);
-        if (!Player.World.IsInBounds(coords)) return;
-
-        float range = 8;
         if (_blockItem is null) return;
-        // get the distance between coords and Player.Coords
+        RpcId(1, nameof(RpcHostAttemptBuildBlock), mouseWorldPosition,
+            _blockItem.ToDictionary());
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+    private void RpcHostAttemptBuildBlock(
+        Vector2 mouseWorldPosition, Dictionary blockItemDict
+    ) {
+        // check that location is valid
+        Vector2I coords = (Vector2I)(mouseWorldPosition / Game.BlockSize);
+        if (!Player.World.IsInBounds(coords)) return;
+        float range = 8;
         float distance = (float)Math.Sqrt(
             Math.Pow(coords.X - Player.Coords.X, 2) +
             Math.Pow(coords.Y - Player.Coords.Y, 2)
         );
         if (distance > range) return;
-        if (_blockItem.HasProperty<ItemPlaceable>()) {
-            BuildBlockActionAttempted?.Invoke(Player, _blockItem, coords);
-        }
+        if (Player.World.Blocks[coords.X, coords.Y] is not null) return;
+
+        // check that item is valid
+        Item blockItem = Item.FromDictionary(blockItemDict);
+        if (blockItem is null) return;
+        if (!blockItem.HasProperty<ItemPlaceable>()) return;
+
+        ServerPlaceBlockAction?.Invoke(blockItem, coords);
     }
 
 
@@ -56,7 +69,7 @@ public partial class BuildAction : PlayerAction {
         );
         if (distance > range) return;
         if (_blockItem.HasProperty<ItemPlaceable>()) {
-            BuildWallActionAttempted?.Invoke(Player, _blockItem, coords);
+            ServerPlaceWallAction?.Invoke(_blockItem, coords);
         }
     }
 
