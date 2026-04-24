@@ -38,6 +38,28 @@ public partial class WorldCollision : Node2D {
         player.LocalPlayerMovedCell += MoveObserver;
     }
 
+    private void OnBlockCreated(Vector2I position) {
+        if (_observerCounts.TryGetValue(position, out int count) && count > 0) {
+            CreateCollisionBlock(position);
+        }
+    }
+
+    private void OnBlockDestroyed(Vector2I position, string _) {
+        RemoveCollisionBlock(position);
+    }
+
+    private void OnPickupCreated(Vector2I position) {
+        IncrementObserverCounts(position);
+    }
+
+    private void OnPickupMoved(Vector2I newPosition, Vector2I oldPosition) {
+        MoveObserver(newPosition, oldPosition);
+    }
+    
+    private void OnPickupDestroyed(Vector2I position) {
+        DecrementObserverCounts(position);
+    }
+
     private void MoveObserver(Vector2I newPosition, Vector2I oldPosition) {
         IncrementObserverCounts(newPosition);
         DecrementObserverCounts(oldPosition);
@@ -78,28 +100,6 @@ public partial class WorldCollision : Node2D {
                 }
             }
         }
-    }
-
-    private void OnBlockCreated(Vector2I position) {
-        if (_observerCounts.TryGetValue(position, out int count) && count > 0) {
-            CreateCollisionBlock(position);
-        }
-    }
-
-    private void OnBlockDestroyed(Vector2I position, string _) {
-        RemoveCollisionBlock(position);
-    }
-
-    private void OnPickupCreated(Vector2I position) {
-        IncrementObserverCounts(position);
-    }
-
-    private void OnPickupMoved(Vector2I newPosition, Vector2I oldPosition) {
-        MoveObserver(newPosition, oldPosition);
-    }
-    
-    private void OnPickupDestroyed(Vector2I position) {
-        DecrementObserverCounts(position);
     }
     
     private bool HasBlockEntity(int x, int y) {
