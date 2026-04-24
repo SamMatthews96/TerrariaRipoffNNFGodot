@@ -14,6 +14,7 @@ public partial class ActionController : Node {
 
 
     public override void _Ready() {
+        if (!Player.IsLocalPlayer) return;
         Player.World.InputManager.LeftMouseUp += OnInputManagerLeftMouseUp;
         Player.World.InputManager.LeftMouseDown += OnInputManagerLeftMouseDown;
         Player.World.InputManager.RightMouseUp += OnInputManagerRightMouseUp;

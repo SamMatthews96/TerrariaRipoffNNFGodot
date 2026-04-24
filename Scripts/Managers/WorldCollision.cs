@@ -14,34 +14,25 @@ public partial class WorldCollision : Node2D {
 
     public override void _Ready() {
         _world.PlayerManager.LocalPlayerSpawned += OnLocalPlayerSpawned;
-        
-        if (Multiplayer.IsServer()) {
-            InitAsHost();
-        }
-    }
-    
-    public override void _ExitTree() {
-        _world.PlayerManager.LocalPlayerSpawned -= OnLocalPlayerSpawned;
-    }
-
-    private void InitAsHost() {
         _world.BlockDestroyed += OnBlockDestroyed;
         _world.BlockCreated += OnBlockCreated;
+        TreeExiting += () => {
+            _world.PlayerManager.LocalPlayerSpawned -= OnLocalPlayerSpawned;
+            _world.BlockCreated -= OnBlockCreated;
+            _world.BlockDestroyed -= OnBlockDestroyed;
+        };
+
+        if (!_world.IsHost) return;
         _world.PickupManager.ServerPickupCreated += OnPickupCreated;
         _world.PickupManager.ServerPickupMoved += OnPickupMoved;
         _world.PickupManager.ServerPickupDestroyed += OnPickupDestroyed;
-        TreeExiting += HostOnTreeExiting;
+        TreeExiting += () => {
+            _world.PickupManager.ServerPickupCreated -= OnPickupCreated;
+            _world.PickupManager.ServerPickupMoved -= OnPickupMoved;
+            _world.PickupManager.ServerPickupDestroyed -= OnPickupDestroyed;
+        };
     }
     
-    private void HostOnTreeExiting() {
-        TreeExiting -= HostOnTreeExiting;
-        _world.BlockDestroyed -= OnBlockDestroyed;
-        _world.BlockCreated -= OnBlockCreated;
-        _world.PickupManager.ServerPickupCreated -= OnPickupCreated;
-        _world.PickupManager.ServerPickupMoved -= OnPickupMoved;
-        _world.PickupManager.ServerPickupDestroyed -= OnPickupDestroyed;
-    }
-
     private void OnLocalPlayerSpawned(Player player) {
         IncrementObserverCounts(player.Coords);
         player.LocalPlayerMovedCell += MoveObserver;
@@ -90,18 +81,13 @@ public partial class WorldCollision : Node2D {
     }
 
     private void OnBlockCreated(Vector2I position) {
-        Rpc(nameof(RpcAllOnBlockCreated), position);
-    }
-
-    [Rpc(CallLocal = true)]
-    private void RpcAllOnBlockCreated(Vector2I position) {
         if (_observerCounts.TryGetValue(position, out int count) && count > 0) {
             CreateCollisionBlock(position);
         }
     }
 
     private void OnBlockDestroyed(Vector2I position, string _) {
-        Rpc(nameof(RpcAllRemoveCollisionBlock), position);
+        RemoveCollisionBlock(position);
     }
 
     private void OnPickupCreated(Vector2I position) {
@@ -133,10 +119,5 @@ public partial class WorldCollision : Node2D {
             block.QueueFree();
             _activeCollisionBlocks.Remove(position);
         }
-    }
-
-    [Rpc(CallLocal = true)]
-    private void RpcAllRemoveCollisionBlock(Vector2I position) {
-        RemoveCollisionBlock(position);
     }
 }

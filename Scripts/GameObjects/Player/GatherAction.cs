@@ -34,11 +34,9 @@ public partial class GatherAction : PlayerAction {
     }
 
     public override void _Process(double delta) {
-        // runs while gather mode is active
         if (!_gatherCooldown.IsStopped()) return;
         Vector2 mouseWorldPosition = Player.World.GetGlobalMousePosition();
         Vector2I coords = (Vector2I)(mouseWorldPosition / Game.BlockSize);
-        GD.Print(mouseWorldPosition);
 
         if (!Player.World.IsInBounds(coords)) return;
         float range = 8;
@@ -60,7 +58,6 @@ public partial class GatherAction : PlayerAction {
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void AttemptGatherOnHost(Vector2I coords) {
-        // the client has determined that they can gather
         if (!_gatherCooldown.IsStopped()) {
             GD.Print("Host Gather on cooldown");
             return;
@@ -78,9 +75,5 @@ public partial class GatherAction : PlayerAction {
         _gatherCooldown.Start();
         float damage = Player.PlayerEquipment.Pickaxe.Power;
         ServerGatherAction?.Invoke(coords, damage);
-    }
-
-    public void OnAfterGatherSuccess() {
-        _gatherCooldown.Start();
     }
 }
