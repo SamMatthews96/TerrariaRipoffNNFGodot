@@ -30,18 +30,17 @@ public partial class Inventory : Node {
     private readonly List<StackedItems> _inventoryItemsList = new();
 
     public override void _Ready() {
-        if (_player.World.IsHost || _player.IsLocalPlayer) {
-            // load inventory from player data
-            // Godot.Collections.Dictionary<string, Array> inventory = 
-            //     _player.PlayerData["Inventory"].AsGodotDictionary<string, Array>();
-            // Array inventoryItems = inventory["InventoryItemsList"];
-            //
-            // foreach (Dictionary savedItem in inventoryItems) {
-            //     Item newItem = Item.FromDictionary(savedItem["Item"].AsGodotDictionary());
-            //     int count = (int)savedItem["Count"].ToString().ToFloat();
-            //     StackedItems newStack = new(newItem, count);
-            //     AddItems(newStack);
-            // }
+        if (_player.IsLocalPlayer) {
+            Godot.Collections.Dictionary<string, Array> inventory = 
+                _player.PlayerData["Inventory"].AsGodotDictionary<string, Array>();
+            Array inventoryItems = inventory["InventoryItemsList"];
+            
+            foreach (Dictionary savedItem in inventoryItems) {
+                Item newItem = Item.FromDictionary(savedItem["Item"].AsGodotDictionary());
+                int count = (int)savedItem["Count"].ToString().ToFloat();
+                StackedItems newStack = new(newItem, count);
+                AddItems(newStack);
+            }
         }
 
         if (_player.World.IsHost) {
