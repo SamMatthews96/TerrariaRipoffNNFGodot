@@ -70,10 +70,12 @@ public partial class World : Node2D {
     
     public override void _Ready() {
         Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
-        PlayerManager.LocalPlayerSpawned += OnLocalPlayerSpawned;
-        PlayerManager.PlayerSpawnedOnServer += OnPlayerSpawnedOnServer;
-        if (Multiplayer.IsServer()) {
+        if (IsHost) {
+            PlayerManager.PlayerSpawnedOnServer += OnPlayerSpawnedOnServer;
             PlayerManager.SpawnHostPlayer(_localPlayerData);
+            TreeExiting += () => {
+                PlayerManager.PlayerSpawnedOnServer -= OnPlayerSpawnedOnServer;
+            };
         } else {
             RpcId(1, nameof(RpcRequestWorldData));
         }
@@ -81,23 +83,31 @@ public partial class World : Node2D {
 
     public override void _ExitTree() {
         Interface.GameMenu.ExitGameButtonDown -= OnExitGameClicked;
-        PlayerManager.LocalPlayerSpawned -= OnLocalPlayerSpawned;
-        PlayerManager.PlayerSpawnedOnServer -= OnPlayerSpawnedOnServer;
-        
     }
 
     private void OnPlayerSpawnedOnServer(Player player) {
         player.ActionController.BuildAction.ServerPlaceBlockAction 
             += OnServerPlaceBlockAction;
+        player.ActionController.GatherAction.ServerGatherAction
+            += OnServerGatherAction;
         player.TreeExiting += () => {
             player.ActionController.BuildAction.ServerPlaceBlockAction 
                 -= OnServerPlaceBlockAction;
-            
+            player.ActionController.GatherAction.ServerGatherAction
+                -= OnServerGatherAction;
         };
     }
 
     private void OnServerPlaceBlockAction(Item item, Vector2I coords) {
         Rpc(nameof(RpcAllCreateBlock), item.ResourcePath, coords);
+    }
+    
+    private void OnServerGatherAction(Vector2I coords, float damage) {
+        Block block = Blocks[coords.X, coords.Y];
+        block.CurrentHealth -= damage;
+        if (block.CurrentHealth <= 0) {
+            Rpc(nameof(RpcAllBlockDestroyed), coords, block.ResourcePath);
+        }
     }
     
     [Rpc(CallLocal = true)]
@@ -107,27 +117,6 @@ public partial class World : Node2D {
             ResourcePath = resourcePath
         };
         BlockCreated?.Invoke(coords);
-    }
-
-    private void OnLocalPlayerSpawned(Player player) {
-        player.ActionController.GatherAction.GatherAttempted += 
-            OnLocalPlayerGatherAttempted;
-    }
-
-    private void OnLocalPlayerGatherAttempted(Vector2I coords, Player player) {
-        RpcId(1, nameof(RpcHostPlayerGatherAttempted),
-            coords, player.PlayerEquipment.Pickaxe.Power);
-    }
-
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    private void RpcHostPlayerGatherAttempted(Vector2I coords, float power) {
-        Block block = Blocks[coords.X, coords.Y];
-        if (block is null) return;
-
-        block.CurrentHealth -= power;
-        if (block.CurrentHealth <= 0) {
-            Rpc(nameof(RpcAllBlockDestroyed), coords, block.ResourcePath);
-        }
     }
 
     [Rpc(CallLocal = true)]
