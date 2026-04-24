@@ -3,7 +3,7 @@
 namespace TerrariaRipoffNNF.Interface;
 
 public partial class Crafting : Control {
-    [Export] private Game _gameInterface;
+    [Export] public Game GameInterface { get; private set; }
     [Export] private Button _selectCraftingStationMenuButton;
 
     [Export] public SelectStationContainer CraftSelectStationContainer { get; private set; }
@@ -13,8 +13,8 @@ public partial class Crafting : Control {
 
     public override void _Ready() {
         Hide();
-        _gameInterface.World.InputManager.ToggleInventoryPressed += OnToggleInventoryPressed;
-        _gameInterface.World.InputManager.EscapePressed += OnEscapePressed;
+        GameInterface.World.InputManager.ToggleInventoryPressed += OnToggleInventoryPressed;
+        GameInterface.World.InputManager.EscapePressed += OnEscapePressed;
     }
 
     private void OnToggleInventoryPressed() {
@@ -24,7 +24,7 @@ public partial class Crafting : Control {
             Show();
         }
     }
-    
+
     private void OnEscapePressed() {
         if (Visible) {
             Hide();

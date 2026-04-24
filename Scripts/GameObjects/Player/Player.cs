@@ -46,7 +46,6 @@ public partial class Player : CharacterBody2D {
 
     public bool IsLocalPlayer { get; private set; }
 
-    public static event Action<Player> LocalPlayerSpawned;
     public delegate void CellMovedDelegate(Vector2I newCoords, Vector2I oldCoords);
     public event CellMovedDelegate LocalPlayerMovedCell;
     public event Action<Player> PlayerDespawned;
@@ -88,7 +87,6 @@ public partial class Player : CharacterBody2D {
             World.InputManager.JumpPressed -= OnJumpPressed;
             World.Interface.GameMenu.ExitGameButtonDown -= OnExitClicked;
         };
-        LocalPlayerSpawned?.Invoke(this);
     }
 
     public void AddPeerToSynchronizer(int peerId) {

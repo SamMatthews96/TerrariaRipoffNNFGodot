@@ -27,17 +27,19 @@ public partial class SelectIngredientsContainer : Container {
             node.QueueFree();
         }
 
+        _craftingInterface.GameInterface.World.PlayerManager.LocalPlayerSpawned +=
+            OnLocalPlayerSpawned;
         _craftingInterface.SelectRecipeContainer.RecipeButtonClicked += OnRecipeButtonClicked;
         _ingredientPopup.SelectIngredientButtonClicked += OnSelectIngredientButtonClicked;
         _craftButton.ButtonDown += OnCraftButtonDown;
-        Player.LocalPlayerSpawned += OnLocalPlayerSpawned;
-    }
+        TreeExiting += () => {
+            _craftingInterface.GameInterface.World.PlayerManager.LocalPlayerSpawned -=
+                OnLocalPlayerSpawned;
+            _craftingInterface.SelectRecipeContainer.RecipeButtonClicked -= OnRecipeButtonClicked;
+            _ingredientPopup.SelectIngredientButtonClicked -= OnSelectIngredientButtonClicked;
+            _craftButton.ButtonDown -= OnCraftButtonDown;
 
-    public override void _ExitTree() {
-        _craftingInterface.SelectRecipeContainer.RecipeButtonClicked -= OnRecipeButtonClicked;
-        _ingredientPopup.SelectIngredientButtonClicked -= OnSelectIngredientButtonClicked;
-        _craftButton.ButtonDown -= OnCraftButtonDown;
-        Player.LocalPlayerSpawned -= OnLocalPlayerSpawned;
+        };
     }
 
     private void OnLocalPlayerSpawned(Player player) {

@@ -6,6 +6,7 @@ namespace TerrariaRipoffNNF.Interface;
 
 public partial class SelectStationContainer : Control {
     [Export] private Container _craftingStationButtonContainer;
+    [Export] private Crafting _craftingInterface;
 
     private Dictionary<CraftingStationType, SelectStationButton> _craftingStationButtons = new();
 
@@ -16,11 +17,12 @@ public partial class SelectStationContainer : Control {
             node.QueueFree();
         }
 
-        Player.LocalPlayerSpawned += OnLocalPlayerSpawned;
-    }
-
-    public override void _ExitTree() {
-        Player.LocalPlayerSpawned -= OnLocalPlayerSpawned;
+        _craftingInterface.GameInterface.World.PlayerManager.LocalPlayerSpawned +=
+            OnLocalPlayerSpawned;
+        TreeExiting += () => {
+            _craftingInterface.GameInterface.World.PlayerManager.LocalPlayerSpawned -=
+                OnLocalPlayerSpawned;
+        };
     }
 
     private void OnLocalPlayerSpawned(Player player) {

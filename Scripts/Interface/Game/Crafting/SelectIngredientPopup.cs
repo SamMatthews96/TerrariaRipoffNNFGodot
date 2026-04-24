@@ -5,6 +5,7 @@ using Godot;
 namespace TerrariaRipoffNNF.Interface;
 
 public partial class SelectIngredientPopup : Window {
+    [Export] private Crafting _craftingInterface;
     [Export] private Container _buttonContainer;
     [Export] private Timer _hideTimer;
     [Export] private PanelContainer _panelContainer;
@@ -38,13 +39,15 @@ public partial class SelectIngredientPopup : Window {
     public event Action<Item, RecipeIngredientSlot> SelectIngredientButtonClicked;
 
     public override void _Ready() {
-        Player.LocalPlayerSpawned += OnLocalPlayerSpawned;
+        _craftingInterface.GameInterface.World.PlayerManager.LocalPlayerSpawned += 
+            OnLocalPlayerSpawned;
         _hideTimer.Timeout += OnHideTimerTimeout;
         MouseEntered += OnMouseEntered;
         MouseExited += OnMouseExited;
 
         TreeExiting += () => {
-            Player.LocalPlayerSpawned -= OnLocalPlayerSpawned;
+            _craftingInterface.GameInterface.World.PlayerManager.LocalPlayerSpawned -=
+                OnLocalPlayerSpawned;
             _hideTimer.Timeout -= OnHideTimerTimeout;
             MouseEntered -= OnMouseEntered;
             MouseExited -= OnMouseExited;

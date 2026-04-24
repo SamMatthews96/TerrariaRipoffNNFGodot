@@ -29,7 +29,7 @@ script = ExtResource("1_hx4ms")
 Inventory = NodePath("Inventory")
 ActionController = NodePath("ActionController")
 Crafting = NodePath("Crafting")
-PlayerEquipment = NodePath("CurrentEquipment")
+PlayerEquipment = NodePath("PlayerEquipment")
 _positionSynchronizer = NodePath("PositionSync")
 _camera = NodePath("Camera2D")
 _nameLabel = NodePath("Label")
@@ -53,7 +53,7 @@ enabled = false
 position_smoothing_enabled = true
 position_smoothing_speed = 25.0
 
-[node name="CurrentEquipment" type="Node" parent="." unique_id=810167592 node_paths=PackedStringArray("_player")]
+[node name="PlayerEquipment" type="Node" parent="." unique_id=810167592 node_paths=PackedStringArray("_player")]
 script = ExtResource("7_in65p")
 _player = NodePath("..")
 Pickaxe = SubResource("Resource_7vd2l")

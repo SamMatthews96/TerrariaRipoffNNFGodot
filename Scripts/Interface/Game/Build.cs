@@ -5,18 +5,20 @@ using Godot;
 namespace TerrariaRipoffNNF.Interface;
 
 public partial class Build : Container {
+    [Export] private Game _gameInterface;
+    [Export] private BoxContainer _blockButtonContainer;
+    [Export] private BoxContainer _placeableButtonContainer;
+    
     private readonly Dictionary<string, BlockTypeButton> _blockButtons = new();
     private readonly Dictionary<string, BlockTypeButton> _placeableButtons = new();
 
-
-    [Export] private BoxContainer _blockButtonContainer;
-    [Export] private BoxContainer _placeableButtonContainer;
+    
     private BlockTypeButton _selectedButton;
 
     public event Action<Item> BuildButtonSelected;
 
     public override void _Ready() {
-        Player.LocalPlayerSpawned += OnLocalPlayerSpawned;
+        _gameInterface.World.PlayerManager.LocalPlayerSpawned += OnLocalPlayerSpawned;
         foreach (Node node in _blockButtonContainer.GetChildren()) {
             node.QueueFree();
         }
@@ -24,11 +26,12 @@ public partial class Build : Container {
         foreach (Node node in _placeableButtonContainer.GetChildren()) {
             node.QueueFree();
         }
-    }
 
-    public override void _ExitTree() {
-        Player.LocalPlayerSpawned -= OnLocalPlayerSpawned;
+        TreeExiting += () => {
+            _gameInterface.World.PlayerManager.LocalPlayerSpawned -= OnLocalPlayerSpawned;
+        };
     }
+    
 
     private void OnPlayerActionChanged(PlayerActionType playerActionType) {
         if (playerActionType == PlayerActionType.Build) {

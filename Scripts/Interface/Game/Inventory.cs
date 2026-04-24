@@ -11,7 +11,7 @@ public partial class Inventory : Control {
     [Export] private PackedScene _inventoryItemUiScene;
 
     private readonly List<InventoryItem> _inventoryItemUiList = new();
-
+    
     private Player _localPlayer;
 
     public event Action<InventoryItem> MouseEnteredItemIcon;
@@ -32,15 +32,13 @@ public partial class Inventory : Control {
         Visible = false;
         _gameInterface.World.InputManager.ToggleInventoryPressed += OnInputManagerToggleInventoryPressed;
         _gameInterface.World.InputManager.EscapePressed += OnEscapePressed;
-        Player.LocalPlayerSpawned += OnLocalPlayerSpawned;
-        
+        _gameInterface.World.PlayerManager.LocalPlayerSpawned += OnLocalPlayerSpawned;
     }
 
     public override void _ExitTree() {
         _gameInterface.World.InputManager.ToggleInventoryPressed -= OnInputManagerToggleInventoryPressed;
-        
         _gameInterface.World.InputManager.EscapePressed -= OnEscapePressed;
-        Player.LocalPlayerSpawned -= OnLocalPlayerSpawned;
+        _gameInterface.World.PlayerManager.LocalPlayerSpawned -= OnLocalPlayerSpawned;
     }
 
     private void OnLocalPlayerSpawned(Player player) {
