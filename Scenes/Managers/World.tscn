@@ -9,13 +9,15 @@
 [ext_resource type="Script" uid="uid://cq6y2tgmtv8jf" path="res://Scripts/Managers/InputManager.cs" id="7_2udm8"]
 [ext_resource type="PackedScene" uid="uid://javhx4rej0q4" path="res://Scenes/Interface/Game/GameInterface.tscn" id="8_2udm8"]
 
-[node name="World" type="Node2D" unique_id=318249153 node_paths=PackedStringArray("WorldCollision", "PickupManager", "PlayerManager", "Interface", "InputManager")]
+[node name="World" type="Node2D" unique_id=318249153 node_paths=PackedStringArray("PickupManager", "PlayerManager", "Interface", "InputManager")]
 script = ExtResource("1_qmgnr")
-WorldCollision = NodePath("WorldCollision")
 PickupManager = NodePath("PickupManager")
 PlayerManager = NodePath("PlayerManager")
 Interface = NodePath("GameInterface")
 InputManager = NodePath("InputManager")
+
+[node name="GameInterface" parent="." unique_id=503822172 node_paths=PackedStringArray("World") instance=ExtResource("8_2udm8")]
+World = NodePath("..")
 
 [node name="WorldCollision" type="Node2D" parent="." unique_id=1252720866 node_paths=PackedStringArray("_world")]
 script = ExtResource("3_r1w0f")
@@ -26,10 +28,6 @@ _collisionBlockScene = ExtResource("2_q5vno")
 script = ExtResource("4_ybhg6")
 _world = NodePath("..")
 
-[node name="PlayerManager" type="Node2D" parent="." unique_id=179624163 node_paths=PackedStringArray("_world")]
-script = ExtResource("5_2qn38")
-_world = NodePath("..")
-
 [node name="WorldRenderer" type="Node2D" parent="." unique_id=840519149 node_paths=PackedStringArray("_world")]
 process_mode = 3
 script = ExtResource("6_wcfbk")
@@ -38,5 +36,6 @@ _world = NodePath("..")
 [node name="InputManager" type="Node2D" parent="." unique_id=495752160]
 script = ExtResource("7_2udm8")
 
-[node name="GameInterface" parent="." unique_id=503822172 node_paths=PackedStringArray("World") instance=ExtResource("8_2udm8")]
-World = NodePath("..")
+[node name="PlayerManager" type="Node2D" parent="." unique_id=179624163 node_paths=PackedStringArray("_world")]
+script = ExtResource("5_2qn38")
+_world = NodePath("..")

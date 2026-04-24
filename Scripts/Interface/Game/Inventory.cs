@@ -11,17 +11,17 @@ public partial class Inventory : Control {
     [Export] private PackedScene _inventoryItemUiScene;
 
     private readonly List<InventoryItem> _inventoryItemUiList = new();
-    
+
     private Player _localPlayer;
 
     public event Action<InventoryItem> MouseEnteredItemIcon;
     public event Action MouseLeftItemIcon;
     public event Action<StackedItems> ItemActionClicked;
-    
+
     private void OnInputManagerToggleInventoryPressed() {
         Visible = !Visible;
     }
-    
+
     private void OnEscapePressed() {
         if (Visible) {
             Visible = false;
@@ -33,17 +33,22 @@ public partial class Inventory : Control {
         _gameInterface.World.InputManager.ToggleInventoryPressed += OnInputManagerToggleInventoryPressed;
         _gameInterface.World.InputManager.EscapePressed += OnEscapePressed;
         _gameInterface.World.PlayerManager.LocalPlayerSpawned += OnLocalPlayerSpawned;
-    }
-
-    public override void _ExitTree() {
-        _gameInterface.World.InputManager.ToggleInventoryPressed -= OnInputManagerToggleInventoryPressed;
-        _gameInterface.World.InputManager.EscapePressed -= OnEscapePressed;
-        _gameInterface.World.PlayerManager.LocalPlayerSpawned -= OnLocalPlayerSpawned;
+        TreeExiting += () => {
+            _gameInterface.World.InputManager.ToggleInventoryPressed -= OnInputManagerToggleInventoryPressed;
+            _gameInterface.World.InputManager.EscapePressed -= OnEscapePressed;
+            _gameInterface.World.PlayerManager.LocalPlayerSpawned -= OnLocalPlayerSpawned;
+        };
     }
 
     private void OnLocalPlayerSpawned(Player player) {
         _localPlayer = player;
+        List<StackedItems> stackedItemsList = 
+            _localPlayer.Inventory.StackedItemsList;
+        foreach (StackedItems stackedItems in stackedItemsList) {
+            OnInventoryAddedItemStack(stackedItems);
+        }
         SetCapacityLabelText();
+
         _localPlayer.Inventory.AddedItemStack += OnInventoryAddedItemStack;
         _localPlayer.Inventory.RemovedItemStack += OnInventoryRemovedItemStack;
         _localPlayer.Inventory.ItemStackChangedSize += OnInventoryItemStackChanged;
@@ -89,6 +94,7 @@ public partial class Inventory : Control {
             inventoryItemUi.QueueFree();
             _inventoryItemUiList.Remove(inventoryItemUi);
         }
+
         SetCapacityLabelText();
     }
 
@@ -101,6 +107,6 @@ public partial class Inventory : Control {
 
     private void SetCapacityLabelText() {
         _capacityLabel.Text =
-            $"{Math.Round(_localPlayer.Inventory.UsedSpace,2)}/{_localPlayer.Inventory.MaximumSpace}";
+            $"{Math.Round(_localPlayer.Inventory.UsedSpace, 2)}/{_localPlayer.Inventory.MaximumSpace}";
     }
 }
