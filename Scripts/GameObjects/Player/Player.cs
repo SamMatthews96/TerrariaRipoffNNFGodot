@@ -33,13 +33,13 @@ public partial class Player : CharacterBody2D {
 
     public World World { get; private set; }
     public int PeerId { get; private set; }
-    
+
     private int _horizontalInput;
     private bool _isFalling;
     private float _xVelocity;
     private float _yVelocity;
     private string _characterName;
-    
+
     public Dictionary PlayerData { get; private set; }
 
     public Vector2I Coords => (Vector2I)(Position / Game.BlockSize);
@@ -68,7 +68,7 @@ public partial class Player : CharacterBody2D {
         foreach (int peer in Multiplayer.GetPeers()) {
             _positionSynchronizer.SetVisibilityFor(peer, true);
         }
-        
+
         _nameLabel.Text = PeerId == 1 ? "Host" : "Client";
 
         if (!IsLocalPlayer) return;
@@ -126,5 +126,22 @@ public partial class Player : CharacterBody2D {
 
         if (previousCoords == Coords) return;
         LocalPlayerMovedCell?.Invoke(Coords, previousCoords);
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    private void RpcHostDeletePlayer() {
+        int[] peerIds = Multiplayer.GetPeers();
+        int senderId = Multiplayer.GetRemoteSenderId();
+        foreach (int peerId in peerIds) {
+            if (peerId == senderId) continue;
+            RpcId(peerId, nameof(RpcClientDeletePlayer));
+        }
+
+        QueueFree();
+    }
+
+    [Rpc]
+    private void RpcClientDeletePlayer() {
+        QueueFree();
     }
 }

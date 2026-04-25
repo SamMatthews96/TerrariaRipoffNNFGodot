@@ -27,7 +27,6 @@ public partial class PlayerEquipment : Node {
         };
     }
 
-
     private void OnUnequipPickaxeClicked() {
         Pickaxe = ItemMining.Create(4, 4, 4);
     }

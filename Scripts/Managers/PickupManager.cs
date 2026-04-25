@@ -11,7 +11,7 @@ public partial class PickupManager : Node2D {
     private readonly List<PickupEntity> _activePickups = new();
     [Export] private World _world;
     private int _pickupCount;
-
+    
     public event Action<Vector2I> ServerPickupCreated;
     public delegate void CellMovedDelegate(Vector2I newCoords, Vector2I oldCoords);
     public event CellMovedDelegate ServerPickupMoved;
@@ -19,8 +19,13 @@ public partial class PickupManager : Node2D {
 
     public override void _Ready() {
         if (_world.IsHost) {
-            _world.BlockDestroyed += ServerOnBlockDestroyed;
+            _world.BlockDestroyed += HostOnBlockDestroyed;
             _world.PlayerManager.PlayerSpawnedOnServer += OnPlayedSpawnedOnServer;
+            TreeExiting += () => {
+                _world.BlockDestroyed -= HostOnBlockDestroyed;
+                _world.PlayerManager.PlayerSpawnedOnServer -= OnPlayedSpawnedOnServer;
+            };
+            
             ProcessMode = ProcessModeEnum.Always;
         } else {
             ProcessMode = ProcessModeEnum.Disabled;
@@ -28,26 +33,20 @@ public partial class PickupManager : Node2D {
         }
     }
 
-    public override void _ExitTree() {
-        if (!_world.IsHost) return;
-        _world.BlockDestroyed -= ServerOnBlockDestroyed;
-        _world.PlayerManager.PlayerSpawnedOnServer -= OnPlayedSpawnedOnServer;
-    }
-
     private void OnPlayedSpawnedOnServer(Player player) {
-        player.ServerPickupArea.CollectedPickup += ServerOnPlayerCollectedPickup;
+        player.ServerPickupArea.CollectedPickup += HostOnPlayerCollectedPickup;
         player.TreeExiting += () => {
-            player.ServerPickupArea.CollectedPickup -= ServerOnPlayerCollectedPickup;
+            player.ServerPickupArea.CollectedPickup -= HostOnPlayerCollectedPickup;
         };
     }
 
-    private void ServerOnPlayerCollectedPickup(PickupEntity pickup) {
+    private void HostOnPlayerCollectedPickup(PickupEntity pickup) {
         _activePickups.Remove(pickup);
         pickup.QueueFreeAllPeers();
         ServerPickupDestroyed?.Invoke(pickup.Coords);
     }
 
-    private void ServerOnBlockDestroyed(Vector2I coords, string resourcePath) {
+    private void HostOnBlockDestroyed(Vector2I coords, string resourcePath) {
         Vector2 position = new(
             (coords.X + 0.5f) * Game.BlockSize,
             (coords.Y + 0.5f) * Game.BlockSize
@@ -56,7 +55,6 @@ public partial class PickupManager : Node2D {
         Rpc(nameof(RpcAllCreatePickup), position, resourcePath, _pickupCount);
         ServerPickupCreated?.Invoke(coords);
     }
-
 
     [Rpc(CallLocal = true)]
     private void RpcAllCreatePickup(Vector2 position, string resourcePath, int pickupCount) {

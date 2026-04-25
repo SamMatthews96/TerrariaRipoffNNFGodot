@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Godot;
 using Godot.Collections;
 
@@ -9,31 +8,48 @@ public partial class PlayerManager : Node2D {
     [Export] private World _world;
     private Player _localPlayer;
     private Dictionary _playerData;
+    private Dictionary<long, Player> _players = new();
 
     public event Action<Player> LocalPlayerSpawned;
     public event Action<Player> PlayerSpawnedOnServer;
 
+    public override void _Ready() {
+        if (!_world.IsHost) return;
+
+        Multiplayer.PeerDisconnected += OnPeerDisconnected;
+        TreeExiting += () => {
+            Multiplayer.PeerDisconnected -= OnPeerDisconnected;
+        };
+    }
+
+    private void OnPeerDisconnected(long id) {
+        Rpc(nameof(RpcAllDeletePlayer), id);
+    }
+
+    [Rpc(CallLocal = true)]
+    private void RpcAllDeletePlayer(long id) {
+        Player player = _players[id];
+        _players.Remove(id);
+        player.QueueFree();
+    }
+
     public void SpawnHostPlayer(Dictionary playerData) {
         int peerId = Multiplayer.GetUniqueId();
-        Player player = Player.Create(_world, peerId, playerData);
-        AddChild(player, true);
-        _localPlayer = player;
-        LocalPlayerSpawned?.Invoke(player);
-        PlayerSpawnedOnServer?.Invoke(player);
+        _localPlayer = CreateNewPlayer(peerId, playerData);
+        
+        LocalPlayerSpawned?.Invoke(_localPlayer);
+        PlayerSpawnedOnServer?.Invoke(_localPlayer);
     }
 
     public void SpawnPlayersOnClient(Dictionary playerData) {
         int[] peers = Multiplayer.GetPeers();
         foreach (int peer in peers) {
-            Player remotePlayer = Player.Create(_world, peer);
-            AddChild(remotePlayer, true);
+            CreateNewPlayer(peer);
         }
         
         int peerId = Multiplayer.GetUniqueId();
-        Player player = Player.Create(_world, peerId, playerData);
-        AddChild(player, true);
-        _localPlayer = player;
-        LocalPlayerSpawned?.Invoke(player);
+        _localPlayer = CreateNewPlayer(peerId, playerData);
+        LocalPlayerSpawned?.Invoke(_localPlayer);
         RpcId(1, nameof(RpcHostHandleNewPeer), playerData);
     }
 
@@ -41,8 +57,7 @@ public partial class PlayerManager : Node2D {
     private void RpcHostHandleNewPeer(Dictionary playerData) {
         int senderId = Multiplayer.GetRemoteSenderId();
         
-        Player remotePlayer = Player.Create(_world, senderId, playerData);
-        AddChild(remotePlayer, true);
+        Player remotePlayer = CreateNewPlayer(senderId, playerData);
         _localPlayer.AddPeerToSynchronizer(senderId);
         PlayerSpawnedOnServer?.Invoke(remotePlayer);
         
@@ -55,8 +70,14 @@ public partial class PlayerManager : Node2D {
 
     [Rpc]
     private void RpcSpawnNewPlayer(int peerId) {
-        Player remotePlayer = Player.Create(_world, peerId);
-        AddChild(remotePlayer, true);
+        CreateNewPlayer(peerId);
         _localPlayer.AddPeerToSynchronizer(peerId);
+    }
+    
+    private Player CreateNewPlayer(int peerId, Dictionary playerData = null) {
+        Player player = Player.Create(_world, peerId, playerData);
+        AddChild(player, true);
+        _players.Add(peerId, player);
+        return player;
     }
 }
