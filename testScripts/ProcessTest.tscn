@@ -1,7 +1,0 @@
-[gd_scene format=3 uid="uid://ci2olsfw08wep"]
-
-[ext_resource type="Script" uid="uid://cv2aeaxgb06kh" path="res://testScripts/ProcessTest.cs" id="1_cjdba"]
-
-[node name="ProcessTest" type="Node2D" unique_id=566407078]
-process_mode = 4
-script = ExtResource("1_cjdba")

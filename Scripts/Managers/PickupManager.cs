@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using Godot;
+using Godot.Collections;
 using TerrariaRipoffNNF.Scripts.GameObjects;
+using Array = Godot.Collections.Array;
 
 namespace TerrariaRipoffNNF;
 
@@ -22,6 +24,7 @@ public partial class PickupManager : Node2D {
             ProcessMode = ProcessModeEnum.Always;
         } else {
             ProcessMode = ProcessModeEnum.Disabled;
+            RpcId(1, nameof(RpcHostRequestWorldData));
         }
     }
 
@@ -66,7 +69,7 @@ public partial class PickupManager : Node2D {
             (int)(position.Y / Game.BlockSize - 0.5f)
         );
         pickup.Item = item;
-        pickup.Name = $"Pickup_{pickupCount}";
+        pickup.Name = $"{pickupCount}";
         AddChild(pickup);
         _activePickups.Add(pickup);
     }
@@ -81,6 +84,29 @@ public partial class PickupManager : Node2D {
 
             ServerPickupMoved?.Invoke(newCoords, pickup.Coords);
             pickup.Coords = newCoords;
+        }
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    private void RpcHostRequestWorldData() {
+        int senderId = Multiplayer.GetRemoteSenderId();
+        Array<Dictionary> pickupData = new();
+        foreach (PickupEntity activePickup in _activePickups) {
+            Dictionary dict = new();
+            dict["Item"] = activePickup.Item.ResourcePath;
+            dict["Name"] = activePickup.Name;
+            pickupData.Add(dict);
+        }
+        
+        RpcId(senderId, nameof(RpcClientProcessPickupData), pickupData);
+    }
+
+    [Rpc]
+    private void RpcClientProcessPickupData(Array<Dictionary> pickupArray) {
+        foreach (Dictionary pickupDict in pickupArray) {
+            string itemResPath = pickupDict["Item"].ToString();
+            int id = pickupDict["Name"].ToString().ToInt();
+            RpcAllCreatePickup(Vector2.Zero, itemResPath, id);
         }
     }
 }

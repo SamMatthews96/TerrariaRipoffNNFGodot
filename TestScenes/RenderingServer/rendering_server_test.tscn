@@ -1,6 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://cm8hkk3pm7qmn"]
+[gd_scene format=3 uid="uid://cm8hkk3pm7qmn"]
 
-[ext_resource type="Script" uid="uid://bvyf0qf0catip" path="res://testScripts/RenderingServerTest.cs" id="1_icb76"]
+[ext_resource type="Script" uid="uid://bvyf0qf0catip" path="res://TestScenes/RenderingServer/RenderingServerTest.cs" id="1_icb76"]
 [ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://Assets/Images/icon.svg" id="1_vtclm"]
 [ext_resource type="Texture2D" uid="uid://des01kpji7vcu" path="res://Assets/Images/Stone.png" id="2_vwdvc"]
 

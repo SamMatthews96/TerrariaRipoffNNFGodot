@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://b720spxw80ds6"]
+
+[ext_resource type="PackedScene" uid="uid://bbb337kin6fqq" path="res://TestScenes/Network.tscn" id="1_6ejon"]
+[ext_resource type="Script" uid="uid://datmk8l4jug8i" path="res://TestScenes/SyncVisibility/SyncVisibility.cs" id="2_dn2oy"]
+[ext_resource type="PackedScene" uid="uid://b3m68jlq5adp0" path="res://TestScenes/SyncVisibility/SyncTestObject.tscn" id="3_0kjqa"]
+
+[node name="SyncVisibilityScene" type="Node" unique_id=228859925]
+
+[node name="Network Test" parent="." unique_id=1123406937 instance=ExtResource("1_6ejon")]
+
+[node name="SyncVisibility" type="Node" parent="." unique_id=175547081 node_paths=PackedStringArray("_networkTest", "_syncVisOn", "_syncVisOff")]
+script = ExtResource("2_dn2oy")
+_networkTest = NodePath("../Network Test")
+_syncObject = ExtResource("3_0kjqa")
+_syncVisOn = NodePath("CanvasLayer/HBoxContainer/SyncVisOn")
+_syncVisOff = NodePath("CanvasLayer/HBoxContainer/SyncVisOff")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="SyncVisibility" unique_id=1139368014]
+
+[node name="HBoxContainer" type="HBoxContainer" parent="SyncVisibility/CanvasLayer" unique_id=1439228258]
+offset_left = 69.0
+offset_top = 3.0
+offset_right = 150.0
+offset_bottom = 43.0
+
+[node name="SyncVisOn" type="Button" parent="SyncVisibility/CanvasLayer/HBoxContainer" unique_id=976514236]
+layout_mode = 2
+text = "Sync Vis On
+"
+
+[node name="SyncVisOff" type="Button" parent="SyncVisibility/CanvasLayer/HBoxContainer" unique_id=1232359295]
+layout_mode = 2
+text = "Sync Vis Off"

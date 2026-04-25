@@ -1,6 +1,0 @@
-[gd_scene format=3 uid="uid://tqp6ychhl1s1"]
-
-[ext_resource type="Script" uid="uid://c4trqx8hmlxqi" path="res://testScripts/RpcDataTest.cs" id="1_pj3y3"]
-
-[node name="RpcDataTest" type="Node2D" unique_id=1480526397]
-script = ExtResource("1_pj3y3")

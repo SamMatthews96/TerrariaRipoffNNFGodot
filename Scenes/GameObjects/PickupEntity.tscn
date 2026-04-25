@@ -34,3 +34,4 @@ shape = SubResource("RectangleShape2D_je82m")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=1168216898]
 replication_config = SubResource("SceneReplicationConfig_d35os")
+public_visibility = false

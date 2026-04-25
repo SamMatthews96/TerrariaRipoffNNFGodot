@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://t472ordp001d"]
 
 [ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://Assets/Images/icon.svg" id="1_f6j83"]
-[ext_resource type="Script" uid="uid://bmbfgivqhe8ta" path="res://testScripts/Network/NetworkTestScene.cs" id="1_jjhdw"]
+[ext_resource type="Script" uid="uid://bmbfgivqhe8ta" path="res://TestScenes/Network/NetworkTestScene.cs" id="1_jjhdw"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_f6j83"]
 properties/0/path = NodePath(".:position")

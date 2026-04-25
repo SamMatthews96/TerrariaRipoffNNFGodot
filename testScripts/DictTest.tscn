@@ -1,6 +1,0 @@
-[gd_scene format=3 uid="uid://7gg7f4gbu3wu"]
-
-[ext_resource type="Script" uid="uid://bnw7amm1bfml8" path="res://testScripts/DictTest.cs" id="1_sj6a3"]
-
-[node name="Node" type="Node" unique_id=1778008642]
-script = ExtResource("1_sj6a3")
