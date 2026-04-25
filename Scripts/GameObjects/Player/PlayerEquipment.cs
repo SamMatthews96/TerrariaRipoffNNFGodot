@@ -9,24 +9,24 @@ public partial class PlayerEquipment : Node {
     [Export] public ItemWeapon Weapon { get; private set; }
 
     public event Action<Item> ItemEquipped;
-
-    public void InitAsLocal(Player player) {
-        _player = player;
+    
+    public override void _Ready() {
+        if (!_player.IsLocalPlayer) return;
+        
         _player.Inventory.EquipItemClicked += OnEquipItemClicked;
         _player.World.Interface.PlayerEquipment.ClickedUnequipWeapon +=
             OnUnequipWeaponClicked;
         _player.World.Interface.PlayerEquipment.ClickedUnequipPickaxe +=
             OnUnequipPickaxeClicked;
-        TreeExiting += OnTreeExiting;
+        TreeExiting += () => {
+            _player.Inventory.EquipItemClicked -= OnEquipItemClicked;
+            _player.World.Interface.PlayerEquipment.ClickedUnequipWeapon -=
+                OnUnequipWeaponClicked;
+            _player.World.Interface.PlayerEquipment.ClickedUnequipPickaxe -=
+                OnUnequipPickaxeClicked;
+        };
     }
 
-    private void OnTreeExiting() {
-        TreeExiting -= OnTreeExiting;
-        _player.World.Interface.PlayerEquipment.ClickedUnequipWeapon -=
-            OnUnequipWeaponClicked;
-        _player.World.Interface.PlayerEquipment.ClickedUnequipPickaxe -=
-            OnUnequipPickaxeClicked;
-    }
 
     private void OnUnequipPickaxeClicked() {
         Pickaxe = ItemMining.Create(4, 4, 4);

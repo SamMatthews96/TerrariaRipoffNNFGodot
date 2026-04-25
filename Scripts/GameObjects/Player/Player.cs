@@ -72,8 +72,6 @@ public partial class Player : CharacterBody2D {
         _nameLabel.Text = PeerId == 1 ? "Host" : "Client";
 
         if (!IsLocalPlayer) return;
-        
-        PlayerEquipment.InitAsLocal(this);
 
         World.InputManager.HorizontalInputChanged += OnHorizontalInputChanged;
         World.InputManager.JumpPressed += OnJumpPressed;
