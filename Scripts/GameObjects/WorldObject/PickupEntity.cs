@@ -1,10 +1,10 @@
-﻿using System;
-using Godot;
+﻿using Godot;
 
 namespace TerrariaRipoffNNF;
 
 public partial class PickupEntity : RigidBody2D {
     [Export] private Sprite2D _sprite;
+    [Export] public MultiplayerSynchronizer Synchronizer { get; private set; }
     public Vector2I Coords;
     public Item Item;
 

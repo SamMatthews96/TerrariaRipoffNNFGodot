@@ -13,11 +13,12 @@ properties/0/path = NodePath(".:position")
 properties/0/spawn = true
 properties/0/replication_mode = 1
 
-[node name="PickupEntity" type="RigidBody2D" unique_id=1218108558 node_paths=PackedStringArray("_sprite")]
+[node name="PickupEntity" type="RigidBody2D" unique_id=1218108558 node_paths=PackedStringArray("_sprite", "Synchronizer")]
 collision_layer = 4
 collision_mask = 2
 script = ExtResource("1_d35os")
 _sprite = NodePath("Sprite2D")
+Synchronizer = NodePath("MultiplayerSynchronizer")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1382974165]
 scale = Vector2(0.8, 0.8)

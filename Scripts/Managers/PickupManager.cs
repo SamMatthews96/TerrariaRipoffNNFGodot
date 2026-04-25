@@ -70,6 +70,10 @@ public partial class PickupManager : Node2D {
         );
         pickup.Item = item;
         pickup.Name = $"{pickupCount}";
+        int[] peers = Multiplayer.GetPeers();
+        foreach (int peerId in peers) {
+            pickup.Synchronizer.SetVisibilityFor(peerId, true);
+        }
         AddChild(pickup);
         _activePickups.Add(pickup);
     }
@@ -107,6 +111,16 @@ public partial class PickupManager : Node2D {
             string itemResPath = pickupDict["Item"].ToString();
             int id = pickupDict["Name"].ToString().ToInt();
             RpcAllCreatePickup(Vector2.Zero, itemResPath, id);
+        }
+        RpcId(1, nameof(RpcHostAddClientToSync));
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    private void RpcHostAddClientToSync() {
+        int senderId = Multiplayer.GetRemoteSenderId();
+        // enable every pickup sync
+        foreach (PickupEntity pickup in _activePickups) {
+            pickup.Synchronizer.SetVisibilityFor(senderId, true);
         }
     }
 }
