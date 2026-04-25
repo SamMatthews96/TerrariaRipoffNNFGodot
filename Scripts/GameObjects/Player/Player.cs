@@ -48,7 +48,6 @@ public partial class Player : CharacterBody2D {
 
     public delegate void CellMovedDelegate(Vector2I newCoords, Vector2I oldCoords);
     public event CellMovedDelegate LocalPlayerMovedCell;
-    public event Action<Player> PlayerDespawned;
 
     public override void _EnterTree() {
         int peerId = Name.ToString().ToInt();
@@ -91,10 +90,6 @@ public partial class Player : CharacterBody2D {
 
     public void AddPeerToSynchronizer(int peerId) {
         _positionSynchronizer.SetVisibilityFor(peerId, true);
-    }
-
-    public override void _ExitTree() {
-        PlayerDespawned?.Invoke(this);
     }
 
     private void OnExitClicked() {

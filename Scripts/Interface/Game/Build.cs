@@ -48,16 +48,13 @@ public partial class Build : Container {
         player.ActionController.ActionChanged += OnPlayerActionChanged;
         player.Inventory.AddedItemStack += OnInventoryAddedItemStack;
         player.Inventory.RemovedItemStack += OnInventoryRemovedItemStack;
-        player.PlayerDespawned += OnLocalPlayerDespawned;
+        player.TreeExiting += () => {
+            player.ActionController.ActionChanged -= OnPlayerActionChanged;
+            player.Inventory.AddedItemStack -= OnInventoryAddedItemStack;
+            player.Inventory.RemovedItemStack -= OnInventoryRemovedItemStack;
+        };
     }
-
-    private void OnLocalPlayerDespawned(Player player) {
-        player.ActionController.ActionChanged -= OnPlayerActionChanged;
-        player.Inventory.AddedItemStack -= OnInventoryAddedItemStack;
-        player.Inventory.RemovedItemStack -= OnInventoryRemovedItemStack;
-        player.PlayerDespawned -= OnLocalPlayerDespawned;
-    }
-
+    
     private void OnInventoryAddedItemStack(StackedItems stackedItems) {
         if (stackedItems.Item.HasProperty<ItemPlaceable>()) {
             AddBlockButton(stackedItems);
