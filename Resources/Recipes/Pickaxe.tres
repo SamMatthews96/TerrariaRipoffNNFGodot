@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Recipe" load_steps=25 format=3 uid="uid://ma6tqmej0nbi"]
+[gd_resource type="Resource" script_class="Recipe" format=3 uid="uid://ma6tqmej0nbi"]
 
 [ext_resource type="Texture2D" uid="uid://wrf00jfy174v" path="res://Assets/Images/woodPlaceholder.png" id="1_h1pe8"]
 [ext_resource type="Script" uid="uid://bg8jhsljipuqc" path="res://Scripts/Resources/Recipes/Recipe.cs" id="1_plyoi"]
@@ -14,21 +14,20 @@
 [ext_resource type="Texture2D" uid="uid://p4wc02lwmqop" path="res://Assets/Images/ItemIcons/ferriumPickaxe.png" id="10_erykj"]
 [ext_resource type="Script" uid="uid://d2pqak21epjnt" path="res://Scripts/Resources/Recipes/RecipeFieldMaps/Texture/RecipeFieldMapTextureConstant.cs" id="11_6gymk"]
 
+[sub_resource type="Resource" id="Resource_ioiwj"]
+script = ExtResource("2_dv4pt")
+RecipeSlot = "metal"
+Amount = 5
+Icon = ExtResource("3_horbn")
+Required = true
+metadata/_custom_type_script = "uid://fn1nx4h2shbl"
+
 [sub_resource type="Resource" id="Resource_hw3lt"]
 script = ExtResource("2_dv4pt")
 RecipeSlot = "wood"
 IngredientType = 2
 Amount = 4
 Icon = ExtResource("1_h1pe8")
-Required = true
-metadata/_custom_type_script = "uid://fn1nx4h2shbl"
-
-[sub_resource type="Resource" id="Resource_ioiwj"]
-script = ExtResource("2_dv4pt")
-RecipeSlot = "metal"
-IngredientType = 0
-Amount = 5
-Icon = ExtResource("3_horbn")
 Required = true
 metadata/_custom_type_script = "uid://fn1nx4h2shbl"
 
@@ -59,13 +58,6 @@ Range = SubResource("Resource_o8fym")
 Power = SubResource("Resource_xq6re")
 metadata/_custom_type_script = "uid://or84jndjr3lh"
 
-[sub_resource type="Resource" id="Resource_3ebu6"]
-script = ExtResource("7_6ddfn")
-Map = Dictionary[Object, String]({
-ExtResource("6_03xxo"): "Rough"
-})
-metadata/_custom_type_script = "uid://coiqlucu73qbu"
-
 [sub_resource type="Resource" id="Resource_c0b7k"]
 script = ExtResource("7_6ddfn")
 Map = Dictionary[Object, String]({
@@ -73,13 +65,20 @@ ExtResource("8_1gjk7"): "Iron"
 })
 metadata/_custom_type_script = "uid://coiqlucu73qbu"
 
+[sub_resource type="Resource" id="Resource_3ebu6"]
+script = ExtResource("7_6ddfn")
+Map = Dictionary[Object, String]({
+ExtResource("6_03xxo"): "Rough"
+})
+metadata/_custom_type_script = "uid://coiqlucu73qbu"
+
 [sub_resource type="Resource" id="Resource_0qfr5"]
 script = ExtResource("9_7jvv0")
 _stringTemplate = "{wood} {metal} Pickaxe"
-_ingredientNameMaps = {
+_ingredientNameMaps = Dictionary[String, ExtResource("7_6ddfn")]({
 "metal": SubResource("Resource_c0b7k"),
 "wood": SubResource("Resource_3ebu6")
-}
+})
 metadata/_custom_type_script = "uid://dtjaxrcrr2rk5"
 
 [sub_resource type="Resource" id="Resource_hdojd"]
@@ -96,7 +95,6 @@ RecipeIngredients = Dictionary[String, Object]({
 "wood": SubResource("Resource_hw3lt")
 })
 TemplateIcon = ExtResource("4_dv4pt")
-IsStackable = false
 ResultNameMap = SubResource("Resource_0qfr5")
 ResultInventorySpaceMap = SubResource("Resource_cab6b")
 ResultTextureSingleMap = SubResource("Resource_hdojd")

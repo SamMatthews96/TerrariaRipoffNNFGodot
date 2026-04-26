@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Recipe" load_steps=23 format=3 uid="uid://c6vf4avmpga6o"]
+[gd_resource type="Resource" script_class="Recipe" format=3 uid="uid://c6vf4avmpga6o"]
 
 [ext_resource type="Texture2D" uid="uid://wrf00jfy174v" path="res://Assets/Images/woodPlaceholder.png" id="1_fd5g7"]
 [ext_resource type="Script" uid="uid://bg8jhsljipuqc" path="res://Scripts/Resources/Recipes/Recipe.cs" id="1_nsi0m"]
@@ -54,14 +54,12 @@ script = ExtResource("6_ccure")
 Speed = SubResource("Resource_27vcd")
 Damage = SubResource("Resource_d1k8b")
 TextureSingle = SubResource("Resource_sjoef")
-WeaponType = 0
 metadata/_custom_type_script = "uid://c6jyj842ux7cg"
 
 [sub_resource type="Resource" id="Resource_6ayas"]
 resource_name = "{wood} Javelin"
 script = ExtResource("8_snchn")
 _stringTemplate = "{wood} Javelin"
-_ingredientNameMaps = Dictionary[String, ExtResource("7_y3lnx")]({})
 metadata/_custom_type_script = "uid://dtjaxrcrr2rk5"
 
 [sub_resource type="Resource" id="Resource_ohtk3"]
@@ -85,7 +83,6 @@ RecipeIngredients = Dictionary[String, Object]({
 "wood": SubResource("Resource_cshgs")
 })
 TemplateIcon = ExtResource("11_32i6g")
-IsStackable = false
 ResultNameMap = SubResource("Resource_6ayas")
 ResultInventorySpaceMap = SubResource("Resource_cfkih")
 ResultTextureSingleMap = SubResource("Resource_j81ox")

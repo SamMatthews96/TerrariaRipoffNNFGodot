@@ -26,6 +26,7 @@ public partial class SelectStationContainer : Control {
     }
 
     private void OnLocalPlayerSpawned(Player player) {
+        OnCraftingStationAdded(CraftingStationType.Handcrafting);
         player.Crafting.CraftingStationAdded += OnCraftingStationAdded;
         player.Crafting.CraftingStationRemoved += OnCraftingStationRemoved;
     }

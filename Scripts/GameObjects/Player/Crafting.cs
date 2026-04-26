@@ -18,53 +18,64 @@ public sealed partial class Crafting : Node {
     public event Action<StackedItems, List<StackedItems>> ItemCrafted;
 
     public override void _Ready() {
+        /* @todo Crafting
+         * For re-implementation
+         *
+         * When opening the crafting menu, we should see handcrafting
+         * We should be able to select a valid recipe
+         *
+         * When we select it, set ingredients and hit craft:
+         * validate locally
+         * validate on host
+         * craft on host
+         * craft locally
+         */
+        
+        // issue: craftingstateadded is called before the handler registers
+        if (!_player.IsLocalPlayer) return;
         Interface.Crafting craftingInterface = _player.World.Interface.CraftingInterface;
         craftingInterface.SelectRecipeContainer.RecipeButtonClicked += OnRecipeButtonClicked;
         craftingInterface.SelectIngredientPopup.SelectIngredientButtonClicked += OnSelectIngredientButtonClicked;
         craftingInterface.SelectIngredientsContainer.CraftButtonPressed += OnCraftButtonPressed;
 
-        _craftingArea.AreaEntered += OnCraftingAreaEntered;
-        _craftingArea.AreaExited += OnCraftingAreaExited;
+        // _craftingArea.AreaEntered += OnCraftingAreaEntered;
+        // _craftingArea.AreaExited += OnCraftingAreaExited;
+        TreeExiting += () => {
+            craftingInterface.SelectRecipeContainer.RecipeButtonClicked -= OnRecipeButtonClicked;
+            craftingInterface.SelectIngredientPopup.SelectIngredientButtonClicked -= OnSelectIngredientButtonClicked;
+            craftingInterface.SelectIngredientsContainer.CraftButtonPressed -= OnCraftButtonPressed;
 
-        CraftingStationAdded?.Invoke(CraftingStationType.Handcrafting);
+            // _craftingArea.AreaEntered -= OnCraftingAreaEntered;
+            // _craftingArea.AreaExited -= OnCraftingAreaExited;
+        };
     }
 
-    public override void _ExitTree() {
-        Interface.Crafting craftingInterface = _player.World.Interface.CraftingInterface;
-        craftingInterface.SelectRecipeContainer.RecipeButtonClicked -= OnRecipeButtonClicked;
-        craftingInterface.SelectIngredientPopup.SelectIngredientButtonClicked -= OnSelectIngredientButtonClicked;
-        craftingInterface.SelectIngredientsContainer.CraftButtonPressed -= OnCraftButtonPressed;
+    // private void OnCraftingAreaEntered(Area2D area) {
+    //     if (area is not CraftStationArea craftStationArea) {
+    //         throw new Exception("[20250617.1422.1] Crafting area entered by non-crafting area");
+    //     }
+    //
+    //     CraftingStationType newType = craftStationArea.CraftStation.Type;
+    //     if (!LocalCraftStationsAreas.Exists(
+    //             currentArea => currentArea.CraftStation.Type == newType)) {
+    //         CraftingStationAdded?.Invoke(newType);
+    //     }
+    //
+    //     LocalCraftStationsAreas.Add(craftStationArea);
+    // }
 
-        _craftingArea.AreaEntered -= OnCraftingAreaEntered;
-        _craftingArea.AreaExited -= OnCraftingAreaExited;
-    }
-
-    private void OnCraftingAreaEntered(Area2D area) {
-        if (area is not CraftStationArea craftStationArea) {
-            throw new Exception("[20250617.1422.1] Crafting area entered by non-crafting area");
-        }
-
-        // CraftingStationType newType = craftStationArea.CraftStation.Type;
-        // if (!LocalCraftStationsAreas.Exists(
-        //         currentArea => currentArea.CraftStation.Type == newType)) {
-        //     CraftingStationAdded?.Invoke(newType);
-        // }
-
-        LocalCraftStationsAreas.Add(craftStationArea);
-    }
-
-    private void OnCraftingAreaExited(Area2D area) {
-        if (area is not CraftStationArea craftStationArea) {
-            throw new Exception("[20250617.1424.1] Crafting area entered by non-crafting area");
-        }
-
-        // CraftingStationType exitingType = craftStationArea.CraftStation.Type;
-        // LocalCraftStationsAreas.Remove(craftStationArea);
-        // if (!LocalCraftStationsAreas.Exists(
-        //         currentArea => currentArea.CraftStation.Type == exitingType)) {
-        //     CraftingStationRemoved?.Invoke(exitingType);
-        // }
-    }
+    // private void OnCraftingAreaExited(Area2D area) {
+    //     if (area is not CraftStationArea craftStationArea) {
+    //         throw new Exception("[20250617.1424.1] Crafting area entered by non-crafting area");
+    //     }
+    //
+    //     CraftingStationType exitingType = craftStationArea.CraftStation.Type;
+    //     LocalCraftStationsAreas.Remove(craftStationArea);
+    //     if (!LocalCraftStationsAreas.Exists(
+    //             currentArea => currentArea.CraftStation.Type == exitingType)) {
+    //         CraftingStationRemoved?.Invoke(exitingType);
+    //     }
+    // }
 
     private void OnCraftButtonPressed() {
         StackedItems newItems = _selectedRecipe.Build(_selectedIngredients);

@@ -125,11 +125,11 @@ public partial class World : Node2D {
         BlockDestroyed?.Invoke(coords, resourcePath);
     }
 
-    public bool IsInBounds(Vector2I intVector) {
-        return intVector.X >= 0
-               && intVector.X < WorldSize.X
-               && intVector.Y >= 0
-               && intVector.Y < WorldSize.Y;
+    public bool IsInBounds(Vector2I coords) {
+        return coords.X >= 0
+               && coords.X < WorldSize.X
+               && coords.Y >= 0
+               && coords.Y < WorldSize.Y;
     }
 
     #region World Synchronization

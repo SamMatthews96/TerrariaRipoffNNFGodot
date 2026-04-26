@@ -15,6 +15,7 @@ public partial class Crafting : Control {
         Hide();
         GameInterface.World.InputManager.ToggleInventoryPressed += OnToggleInventoryPressed;
         GameInterface.World.InputManager.EscapePressed += OnEscapePressed;
+        
     }
 
     private void OnToggleInventoryPressed() {

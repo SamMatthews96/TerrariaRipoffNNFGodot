@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Recipe" load_steps=21 format=3 uid="uid://cci54wnqnmqaf"]
+[gd_resource type="Resource" script_class="Recipe" format=3 uid="uid://cci54wnqnmqaf"]
 
 [ext_resource type="Script" uid="uid://bg8jhsljipuqc" path="res://Scripts/Resources/Recipes/Recipe.cs" id="1_bek66"]
 [ext_resource type="Texture2D" uid="uid://bsnw8muyx5lhx" path="res://Assets/Images/ItemIcons/stonePlaceholder.png" id="1_w7g3f"]
@@ -43,9 +43,9 @@ metadata/_custom_type_script = "uid://coiqlucu73qbu"
 [sub_resource type="Resource" id="Resource_3d7rj"]
 script = ExtResource("8_l5vwp")
 _stringTemplate = "{metal} Ingot"
-_ingredientNameMaps = {
+_ingredientNameMaps = Dictionary[String, ExtResource("7_gomja")]({
 "metal": SubResource("Resource_q6d53")
-}
+})
 metadata/_custom_type_script = "uid://dtjaxrcrr2rk5"
 
 [sub_resource type="Resource" id="Resource_5p4ly"]
@@ -69,7 +69,6 @@ RecipeIngredients = Dictionary[String, Object]({
 "metal": SubResource("Resource_6wlpj")
 })
 TemplateIcon = ExtResource("12_xfsbg")
-IsStackable = false
 ResultNameMap = SubResource("Resource_3d7rj")
 ResultInventorySpaceMap = SubResource("Resource_334pp")
 ResultTextureSingleMap = SubResource("Resource_ghx3a")
