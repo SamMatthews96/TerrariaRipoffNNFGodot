@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-// using System.Collections.Generic;
 using Godot;
 using Godot.Collections;
 
@@ -21,14 +20,14 @@ public sealed partial class Crafting : Node {
         if (!_player.IsLocalPlayer) return;
         Interface.Crafting craftingInterface = _player.World.Interface.CraftingInterface;
         
-        craftingInterface.SelectRecipeContainer.RecipeButtonClicked += OnRecipeButtonClicked;
-        craftingInterface.SelectIngredientPopup.SelectIngredientButtonClicked += OnSelectIngredientButtonClicked;
-        craftingInterface.SelectIngredientsContainer.CraftButtonPressed += OnCraftButtonPressed;
+        craftingInterface.RecipeContainer.RecipeButtonClicked += OnRecipeButtonClicked;
+        craftingInterface.IngredientPopup.SelectIngredientButtonClicked += OnIngredientButtonClicked;
+        craftingInterface.IngredientsContainer.CraftButtonPressed += OnCraftButtonPressed;
         
         TreeExiting += () => {
-            craftingInterface.SelectRecipeContainer.RecipeButtonClicked -= OnRecipeButtonClicked;
-            craftingInterface.SelectIngredientPopup.SelectIngredientButtonClicked -= OnSelectIngredientButtonClicked;
-            craftingInterface.SelectIngredientsContainer.CraftButtonPressed -= OnCraftButtonPressed;
+            craftingInterface.RecipeContainer.RecipeButtonClicked -= OnRecipeButtonClicked;
+            craftingInterface.IngredientPopup.SelectIngredientButtonClicked -= OnIngredientButtonClicked;
+            craftingInterface.IngredientsContainer.CraftButtonPressed -= OnCraftButtonPressed;
         };
     }
 
@@ -70,8 +69,9 @@ public sealed partial class Crafting : Node {
     }
 
     private bool IsCraftValid() {
-        foreach (RecipeIngredientSlot slot in _selectedRecipe.RecipeIngredients.Values) {
-            if (slot.Required && !_selectedIngredients.ContainsKey(slot.RecipeSlot)) {
+        // KeyValuePair<string, RecipeIngredientSlot> slot
+        foreach ((string key, Ingredient slot) in _selectedRecipe.RecipeIngredients) {
+            if (slot.Required && !_selectedIngredients.ContainsKey(key)) {
                 return false;
             }
         }
@@ -108,8 +108,8 @@ public sealed partial class Crafting : Node {
         }
     }
 
-    private void OnSelectIngredientButtonClicked(Item item, RecipeIngredientSlot ingredientSlot) {
-        _selectedIngredients[ingredientSlot.RecipeSlot] = item;
+    private void OnIngredientButtonClicked(Item item, string slotName) {
+        _selectedIngredients[slotName] = item;
         StackedItems newItems = _selectedRecipe.Build(_selectedIngredients);
         SelectedIngredientsChanged?.Invoke(newItems);
     }

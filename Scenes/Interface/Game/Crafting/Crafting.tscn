@@ -2,30 +2,29 @@
 
 [ext_resource type="Script" uid="uid://chga670axxwh6" path="res://Scripts/Interface/Game/Crafting/Crafting.cs" id="1_t416l"]
 [ext_resource type="PackedScene" uid="uid://d31jlx7lau6lq" path="res://Scenes/Interface/Game/Crafting/RecipePopup.tscn" id="2_0ra1c"]
-[ext_resource type="Script" uid="uid://djguw8ysdjviw" path="res://Scripts/Interface/Game/Crafting/SelectStationContainer.cs" id="3_rcspo"]
+[ext_resource type="Script" uid="uid://djguw8ysdjviw" path="res://Scripts/Interface/Game/Crafting/StationContainer.cs" id="3_rcspo"]
 [ext_resource type="Texture2D" uid="uid://c1dlk5ira363n" path="res://Assets/Images/hand.png" id="4_eu8om"]
-[ext_resource type="Script" uid="uid://bi8ajy153uqa0" path="res://Scripts/Interface/Game/Crafting/SelectRecipeContainer.cs" id="5_0yb3w"]
+[ext_resource type="Script" uid="uid://bi8ajy153uqa0" path="res://Scripts/Interface/Game/Crafting/RecipeContainer.cs" id="5_0yb3w"]
 [ext_resource type="Texture2D" uid="uid://dfscdvvt4bdr6" path="res://Assets/Images/pickaxePlaceholder.png" id="6_bhvgf"]
-[ext_resource type="Script" uid="uid://jxhgabm7a16r" path="res://Scripts/Interface/Game/Crafting/SelectIngredientsContainer.cs" id="7_l8j2k"]
+[ext_resource type="Script" uid="uid://jxhgabm7a16r" path="res://Scripts/Interface/Game/Crafting/IngredientsContainer.cs" id="7_l8j2k"]
 [ext_resource type="PackedScene" uid="uid://bawlysyg56da3" path="res://Scenes/Interface/Game/Crafting/RecipeIngredientSlotTexture.tscn" id="8_oxyri"]
 [ext_resource type="Texture2D" uid="uid://wrf00jfy174v" path="res://Assets/Images/woodPlaceholder.png" id="9_gfgye"]
 
-[node name="Crafting" type="HBoxContainer" unique_id=295219936 node_paths=PackedStringArray("_selectCraftingStationMenuButton", "CraftSelectStationContainer", "SelectRecipeContainer", "SelectIngredientsContainer", "SelectIngredientPopup")]
+[node name="Crafting" type="HBoxContainer" unique_id=295219936 node_paths=PackedStringArray("_selectCraftingStationMenuButton", "StationContainer", "RecipeContainer", "IngredientsContainer", "IngredientPopup")]
 offset_right = 872.0
 offset_bottom = 343.0
 mouse_filter = 2
 script = ExtResource("1_t416l")
 _selectCraftingStationMenuButton = NodePath("SelectStationContainer/TitleContainer/SelectCraftingStationMenuButton")
-CraftSelectStationContainer = NodePath("SelectStationContainer")
-SelectRecipeContainer = NodePath("SelectRecipeContainer")
-SelectIngredientsContainer = NodePath("SelectIngredientsContainer")
-SelectIngredientPopup = NodePath("SelectIngredientPopup")
+StationContainer = NodePath("SelectStationContainer")
+RecipeContainer = NodePath("SelectRecipeContainer")
+IngredientsContainer = NodePath("SelectIngredientsContainer")
+IngredientPopup = NodePath("SelectIngredientPopup")
 
-[node name="SelectIngredientPopup" parent="." unique_id=1609194623 node_paths=PackedStringArray("_craftingInterface", "SelectIngredientsContainer") instance=ExtResource("2_0ra1c")]
+[node name="SelectIngredientPopup" parent="." unique_id=1609194623 node_paths=PackedStringArray("_craftingInterface") instance=ExtResource("2_0ra1c")]
 position = Vector2i(345, 320)
 visible = false
 _craftingInterface = NodePath("..")
-SelectIngredientsContainer = NodePath("../SelectIngredientsContainer")
 
 [node name="SelectStationContainer" type="VBoxContainer" parent="." unique_id=768364216 node_paths=PackedStringArray("_craftingStationButtonContainer", "_craftingInterface")]
 layout_mode = 2

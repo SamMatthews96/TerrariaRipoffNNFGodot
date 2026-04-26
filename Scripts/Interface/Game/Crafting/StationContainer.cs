@@ -4,11 +4,11 @@ using Godot.Collections;
 
 namespace TerrariaRipoffNNF.Interface;
 
-public partial class SelectStationContainer : Control {
+public partial class StationContainer : Control {
     [Export] private Container _craftingStationButtonContainer;
     [Export] private Crafting _craftingInterface;
 
-    private Dictionary<CraftingStationType, SelectStationButton> _craftingStationButtons = new();
+    private Dictionary<CraftingStationType, CraftStationButton> _craftingStationButtons = new();
 
     public event Action<CraftingStation> CraftingStationButtonClicked;
 
@@ -33,8 +33,8 @@ public partial class SelectStationContainer : Control {
 
     private void OnCraftingStationAdded(CraftingStationType type) {
         CraftingStation craftingStation = Data.CraftingStations[type];
-        SelectStationButton newButton
-            = SelectStationButton.Create(craftingStation);
+        CraftStationButton newButton
+            = CraftStationButton.Create(craftingStation);
         newButton.CraftingStationButtonClicked += OnCraftingStationButtonClicked;
         _craftingStationButtonContainer.AddChild(newButton);
 
@@ -42,7 +42,7 @@ public partial class SelectStationContainer : Control {
     }
 
     private void OnCraftingStationRemoved(CraftingStationType type) {
-        SelectStationButton button = _craftingStationButtons[type];
+        CraftStationButton button = _craftingStationButtons[type];
         button.CraftingStationButtonClicked -= OnCraftingStationButtonClicked;
         button.QueueFree();
         _craftingStationButtons.Remove(type);

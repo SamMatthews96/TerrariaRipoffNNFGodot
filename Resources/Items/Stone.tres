@@ -8,7 +8,6 @@
 
 [sub_resource type="Resource" id="Resource_xwkr0"]
 script = ExtResource("3_x64jl")
-OccupiedCells = null
 metadata/_custom_type_script = "uid://ctwdtjjrpbdwg"
 
 [resource]

@@ -8,7 +8,7 @@ namespace TerrariaRipoffNNF;
 public partial class Recipe : Resource {
     [Export] public string RecipeName { get; private set; }
     [Export] public CraftingStationType RequiredCraftingStation { get; private set; }
-    [Export] public Dictionary<string, RecipeIngredientSlot> RecipeIngredients { get; private set; }
+    [Export] public Dictionary<string, Ingredient> RecipeIngredients { get; private set; }
     [Export] public Texture2D TemplateIcon { get; private set; }
 
     [Export] public bool IsStackable { get; private set; }

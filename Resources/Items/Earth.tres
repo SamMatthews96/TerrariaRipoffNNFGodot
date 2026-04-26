@@ -7,7 +7,6 @@
 
 [sub_resource type="Resource" id="Resource_57ykf"]
 script = ExtResource("3_pyd5u")
-OccupiedCells = null
 metadata/_custom_type_script = "uid://ctwdtjjrpbdwg"
 
 [resource]

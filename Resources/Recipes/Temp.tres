@@ -1,0 +1,46 @@
+[gd_resource type="Resource" script_class="Recipe" format=3 uid="uid://ijutwx8b8knx"]
+
+[ext_resource type="Script" uid="uid://bg8jhsljipuqc" path="res://Scripts/Resources/Recipes/Recipe.cs" id="1_p5mmt"]
+[ext_resource type="Script" uid="uid://drhtbuywngnuq" path="res://Scripts/Resources/Recipes/RecipeFieldMaps/Float/RecipeFieldMapFloatConstant.cs" id="1_pkfhd"]
+[ext_resource type="Texture2D" uid="uid://bsnw8muyx5lhx" path="res://Assets/Images/ItemIcons/stonePlaceholder.png" id="1_x151m"]
+[ext_resource type="Script" uid="uid://fn1nx4h2shbl" path="res://Scripts/Resources/Recipes/Ingredient.cs" id="2_ruyps"]
+[ext_resource type="Script" uid="uid://bfcev5h2r3enq" path="res://Scripts/Resources/Recipes/RecipeFieldMaps/String/RecipeFieldMapStringConstant.cs" id="2_s5l42"]
+[ext_resource type="Texture2D" uid="uid://dh51pmlsc06fg" path="res://Assets/Images/ItemIcons/log2.png" id="3_x151m"]
+[ext_resource type="Script" uid="uid://d2pqak21epjnt" path="res://Scripts/Resources/Recipes/RecipeFieldMaps/Texture/RecipeFieldMapTextureConstant.cs" id="4_ruyps"]
+[ext_resource type="Texture2D" uid="uid://wrf00jfy174v" path="res://Assets/Images/woodPlaceholder.png" id="5_qmxoh"]
+
+[sub_resource type="Resource" id="Resource_qmxoh"]
+script = ExtResource("2_ruyps")
+IngredientType = 1
+Amount = 3
+Icon = ExtResource("1_x151m")
+Required = true
+metadata/_custom_type_script = "uid://fn1nx4h2shbl"
+
+[sub_resource type="Resource" id="Resource_uitym"]
+script = ExtResource("1_pkfhd")
+_value = 1.0
+metadata/_custom_type_script = "uid://drhtbuywngnuq"
+
+[sub_resource type="Resource" id="Resource_fq4v2"]
+script = ExtResource("2_s5l42")
+_value = "Temp"
+metadata/_custom_type_script = "uid://bfcev5h2r3enq"
+
+[sub_resource type="Resource" id="Resource_6gilt"]
+script = ExtResource("4_ruyps")
+_value = ExtResource("3_x151m")
+metadata/_custom_type_script = "uid://d2pqak21epjnt"
+
+[resource]
+script = ExtResource("1_p5mmt")
+RecipeName = "Temp"
+RecipeIngredients = Dictionary[String, Object]({
+"temp": SubResource("Resource_qmxoh")
+})
+TemplateIcon = ExtResource("5_qmxoh")
+ResultNameMap = SubResource("Resource_fq4v2")
+ResultInventorySpaceMap = SubResource("Resource_uitym")
+ResultTextureSingleMap = SubResource("Resource_6gilt")
+ResultItemProperties = Array[Object]([])
+metadata/_custom_type_script = "uid://bg8jhsljipuqc"

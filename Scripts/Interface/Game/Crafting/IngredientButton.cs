@@ -3,15 +3,15 @@ using Godot;
 
 namespace TerrariaRipoffNNF.Interface;
 
-public partial class SelectIngredientButton : TextureButton {
+public partial class IngredientButton : TextureButton {
     private Item _item;
-    public static SelectIngredientButton Create(Item item) {
-        SelectIngredientButton selectIngredientButton =
+    public static IngredientButton Create(Item item) {
+        IngredientButton ingredientButton =
             Data.PackedScenes.SelectIngredientButton
-                .Instantiate<SelectIngredientButton>();
-        selectIngredientButton.TextureNormal = item.IconTexture;
-        selectIngredientButton._item = item;
-        return selectIngredientButton;
+                .Instantiate<IngredientButton>();
+        ingredientButton.TextureNormal = item.IconTexture;
+        ingredientButton._item = item;
+        return ingredientButton;
     }
     
     public event Action<Item> IngredientButtonClicked;

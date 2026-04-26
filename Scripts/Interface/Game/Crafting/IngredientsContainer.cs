@@ -4,20 +4,20 @@ using Godot.Collections;
 
 namespace TerrariaRipoffNNF.Interface;
 
-public partial class SelectIngredientsContainer : Container {
+public partial class IngredientsContainer : Container {
     [Export] private Button _recipeNameButton;
     [Export] private Crafting _craftingInterface;
     [Export] private Container _ingredientContainer;
     [Export] private Button _craftButton;
     [Export] private TextureRect _resultItemIcon;
-    [Export] private SelectIngredientPopup _ingredientPopup;
+    [Export] private IngredientPopup _ingredientPopup;
 
-    private Dictionary<string, SelectIngredientMouseover> _selectIngredientMouseovers = new();
+    private Dictionary<string, IngredientMouseover> _selectIngredientMouseovers = new();
 
     private Recipe _selectedRecipe;
     private Player _player;
 
-    public event Action<Control, RecipeIngredientSlot> IngredientIconMouseEntered;
+    public event Action<Control, Ingredient, string> IngredientIconMouseEntered;
     public event Action IngredientIconMouseLeft;
     public event Action CraftButtonPressed;
 
@@ -29,16 +29,15 @@ public partial class SelectIngredientsContainer : Container {
 
         _craftingInterface.GameInterface.World.PlayerManager.LocalPlayerSpawned +=
             OnLocalPlayerSpawned;
-        _craftingInterface.SelectRecipeContainer.RecipeButtonClicked += OnRecipeButtonClicked;
+        _craftingInterface.RecipeContainer.RecipeButtonClicked += OnRecipeButtonClicked;
         _ingredientPopup.SelectIngredientButtonClicked += OnSelectIngredientButtonClicked;
         _craftButton.ButtonDown += OnCraftButtonDown;
         TreeExiting += () => {
             _craftingInterface.GameInterface.World.PlayerManager.LocalPlayerSpawned -=
                 OnLocalPlayerSpawned;
-            _craftingInterface.SelectRecipeContainer.RecipeButtonClicked -= OnRecipeButtonClicked;
+            _craftingInterface.RecipeContainer.RecipeButtonClicked -= OnRecipeButtonClicked;
             _ingredientPopup.SelectIngredientButtonClicked -= OnSelectIngredientButtonClicked;
             _craftButton.ButtonDown -= OnCraftButtonDown;
-
         };
     }
 
@@ -53,10 +52,11 @@ public partial class SelectIngredientsContainer : Container {
             : newItems.Item.IconTexture;
     }
 
-    private void OnSelectIngredientButtonClicked(Item selectedIngredient, RecipeIngredientSlot ingredientSlot) {
-        _selectIngredientMouseovers[ingredientSlot.RecipeSlot].Texture = selectedIngredient.IconTexture;
+    private void OnSelectIngredientButtonClicked(
+        Item selectedIngredient, string slotName
+    ) {
+        _selectIngredientMouseovers[slotName].Texture = selectedIngredient.IconTexture;
     }
-
 
     private void OnCraftButtonDown() {
         CraftButtonPressed?.Invoke();
@@ -71,24 +71,31 @@ public partial class SelectIngredientsContainer : Container {
 
         _selectIngredientMouseovers.Clear();
 
-        foreach ((string slotName, RecipeIngredientSlot ingredientSlot) in recipe.RecipeIngredients) {
-            SelectIngredientMouseover newIngredientMouseover
-                = SelectIngredientMouseover.Create(ingredientSlot);
+        foreach ((string slotName, Ingredient ingredient) in recipe.RecipeIngredients) {
+            IngredientMouseover newIngredientMouseover
+                = IngredientMouseover.Create(ingredient);
             _selectIngredientMouseovers.Add(slotName, newIngredientMouseover);
-            newIngredientMouseover.MouseEnteredIcon += OnIngredientIconMouseEntered;
-            newIngredientMouseover.MouseLeftIcon += OnIngredientIconMouseLeft;
+
+            void Entered() {
+                IngredientIconMouseEntered?.Invoke(
+                    newIngredientMouseover, ingredient, slotName);
+            }
+
+            void Exited() {
+                IngredientIconMouseLeft?.Invoke();
+            }
+
+            newIngredientMouseover.MouseEntered += Entered;
+            newIngredientMouseover.MouseExited += Exited;
+            TreeExiting += () => {
+                newIngredientMouseover.MouseEntered -= Entered;
+                newIngredientMouseover.MouseExited -= Exited;
+            };
+
             _ingredientContainer.AddChild(newIngredientMouseover);
         }
 
         _resultItemIcon.Texture = recipe.TemplateIcon;
         Show();
-    }
-
-    private void OnIngredientIconMouseEntered(Control node, RecipeIngredientSlot ingredientSlot) {
-        IngredientIconMouseEntered?.Invoke(node, ingredientSlot);
-    }
-
-    private void OnIngredientIconMouseLeft() {
-        IngredientIconMouseLeft?.Invoke();
     }
 }

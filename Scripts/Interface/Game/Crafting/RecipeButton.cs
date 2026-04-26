@@ -3,14 +3,14 @@ using Godot;
 
 namespace TerrariaRipoffNNF.Interface;
 
-public partial class SelectRecipeButton : TextureButton {
+public partial class RecipeButton : TextureButton {
     private Recipe _recipe;
     public event Action<Recipe> RecipeButtonClicked;
     
-    public static SelectRecipeButton Create(Recipe recipe) {
-        SelectRecipeButton button = 
+    public static RecipeButton Create(Recipe recipe) {
+        RecipeButton button = 
             Data.PackedScenes.SelectRecipeButton
-                .Instantiate<SelectRecipeButton>();
+                .Instantiate<RecipeButton>();
         button._recipe = recipe;
         button.TextureNormal = recipe.TemplateIcon;
         return button;

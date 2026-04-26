@@ -4,10 +4,10 @@ using Godot;
 
 namespace TerrariaRipoffNNF.Interface;
 
-public partial class SelectRecipeContainer : Control {
+public partial class RecipeContainer : Control {
     [Export] public Crafting CraftingInterface { get; private set; }
     [Export] private Container _selectRecipeButtonContainer;
-    private readonly List<SelectRecipeButton> _recipeSelectButtons = new();
+    private readonly List<RecipeButton> _recipeSelectButtons = new();
 
     public event Action<Recipe> RecipeButtonClicked;
 
@@ -17,11 +17,11 @@ public partial class SelectRecipeContainer : Control {
         }
 
         Hide();
-        CraftingInterface.CraftSelectStationContainer.CraftingStationButtonClicked +=
-            OnCraftingSelectStationButtonClicked;
+        CraftingInterface.StationContainer.CraftingStationButtonClicked +=
+            OnCraftingCraftStationButtonClicked;
     }
 
-    private void OnCraftingSelectStationButtonClicked(CraftingStation craftingStation) {
+    private void OnCraftingCraftStationButtonClicked(CraftingStation craftingStation) {
         _recipeSelectButtons.ForEach(button => {
             button.RecipeButtonClicked -= OnRecipeButtonClicked;
             button.QueueFree();
@@ -29,7 +29,7 @@ public partial class SelectRecipeContainer : Control {
         _recipeSelectButtons.Clear();
 
         foreach (Recipe recipe in Data.Recipes.GetRecipes(craftingStation.Type)) {
-            SelectRecipeButton newButton = SelectRecipeButton.Create(recipe);
+            RecipeButton newButton = RecipeButton.Create(recipe);
             _recipeSelectButtons.Add(newButton);
             newButton.RecipeButtonClicked += OnRecipeButtonClicked;
             _selectRecipeButtonContainer.AddChild(newButton);
