@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+// using System.Collections.Generic;
 using Godot;
+using Godot.Collections;
 
 namespace TerrariaRipoffNNF;
 
@@ -10,43 +11,24 @@ public sealed partial class Crafting : Node {
     [Export] private Player _player;
     private Recipe _selectedRecipe;
 
-    private Godot.Collections.Dictionary<string, Item> _selectedIngredients = new();
-    public List<CraftStationArea> LocalCraftStationsAreas = new();
+    private Dictionary<string, Item> _selectedIngredients = new();
     public event Action<CraftingStationType> CraftingStationAdded;
     public event Action<CraftingStationType> CraftingStationRemoved;
     public event Action<StackedItems> SelectedIngredientsChanged;
-    public event Action<StackedItems, List<StackedItems>> ItemCrafted;
+    // public event Action<StackedItems, List<StackedItems>> ItemCrafted;
 
     public override void _Ready() {
-        /* @todo Crafting
-         * For re-implementation
-         *
-         * When opening the crafting menu, we should see handcrafting
-         * We should be able to select a valid recipe
-         *
-         * When we select it, set ingredients and hit craft:
-         * validate locally
-         * validate on host
-         * craft on host
-         * craft locally
-         */
-        
-        // issue: craftingstateadded is called before the handler registers
         if (!_player.IsLocalPlayer) return;
         Interface.Crafting craftingInterface = _player.World.Interface.CraftingInterface;
+        
         craftingInterface.SelectRecipeContainer.RecipeButtonClicked += OnRecipeButtonClicked;
         craftingInterface.SelectIngredientPopup.SelectIngredientButtonClicked += OnSelectIngredientButtonClicked;
         craftingInterface.SelectIngredientsContainer.CraftButtonPressed += OnCraftButtonPressed;
-
-        // _craftingArea.AreaEntered += OnCraftingAreaEntered;
-        // _craftingArea.AreaExited += OnCraftingAreaExited;
+        
         TreeExiting += () => {
             craftingInterface.SelectRecipeContainer.RecipeButtonClicked -= OnRecipeButtonClicked;
             craftingInterface.SelectIngredientPopup.SelectIngredientButtonClicked -= OnSelectIngredientButtonClicked;
             craftingInterface.SelectIngredientsContainer.CraftButtonPressed -= OnCraftButtonPressed;
-
-            // _craftingArea.AreaEntered -= OnCraftingAreaEntered;
-            // _craftingArea.AreaExited -= OnCraftingAreaExited;
         };
     }
 
@@ -78,30 +60,58 @@ public sealed partial class Crafting : Node {
     // }
 
     private void OnCraftButtonPressed() {
-        StackedItems newItems = _selectedRecipe.Build(_selectedIngredients);
-        if (newItems is null) return;
-        List<StackedItems> totalIngredients = GetTotalSelectedIngredients();
-        if (totalIngredients.Any(
-                stackedItems => !_player.Inventory.IsContainingStackedItems(stackedItems))) return;
+        if (!_player.World.IsHost) {
+            if (!IsCraftValid()) return;
+        }
 
-        ItemCrafted?.Invoke(newItems, GetTotalSelectedIngredients());
+        RpcId(1, nameof(RpcHostTryCraft));
+
+        
+    }
+
+    private bool IsCraftValid() {
+        foreach (RecipeIngredientSlot slot in _selectedRecipe.RecipeIngredients.Values) {
+            if (slot.Required && !_selectedIngredients.ContainsKey(slot.RecipeSlot)) {
+                return false;
+            }
+        }
+
+        foreach (string key in _selectedRecipe.RecipeIngredients.Keys) {
+            if (!_selectedIngredients.TryGetValue(key, out Item item)) continue;
+            int amount = _selectedRecipe.RecipeIngredients[key].Amount;
+            StackedItems stackedItems = new(item, amount);
+            if (!_player.Inventory.IsContainingStackedItems(stackedItems)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+    private void RpcHostTryCraft(Recipe recipe, Dictionary<string, Item> ingredients) {
+        if (!IsCraftValid()) return;
+        
+        // craft on host
+        
+        int senderId = Multiplayer.GetRemoteSenderId();
+        if (senderId == 1) return;
+        // craft on client
+        
+    }
+
+    private void CraftRecipe(Recipe recipe, Dictionary<string, Item> ingredients) {
+        StackedItems newItems = recipe.Build(ingredients);
+        var temp = ingredients.Values.ToList();
+        foreach (Item item in temp) {
+            
+        }
     }
 
     private void OnSelectIngredientButtonClicked(Item item, RecipeIngredientSlot ingredientSlot) {
         _selectedIngredients[ingredientSlot.RecipeSlot] = item;
         StackedItems newItems = _selectedRecipe.Build(_selectedIngredients);
         SelectedIngredientsChanged?.Invoke(newItems);
-    }
-
-    private List<StackedItems> GetTotalSelectedIngredients() {
-        List<StackedItems> totalIngredients = new();
-        foreach (string key in _selectedRecipe.RecipeIngredients.Keys) {
-            if (!_selectedIngredients.TryGetValue(key, out Item item)) continue;
-            int amount = _selectedRecipe.RecipeIngredients[key].Amount;
-            totalIngredients.Add(new StackedItems(item, amount));
-        }
-
-        return totalIngredients;
     }
 
     private void OnRecipeButtonClicked(Recipe recipe) {
