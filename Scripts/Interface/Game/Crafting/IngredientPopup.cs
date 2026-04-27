@@ -26,6 +26,8 @@ public partial class IngredientPopup : Window {
         MouseExited += OnMouseExited;
         _craftingInterface.IngredientsContainer.IngredientIconMouseEntered +=
             OnIngredientIconMouseEntered;
+        _craftingInterface.IngredientsContainer.IngredientIconMouseLeft +=
+            OnIngredientIconMouseExited;
 
         TreeExiting += () => {
             _craftingInterface.GameInterface.World.PlayerManager.LocalPlayerSpawned -=
@@ -36,8 +38,15 @@ public partial class IngredientPopup : Window {
         };
     }
 
+    private void OnIngredientIconMouseExited() {
+        _isMouseOverIngredientMouseover = false;
+        OnMouseoverUpdated();
+    }
+
     private void OnIngredientIconMouseEntered(Control _, Ingredient __, string slotName) {
         _slotName = slotName;
+        _isMouseOverIngredientMouseover = true;
+        OnMouseoverUpdated();
     }
 
 
@@ -65,7 +74,6 @@ public partial class IngredientPopup : Window {
 
     private void OnMouseoverUpdated() {
         bool isMouseOver = _isMouseOverIngredientMouseover || _isMouseOverPopup;
-
         if (isMouseOver) {
             _hideTimer.Stop();
             OpenPopup();
@@ -92,11 +100,11 @@ public partial class IngredientPopup : Window {
             newButton.IngredientButtonClicked += OnIngredientButtonClicked;
         });
 
+        Show();
         Size = new Vector2I {
             X = (int)_panelContainer.Size.X,
             Y = (int)_panelContainer.Size.Y
         };
-        Show();
 
         _hideTimer.Stop();
     }
