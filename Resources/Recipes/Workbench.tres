@@ -42,5 +42,5 @@ TemplateIcon = ExtResource("6_pwi0r")
 ResultNameMap = SubResource("Resource_1p1fj")
 ResultInventorySpaceMap = SubResource("Resource_mj3rb")
 ResultTextureSingleMap = SubResource("Resource_0chpu")
-ResultItemProperties = null
+ResultItemProperties = Array[Object]([])
 metadata/_custom_type_script = "uid://wufmphxsnnhm"

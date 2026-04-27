@@ -5,13 +5,13 @@ namespace TerrariaRipoffNNF;
 
 [GlobalClass]
 public partial class ItemCrafted : ItemProperty {
-    // private Recipe _recipe;
+    private Recipe _recipe;
     private Dictionary<string, Item> _suppliedIngredients;
 
     public static bool AreEqual(ItemCrafted a, ItemCrafted b) {
-        // if (a._recipe != b._recipe) {
-        //     return false;
-        // }
+        if (a._recipe != b._recipe) {
+            return false;
+        }
 
         if (a._suppliedIngredients.Count != b._suppliedIngredients.Count) {
             return false;
@@ -27,16 +27,16 @@ public partial class ItemCrafted : ItemProperty {
         return true;
     }
 
-    // public ItemCrafted(Recipe recipe, Dictionary<string, Item> suppliedIngredients) {
-    //     _recipe = recipe;
-    //     _suppliedIngredients = suppliedIngredients;
-    // }
+    public ItemCrafted(Recipe recipe, Dictionary<string, Item> suppliedIngredients) {
+        _recipe = recipe;
+        _suppliedIngredients = suppliedIngredients;
+    }
 
     public ItemCrafted() { }
 
     public Dictionary ToDictionary() {
         Dictionary newDictionary = new();
-        // newDictionary.Add("RecipeResourcePath", _recipe.ResourcePath);
+        newDictionary.Add("RecipeResourcePath", _recipe.ResourcePath);
         Dictionary suppliedIngredientsDict = new();
         foreach ((string key, Item item) in _suppliedIngredients) {
             suppliedIngredientsDict.Add(key, item.ToDictionary());

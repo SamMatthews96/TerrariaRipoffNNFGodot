@@ -13,16 +13,17 @@ public sealed partial class Crafting : Node {
     public event Action<CraftingStationType> CraftingStationAdded;
     public event Action<CraftingStationType> CraftingStationRemoved;
     public event Action<StackedItems> SelectedIngredientsChanged;
-    // public event Action<StackedItems, List<StackedItems>> ItemCrafted;
+    public delegate void CraftEventHandler(StackedItems result, Array<StackedItems> ingredients);
+    public event CraftEventHandler HostItemCrafted;
 
     public override void _Ready() {
         if (!_player.IsLocalPlayer) return;
         Interface.Crafting craftingInterface = _player.World.Interface.CraftingInterface;
-        
+
         craftingInterface.RecipeContainer.RecipeButtonClicked += OnRecipeButtonClicked;
         craftingInterface.IngredientPopup.SelectIngredientButtonClicked += OnIngredientButtonClicked;
         craftingInterface.IngredientsContainer.CraftButtonPressed += OnCraftButtonPressed;
-        
+
         TreeExiting += () => {
             craftingInterface.RecipeContainer.RecipeButtonClicked -= OnRecipeButtonClicked;
             craftingInterface.IngredientPopup.SelectIngredientButtonClicked -= OnIngredientButtonClicked;
@@ -57,9 +58,20 @@ public sealed partial class Crafting : Node {
     //     }
     // }
 
+    private void OnRecipeButtonClicked(Recipe recipe) {
+        _selectedRecipe = recipe;
+        _selectedIngredients.Clear();
+    }
+
+    private void OnIngredientButtonClicked(Item item, string slotName) {
+        _selectedIngredients[slotName] = item;
+        StackedItems newItems = _selectedRecipe.Build(_selectedIngredients);
+        SelectedIngredientsChanged?.Invoke(newItems);
+    }
+
     private void OnCraftButtonPressed() {
         if (!_player.World.IsHost) {
-            if (!IsCraftValid()) return;
+            if (!IsCraftValid(_selectedRecipe, _selectedIngredients)) return;
         }
 
         Dictionary<string, Dictionary> ingredientsDictionary = new();
@@ -68,19 +80,24 @@ public sealed partial class Crafting : Node {
             ingredientsDictionary[key] = itemDictionary;
         }
 
-        RpcId(1, nameof(RpcHostTryCraft), _selectedRecipe.Id, ingredientsDictionary);
+        RpcId(1, nameof(RpcHostTryCraft),
+            _selectedRecipe.Id, ingredientsDictionary);
     }
+    
+    
 
-    private bool IsCraftValid() {
-        foreach ((string key, Ingredient slot) in _selectedRecipe.RecipeIngredients) {
-            if (slot.Required && !_selectedIngredients.ContainsKey(key)) {
+    private bool IsCraftValid(
+        Recipe recipe, Dictionary<string, Item> ingredients
+    ) {
+        foreach ((string key, Ingredient slot) in recipe.RecipeIngredients) {
+            if (slot.Required && !ingredients.ContainsKey(key)) {
                 return false;
             }
         }
 
-        foreach (string key in _selectedRecipe.RecipeIngredients.Keys) {
-            if (!_selectedIngredients.TryGetValue(key, out Item item)) continue;
-            int amount = _selectedRecipe.RecipeIngredients[key].Amount;
+        foreach (string key in recipe.RecipeIngredients.Keys) {
+            if (!ingredients.TryGetValue(key, out Item item)) continue;
+            int amount = recipe.RecipeIngredients[key].Amount;
             StackedItems stackedItems = new(item, amount);
             if (!_player.Inventory.IsContainingStackedItems(stackedItems)) {
                 return false;
@@ -91,35 +108,26 @@ public sealed partial class Crafting : Node {
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    private void RpcHostTryCraft(int recipeId, Dictionary<string, Dictionary> ingredientsDictionary) {
-        if (!IsCraftValid()) return;
-        
-        RpcCraftRecipe(recipeId, ingredientsDictionary);
-        
-        int senderId = Multiplayer.GetRemoteSenderId();
-        if (senderId == 1) return;
-        RpcId(senderId, nameof(RpcCraftRecipe), recipeId, ingredientsDictionary);
-    }
-
-    private void RpcCraftRecipe(int recipeId, Dictionary<string, Dictionary> ingredientsDictionary) {
+    private void RpcHostTryCraft(
+        int recipeId, Dictionary<string, Dictionary> ingredientsDictionary
+    ) {
         Recipe recipe = Data.Recipes.GetRecipe(recipeId);
         Dictionary<string, Item> ingredients = new();
         foreach ((string key, Dictionary ingredientDict) in ingredientsDictionary) {
             ingredients[key] = Item.FromDictionary(ingredientDict);
         }
+
+        if (!IsCraftValid(recipe, ingredients)) return;
+
         StackedItems newItems = recipe.Build(ingredients);
-        
-        GD.Print(newItems.Item.Name);
-    }
 
-    private void OnIngredientButtonClicked(Item item, string slotName) {
-        _selectedIngredients[slotName] = item;
-        StackedItems newItems = _selectedRecipe.Build(_selectedIngredients);
-        SelectedIngredientsChanged?.Invoke(newItems);
-    }
-
-    private void OnRecipeButtonClicked(Recipe recipe) {
-        _selectedRecipe = recipe;
-        _selectedIngredients.Clear();
+        Array<StackedItems> ingredientsArray = new();
+        foreach ((string slotName, Item item) in ingredients) {
+            int amount = recipe.RecipeIngredients[slotName].Amount;
+            StackedItems stackedItems = new(item, amount);
+            ingredientsArray.Add(stackedItems);
+        }
+    
+        HostItemCrafted?.Invoke(newItems, ingredientsArray);
     }
 }

@@ -16,6 +16,7 @@ public sealed partial class Item : Resource {
         if (a.ResourcePath != "" || b.ResourcePath != "") {
             return a.ResourcePath == b.ResourcePath;
         }
+
         if (
             a.TryGetProperty(out ItemCrafted aItemCrafted) &&
             b.TryGetProperty(out ItemCrafted bItemCrafted)
@@ -72,20 +73,19 @@ public sealed partial class Item : Resource {
     public static Item FromDictionary(Dictionary dictionary) {
         if (dictionary.TryGetValue("ResourcePath", out Variant resourcePath)) {
             return ResourceLoader.Load<Item>(resourcePath.AsString());
-        } 
-        else {
-            // string recipeResourcePath = dictionary["RecipeResourcePath"].AsString();
-            // Recipe recipe = ResourceLoader.Load<Recipe>(recipeResourcePath);
-            // Dictionary<string, Item> suppliedIngredients = new();
-            // dictionary["SuppliedIngredients"].AsGodotDictionary<string, Dictionary>();
-            // foreach ((string key, Dictionary itemDict) in dictionary["SuppliedIngredients"]
-            //              .AsGodotDictionary<string, Dictionary>()) {
-            //     Item item = FromDictionary(itemDict);
-            //     suppliedIngredients.Add(key, item);
-            // }
-            // Item newItem = recipe.Build(suppliedIngredients).Item;
-            // return newItem;
-            throw new Exception("Not implemented");
+        } else {
+            string recipeResourcePath = dictionary["RecipeResourcePath"].AsString();
+            Recipe recipe = ResourceLoader.Load<Recipe>(recipeResourcePath);
+            Dictionary<string, Item> suppliedIngredients = new();
+            dictionary["SuppliedIngredients"].AsGodotDictionary<string, Dictionary>();
+            foreach ((string key, Dictionary itemDict) in dictionary["SuppliedIngredients"]
+                         .AsGodotDictionary<string, Dictionary>()) {
+                Item item = FromDictionary(itemDict);
+                suppliedIngredients.Add(key, item);
+            }
+
+            Item newItem = recipe.Build(suppliedIngredients).Item;
+            return newItem;
         }
     }
 

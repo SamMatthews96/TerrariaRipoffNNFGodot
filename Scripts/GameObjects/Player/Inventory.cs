@@ -9,7 +9,6 @@ namespace TerrariaRipoffNNF;
 public partial class Inventory : Node {
     public float MaximumSpace { get; private set; } = 100;
     public float UsedSpace { get; private set; }
-
     public List<StackedItems> StackedItemsList => _inventoryItemsList;
 
     public bool IsContainingStackedItems(StackedItems stackedItems) {
@@ -42,6 +41,11 @@ public partial class Inventory : Node {
                 StackedItems newStack = new(newItem, count);
                 AddItems(newStack);
             }
+
+            _player.Crafting.HostItemCrafted += OnHostItemCrafted;
+            TreeExiting += () => {
+                _player.Crafting.HostItemCrafted -= OnHostItemCrafted;
+            };
         }
 
         if (_player.World.IsHost) {
@@ -58,6 +62,25 @@ public partial class Inventory : Node {
 
         // _player.Crafting.ItemCrafted += OnItemCrafted;
         // _player.World.Interface.InventoryUi.ItemActionClicked += OnItemActionClicked;
+    }
+
+    private void OnHostItemCrafted(StackedItems newItems, Array<StackedItems> ingredients) {
+        AddItems(newItems);
+        foreach (StackedItems ingredient in ingredients) {
+            RemoveItems(ingredient);
+        }
+
+        if (_player.PeerId == 1) return;
+        Dictionary newItemsDict = newItems.ToDictionary();
+        Array<Dictionary> ingredientDicts = new();
+        foreach (StackedItems ingredient in ingredients) {
+            Dictionary ingredientDict = ingredient.ToDictionary();
+            ingredientDicts.Add(ingredientDict);
+        }
+        RpcId(_player.PeerId, nameof(RpcAddItems), newItemsDict);
+        foreach (Dictionary ingredient in ingredientDicts) {
+            RpcId(_player.PeerId, nameof(RpcRemoveItems), ingredient);
+        }
     }
 
     private void HostOnPlaceBlock(Item item, Vector2I coords) {
@@ -77,12 +100,6 @@ public partial class Inventory : Node {
         }
     }
 
-    private void OnItemCrafted(StackedItems newItems, List<StackedItems> ingredients) {
-        AddItems(newItems);
-        foreach (StackedItems ingredient in ingredients) {
-            RemoveItems(ingredient);
-        }
-    }
 
     private void HostOnCollectedPickup(PickupEntity pickup) {
         StackedItems stackedItems = new(pickup.Item);
@@ -119,7 +136,6 @@ public partial class Inventory : Node {
         StackedItems inventoryItems = StackedItems.FromDictionary(stackedItemsDict);
         RemoveItems(inventoryItems);
     }
-    
     
     private void RemoveItems(StackedItems inventoryItemsToRemove) {
         UsedSpace -= inventoryItemsToRemove.TotalSpace;

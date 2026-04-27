@@ -24,7 +24,7 @@ public partial class Recipe : Resource {
         }
     
         Array<ItemProperty> newItemProperties = new() {
-            // new ItemCrafted(this, suppliedIngredients)
+            new ItemCrafted(this, suppliedIngredients)
         };
         foreach (ItemPropertyOutputTemplate itemPropertyOutputTemplate in ResultItemProperties) {
             ItemProperty newItemProperty
