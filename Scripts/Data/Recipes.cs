@@ -3,20 +3,15 @@ using Godot.Collections;
 
 namespace TerrariaRipoffNNF;
 
-[GlobalClass]
+[GlobalClass][Tool]
 public partial class Recipes : Resource {
-    private static string RecipesDir => "res://Resources/Recipes";
+    private const string RecipeDir = "res://Resources/Recipes";
 
-    private Array<Recipe> _recipes;
+    [Export] private Dictionary<uint, Recipe> _recipes;
 
     public Array<Recipe> GetRecipes(CraftingStationType craftingStationType) {
-        if (_recipes is null) {
-            _recipes = new Array<Recipe>();
-            Load();
-        }
-
         Array<Recipe> recipes = new();
-        foreach (Recipe recipe in _recipes) {
+        foreach (Recipe recipe in _recipes.Values) {
             if (recipe.RequiredCraftingStation == craftingStationType) {
                 recipes.Add(recipe);
             }
@@ -24,19 +19,27 @@ public partial class Recipes : Resource {
 
         return recipes;
     }
+    
+    public Recipe GetRecipe(uint id) {
+        return _recipes[id];
+    }
 
-    private void Load() {
-        DirAccess dirAccess = DirAccess.Open(RecipesDir);
+    public void SetRecipes() {
+        _recipes.Clear();
+        
+        DirAccess dirAccess = DirAccess.Open(RecipeDir);
         string[] resourceFiles = dirAccess.GetFiles();
-
+        uint count = 0;
         foreach (string resourceFile in resourceFiles) {
-            string resourcePath = $"{RecipesDir}/{resourceFile}";
-            Recipe newResource = ResourceLoader.Load<Recipe>(resourcePath);
-            if (newResource != null) {
-                _recipes.Add(newResource);
-            } else {
+            string resourcePath = $"{RecipeDir}/{resourceFile}";
+            Recipe recipe = ResourceLoader.Load<Recipe>(resourcePath);
+            if (recipe is null) {
                 GD.PrintErr($"Failed to load recipe from {resourcePath}");
+                return;
             }
+            recipe.Id = ++count;
+            _recipes.Add(count, recipe);
         }
     }
+    
 }

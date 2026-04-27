@@ -6,6 +6,7 @@ namespace TerrariaRipoffNNF;
 
 [GlobalClass]
 public partial class Recipe : Resource {
+    [Export] public uint Id;
     [Export] public string RecipeName { get; private set; }
     [Export] public CraftingStationType RequiredCraftingStation { get; private set; }
     [Export] public Dictionary<string, Ingredient> RecipeIngredients { get; private set; }
@@ -43,5 +44,16 @@ public partial class Recipe : Resource {
             itemProperties: newItemProperties
         );
         return new StackedItems(item);
+    }
+}
+
+[Tool]
+public partial class Recipe {
+    private const string RecipeFile = "res://Resources/Data/Recipes.tres";
+    public override void _ValidateProperty(Dictionary property) {
+        if (!Engine.IsEditorHint()) return;
+        if (Id != 0) return;
+        Recipes recipes = ResourceLoader.Load<Recipes>(RecipeFile);
+        recipes.SetRecipes();
     }
 }

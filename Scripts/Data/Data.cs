@@ -14,7 +14,7 @@ public partial class Data : Node {
     [Export] private PackedScenes _packedScenes;
     [Export] private Items _items;
     [Export] private CraftingStations _craftingStations;
-    private Recipes _recipes;
+    [Export] private Recipes _recipes;
 
     public override void _Ready() {
         PackedScenes = _packedScenes;
