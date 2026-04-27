@@ -4,17 +4,17 @@ using Godot;
 namespace TerrariaRipoffNNF.Interface;
 
 public partial class RecipeButton : TextureButton {
-    private Recipe _recipe;
-    public event Action<Recipe> RecipeButtonClicked;
+    // private Recipe _recipe;
+    // public event Action<Recipe> RecipeButtonClicked;
     
-    public static RecipeButton Create(Recipe recipe) {
-        RecipeButton button = 
-            Data.PackedScenes.SelectRecipeButton
-                .Instantiate<RecipeButton>();
-        button._recipe = recipe;
-        button.TextureNormal = recipe.TemplateIcon;
-        return button;
-    }
+    // public static RecipeButton Create(Recipe recipe) {
+    //     RecipeButton button = 
+    //         Data.PackedScenes.SelectRecipeButton
+    //             .Instantiate<RecipeButton>();
+    //     button._recipe = recipe;
+    //     button.TextureNormal = recipe.TemplateIcon;
+    //     return button;
+    // }
     
     public override void _Ready() {
         ButtonDown += OnButtonDown;
@@ -25,6 +25,6 @@ public partial class RecipeButton : TextureButton {
     }
     
     private void OnButtonDown() {
-        RecipeButtonClicked?.Invoke(_recipe);
+        // RecipeButtonClicked?.Invoke(_recipe);
     }
 }

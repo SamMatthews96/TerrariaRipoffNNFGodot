@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Godot;
 using Godot.Collections;
 
@@ -8,7 +7,7 @@ namespace TerrariaRipoffNNF;
 public sealed partial class Crafting : Node {
     [Export] private Area2D _craftingArea;
     [Export] private Player _player;
-    private Recipe _selectedRecipe;
+    // private Recipe _selectedRecipe;
 
     private Dictionary<string, Item> _selectedIngredients = new();
     public event Action<CraftingStationType> CraftingStationAdded;
@@ -20,12 +19,12 @@ public sealed partial class Crafting : Node {
         if (!_player.IsLocalPlayer) return;
         Interface.Crafting craftingInterface = _player.World.Interface.CraftingInterface;
         
-        craftingInterface.RecipeContainer.RecipeButtonClicked += OnRecipeButtonClicked;
+        // craftingInterface.RecipeContainer.RecipeButtonClicked += OnRecipeButtonClicked;
         craftingInterface.IngredientPopup.SelectIngredientButtonClicked += OnIngredientButtonClicked;
         craftingInterface.IngredientsContainer.CraftButtonPressed += OnCraftButtonPressed;
         
         TreeExiting += () => {
-            craftingInterface.RecipeContainer.RecipeButtonClicked -= OnRecipeButtonClicked;
+            // craftingInterface.RecipeContainer.RecipeButtonClicked -= OnRecipeButtonClicked;
             craftingInterface.IngredientPopup.SelectIngredientButtonClicked -= OnIngredientButtonClicked;
             craftingInterface.IngredientsContainer.CraftButtonPressed -= OnCraftButtonPressed;
         };
@@ -63,59 +62,64 @@ public sealed partial class Crafting : Node {
             if (!IsCraftValid()) return;
         }
 
-        RpcId(1, nameof(RpcHostTryCraft));
+        Dictionary<string, Dictionary> ingredientsDictionary = new();
+        foreach ((string key, Item item) in _selectedIngredients) {
+            Dictionary itemDictionary = item.ToDictionary();
+            ingredientsDictionary[key] = itemDictionary;
+        }
 
-        
+        // RpcId(1, nameof(RpcHostTryCraft), _selectedRecipe.Id, ingredientsDictionary);
     }
 
     private bool IsCraftValid() {
-        // KeyValuePair<string, RecipeIngredientSlot> slot
-        foreach ((string key, Ingredient slot) in _selectedRecipe.RecipeIngredients) {
-            if (slot.Required && !_selectedIngredients.ContainsKey(key)) {
-                return false;
-            }
-        }
+        // foreach ((string key, Ingredient slot) in _selectedRecipe.RecipeIngredients) {
+        //     if (slot.Required && !_selectedIngredients.ContainsKey(key)) {
+        //         return false;
+        //     }
+        // }
 
-        foreach (string key in _selectedRecipe.RecipeIngredients.Keys) {
-            if (!_selectedIngredients.TryGetValue(key, out Item item)) continue;
-            int amount = _selectedRecipe.RecipeIngredients[key].Amount;
-            StackedItems stackedItems = new(item, amount);
-            if (!_player.Inventory.IsContainingStackedItems(stackedItems)) {
-                return false;
-            }
-        }
+        // foreach (string key in _selectedRecipe.RecipeIngredients.Keys) {
+        //     if (!_selectedIngredients.TryGetValue(key, out Item item)) continue;
+        //     int amount = _selectedRecipe.RecipeIngredients[key].Amount;
+        //     StackedItems stackedItems = new(item, amount);
+        //     if (!_player.Inventory.IsContainingStackedItems(stackedItems)) {
+        //         return false;
+        //     }
+        // }
 
         return true;
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    private void RpcHostTryCraft(Recipe recipe, Dictionary<string, Item> ingredients) {
+    private void RpcHostTryCraft(uint recipeId, Dictionary<string, Dictionary> ingredientsDictionary) {
         if (!IsCraftValid()) return;
         
-        // craft on host
+        RpcCraftRecipe(recipeId, ingredientsDictionary);
         
         int senderId = Multiplayer.GetRemoteSenderId();
         if (senderId == 1) return;
-        // craft on client
-        
+        RpcId(senderId, nameof(RpcCraftRecipe), recipeId, ingredientsDictionary);
     }
 
-    private void CraftRecipe(Recipe recipe, Dictionary<string, Item> ingredients) {
-        StackedItems newItems = recipe.Build(ingredients);
-        var temp = ingredients.Values.ToList();
-        foreach (Item item in temp) {
-            
-        }
+    private void RpcCraftRecipe(uint recipeId, Dictionary<string, Dictionary> ingredientsDictionary) {
+        // Recipe recipe = Data.Recipes.GetRecipe(recipeId);
+        // Dictionary<string, Item> ingredients = new();
+        // foreach ((string key, Dictionary ingredientDict) in ingredientsDictionary) {
+        //     ingredients[key] = Item.FromDictionary(ingredientDict);
+        // }
+        // StackedItems newItems = recipe.Build(ingredients);
+        //
+        // GD.Print(newItems.Item.Name);
     }
 
     private void OnIngredientButtonClicked(Item item, string slotName) {
-        _selectedIngredients[slotName] = item;
-        StackedItems newItems = _selectedRecipe.Build(_selectedIngredients);
-        SelectedIngredientsChanged?.Invoke(newItems);
+        // _selectedIngredients[slotName] = item;
+        // StackedItems newItems = _selectedRecipe.Build(_selectedIngredients);
+        // SelectedIngredientsChanged?.Invoke(newItems);
     }
 
-    private void OnRecipeButtonClicked(Recipe recipe) {
-        _selectedRecipe = recipe;
-        _selectedIngredients.Clear();
-    }
+    // private void OnRecipeButtonClicked(Recipe recipe) {
+    //     _selectedRecipe = recipe;
+    //     _selectedIngredients.Clear();
+    // }
 }
