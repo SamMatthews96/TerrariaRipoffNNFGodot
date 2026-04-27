@@ -14,9 +14,7 @@ public partial class ItemWeaponOutputTemplate : ItemPropertyOutputTemplate {
         Dictionary<string, Item> suppliedIngredients
     ) {
         float speed = Speed.ResolveTemplate(suppliedIngredients);
-        // float speed = 7;
         float damage = Damage.ResolveTemplate(suppliedIngredients);
-        // float damage = 7;
         Texture2D texture = TextureSingle.ResolveTemplate(suppliedIngredients);
         
         return ItemWeapon.Create(

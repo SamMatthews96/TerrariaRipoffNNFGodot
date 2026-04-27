@@ -12,23 +12,20 @@ public partial class Crafting : Control {
     [Export] public IngredientPopup IngredientPopup { get; private set; }
 
     public override void _Ready() {
-        Hide();
+        Visible = false;
         GameInterface.World.InputManager.ToggleInventoryPressed += OnToggleInventoryPressed;
         GameInterface.World.InputManager.EscapePressed += OnEscapePressed;
-        
+        TreeExiting += () => {
+            GameInterface.World.InputManager.ToggleInventoryPressed -= OnToggleInventoryPressed;
+            GameInterface.World.InputManager.EscapePressed -= OnEscapePressed;
+        };
     }
 
     private void OnToggleInventoryPressed() {
-        if (Visible) {
-            Hide();
-        } else {
-            Show();
-        }
+        Visible = !Visible;
     }
 
     private void OnEscapePressed() {
-        if (Visible) {
-            Hide();
-        }
+        Visible = false;
     }
 }

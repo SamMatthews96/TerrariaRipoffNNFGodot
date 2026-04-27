@@ -9,7 +9,7 @@ public partial class Data : Node {
     public static PackedScenes PackedScenes { get; private set; }
     public static Items Items { get; private set; }
     public static CraftingStations CraftingStations { get; private set; }
-    // public static Recipes Recipes { get; private set; }
+    public static Recipes Recipes { get; private set; }
 
     [Export] private PackedScenes _packedScenes;
     [Export] private Items _items;
@@ -20,6 +20,6 @@ public partial class Data : Node {
         PackedScenes = _packedScenes;
         Items = _items;
         CraftingStations = _craftingStations;
-        // Recipes = _recipes;
+        Recipes = new Recipes();
     }
 }

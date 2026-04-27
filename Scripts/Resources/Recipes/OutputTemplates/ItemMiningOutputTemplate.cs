@@ -14,11 +14,8 @@ public partial class ItemMiningOutputTemplate : ItemPropertyOutputTemplate {
     ) {
         return ItemMining.Create(
             speed: Speed.ResolveTemplate(suppliedIngredients),
-            // speed: 7,
             range: Range.ResolveTemplate(suppliedIngredients),
-            // range: 7,
             power: Power.ResolveTemplate(suppliedIngredients)
-            // power: 7
         );
     }
 }

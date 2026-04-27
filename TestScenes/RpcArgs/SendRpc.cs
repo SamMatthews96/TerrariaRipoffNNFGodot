@@ -2,7 +2,7 @@
 
 namespace TerrariaRipoffNNF.TestScenes.RpcArgs;
 
-// Sending resources acros RPC will not work
+// Sending resources across RPC will not work
 public partial class SendRpc : Node {
     [Export] private NetworkTest _networkTest;
     // [Export] private Recipe _recipe;
