@@ -10,13 +10,13 @@ public partial class WorldRenderer : Node2D {
     [Export] private World _world;
     private Player _localPlayer;
     private Rid _canvas;
-    
+
     public override void _Ready() {
         _canvas = RenderingServer.CanvasItemCreate();
         RenderingServer.CanvasItemSetParent(_canvas, GetCanvasItem());
         RenderingServer.CanvasItemSetTransform(_canvas, new Transform2D(0, Vector2.Zero));
         ProcessMode = ProcessModeEnum.Disabled;
-        
+
         _world.PlayerManager.LocalPlayerSpawned += OnLocalPlayerSpawned;
         TreeExiting += () => {
             RenderingServer.FreeRid(_canvas);
@@ -40,8 +40,14 @@ public partial class WorldRenderer : Node2D {
 
         for (int x = drawPositionXStart; x < drawPositionXEnd; x++) {
             for (int y = drawPositionYStart; y < drawPositionYEnd; y++) {
+                bool isBlock = true;
                 Block block = _world.BlockManager.Blocks[x, y];
-                if (block == null) continue;
+                if (block is null) {
+                    isBlock = false;
+                    block = _world.BlockManager.Walls[x, y];
+                }
+                if (block is null) continue;
+
                 Rect2 drawDimensions = new(
                     x * Game.BlockSize,
                     y * Game.BlockSize,
@@ -49,11 +55,13 @@ public partial class WorldRenderer : Node2D {
                     Game.BlockSize
                 );
                 Item item = ResourceLoader.Load<Item>(block.ResourcePath);
-
+                float modulate = isBlock ? 1 : 0.3f;
+                Color color = new(modulate, modulate, modulate);
                 RenderingServer.CanvasItemAddTextureRect(
                     _canvas,
                     drawDimensions,
-                    item.IconTexture.GetRid()
+                    item.IconTexture.GetRid(),
+                    modulate: color
                 );
             }
         }

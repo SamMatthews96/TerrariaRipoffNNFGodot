@@ -34,6 +34,7 @@ _world = NodePath("..")
 
 [node name="WorldRenderer" type="Node2D" parent="." unique_id=840519149 node_paths=PackedStringArray("_world")]
 process_mode = 3
+z_index = -1
 script = ExtResource("6_wcfbk")
 _world = NodePath("..")
 

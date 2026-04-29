@@ -23,20 +23,32 @@ public static class WorldCreator {
         };
         Random random = new();
 
+        Item wallItem = Data.Items.Earth;
+        Dictionary wallItemDict = wallItem.ToDictionary();
+        
         Array blockList = new();
+        Array wallList = new();
         for (int x = 0; x < worldBasicInfo.Width; x++) {
             for (int y = mid; y < worldBasicInfo.Height; y++) {
                 Item item = items[random.Next(items.Length)];
                 Dictionary newBlock = new() {
                     { "item", item.ToDictionary() },
                     { "xPosition", x },
-                    { "yPosition", y },
+                    { "yPosition", y }
                 };
                 blockList.Add(newBlock);
+                
+                Dictionary newWall = new() {
+                    { "item", wallItemDict },
+                    { "xPosition", x },
+                    { "yPosition", y }
+                };
+                wallList.Add(newWall);
             }
         }
 
         worldDictionary.Add("blocks", blockList);
+        worldDictionary.Add("walls", wallList);
 
         FileManager.SaveWorld(worldDictionary);
     }

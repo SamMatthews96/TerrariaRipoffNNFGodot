@@ -84,18 +84,38 @@ public partial class BuildAction : PlayerAction {
     }
 
     public override void RightMouseAction(Vector2 mouseWorldPosition) {
-        Vector2 temp = mouseWorldPosition / Game.BlockSize;
-        Vector2I coords = new((int)temp.X, (int)temp.Y);
         if (_blockItem is null) return;
+        RpcId(1, nameof(RpcHostAttemptBuildSecondary), mouseWorldPosition,
+            _blockItem.ToDictionary());
+    }
+
+    private void RpcHostAttemptBuildSecondary(
+        Vector2 mouseWorldPosition, Dictionary blockItemDict
+    ) {
+        Vector2I coords = new(
+            (int)Math.Floor(mouseWorldPosition.X / Game.BlockSize),
+            (int)Math.Floor(mouseWorldPosition.Y / Game.BlockSize)
+        );
 
         if (!Player.World.IsInBounds(coords)) return;
         float range = 8;
         if (Math.Abs(coords.X - Player.Coords.X) > range) return;
         if (Math.Abs(coords.Y - Player.Coords.Y) > range) return;
 
-        if (_blockItem.HasProperty<ItemBlock>()) {
-            HostPlaceWallAction?.Invoke(_blockItem, coords);
+        // check that item is valid
+        Item item = Item.FromDictionary(blockItemDict);
+        if (item is null) {
+            throw new Exception("Item is null");
         }
+
+        if (item.HasProperty<ItemBlock>()) {
+            AttemptBuildWall(item, coords);
+        }
+    }
+    
+    private void AttemptBuildWall(Item item, Vector2I coords) {
+        if (Player.World.IsCellFilled(coords)) return;
+        HostPlaceWallAction?.Invoke(item, coords);
     }
 
     public override void EndLeftMouseAction(Vector2 mouseWorldPosition) { }
