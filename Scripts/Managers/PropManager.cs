@@ -9,9 +9,10 @@ namespace TerrariaRipoffNNF;
  */
 public partial class PropManager : Node {
     [Export] private World _world;
-    private Dictionary<Vector2I, Node2D> _propCells = new();
+    public Dictionary<Vector2I, Node2D> PropCells { get; private set; }
 
     public override void _Ready() {
+        PropCells = new Dictionary<Vector2I, Node2D>();
         if (!_world.IsHost) return;
         
         _world.PlayerManager.PlayerSpawnedOnServer += OnPlayerSpawnedOnServer;
@@ -32,7 +33,7 @@ public partial class PropManager : Node {
     private void OnHostPlacePropAction(Item item, Vector2I coords) {
         Prop newProp = Prop.Create(item, coords);
         foreach (Vector2I cell in newProp.Cells) {
-            _propCells[cell] = newProp;
+            PropCells[cell] = newProp;
         }
         AddChild(newProp);
     }

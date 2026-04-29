@@ -10,10 +10,11 @@
 [ext_resource type="PackedScene" uid="uid://javhx4rej0q4" path="res://Scenes/Interface/Game/GameInterface.tscn" id="8_2udm8"]
 [ext_resource type="Script" uid="uid://cheg1o8gv8pno" path="res://Scripts/Managers/PropManager.cs" id="9_oby1v"]
 
-[node name="World" type="Node2D" unique_id=318249153 node_paths=PackedStringArray("PickupManager", "PlayerManager", "Interface", "InputManager")]
+[node name="World" type="Node2D" unique_id=318249153 node_paths=PackedStringArray("PickupManager", "PlayerManager", "PropManager", "Interface", "InputManager")]
 script = ExtResource("1_qmgnr")
 PickupManager = NodePath("PickupManager")
 PlayerManager = NodePath("PlayerManager")
+PropManager = NodePath("PropManager")
 Interface = NodePath("GameInterface")
 InputManager = NodePath("InputManager")
 

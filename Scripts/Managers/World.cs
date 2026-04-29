@@ -14,8 +14,9 @@ public partial class World : Node2D {
     public Vector2I DefaultSpawnPosition { get; private set; } = new(4, 14);
     [Export] public PickupManager PickupManager { get; private set; }
     [Export] public PlayerManager PlayerManager { get; private set; }
-    [Export] public Interface.Game Interface { get; private set; }
+    [Export] public PropManager PropManager { get; private set; }
     [Export] public InputManager InputManager { get; private set; }
+    [Export] public Interface.Game Interface { get; private set; }
 
     // World sync constants
     private const int ChunkSize = 50;
@@ -130,6 +131,11 @@ public partial class World : Node2D {
                && coords.X < WorldSize.X
                && coords.Y >= 0
                && coords.Y < WorldSize.Y;
+    }
+
+    public bool IsCellFilled(Vector2I coords) {
+        if (Blocks[coords.X,coords.Y] is not null) return true;
+        return PropManager.PropCells.ContainsKey(coords);
     }
 
     #region World Synchronization

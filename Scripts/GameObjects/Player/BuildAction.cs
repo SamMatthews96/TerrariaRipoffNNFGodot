@@ -29,16 +29,18 @@ public partial class BuildAction : PlayerAction {
 
     public override void LeftMouseAction(Vector2 mouseWorldPosition) {
         if (_blockItem is null) return;
-        RpcId(1, nameof(RpcHostAttemptBuildBlock), mouseWorldPosition,
+        RpcId(1, nameof(RpcHostAttemptBuildPrimary), mouseWorldPosition,
             _blockItem.ToDictionary());
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    private void RpcHostAttemptBuildBlock(
+    private void RpcHostAttemptBuildPrimary(
         Vector2 mouseWorldPosition, Dictionary blockItemDict
     ) {
-        // check that location is valid
-        Vector2I coords = (Vector2I)(mouseWorldPosition / Game.BlockSize);
+        Vector2I coords = new(
+            (int)Math.Floor(mouseWorldPosition.X / Game.BlockSize),
+            (int)Math.Floor(mouseWorldPosition.Y / Game.BlockSize)
+        );
         if (!Player.World.IsInBounds(coords)) return;
         float range = 8;
         float distance = (float)Math.Sqrt(
@@ -46,18 +48,42 @@ public partial class BuildAction : PlayerAction {
             Math.Pow(coords.Y - Player.Coords.Y, 2)
         );
         if (distance > range) return;
-        if (Player.World.Blocks[coords.X, coords.Y] is not null) return;
 
         // check that item is valid
-        Item blockItem = Item.FromDictionary(blockItemDict);
-        if (blockItem is null) return;
-        if (blockItem.HasProperty<ItemBlock>()) {
-            HostPlaceBlockAction?.Invoke(blockItem, coords);
-        } else if (blockItem.HasProperty<ItemProp>()) {
-            HostPlacePropAction?.Invoke(blockItem, coords);
+        Item item = Item.FromDictionary(blockItemDict);
+        if (item is null) {
+            throw new Exception("Item is null");
+        }
+
+        if (item.HasProperty<ItemBlock>()) {
+            AttemptBuildBlock(item, coords);
+        } else if (item.HasProperty<ItemProp>()) {
+            AttemptBuildProp(item, coords);
         }
     }
 
+    private void AttemptBuildBlock(Item item, Vector2I coords) {
+        if (Player.World.IsCellFilled(coords)) return;
+        HostPlaceBlockAction?.Invoke(item, coords);
+    }
+
+    private void AttemptBuildProp(Item item, Vector2I coords) {
+        ItemProp prop = item.GetProperty<ItemProp>();
+        if (!Player.World.IsInBounds(coords)) return;
+        Vector2I bottomRight = coords + prop.Dimensions + Vector2I.Left;
+        if (!Player.World.IsInBounds(bottomRight)) return;
+        for (int x = 0; x < prop.Dimensions.X; x++) {
+            for (int y = 0; y < prop.Dimensions.Y; y++) {
+                Vector2I cell = coords + new Vector2I(x, y);
+                if (Player.World.IsCellFilled(cell)) return;
+            }
+
+            Vector2I ground = coords + new Vector2I(x, prop.Dimensions.Y);
+            if (Player.World.Blocks[ground.X, ground.Y] is null) return;
+        }
+
+        HostPlacePropAction?.Invoke(item, coords);
+    }
 
     public override void RightMouseAction(Vector2 mouseWorldPosition) {
         Vector2 temp = mouseWorldPosition / Game.BlockSize;
