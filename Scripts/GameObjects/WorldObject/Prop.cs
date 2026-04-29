@@ -4,14 +4,14 @@ using Godot.Collections;
 namespace TerrariaRipoffNNF;
 
 public partial class Prop : Node2D {
-    private Item _item;
+    public Item Item { get; private set; }
     public Array<Vector2I> Cells { get; private set; } = new();
     [Export] private Sprite2D _sprite;
 
     public static Prop Create(Item item, Vector2I coords) {
         Prop newProp = Data.PackedScenes.Prop.Instantiate<Prop>();
         newProp.Position = coords * Game.BlockSize;
-        newProp._item = item;
+        newProp.Item = item;
         ItemProp itemProp = item.GetProperty<ItemProp>();
         // let coords be the top left of the prop
         for (int x = 0; x < itemProp.Dimensions.X; x++) {

@@ -1,4 +1,5 @@
-﻿using Godot;
+﻿using System;
+using Godot;
 using Godot.Collections;
 
 namespace TerrariaRipoffNNF;
@@ -6,6 +7,8 @@ namespace TerrariaRipoffNNF;
 public partial class PropManager : Node {
     [Export] private World _world;
     public Dictionary<Vector2I, Prop> PropCells { get; private set; }
+
+    public event Action<Item, Vector2I> HostPropDestroyed;
 
     public override void _Ready() {
         PropCells = new Dictionary<Vector2I, Prop>();
@@ -49,14 +52,16 @@ public partial class PropManager : Node {
     }
     
     private void OnHostGatherPropAction(Vector2I coords, float damage) {
+        Prop prop = PropCells[coords];
         Rpc(nameof(RpcClientsGatherProp), coords);
+        HostPropDestroyed?.Invoke(prop.Item, coords);
     }
 
     [Rpc(CallLocal = true)]
     private void RpcClientsGatherProp(Vector2I coords) {
         Prop prop = PropCells[coords];
         foreach (Vector2I cell in prop.Cells) {
-            PropCells[cell] = null;
+            PropCells.Remove(cell);
         }
         prop.QueueFree();
     }

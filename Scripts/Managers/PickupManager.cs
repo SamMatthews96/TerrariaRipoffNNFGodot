@@ -11,7 +11,7 @@ public partial class PickupManager : Node2D {
     private readonly List<PickupEntity> _activePickups = new();
     [Export] private World _world;
     private int _pickupCount;
-    
+
     public event Action<Vector2I> ServerPickupCreated;
     public delegate void CellMovedDelegate(Vector2I newCoords, Vector2I oldCoords);
     public event CellMovedDelegate ServerPickupMoved;
@@ -21,11 +21,13 @@ public partial class PickupManager : Node2D {
         if (_world.IsHost) {
             _world.BlockManager.BlockDestroyed += HostOnBlockDestroyed;
             _world.PlayerManager.PlayerSpawnedOnHost += OnPlayedSpawnedOnHost;
+            _world.PropManager.HostPropDestroyed += OnHostPropDestroyed;
             TreeExiting += () => {
                 _world.BlockManager.BlockDestroyed -= HostOnBlockDestroyed;
                 _world.PlayerManager.PlayerSpawnedOnHost -= OnPlayedSpawnedOnHost;
+                _world.PropManager.HostPropDestroyed -= OnHostPropDestroyed;
             };
-            
+
             ProcessMode = ProcessModeEnum.Always;
         } else {
             ProcessMode = ProcessModeEnum.Disabled;
@@ -35,9 +37,7 @@ public partial class PickupManager : Node2D {
 
     private void OnPlayedSpawnedOnHost(Player player) {
         player.ServerPickupArea.CollectedPickup += HostOnPlayerCollectedPickup;
-        player.TreeExiting += () => {
-            player.ServerPickupArea.CollectedPickup -= HostOnPlayerCollectedPickup;
-        };
+        player.TreeExiting += () => { player.ServerPickupArea.CollectedPickup -= HostOnPlayerCollectedPickup; };
     }
 
     private void HostOnPlayerCollectedPickup(PickupEntity pickup) {
@@ -52,15 +52,29 @@ public partial class PickupManager : Node2D {
             (coords.Y + 0.5f) * Game.BlockSize
         );
         _pickupCount++;
-        Rpc(nameof(RpcAllCreatePickup), position, resourcePath, _pickupCount);
+        Dictionary resourcePathDict = new();
+        resourcePathDict["ResourcePath"] = resourcePath;
+        Rpc(nameof(RpcAllCreatePickup), 
+            position, resourcePathDict, _pickupCount);
+        ServerPickupCreated?.Invoke(coords);
+    }
+
+    private void OnHostPropDestroyed(Item item, Vector2I coords) {
+        Vector2 position = new(
+            (coords.X + 0.5f) * Game.BlockSize,
+            (coords.Y + 0.5f) * Game.BlockSize);
+        _pickupCount++;
+        Rpc(nameof(RpcAllCreatePickup), 
+            position, item.ToDictionary(), _pickupCount);    
         ServerPickupCreated?.Invoke(coords);
     }
 
     [Rpc(CallLocal = true)]
-    private void RpcAllCreatePickup(Vector2 position, string resourcePath, int pickupCount) {
+    private void RpcAllCreatePickup(
+        Vector2 position, Dictionary resourcePath, int pickupCount) {
         PickupEntity pickup =
             Data.PackedScenes.Pickup.Instantiate<PickupEntity>();
-        Item item = ResourceLoader.Load<Item>(resourcePath);
+        Item item = Item.FromDictionary(resourcePath);
         pickup.Position = position;
         pickup.Coords = new Vector2I(
             (int)(position.X / Game.BlockSize - 0.5f),
@@ -72,6 +86,7 @@ public partial class PickupManager : Node2D {
         foreach (int peerId in peers) {
             pickup.Synchronizer.SetVisibilityFor(peerId, true);
         }
+
         AddChild(pickup);
         _activePickups.Add(pickup);
     }
@@ -99,7 +114,7 @@ public partial class PickupManager : Node2D {
             dict["Name"] = activePickup.Name;
             pickupData.Add(dict);
         }
-        
+
         RpcId(senderId, nameof(RpcClientProcessPickupData), pickupData);
     }
 
@@ -108,8 +123,11 @@ public partial class PickupManager : Node2D {
         foreach (Dictionary pickupDict in pickupArray) {
             string itemResPath = pickupDict["Item"].ToString();
             int id = pickupDict["Name"].ToString().ToInt();
-            RpcAllCreatePickup(Vector2.Zero, itemResPath, id);
+            Dictionary dict = new();
+            dict["ResourcePath"] = itemResPath;
+            RpcAllCreatePickup(Vector2.Zero, dict, id);
         }
+
         RpcId(1, nameof(RpcHostAddClientToSync));
     }
 
