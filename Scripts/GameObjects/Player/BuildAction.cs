@@ -50,7 +50,7 @@ public partial class BuildAction : PlayerAction {
         // check that item is valid
         Item blockItem = Item.FromDictionary(blockItemDict);
         if (blockItem is null) return;
-        if (!blockItem.HasProperty<ItemPlaceable>()) return;
+        if (!blockItem.HasProperty<ItemBlock>()) return;
 
         HostPlaceBlockAction?.Invoke(blockItem, coords);
     }
@@ -68,7 +68,7 @@ public partial class BuildAction : PlayerAction {
             Math.Pow(coords.Y - Player.Coords.Y, 2)
         );
         if (distance > range) return;
-        if (_blockItem.HasProperty<ItemPlaceable>()) {
+        if (_blockItem.HasProperty<ItemBlock>()) {
             HostPlaceWallAction?.Invoke(_blockItem, coords);
         }
     }
