@@ -20,6 +20,7 @@
 [ext_resource type="Script" uid="uid://dvkkdi1y5ho67" path="res://Scripts/GameObjects/Player/BuildAction.cs" id="15_pfyql"]
 [ext_resource type="Script" uid="uid://cgdyjno3yd0yr" path="res://Scripts/GameObjects/Player/WeaponAction.cs" id="16_ahtse"]
 [ext_resource type="PackedScene" uid="uid://oqop40vb15di" path="res://Scenes/WeaponNodes/Projectile.tscn" id="16_p2brr"]
+[ext_resource type="PackedScene" uid="uid://cmeg4ppsu66t8" path="res://Scenes/GameObjects/Prop.tscn" id="16_r0aru"]
 [ext_resource type="Script" uid="uid://kjyoip5nu1o4" path="res://Scripts/GameObjects/Player/Crafting.cs" id="17_2gngu"]
 [ext_resource type="PackedScene" uid="uid://dyxoinb1s88j3" path="res://Scenes/WeaponNodes/Swing.tscn" id="17_w7gg7"]
 [ext_resource type="PackedScene" uid="uid://cakmoct7fr7qe" path="res://Scenes/Managers/World.tscn" id="19_w7gg7"]
@@ -131,6 +132,7 @@ RecipeIngredientSlotTexture = ExtResource("7_6ykcs")
 BlockTypeButton = ExtResource("4_rx88w")
 ItemTooltipPropertyGroup = ExtResource("5_8fovs")
 SelectIngredientButton = ExtResource("11_tftwe")
+Prop = ExtResource("16_r0aru")
 LoadingScreen = ExtResource("4_y0gj7")
 World = ExtResource("19_w7gg7")
 WeaponProjectile = ExtResource("16_p2brr")

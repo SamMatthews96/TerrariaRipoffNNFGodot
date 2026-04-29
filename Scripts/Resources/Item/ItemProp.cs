@@ -6,7 +6,7 @@ namespace TerrariaRipoffNNF;
 [GlobalClass]
 public partial class ItemProp : ItemProperty {
     [Export] public Texture2D Texture { get; private set; }
-    [Export] public Vector2 Dimensions { get; private set; }
+    [Export] public Vector2I Dimensions { get; private set; }
     
     public override Dictionary GetTooltipAttributes() {
         return new Dictionary();

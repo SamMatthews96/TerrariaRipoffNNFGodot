@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://cmeg4ppsu66t8"]
+
+[ext_resource type="Texture2D" uid="uid://dom0h6yhambyh" path="res://Assets/Images/placedTorch.png" id="1_754s8"]
+[ext_resource type="Script" uid="uid://cio6nbw3j247k" path="res://Scripts/GameObjects/WorldObject/Prop.cs" id="1_ume6u"]
+
+[node name="Prop" type="Node2D" unique_id=297699570 node_paths=PackedStringArray("_sprite")]
+script = ExtResource("1_ume6u")
+_sprite = NodePath("Sprite2D")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1819042009]
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("1_754s8")
+centered = false

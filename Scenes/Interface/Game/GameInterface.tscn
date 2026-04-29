@@ -116,7 +116,7 @@ texture_normal = ExtResource("8_y013w")
 script = ExtResource("6_eri8v")
 State = 2
 
-[node name="Build" type="VBoxContainer" parent="." unique_id=1906919574 node_paths=PackedStringArray("_gameInterface", "_blockButtonContainer", "_placeableButtonContainer")]
+[node name="Build" type="VBoxContainer" parent="." unique_id=1906919574 node_paths=PackedStringArray("_gameInterface", "_blockButtonContainer", "_propButtonContainer")]
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
@@ -126,22 +126,22 @@ grow_vertical = 0
 script = ExtResource("9_jhyas")
 _gameInterface = NodePath("..")
 _blockButtonContainer = NodePath("BuildBlockBar/MarginContainer/BlockButtonContainer")
-_placeableButtonContainer = NodePath("PanelContainer/MarginContainer/PlaceableButtonContainer")
+_propButtonContainer = NodePath("BuildPropBar/MarginContainer/PropButtonContainer")
 
-[node name="PanelContainer" type="PanelContainer" parent="Build" unique_id=298528441]
+[node name="BuildPropBar" type="PanelContainer" parent="Build" unique_id=298528441]
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="Build/PanelContainer" unique_id=1676212287]
+[node name="MarginContainer" type="MarginContainer" parent="Build/BuildPropBar" unique_id=1676212287]
 layout_mode = 2
 theme_override_constants/margin_left = 3
 theme_override_constants/margin_top = 3
 theme_override_constants/margin_right = 3
 theme_override_constants/margin_bottom = 3
 
-[node name="PlaceableButtonContainer" type="HBoxContainer" parent="Build/PanelContainer/MarginContainer" unique_id=946354533]
+[node name="PropButtonContainer" type="HBoxContainer" parent="Build/BuildPropBar/MarginContainer" unique_id=946354533]
 layout_mode = 2
 
-[node name="BlockTypeButton" parent="Build/PanelContainer/MarginContainer/PlaceableButtonContainer" unique_id=916879533 instance=ExtResource("10_gomyk")]
+[node name="BlockTypeButton" parent="Build/BuildPropBar/MarginContainer/PropButtonContainer" unique_id=916879533 instance=ExtResource("10_gomyk")]
 layout_mode = 2
 
 [node name="BuildBlockBar" type="PanelContainer" parent="Build" unique_id=1064430124]

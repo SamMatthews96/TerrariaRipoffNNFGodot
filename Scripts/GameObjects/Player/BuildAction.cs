@@ -5,9 +5,10 @@ using Godot.Collections;
 namespace TerrariaRipoffNNF;
 
 public partial class BuildAction : PlayerAction {
-    public delegate void PlaceBlockDelegate(Item item, Vector2I coords);
-    public event PlaceBlockDelegate HostPlaceBlockAction;
-    public event PlaceBlockDelegate HostPlaceWallAction;
+    public delegate void BuildActionDelegate(Item item, Vector2I coords);
+    public event BuildActionDelegate HostPlaceBlockAction;
+    public event BuildActionDelegate HostPlaceWallAction;
+    public event BuildActionDelegate HostPlacePropAction;
 
     private Item _blockItem;
 
@@ -50,9 +51,11 @@ public partial class BuildAction : PlayerAction {
         // check that item is valid
         Item blockItem = Item.FromDictionary(blockItemDict);
         if (blockItem is null) return;
-        if (!blockItem.HasProperty<ItemBlock>()) return;
-
-        HostPlaceBlockAction?.Invoke(blockItem, coords);
+        if (blockItem.HasProperty<ItemBlock>()) {
+            HostPlaceBlockAction?.Invoke(blockItem, coords);
+        } else if (blockItem.HasProperty<ItemProp>()) {
+            HostPlacePropAction?.Invoke(blockItem, coords);
+        }
     }
 
 
