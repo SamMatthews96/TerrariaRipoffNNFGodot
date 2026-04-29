@@ -7,10 +7,10 @@ namespace TerrariaRipoffNNF.Interface;
 public partial class Build : Container {
     [Export] private Game _gameInterface;
     [Export] private BoxContainer _blockButtonContainer;
-    [Export] private BoxContainer _placeableButtonContainer;
+    [Export] private BoxContainer _propButtonContainer;
     
     private readonly Dictionary<string, BlockTypeButton> _blockButtons = new();
-    private readonly Dictionary<string, BlockTypeButton> _placeableButtons = new();
+    private readonly Dictionary<string, BlockTypeButton> _propButtons = new();
 
     
     private BlockTypeButton _selectedButton;
@@ -23,7 +23,7 @@ public partial class Build : Container {
             node.QueueFree();
         }
 
-        foreach (Node node in _placeableButtonContainer.GetChildren()) {
+        foreach (Node node in _propButtonContainer.GetChildren()) {
             node.QueueFree();
         }
 
@@ -59,10 +59,6 @@ public partial class Build : Container {
         if (stackedItems.Item.HasProperty<ItemBlock>()) {
             AddBlockButton(stackedItems);
         }
-
-        // if (stackedItems.Item.HasProperty<ItemPlaceableOld>()) {
-        //     AddPlaceableButton(stackedItems);
-        // }
     }
 
     private void AddBlockButton(StackedItems stackedItems) {
@@ -75,13 +71,13 @@ public partial class Build : Container {
         }
     }
 
-    private void AddPlaceableButton(StackedItems stackedItems) {
+    private void AddPropButton(StackedItems stackedItems) {
         BlockTypeButton button = BlockTypeButton.Create(stackedItems.Item, false);
-        button.BuildBlockSelected += SelectPlaceableButton;
-        _placeableButtonContainer.AddChild(button);
-        _placeableButtons.Add(stackedItems.Item.Name, button);
+        button.BuildBlockSelected += SelectPropButton;
+        _propButtonContainer.AddChild(button);
+        _propButtons.Add(stackedItems.Item.Name, button);
         if (_selectedButton == null) {
-            SelectPlaceableButton(stackedItems.Item);
+            SelectPropButton(stackedItems.Item);
         }
     }
 
@@ -90,7 +86,7 @@ public partial class Build : Container {
             return;
         }
 
-        _placeableButtons.Remove(stackedItems.Item.Name);
+        _propButtons.Remove(stackedItems.Item.Name);
         
         
         if (_selectedButton == button) {
@@ -110,10 +106,10 @@ public partial class Build : Container {
         BuildButtonSelected?.Invoke(item);
     }
 
-    private void SelectPlaceableButton(Item item) {
+    private void SelectPropButton(Item item) {
         _selectedButton?.SetUnfocus();
 
-        _selectedButton = _placeableButtons[item.Name];
+        _selectedButton = _propButtons[item.Name];
         _selectedButton.SetFocus();
         BuildButtonSelected?.Invoke(item);
     }

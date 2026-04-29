@@ -4,9 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://bsnw8muyx5lhx" path="res://Assets/Images/ItemIcons/stonePlaceholder.png" id="1_kmiyo"]
 [ext_resource type="Script" uid="uid://drhtbuywngnuq" path="res://Scripts/Resources/Recipes/RecipeFieldMaps/Float/RecipeFieldMapFloatConstant.cs" id="2_kmiyo"]
 [ext_resource type="Script" uid="uid://bfcev5h2r3enq" path="res://Scripts/Resources/Recipes/RecipeFieldMaps/String/RecipeFieldMapStringConstant.cs" id="3_w51hq"]
-[ext_resource type="Texture2D" uid="uid://c4xxd5bays5fi" path="res://Assets/Images/placedBench.png" id="4_qh1d6"]
 [ext_resource type="Texture2D" uid="uid://cyllurh0pjf8q" path="res://Assets/Images/ItemIcons/bench.png" id="4_xeeua"]
-[ext_resource type="Script" uid="uid://yd4u7trnr176" path="res://Scripts/Resources/Recipes/OutputTemplates/ItemPlaceableOutputTemplate.cs" id="5_pwi0r"]
 [ext_resource type="Script" uid="uid://d2pqak21epjnt" path="res://Scripts/Resources/Recipes/RecipeFieldMaps/Texture/RecipeFieldMapTextureConstant.cs" id="5_qh1d6"]
 [ext_resource type="Texture2D" uid="uid://cd8fw3qgjwmu3" path="res://Assets/Images/ItemIcons/benchPlaceholder.png" id="6_pwi0r"]
 [ext_resource type="Script" uid="uid://wufmphxsnnhm" path="res://Scripts/Resources/Recipes/Recipe.cs" id="7_5gmoa"]
@@ -23,11 +21,6 @@ metadata/_custom_type_script = "uid://fn1nx4h2shbl"
 script = ExtResource("2_kmiyo")
 _value = 3.0
 metadata/_custom_type_script = "uid://drhtbuywngnuq"
-
-[sub_resource type="Resource" id="Resource_xeeua"]
-script = ExtResource("5_pwi0r")
-Texture = ExtResource("4_qh1d6")
-metadata/_custom_type_script = "uid://yd4u7trnr176"
 
 [sub_resource type="Resource" id="Resource_1p1fj"]
 script = ExtResource("3_w51hq")
@@ -49,5 +42,5 @@ TemplateIcon = ExtResource("6_pwi0r")
 ResultNameMap = SubResource("Resource_1p1fj")
 ResultInventorySpaceMap = SubResource("Resource_mj3rb")
 ResultTextureSingleMap = SubResource("Resource_0chpu")
-ResultItemProperties = Array[Object]([SubResource("Resource_xeeua")])
+ResultItemProperties = Array[Object]([])
 metadata/_custom_type_script = "uid://wufmphxsnnhm"
