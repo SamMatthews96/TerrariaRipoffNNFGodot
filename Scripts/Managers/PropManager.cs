@@ -3,10 +3,6 @@ using Godot.Collections;
 
 namespace TerrariaRipoffNNF;
 
-/*
- * 
- * 
- */
 public partial class PropManager : Node {
     [Export] private World _world;
     public Dictionary<Vector2I, Node2D> PropCells { get; private set; }

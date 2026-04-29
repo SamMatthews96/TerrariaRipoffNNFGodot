@@ -12,28 +12,16 @@ public partial class GatherAction : PlayerAction {
     public override void _Ready() {
         ProcessMode = ProcessModeEnum.Disabled;
         Player = ActionController.Player;
-        if (Player.World.IsHost) {
-            _gatherCooldown.Timeout += OnGatherTimeoutHost;
-            TreeExiting += () => {
-                _gatherCooldown.Timeout -= OnGatherTimeoutHost;
-            };
-        }
+        
         if (!Player.IsLocalPlayer) return;
         Player.ActionController.ActionChanged += OnActionChanged;
-        _gatherCooldown.Timeout += OnGatherTimeoutClient;
         TreeExiting += () => {
             Player.ActionController.ActionChanged -= OnActionChanged;
-            _gatherCooldown.Timeout -= OnGatherTimeoutClient;
         };
     }
 
-    private void OnGatherTimeoutHost() {
-        GD.Print("Host timeout");
-    }
+    
 
-    private void OnGatherTimeoutClient() {
-        GD.Print("Client timeout");
-    }
 
 
     private void OnActionChanged(PlayerActionType _) {
