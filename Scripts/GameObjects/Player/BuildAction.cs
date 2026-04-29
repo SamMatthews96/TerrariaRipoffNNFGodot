@@ -89,6 +89,7 @@ public partial class BuildAction : PlayerAction {
             _blockItem.ToDictionary());
     }
 
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void RpcHostAttemptBuildSecondary(
         Vector2 mouseWorldPosition, Dictionary blockItemDict
     ) {
