@@ -41,13 +41,11 @@ public partial class BuildAction : PlayerAction {
             (int)Math.Floor(mouseWorldPosition.X / Game.BlockSize),
             (int)Math.Floor(mouseWorldPosition.Y / Game.BlockSize)
         );
+
         if (!Player.World.IsInBounds(coords)) return;
         float range = 8;
-        float distance = (float)Math.Sqrt(
-            Math.Pow(coords.X - Player.Coords.X, 2) +
-            Math.Pow(coords.Y - Player.Coords.Y, 2)
-        );
-        if (distance > range) return;
+        if (Math.Abs(coords.X - Player.Coords.X) > range) return;
+        if (Math.Abs(coords.Y - Player.Coords.Y) > range) return;
 
         // check that item is valid
         Item item = Item.FromDictionary(blockItemDict);
@@ -79,7 +77,7 @@ public partial class BuildAction : PlayerAction {
             }
 
             Vector2I ground = coords + new Vector2I(x, prop.Dimensions.Y);
-            if (Player.World.Blocks[ground.X, ground.Y] is null) return;
+            if (Player.World.BlockManager.Blocks[ground.X, ground.Y] is null) return;
         }
 
         HostPlacePropAction?.Invoke(item, coords);
@@ -88,15 +86,13 @@ public partial class BuildAction : PlayerAction {
     public override void RightMouseAction(Vector2 mouseWorldPosition) {
         Vector2 temp = mouseWorldPosition / Game.BlockSize;
         Vector2I coords = new((int)temp.X, (int)temp.Y);
-        if (!Player.World.IsInBounds(coords)) return;
-
-        float range = 8;
         if (_blockItem is null) return;
-        float distance = (float)Math.Sqrt(
-            Math.Pow(coords.X - Player.Coords.X, 2) +
-            Math.Pow(coords.Y - Player.Coords.Y, 2)
-        );
-        if (distance > range) return;
+
+        if (!Player.World.IsInBounds(coords)) return;
+        float range = 8;
+        if (Math.Abs(coords.X - Player.Coords.X) > range) return;
+        if (Math.Abs(coords.Y - Player.Coords.Y) > range) return;
+
         if (_blockItem.HasProperty<ItemBlock>()) {
             HostPlaceWallAction?.Invoke(_blockItem, coords);
         }

@@ -8,7 +8,6 @@ namespace TerrariaRipoffNNF;
 
 public partial class World : Node2D {
     public Game Game { get; private set; }
-    public Block[,] Blocks { get; private set; }
     public Vector2I WorldSize { get; private set; }
     public bool IsHost { get; private set; }
     public Vector2I DefaultSpawnPosition { get; private set; } = new(4, 14);
@@ -17,39 +16,21 @@ public partial class World : Node2D {
     [Export] public PropManager PropManager { get; private set; }
     [Export] public InputManager InputManager { get; private set; }
     [Export] public Interface.Game Interface { get; private set; }
+    [Export] public BlockManager BlockManager { get; private set; }
 
     // World sync constants
     private const int ChunkSize = 50;
     private Dictionary _localPlayerData;
-
-    public event Action<Vector2I, string> BlockDestroyed; 
-    public event Action<Vector2I> BlockCreated;
-
+    public Dictionary WorldData { get; private set; } 
+    
     public static World CreateAsHost(Game game, Dictionary worldData, Dictionary playerData) {
         World world = Data.PackedScenes.World.Instantiate<World>();
         world.IsHost = true;
         world.WorldSize = new Vector2I((int)worldData["Width"], (int)worldData["Height"]);
-        world.Blocks = new Block[world.WorldSize.X, world.WorldSize.Y];
         world.Game = game;
+        
         world._localPlayerData = playerData;
-
-        Array allWorldObjects = worldData["SavedWorldObjects"].AsGodotArray();
-        foreach (Dictionary dictionary in allWorldObjects) {
-            int x = (int)dictionary["xPosition"].ToString().ToFloat();
-            int y = (int)dictionary["yPosition"].ToString().ToFloat();
-
-            switch (dictionary["type"].ToString()) {
-                case "block":
-                    world.Blocks[x, y] = new Block() {
-                        CurrentHealth = 1,
-                        ResourcePath = dictionary["item"].AsGodotDictionary()["ResourcePath"].ToString(),
-                    };
-                    break;
-                default:
-                    throw new Exception(
-                        $"[20250529.2332.1] Unknown world object type: {dictionary["type"].ToString()}");
-            }
-        }
+        world.WorldData = worldData;
 
         return world;
     }
@@ -57,7 +38,6 @@ public partial class World : Node2D {
     public static World CreateAsClient(Dictionary metadata, Dictionary playerData, Game game) {
         World world = Data.PackedScenes.World.Instantiate<World>();
         world.WorldSize = new Vector2I((int)metadata["Width"], (int)metadata["Height"]);
-        world.Blocks = new Block[world.WorldSize.X, world.WorldSize.Y];
         world.Game = game;
         world._localPlayerData = playerData;
         return world;
@@ -72,11 +52,8 @@ public partial class World : Node2D {
     public override void _Ready() {
         Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
         if (IsHost) {
-            PlayerManager.PlayerSpawnedOnServer += OnPlayerSpawnedOnServer;
             PlayerManager.SpawnHostPlayer(_localPlayerData);
-            TreeExiting += () => {
-                PlayerManager.PlayerSpawnedOnServer -= OnPlayerSpawnedOnServer;
-            };
+            _localPlayerData = null;
         } else {
             RpcId(1, nameof(RpcRequestWorldData));
         }
@@ -84,46 +61,6 @@ public partial class World : Node2D {
 
     public override void _ExitTree() {
         Interface.GameMenu.ExitGameButtonDown -= OnExitGameClicked;
-    }
-
-    private void OnPlayerSpawnedOnServer(Player player) {
-        player.ActionController.BuildAction.HostPlaceBlockAction 
-            += OnHostPlaceBlockAction;
-        player.ActionController.GatherAction.ServerGatherAction
-            += OnServerGatherAction;
-        player.TreeExiting += () => {
-            player.ActionController.BuildAction.HostPlaceBlockAction 
-                -= OnHostPlaceBlockAction;
-            player.ActionController.GatherAction.ServerGatherAction
-                -= OnServerGatherAction;
-        };
-    }
-
-    private void OnHostPlaceBlockAction(Item item, Vector2I coords) {
-        Rpc(nameof(RpcAllCreateBlock), item.ResourcePath, coords);
-    }
-    
-    private void OnServerGatherAction(Vector2I coords, float damage) {
-        Block block = Blocks[coords.X, coords.Y];
-        block.CurrentHealth -= damage;
-        if (block.CurrentHealth <= 0) {
-            Rpc(nameof(RpcAllBlockDestroyed), coords, block.ResourcePath);
-        }
-    }
-    
-    [Rpc(CallLocal = true)]
-    private void RpcAllCreateBlock(string resourcePath, Vector2I coords) {
-        Blocks[coords.X, coords.Y] = new Block {
-            CurrentHealth = 1,
-            ResourcePath = resourcePath
-        };
-        BlockCreated?.Invoke(coords);
-    }
-
-    [Rpc(CallLocal = true)]
-    private void RpcAllBlockDestroyed(Vector2I coords, string resourcePath) {
-        Blocks[coords.X, coords.Y] = null;
-        BlockDestroyed?.Invoke(coords, resourcePath);
     }
 
     public bool IsInBounds(Vector2I coords) {
@@ -134,8 +71,15 @@ public partial class World : Node2D {
     }
 
     public bool IsCellFilled(Vector2I coords) {
-        if (Blocks[coords.X,coords.Y] is not null) return true;
+        if (BlockManager.Blocks[coords.X,coords.Y] is not null) return true;
         return PropManager.PropCells.ContainsKey(coords);
+    }
+
+    public bool IsInOrthogonalRange(Vector2I a, Vector2I b, int range) {
+        if (!IsInBounds(a) || !IsInBounds(b)) return false;
+        if (Math.Abs(a.X - b.X) > range) return false;
+        if (Math.Abs(a.Y - b.Y) > range) return false;
+        return true;
     }
 
     #region World Synchronization
@@ -179,7 +123,7 @@ public partial class World : Node2D {
 
         for (int x = startX; x < endX; x++) {
             for (int y = startY; y < endY; y++) {
-                Block block = Blocks[x, y];
+                Block block = BlockManager.Blocks[x, y];
                 if (block is null) continue;
                 Dictionary entityData = new() {
                     ["type"] = "block",
@@ -208,7 +152,7 @@ public partial class World : Node2D {
 
             switch (entityData["type"].ToString()) {
                 case "block":
-                    Blocks[x, y] = new Block() {
+                    BlockManager.Blocks[x, y] = new Block() {
                         CurrentHealth = (float)entityData["health"],
                         ResourcePath = entityData["path"].ToString()
                     };
@@ -226,6 +170,7 @@ public partial class World : Node2D {
 
     private void OnWorldSyncComplete() {
         PlayerManager.SpawnPlayersOnClient(_localPlayerData);
+        _localPlayerData = null;
     }
 
     #endregion

@@ -19,11 +19,11 @@ public partial class PickupManager : Node2D {
 
     public override void _Ready() {
         if (_world.IsHost) {
-            _world.BlockDestroyed += HostOnBlockDestroyed;
-            _world.PlayerManager.PlayerSpawnedOnServer += OnPlayedSpawnedOnServer;
+            _world.BlockManager.BlockDestroyed += HostOnBlockDestroyed;
+            _world.PlayerManager.PlayerSpawnedOnHost += OnPlayedSpawnedOnHost;
             TreeExiting += () => {
-                _world.BlockDestroyed -= HostOnBlockDestroyed;
-                _world.PlayerManager.PlayerSpawnedOnServer -= OnPlayedSpawnedOnServer;
+                _world.BlockManager.BlockDestroyed -= HostOnBlockDestroyed;
+                _world.PlayerManager.PlayerSpawnedOnHost -= OnPlayedSpawnedOnHost;
             };
             
             ProcessMode = ProcessModeEnum.Always;
@@ -33,7 +33,7 @@ public partial class PickupManager : Node2D {
         }
     }
 
-    private void OnPlayedSpawnedOnServer(Player player) {
+    private void OnPlayedSpawnedOnHost(Player player) {
         player.ServerPickupArea.CollectedPickup += HostOnPlayerCollectedPickup;
         player.TreeExiting += () => {
             player.ServerPickupArea.CollectedPickup -= HostOnPlayerCollectedPickup;

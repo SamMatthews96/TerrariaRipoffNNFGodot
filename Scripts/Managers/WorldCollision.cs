@@ -14,12 +14,12 @@ public partial class WorldCollision : Node2D {
 
     public override void _Ready() {
         _world.PlayerManager.LocalPlayerSpawned += OnLocalPlayerSpawned;
-        _world.BlockDestroyed += OnBlockDestroyed;
-        _world.BlockCreated += OnBlockCreated;
+        _world.BlockManager.BlockDestroyed += OnBlockDestroyed;
+        _world.BlockManager.BlockCreated += OnBlockCreated;
         TreeExiting += () => {
             _world.PlayerManager.LocalPlayerSpawned -= OnLocalPlayerSpawned;
-            _world.BlockCreated -= OnBlockCreated;
-            _world.BlockDestroyed -= OnBlockDestroyed;
+            _world.BlockManager.BlockCreated -= OnBlockCreated;
+            _world.BlockManager.BlockDestroyed -= OnBlockDestroyed;
         };
 
         if (!_world.IsHost) return;
@@ -103,7 +103,7 @@ public partial class WorldCollision : Node2D {
     }
     
     private bool HasBlockEntity(int x, int y) {
-        return _world.Blocks[x, y] != null;
+        return _world.BlockManager.Blocks[x, y] != null;
     }
 
     private void CreateCollisionBlock(Vector2I position) {

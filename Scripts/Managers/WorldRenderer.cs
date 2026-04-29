@@ -15,9 +15,13 @@ public partial class WorldRenderer : Node2D {
         _canvas = RenderingServer.CanvasItemCreate();
         RenderingServer.CanvasItemSetParent(_canvas, GetCanvasItem());
         RenderingServer.CanvasItemSetTransform(_canvas, new Transform2D(0, Vector2.Zero));
+        ProcessMode = ProcessModeEnum.Disabled;
         
         _world.PlayerManager.LocalPlayerSpawned += OnLocalPlayerSpawned;
-        ProcessMode = ProcessModeEnum.Disabled;
+        TreeExiting += () => {
+            RenderingServer.FreeRid(_canvas);
+            _world.PlayerManager.LocalPlayerSpawned -= OnLocalPlayerSpawned;
+        };
     }
 
     private void OnLocalPlayerSpawned(Player player) {
@@ -36,7 +40,7 @@ public partial class WorldRenderer : Node2D {
 
         for (int x = drawPositionXStart; x < drawPositionXEnd; x++) {
             for (int y = drawPositionYStart; y < drawPositionYEnd; y++) {
-                Block block = _world.Blocks[x, y];
+                Block block = _world.BlockManager.Blocks[x, y];
                 if (block == null) continue;
                 Rect2 drawDimensions = new(
                     x * Game.BlockSize,
@@ -53,10 +57,5 @@ public partial class WorldRenderer : Node2D {
                 );
             }
         }
-    }
-
-    public override void _ExitTree() {
-        RenderingServer.FreeRid(_canvas);
-        _world.PlayerManager.LocalPlayerSpawned -= OnLocalPlayerSpawned;
     }
 }

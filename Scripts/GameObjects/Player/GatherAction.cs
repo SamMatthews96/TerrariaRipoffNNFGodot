@@ -5,24 +5,20 @@ using TerrariaRipoffNNF.Scripts.GameObjects.WeaponSprites;
 namespace TerrariaRipoffNNF;
 
 public partial class GatherAction : PlayerAction {
-    public event Action<Vector2I, float> ServerGatherAction;
+    public delegate void GatherActionDelegate(Vector2I coords, float damage);
+    public event GatherActionDelegate HostGatherBlockAction;
+    public event GatherActionDelegate HostGatherPropAction;
 
     [Export] private Timer _gatherCooldown;
 
     public override void _Ready() {
         ProcessMode = ProcessModeEnum.Disabled;
         Player = ActionController.Player;
-        
+
         if (!Player.IsLocalPlayer) return;
         Player.ActionController.ActionChanged += OnActionChanged;
-        TreeExiting += () => {
-            Player.ActionController.ActionChanged -= OnActionChanged;
-        };
+        TreeExiting += () => { Player.ActionController.ActionChanged -= OnActionChanged; };
     }
-
-    
-
-
 
     private void OnActionChanged(PlayerActionType _) {
         ProcessMode = ProcessModeEnum.Disabled;
@@ -37,46 +33,45 @@ public partial class GatherAction : PlayerAction {
     }
 
     public override void _Process(double delta) {
-        if (!_gatherCooldown.IsStopped()) return;
         Vector2 mouseWorldPosition = Player.World.GetGlobalMousePosition();
-        Vector2I coords = (Vector2I)(mouseWorldPosition / Game.BlockSize);
-
-        if (!Player.World.IsInBounds(coords)) return;
-        float range = 8;
-        if (Math.Abs(coords.X - Player.Coords.X) > range) return;
-        if (Math.Abs(coords.Y - Player.Coords.Y) > range) return;
-
-        if (Player.PlayerEquipment.Pickaxe is null) return;
-
+        Vector2I targetCoords = (Vector2I)(mouseWorldPosition / Game.BlockSize);
         if (Player.World.IsHost) {
-            if (Player.World.Blocks[coords.X, coords.Y] is null) return;
-            _gatherCooldown.Start();
-            float damage = Player.PlayerEquipment.Pickaxe.Power;
-            ServerGatherAction?.Invoke(coords, damage);
+            AttemptGatherOnHost(targetCoords);
         } else {
-            _gatherCooldown.Start();
-            RpcId(1, nameof(AttemptGatherOnHost), coords);
+            AttemptGatherOnClient(targetCoords);
         }
     }
 
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
-    private void AttemptGatherOnHost(Vector2I coords) {
-        if (!_gatherCooldown.IsStopped()) {
-            GD.Print("Host Gather on cooldown");
-            return;
-        }
+    private void AttemptGatherOnClient(Vector2I targetCoords) {
+        if (!_gatherCooldown.IsStopped()) return;
+        int range = 8;
+        if (!Player.World.IsInOrthogonalRange(
+                targetCoords, Player.Coords, range)) return;
+        if (Player.PlayerEquipment.Pickaxe is null) return;
+        _gatherCooldown.Start();
+        RpcId(1, nameof(AttemptGatherOnHost), targetCoords);
+    }
 
-        if (!Player.World.IsInBounds(coords)) return;
-        float range = 8;
-        if (Math.Abs(coords.X - Player.Coords.X) > range) return;
-        if (Math.Abs(coords.Y - Player.Coords.Y) > range) return;
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    private void AttemptGatherOnHost(Vector2I targetCoords) {
+        if (!_gatherCooldown.IsStopped()) return;
 
         if (Player.PlayerEquipment.Pickaxe is null) return;
 
-        if (Player.World.Blocks[coords.X, coords.Y] is null) return;
+        int range = Player.PlayerEquipment.Pickaxe.Range;
+        if (!Player.World.IsInOrthogonalRange(
+                targetCoords, Player.Coords, range)) return;
+
+        GatherActionDelegate action;
+        if (Player.World.BlockManager.Blocks[
+                targetCoords.X, targetCoords.Y] is not null) {
+            action = HostGatherBlockAction;
+        } else if (Player.World.PropManager.PropCells.ContainsKey(targetCoords)) {
+            action = HostGatherPropAction;
+        } else return;
 
         _gatherCooldown.Start();
         float damage = Player.PlayerEquipment.Pickaxe.Power;
-        ServerGatherAction?.Invoke(coords, damage);
+        action?.Invoke(targetCoords, damage);
     }
 }

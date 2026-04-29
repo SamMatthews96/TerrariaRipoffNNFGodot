@@ -11,7 +11,7 @@ public partial class PlayerManager : Node2D {
     private Dictionary<long, Player> _players = new();
 
     public event Action<Player> LocalPlayerSpawned;
-    public event Action<Player> PlayerSpawnedOnServer;
+    public event Action<Player> PlayerSpawnedOnHost;
 
     public override void _Ready() {
         if (!_world.IsHost) return;
@@ -38,7 +38,7 @@ public partial class PlayerManager : Node2D {
         _localPlayer = CreateNewPlayer(peerId, playerData);
         
         LocalPlayerSpawned?.Invoke(_localPlayer);
-        PlayerSpawnedOnServer?.Invoke(_localPlayer);
+        PlayerSpawnedOnHost?.Invoke(_localPlayer);
     }
 
     public void SpawnPlayersOnClient(Dictionary playerData) {
@@ -59,7 +59,7 @@ public partial class PlayerManager : Node2D {
         
         Player remotePlayer = CreateNewPlayer(senderId, playerData);
         _localPlayer.AddPeerToSynchronizer(senderId);
-        PlayerSpawnedOnServer?.Invoke(remotePlayer);
+        PlayerSpawnedOnHost?.Invoke(remotePlayer);
         
         int[] peers = Multiplayer.GetPeers();
         foreach (int peerId in peers) {
