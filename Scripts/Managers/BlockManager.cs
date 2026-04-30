@@ -141,26 +141,19 @@ public partial class BlockManager : Node2D {
         for (int chunkX = 0; chunkX < chunksX; chunkX++) {
             for (int chunkY = 0; chunkY < chunksY; chunkY++) {
                 Array blockData = SerializeChunk(chunkX, chunkY, Blocks);
-
-                Dictionary blockPacket = new() {
-                    ["chunkX"] = chunkX,
-                    ["chunkY"] = chunkY,
-                    ["chunkIndex"] = chunkIndex,
-                    ["totalChunks"] = totalChunks,
-                    ["entities"] = blockData
-                };
-
                 Array wallData = SerializeChunk(chunkX, chunkY, Walls);
-                Dictionary wallPacket = new() {
+                
+                Dictionary chunkPacket = new() {
                     ["chunkX"] = chunkX,
                     ["chunkY"] = chunkY,
                     ["chunkIndex"] = chunkIndex,
                     ["totalChunks"] = totalChunks,
-                    ["entities"] = wallData
+                    ["blocks"] = blockData,
+                    ["walls"] = wallData
                 };
 
                 RpcId(requestingPeerId, nameof(RpcProcessWorldChunk),
-                    blockPacket, wallPacket);
+                    chunkPacket);
                 chunkIndex++;
             }
         }
@@ -179,7 +172,6 @@ public partial class BlockManager : Node2D {
                 Block block = data[x, y];
                 if (block is null) continue;
                 Dictionary entityData = new() {
-                    ["type"] = "block",
                     ["x"] = x,
                     ["y"] = y,
                     ["health"] = block.CurrentHealth,
@@ -193,14 +185,13 @@ public partial class BlockManager : Node2D {
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
-    private void RpcProcessWorldChunk(Dictionary blockPacket, Dictionary wallPacket) {
-        int chunkIndex = (int)blockPacket["chunkIndex"];
-        int totalChunks = (int)blockPacket["totalChunks"];
-        Array entities = blockPacket["entities"].AsGodotArray();
-        Array wallEntities = wallPacket["entities"].AsGodotArray();
+    private void RpcProcessWorldChunk(Dictionary chunkPacket) {
+        int chunkIndex = (int)chunkPacket["chunkIndex"];
+        int totalChunks = (int)chunkPacket["totalChunks"];
+        Array blockEntities = chunkPacket["blocks"].AsGodotArray();
+        Array wallEntities = chunkPacket["walls"].AsGodotArray();
 
-        // Deserialize entities into the world
-        foreach (Dictionary entityData in entities) {
+        foreach (Dictionary entityData in blockEntities) {
             int x = (int)entityData["x"];
             int y = (int)entityData["y"];
 
