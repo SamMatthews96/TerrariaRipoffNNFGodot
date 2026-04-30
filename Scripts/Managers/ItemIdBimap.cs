@@ -33,7 +33,7 @@ public class ItemIdBimap {
             return id;
         }
 
-        ushort count = (ushort)(_idToString.Count - 1);
+        ushort count = (ushort)_idToString.Count;
         _idToString.Add(itemString);
         _stringToId[itemString] = count;
         _stringToItem[itemString] = item;

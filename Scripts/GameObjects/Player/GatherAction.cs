@@ -7,7 +7,7 @@ namespace TerrariaRipoffNNF;
 public partial class GatherAction : PlayerAction {
     public delegate void GatherActionDelegate(Vector2I coords, float damage);
     public event GatherActionDelegate HostGatheredBlock;
-    public event GatherActionDelegate HostGatherPropAction;
+    public event GatherActionDelegate HostGatherProp;
     public event GatherActionDelegate HostGatheredWall;
 
     [Export] private Timer _gatherCooldown;
@@ -65,7 +65,7 @@ public partial class GatherAction : PlayerAction {
                 targetCoords.X, targetCoords.Y] is not null) {
             action = HostGatheredBlock;
         } else if (Player.World.PropManager.PropCells.ContainsKey(targetCoords)) {
-            action = HostGatherPropAction;
+            action = HostGatherProp;
         } else if (Player.World.BlockManager.Walls[
                        targetCoords.X, targetCoords.Y] is not null) {
             action = HostGatheredWall;

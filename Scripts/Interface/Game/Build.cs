@@ -10,7 +10,7 @@ public partial class Build : Container {
     [Export] private BoxContainer _propButtonContainer;
     
     private readonly Dictionary<string, BlockTypeButton> _blockButtons = new();
-    private readonly Dictionary<string, BlockTypeButton> _propButtons = new();
+    private readonly Dictionary<ushort, BlockTypeButton> _propButtons = new();
 
     
     private BlockTypeButton _selectedButton;
@@ -77,7 +77,9 @@ public partial class Build : Container {
         BlockTypeButton button = BlockTypeButton.Create(stackedItems.Item, false);
         button.BuildBlockSelected += SelectPropButton;
         _propButtonContainer.AddChild(button);
-        _propButtons.Add(stackedItems.Item.Name, button);
+        ushort itemId = 
+            _gameInterface.World.ItemIdBimap.GetId(stackedItems.Item);
+        _propButtons.Add(itemId, button);
         if (_selectedButton == null) {
             SelectPropButton(stackedItems.Item);
         }
@@ -93,14 +95,15 @@ public partial class Build : Container {
             button.QueueFree();
             _blockButtons.Remove(stackedItems.Item.Name);
         }
-        
-        if (_propButtons.TryGetValue(stackedItems.Item.Name, out button)) {
+        ushort itemId = 
+            _gameInterface.World.ItemIdBimap.GetId(stackedItems.Item);
+        if (_propButtons.TryGetValue(itemId, out button)) {
             if (_selectedButton == button) {
                 _selectedButton = null;
             }
             button.BuildBlockSelected -= SelectPropButton;
             button.QueueFree();
-            _propButtons.Remove(stackedItems.Item.Name);
+            _propButtons.Remove(itemId);
         
         }
     }
@@ -115,8 +118,8 @@ public partial class Build : Container {
 
     private void SelectPropButton(Item item) {
         _selectedButton?.SetUnfocus();
-
-        _selectedButton = _propButtons[item.Name];
+        ushort itemId = _gameInterface.World.ItemIdBimap.GetId(item);
+        _selectedButton = _propButtons[itemId];
         _selectedButton.SetFocus();
         BuildButtonSelected?.Invoke(item);
     }
