@@ -33,6 +33,7 @@ public partial class WorldRenderer : Node2D {
         RenderingServer.CanvasItemClear(_canvas);
         int playerX = _localPlayer.Coords.X;
         int playerY = _localPlayer.Coords.Y;
+        
         int drawPositionXStart = Math.Max(0, playerX - BlockDrawDistance);
         int drawPositionXEnd = Math.Min(_world.WorldSize.X, playerX + BlockDrawDistance);
         int drawPositionYStart = Math.Max(0, playerY - BlockDrawDistance);

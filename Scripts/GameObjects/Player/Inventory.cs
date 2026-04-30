@@ -51,17 +51,14 @@ public partial class Inventory : Node {
         if (_player.World.IsHost) {
             _player.ServerPickupArea.CollectedPickup +=
                 HostOnCollectedPickup;
-            _player.ActionController.BuildAction.HostPlaceBlockAction +=
-                HostOnPlaceBlock;
+            _player.ActionState.Build.HostPlacedBlock +=
+                HostOnPlacedBlock;
             TreeExiting += () => {
                 _player.ServerPickupArea.CollectedPickup -= HostOnCollectedPickup;
-                _player.ActionController.BuildAction.HostPlaceBlockAction -=
-                    HostOnPlaceBlock;
+                _player.ActionState.Build.HostPlacedBlock -=
+                    HostOnPlacedBlock;
             };
         }
-
-        // _player.Crafting.ItemCrafted += OnItemCrafted;
-        // _player.World.Interface.InventoryUi.ItemActionClicked += OnItemActionClicked;
     }
 
     private void OnHostItemCrafted(StackedItems newItems, Array<StackedItems> ingredients) {
@@ -83,7 +80,7 @@ public partial class Inventory : Node {
         }
     }
 
-    private void HostOnPlaceBlock(Item item, Vector2I coords) {
+    private void HostOnPlacedBlock(Item item, Vector2I coords) {
         StackedItems inventoryItems = new(item);
         RemoveItems(inventoryItems);
         

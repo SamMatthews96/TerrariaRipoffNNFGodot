@@ -24,7 +24,7 @@ public partial class ActionBar : PanelContainer {
     }
     
     private void OnLocalPlayerSpawned(Player player) {
-        player.ActionController.ActionChanged += OnPlayerActionChanged;
+        player.ActionState.ActionChanged += OnPlayerActionChanged;
     }
     
     private void OnPlayerActionChanged(PlayerActionType state) {

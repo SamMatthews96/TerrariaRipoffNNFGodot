@@ -5,10 +5,10 @@
 [ext_resource type="Script" uid="uid://dvkkdi1y5ho67" path="res://Scripts/GameObjects/Player/BuildAction.cs" id="3_ca5xg"]
 [ext_resource type="Script" uid="uid://cgdyjno3yd0yr" path="res://Scripts/GameObjects/Player/WeaponAction.cs" id="4_da70o"]
 
-[node name="ActionController" type="Node" unique_id=1959633914 node_paths=PackedStringArray("GatherAction", "BuildAction", "WeaponAction")]
+[node name="ActionController" type="Node" unique_id=1959633914 node_paths=PackedStringArray("Gather", "Build", "WeaponAction")]
 script = ExtResource("1_akseq")
-GatherAction = NodePath("GatherActionState")
-BuildAction = NodePath("BuildActionState")
+Gather = NodePath("GatherActionState")
+Build = NodePath("BuildActionState")
 WeaponAction = NodePath("WeaponActionState")
 
 [node name="GatherActionState" type="Node" parent="." unique_id=397095415 node_paths=PackedStringArray("_gatherCooldown", "ActionController")]

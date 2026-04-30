@@ -49,11 +49,9 @@ public partial class BlockManager : Node2D {
         }
 
         _world.PlayerManager.PlayerSpawnedOnHost += OnPlayerSpawnedOnHost;
-        TreeExiting += () => { _world.PlayerManager.PlayerSpawnedOnHost -= OnPlayerSpawnedOnHost; };
-
-        if (!_world.IsHost) {
-            RpcId(1, nameof(RpcRequestWorldData));
-        }
+        TreeExiting += () => {
+            _world.PlayerManager.PlayerSpawnedOnHost -= OnPlayerSpawnedOnHost;
+        };
     }
 
     public void ClientGetWorldData() {
@@ -61,27 +59,19 @@ public partial class BlockManager : Node2D {
     }
 
     private void OnPlayerSpawnedOnHost(Player player) {
-        player.ActionController.BuildAction.HostPlaceBlockAction
-            += OnHostPlaceBlockAction;
-        player.ActionController.BuildAction.HostPlaceWallAction +=
-            OnHostPlaceWallAction;
-        player.ActionController.GatherAction.HostGatherBlockAction +=
-            OnHostGatherBlockAction;
-        player.ActionController.GatherAction.HostGatherWallAction +=
-            OnHostGatherWallAction;
+        player.ActionState.Build.HostPlacedBlock += OnHostPlacedBlock;
+        player.ActionState.Build.HostPlacedWall += OnHostPlacedWall;
+        player.ActionState.Gather.HostGatheredBlock += OnHostGatheredBlock;
+        player.ActionState.Gather.HostGatheredWall += OnHostGatheredWall;
         player.TreeExiting += () => {
-            player.ActionController.BuildAction.HostPlaceBlockAction
-                -= OnHostPlaceBlockAction;
-            player.ActionController.BuildAction.HostPlaceWallAction -=
-                OnHostPlaceWallAction;
-            player.ActionController.GatherAction.HostGatherBlockAction -=
-                OnHostGatherBlockAction;
-            player.ActionController.GatherAction.HostGatherWallAction -=
-                OnHostGatherWallAction;
+            player.ActionState.Build.HostPlacedBlock -= OnHostPlacedBlock;
+            player.ActionState.Build.HostPlacedWall -= OnHostPlacedWall;
+            player.ActionState.Gather.HostGatheredBlock -= OnHostGatheredBlock;
+            player.ActionState.Gather.HostGatheredWall -= OnHostGatheredWall;
         };
     }
 
-    private void OnHostPlaceBlockAction(Item item, Vector2I coords) {
+    private void OnHostPlacedBlock(Item item, Vector2I coords) {
         Rpc(nameof(RpcAllCreateBlock), item.ResourcePath, coords);
     }
 
@@ -94,7 +84,7 @@ public partial class BlockManager : Node2D {
         BlockCreated?.Invoke(coords);
     }
 
-    private void OnHostPlaceWallAction(Item item, Vector2I coords) {
+    private void OnHostPlacedWall(Item item, Vector2I coords) {
         Rpc(nameof(RpcAllCreateWall), item.ToDictionary(), coords);
     }
 
@@ -106,7 +96,7 @@ public partial class BlockManager : Node2D {
         };
     }
 
-    private void OnHostGatherBlockAction(Vector2I coords, float damage) {
+    private void OnHostGatheredBlock(Vector2I coords, float damage) {
         Block block = Blocks[coords.X, coords.Y];
         block.CurrentHealth -= damage;
         if (block.CurrentHealth <= 0) {
@@ -120,7 +110,7 @@ public partial class BlockManager : Node2D {
         BlockDestroyed?.Invoke(coords, resourcePath);
     }
 
-    private void OnHostGatherWallAction(Vector2I coords, float damage) {
+    private void OnHostGatheredWall(Vector2I coords, float damage) {
         Block block = Walls[coords.X, coords.Y];
         block.CurrentHealth -= damage;
         if (block.CurrentHealth <= 0) {

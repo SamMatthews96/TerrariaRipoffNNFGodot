@@ -20,19 +20,19 @@ public partial class PropManager : Node {
     }
     
     private void OnPlayerSpawnedOnHost(Player player) {
-        player.ActionController.BuildAction.HostPlacePropAction 
-            += OnHostPlacePropAction;
-        player.ActionController.GatherAction.HostGatherPropAction
-            += OnHostGatherPropAction;
+        player.ActionState.Build.HostPlacePropAction 
+            += OnHostPlaceProp;
+        player.ActionState.Gather.HostGatherPropAction
+            += OnHostGatherProp;
         player.TreeExiting += () => {
-            player.ActionController.BuildAction.HostPlacePropAction 
-                -= OnHostPlacePropAction;
-            player.ActionController.GatherAction.HostGatherPropAction
-                -= OnHostGatherPropAction;
+            player.ActionState.Build.HostPlacePropAction 
+                -= OnHostPlaceProp;
+            player.ActionState.Gather.HostGatherPropAction
+                -= OnHostGatherProp;
         };
     }
 
-    private void OnHostPlacePropAction(Item item, Vector2I coords) {
+    private void OnHostPlaceProp(Item item, Vector2I coords) {
         Prop newProp = Prop.Create(item, coords);
         foreach (Vector2I cell in newProp.Cells) {
             PropCells[cell] = newProp;
@@ -51,7 +51,7 @@ public partial class PropManager : Node {
         AddChild(newProp);
     }
     
-    private void OnHostGatherPropAction(Vector2I coords, float damage) {
+    private void OnHostGatherProp(Vector2I coords, float damage) {
         Prop prop = PropCells[coords];
         Rpc(nameof(RpcClientsGatherProp), coords);
         HostPropDestroyed?.Invoke(prop.Item, coords);

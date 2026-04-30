@@ -23,11 +23,11 @@ Range = 4.0
 Power = 4.0
 metadata/_custom_type_script = "uid://dfb4kfm2jhuiq"
 
-[node name="Player" type="CharacterBody2D" unique_id=943920394 node_paths=PackedStringArray("Inventory", "ActionController", "Crafting", "PlayerEquipment", "_positionSynchronizer", "_camera", "_nameLabel")]
+[node name="Player" type="CharacterBody2D" unique_id=943920394 node_paths=PackedStringArray("Inventory", "ActionState", "Crafting", "PlayerEquipment", "_positionSynchronizer", "_camera", "_nameLabel")]
 collision_mask = 2
 script = ExtResource("1_hx4ms")
 Inventory = NodePath("Inventory")
-ActionController = NodePath("ActionController")
+ActionState = NodePath("ActionController")
 Crafting = NodePath("Crafting")
 PlayerEquipment = NodePath("PlayerEquipment")
 _positionSynchronizer = NodePath("PositionSync")

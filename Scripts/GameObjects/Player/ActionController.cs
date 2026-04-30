@@ -6,8 +6,8 @@ namespace TerrariaRipoffNNF;
 public partial class ActionController : Node {
     private PlayerAction _currentPlayerAction;
     [Export] public Player Player { get; private set; }
-    [Export] public GatherAction GatherAction { get; private set; }
-    [Export] public BuildAction BuildAction { get; private set; }
+    [Export] public GatherAction Gather { get; private set; }
+    [Export] public BuildAction Build { get; private set; }
     [Export] public WeaponAction WeaponAction { get; private set; }
     
     public event Action<PlayerActionType> ActionChanged;
@@ -54,8 +54,8 @@ public partial class ActionController : Node {
 
     private void EquipAction(PlayerActionType state) {
         _currentPlayerAction = state switch {
-            PlayerActionType.Gather => GatherAction,
-            PlayerActionType.Build => BuildAction,
+            PlayerActionType.Gather => Gather,
+            PlayerActionType.Build => Build,
             PlayerActionType.Weapon => WeaponAction,
             _ => throw new ArgumentOutOfRangeException(nameof(state), state, null)
         };

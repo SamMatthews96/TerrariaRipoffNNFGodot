@@ -6,8 +6,8 @@ namespace TerrariaRipoffNNF;
 
 public partial class BuildAction : PlayerAction {
     public delegate void BuildActionDelegate(Item item, Vector2I coords);
-    public event BuildActionDelegate HostPlaceBlockAction;
-    public event BuildActionDelegate HostPlaceWallAction;
+    public event BuildActionDelegate HostPlacedBlock;
+    public event BuildActionDelegate HostPlacedWall;
     public event BuildActionDelegate HostPlacePropAction;
 
     private Item _blockItem;
@@ -62,7 +62,7 @@ public partial class BuildAction : PlayerAction {
 
     private void AttemptBuildBlock(Item item, Vector2I coords) {
         if (Player.World.IsCellFilled(coords)) return;
-        HostPlaceBlockAction?.Invoke(item, coords);
+        HostPlacedBlock?.Invoke(item, coords);
     }
 
     private void AttemptBuildProp(Item item, Vector2I coords) {
@@ -116,7 +116,7 @@ public partial class BuildAction : PlayerAction {
     
     private void AttemptBuildWall(Item item, Vector2I coords) {
         if (Player.World.IsCellFilled(coords)) return;
-        HostPlaceWallAction?.Invoke(item, coords);
+        HostPlacedWall?.Invoke(item, coords);
     }
 
     public override void EndLeftMouseAction(Vector2 mouseWorldPosition) { }

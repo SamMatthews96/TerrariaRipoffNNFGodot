@@ -17,7 +17,7 @@ public partial class Player : CharacterBody2D {
     }
 
     [Export] public Inventory Inventory { get; private set; }
-    [Export] public ActionController ActionController { get; private set; }
+    [Export] public ActionController ActionState { get; private set; }
     [Export] public Crafting Crafting { get; private set; }
     [Export] public PlayerEquipment PlayerEquipment { get; private set; }
     public ServerPickupArea ServerPickupArea { get; private set; }

@@ -45,11 +45,11 @@ public partial class Build : Container {
         foreach (StackedItems stackedItems in player.Inventory.StackedItemsList) {
             OnInventoryAddedItemStack(stackedItems);    
         }
-        player.ActionController.ActionChanged += OnPlayerActionChanged;
+        player.ActionState.ActionChanged += OnPlayerActionChanged;
         player.Inventory.AddedItemStack += OnInventoryAddedItemStack;
         player.Inventory.RemovedItemStack += OnInventoryRemovedItemStack;
         player.TreeExiting += () => {
-            player.ActionController.ActionChanged -= OnPlayerActionChanged;
+            player.ActionState.ActionChanged -= OnPlayerActionChanged;
             player.Inventory.AddedItemStack -= OnInventoryAddedItemStack;
             player.Inventory.RemovedItemStack -= OnInventoryRemovedItemStack;
         };
