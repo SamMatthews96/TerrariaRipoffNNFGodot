@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Godot;
 using Godot.Collections;
+using TerrariaRipoffNNF.TestScenes;
 using Array = Godot.Collections.Array;
 
 namespace TerrariaRipoffNNF;
@@ -18,18 +19,22 @@ public partial class World : Node2D {
     [Export] public Interface.Game Interface { get; private set; }
     [Export] public BlockManager BlockManager { get; private set; }
 
-    // World sync constants
+    public ItemIdBimap ItemIdBimap { get; private set; }
     private Dictionary _localPlayerData;
-    public Dictionary WorldData { get; private set; } 
-    
+    public Dictionary WorldData { get; private set; }
+
+
     public static World CreateAsHost(Game game, Dictionary worldData, Dictionary playerData) {
         World world = Data.PackedScenes.World.Instantiate<World>();
         world.IsHost = true;
         world.WorldSize = new Vector2I((int)worldData["Width"], (int)worldData["Height"]);
         world.Game = game;
-        
+        world.ItemIdBimap = new ItemIdBimap(
+            worldData["itemMap"].AsGodotDictionary());
+
         world._localPlayerData = playerData;
         world.WorldData = worldData;
+
 
         return world;
     }
@@ -41,18 +46,16 @@ public partial class World : Node2D {
         world._localPlayerData = playerData;
         return world;
     }
-    
+
     private void OnExitGameClicked() {
         Visible = false;
         Interface.GameMenu.ExitGameButtonDown -= OnExitGameClicked;
         QueueFree();
     }
-    
+
     public override void _Ready() {
         Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
-        TreeExiting += () => {
-            Interface.GameMenu.ExitGameButtonDown -= OnExitGameClicked;
-        };
+        TreeExiting += () => { Interface.GameMenu.ExitGameButtonDown -= OnExitGameClicked; };
         if (IsHost) {
             PlayerManager.SpawnHostPlayer(_localPlayerData);
             _localPlayerData = null;
@@ -70,7 +73,7 @@ public partial class World : Node2D {
     }
 
     public bool IsCellFilled(Vector2I coords) {
-        if (BlockManager.Blocks[coords.X,coords.Y] is not null) return true;
+        if (BlockManager.Blocks[coords.X, coords.Y] is not null) return true;
         return PropManager.PropCells.ContainsKey(coords);
     }
 
@@ -86,5 +89,4 @@ public partial class World : Node2D {
         _localPlayerData = null;
         BlockManager.SyncComplete -= ClientOnSyncComplete;
     }
-    
 }

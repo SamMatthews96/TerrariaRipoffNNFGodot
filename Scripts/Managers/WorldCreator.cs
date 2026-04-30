@@ -1,5 +1,6 @@
 using System;
 using Godot.Collections;
+using TerrariaRipoffNNF.TestScenes;
 using Array = Godot.Collections.Array;
 
 namespace TerrariaRipoffNNF;
@@ -23,8 +24,9 @@ public static class WorldCreator {
         };
         Random random = new();
 
-        Item wallItem = Data.Items.Earth;
-        Dictionary wallItemDict = wallItem.ToDictionary();
+        ItemIdBimap map = new();
+        
+        int earthId = map.GetId(Data.Items.Earth);
         
         Array blockList = new();
         Array wallList = new();
@@ -32,14 +34,15 @@ public static class WorldCreator {
             for (int y = mid; y < worldBasicInfo.Height; y++) {
                 Item item = items[random.Next(items.Length)];
                 Dictionary newBlock = new() {
-                    { "item", item.ToDictionary() },
+                    // get id from item
+                    { "item", map.GetId(item) },
                     { "xPosition", x },
                     { "yPosition", y }
                 };
                 blockList.Add(newBlock);
                 
                 Dictionary newWall = new() {
-                    { "item", wallItemDict },
+                    { "item", earthId },
                     { "xPosition", x },
                     { "yPosition", y }
                 };
@@ -49,6 +52,7 @@ public static class WorldCreator {
 
         worldDictionary.Add("blocks", blockList);
         worldDictionary.Add("walls", wallList);
+        worldDictionary.Add("itemMap", map.ToDictionary());
 
         FileManager.SaveWorld(worldDictionary);
     }

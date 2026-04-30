@@ -31,8 +31,7 @@ public partial class BlockManager : Node2D {
 
             Blocks[x, y] = new Block {
                 CurrentHealth = 1,
-                ResourcePath = dictionary["item"]
-                    .AsGodotDictionary()["ResourcePath"].ToString(),
+                ItemId = (UInt16)dictionary["item"]
             };
         }
 
@@ -43,8 +42,7 @@ public partial class BlockManager : Node2D {
 
             Walls[x, y] = new Block {
                 CurrentHealth = 1,
-                ResourcePath = dictionary["item"]
-                    .AsGodotDictionary()["ResourcePath"].ToString(),
+                ItemId = (UInt16)dictionary["item"]
             };
         }
 
