@@ -44,7 +44,7 @@ public partial class WorldCollision : Node2D {
         }
     }
 
-    private void OnBlockDestroyed(Vector2I position, UInt16 _) {
+    private void OnBlockDestroyed(Vector2I position, ushort _) {
         RemoveCollisionBlock(position);
     }
 

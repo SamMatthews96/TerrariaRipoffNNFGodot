@@ -84,20 +84,25 @@ public partial class Build : Container {
     }
 
     private void OnInventoryRemovedItemStack(StackedItems stackedItems) {
-        if (!_blockButtons.TryGetValue(stackedItems.Item.Name, out BlockTypeButton button)) {
-            return;
-        }
+        if (_blockButtons.TryGetValue(stackedItems.Item.Name, out BlockTypeButton button)) {
+            if (_selectedButton == button) {
+                _selectedButton = null;
+            }
 
-        _propButtons.Remove(stackedItems.Item.Name);
-        
-        
-        if (_selectedButton == button) {
-            _selectedButton = null;
+            button.BuildBlockSelected -= SelectBlockButton;
+            button.QueueFree();
+            _blockButtons.Remove(stackedItems.Item.Name);
         }
-
-        button.BuildBlockSelected -= SelectBlockButton;
-        button.QueueFree();
-        _blockButtons.Remove(stackedItems.Item.Name);
+        
+        if (_propButtons.TryGetValue(stackedItems.Item.Name, out button)) {
+            if (_selectedButton == button) {
+                _selectedButton = null;
+            }
+            button.BuildBlockSelected -= SelectPropButton;
+            button.QueueFree();
+            _propButtons.Remove(stackedItems.Item.Name);
+        
+        }
     }
 
     private void SelectBlockButton(Item item) {

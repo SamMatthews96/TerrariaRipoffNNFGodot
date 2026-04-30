@@ -12,9 +12,9 @@ public partial class BlockManager : Node2D {
     [Export] private World _world;
 
     public event Action SyncComplete;
-    public event Action<Vector2I, UInt16> BlockDestroyed;
+    public event Action<Vector2I, ushort> BlockDestroyed;
     public event Action<Vector2I> BlockCreated;
-    public event Action<Vector2I, UInt16> WallDestroyed;
+    public event Action<Vector2I, ushort> WallDestroyed;
 
     private const int ChunkSize = 50;
 
@@ -31,7 +31,7 @@ public partial class BlockManager : Node2D {
 
             Blocks[x, y] = new Block {
                 CurrentHealth = 1,
-                ItemId = (UInt16)dictionary["item"]
+                ItemId = (ushort)dictionary["item"]
             };
         }
 
@@ -42,7 +42,7 @@ public partial class BlockManager : Node2D {
 
             Walls[x, y] = new Block {
                 CurrentHealth = 1,
-                ItemId = (UInt16)dictionary["item"]
+                ItemId = (ushort)dictionary["item"]
             };
         }
 
@@ -70,12 +70,12 @@ public partial class BlockManager : Node2D {
     }
 
     private void OnHostPlacedBlock(Item item, Vector2I coords) {
-        UInt16 itemId = _world.ItemIdBimap.GetId(item);
+        ushort itemId = _world.ItemIdBimap.GetId(item);
         Rpc(nameof(RpcAllCreateBlock), itemId, coords);
     }
 
     [Rpc(CallLocal = true)]
-    private void RpcAllCreateBlock(UInt16 itemId, Vector2I coords) {
+    private void RpcAllCreateBlock(ushort itemId, Vector2I coords) {
         Blocks[coords.X, coords.Y] = new Block {
             CurrentHealth = 1,
             ItemId = itemId
@@ -84,12 +84,12 @@ public partial class BlockManager : Node2D {
     }
 
     private void OnHostPlacedWall(Item item, Vector2I coords) {
-        UInt16 itemId = _world.ItemIdBimap.GetId(item);
+        ushort itemId = _world.ItemIdBimap.GetId(item);
         Rpc(nameof(RpcAllCreateWall), itemId, coords);
     }
 
     [Rpc(CallLocal = true)]
-    private void RpcAllCreateWall(UInt16 itemId, Vector2I coords) {
+    private void RpcAllCreateWall(ushort itemId, Vector2I coords) {
         Walls[coords.X, coords.Y] = new Block {
             CurrentHealth = 1,
             ItemId = itemId
@@ -105,7 +105,7 @@ public partial class BlockManager : Node2D {
     }
 
     [Rpc(CallLocal = true)]
-    private void RpcAllDestroyBlock(Vector2I coords, UInt16 itemId) {
+    private void RpcAllDestroyBlock(Vector2I coords, ushort itemId) {
         Blocks[coords.X, coords.Y] = null;
         BlockDestroyed?.Invoke(coords, itemId);
     }
@@ -120,7 +120,7 @@ public partial class BlockManager : Node2D {
 
     [Rpc(CallLocal = true)]
     private void RpcAllDestroyWall(Vector2I coords) {
-        UInt16 itemId = Walls[coords.X, coords.Y].ItemId;
+        ushort itemId = Walls[coords.X, coords.Y].ItemId;
         Walls[coords.X, coords.Y] = null;
         WallDestroyed?.Invoke(coords, itemId);
     }
@@ -197,7 +197,7 @@ public partial class BlockManager : Node2D {
 
             Blocks[x, y] = new Block {
                 CurrentHealth = (float)entityData["health"],
-                ItemId = (UInt16)entityData["itemId"]
+                ItemId = (ushort)entityData["itemId"]
             };
         }
 
@@ -207,7 +207,7 @@ public partial class BlockManager : Node2D {
 
             Walls[x, y] = new Block {
                 CurrentHealth = (float)entityData["health"],
-                ItemId = (UInt16)entityData["itemId"]
+                ItemId = (ushort)entityData["itemId"]
             };
         }
 

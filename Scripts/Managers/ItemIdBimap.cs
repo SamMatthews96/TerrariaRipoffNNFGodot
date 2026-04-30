@@ -9,15 +9,15 @@ namespace TerrariaRipoffNNF.TestScenes;
 // potential concern: ordering of dict elements
 
 public class ItemIdBimap {
-    private Array<string> _idToString = new();
-    private Dictionary<string, UInt16> _stringToId = new();
-    private Dictionary<string, Item> _stringToItem = new();
+    private readonly Array<string> _idToString = new();
+    private readonly Dictionary<string, ushort> _stringToId = new();
+    private readonly Dictionary<string, Item> _stringToItem = new();
     
     public ItemIdBimap() {    }
 
     public ItemIdBimap(Dictionary dict) {
         _idToString = dict["IdToString"].AsGodotArray<string>();
-        _stringToId = dict["StringToId"].AsGodotDictionary<string, UInt16>();
+        _stringToId = dict["StringToId"].AsGodotDictionary<string, ushort>();
         
         // _stringToItem =
         Dictionary<string, Dictionary> stringToItemDict =
@@ -27,20 +27,20 @@ public class ItemIdBimap {
         }
     }
     
-    public UInt16 GetId(Item item) {
+    public ushort GetId(Item item) {
         string itemString = GetItemString(item);
-        if (_stringToId.TryGetValue(itemString, out UInt16 id)) {
+        if (_stringToId.TryGetValue(itemString, out ushort id)) {
             return id;
         }
 
+        ushort count = (ushort)(_idToString.Count - 1);
         _idToString.Add(itemString);
-        UInt16 count = (UInt16)(_idToString.Count - 1);
         _stringToId[itemString] = count;
         _stringToItem[itemString] = item;
         return count;
     }
 
-    public Item GetItem(UInt16 id) {
+    public Item GetItem(ushort id) {
         string itemString = _idToString[id];
         return _stringToItem[itemString];
     }
