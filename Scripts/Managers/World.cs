@@ -35,7 +35,6 @@ public partial class World : Node2D {
         world._localPlayerData = playerData;
         world.WorldData = worldData;
 
-
         return world;
     }
 
@@ -43,6 +42,8 @@ public partial class World : Node2D {
         World world = Data.PackedScenes.World.Instantiate<World>();
         world.WorldSize = new Vector2I((int)metadata["Width"], (int)metadata["Height"]);
         world.Game = game;
+        world.ItemIdBimap = new ItemIdBimap(
+            metadata["itemMap"].AsGodotDictionary());
         world._localPlayerData = playerData;
         return world;
     }

@@ -55,7 +55,7 @@ public partial class WorldRenderer : Node2D {
                     Game.BlockSize,
                     Game.BlockSize
                 );
-                Item item = ResourceLoader.Load<Item>(block.ResourcePath);
+                Item item = _world.ItemIdBimap.GetItem(block.ItemId);
                 float modulate = isBlock ? 1 : 0.3f;
                 Color color = new(modulate, modulate, modulate);
                 RenderingServer.CanvasItemAddTextureRect(

@@ -12,9 +12,9 @@ public partial class BlockManager : Node2D {
     [Export] private World _world;
 
     public event Action SyncComplete;
-    public event Action<Vector2I, string> BlockDestroyed;
+    public event Action<Vector2I, UInt16> BlockDestroyed;
     public event Action<Vector2I> BlockCreated;
-    public event Action<Vector2I, string> WallDestroyed;
+    public event Action<Vector2I, UInt16> WallDestroyed;
 
     private const int ChunkSize = 50;
 
@@ -70,27 +70,29 @@ public partial class BlockManager : Node2D {
     }
 
     private void OnHostPlacedBlock(Item item, Vector2I coords) {
-        Rpc(nameof(RpcAllCreateBlock), item.ResourcePath, coords);
+        UInt16 itemId = _world.ItemIdBimap.GetId(item);
+        Rpc(nameof(RpcAllCreateBlock), itemId, coords);
     }
 
     [Rpc(CallLocal = true)]
-    private void RpcAllCreateBlock(string resourcePath, Vector2I coords) {
+    private void RpcAllCreateBlock(UInt16 itemId, Vector2I coords) {
         Blocks[coords.X, coords.Y] = new Block {
             CurrentHealth = 1,
-            ResourcePath = resourcePath
+            ItemId = itemId
         };
         BlockCreated?.Invoke(coords);
     }
 
     private void OnHostPlacedWall(Item item, Vector2I coords) {
-        Rpc(nameof(RpcAllCreateWall), item.ToDictionary(), coords);
+        UInt16 itemId = _world.ItemIdBimap.GetId(item);
+        Rpc(nameof(RpcAllCreateWall), itemId, coords);
     }
 
     [Rpc(CallLocal = true)]
-    private void RpcAllCreateWall(Dictionary itemDict, Vector2I coords) {
+    private void RpcAllCreateWall(UInt16 itemId, Vector2I coords) {
         Walls[coords.X, coords.Y] = new Block {
             CurrentHealth = 1,
-            ResourcePath = itemDict["ResourcePath"].ToString()
+            ItemId = itemId
         };
     }
 
@@ -98,14 +100,14 @@ public partial class BlockManager : Node2D {
         Block block = Blocks[coords.X, coords.Y];
         block.CurrentHealth -= damage;
         if (block.CurrentHealth <= 0) {
-            Rpc(nameof(RpcAllDestroyBlock), coords, block.ResourcePath);
+            Rpc(nameof(RpcAllDestroyBlock), coords, block.ItemId);
         }
     }
 
     [Rpc(CallLocal = true)]
-    private void RpcAllDestroyBlock(Vector2I coords, string resourcePath) {
+    private void RpcAllDestroyBlock(Vector2I coords, UInt16 itemId) {
         Blocks[coords.X, coords.Y] = null;
-        BlockDestroyed?.Invoke(coords, resourcePath);
+        BlockDestroyed?.Invoke(coords, itemId);
     }
 
     private void OnHostGatheredWall(Vector2I coords, float damage) {
@@ -118,9 +120,9 @@ public partial class BlockManager : Node2D {
 
     [Rpc(CallLocal = true)]
     private void RpcAllDestroyWall(Vector2I coords) {
-        string path = Walls[coords.X, coords.Y].ResourcePath;
+        UInt16 itemId = Walls[coords.X, coords.Y].ItemId;
         Walls[coords.X, coords.Y] = null;
-        WallDestroyed?.Invoke(coords, path);
+        WallDestroyed?.Invoke(coords, itemId);
     }
 
     #region World Synchronization
@@ -173,7 +175,7 @@ public partial class BlockManager : Node2D {
                     ["x"] = x,
                     ["y"] = y,
                     ["health"] = block.CurrentHealth,
-                    ["path"] = block.ResourcePath
+                    ["itemId"] = block.ItemId
                 };
                 chunkEntities.Add(entityData);
             }
@@ -195,7 +197,7 @@ public partial class BlockManager : Node2D {
 
             Blocks[x, y] = new Block {
                 CurrentHealth = (float)entityData["health"],
-                ResourcePath = entityData["path"].ToString()
+                ItemId = (UInt16)entityData["itemId"]
             };
         }
 
@@ -205,7 +207,7 @@ public partial class BlockManager : Node2D {
 
             Walls[x, y] = new Block {
                 CurrentHealth = (float)entityData["health"],
-                ResourcePath = entityData["path"].ToString()
+                ItemId = (UInt16)entityData["itemId"]
             };
         }
 

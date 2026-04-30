@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Godot;
-using GodotCollections = Godot.Collections;
 
 namespace TerrariaRipoffNNF;
 
@@ -44,7 +44,7 @@ public partial class WorldCollision : Node2D {
         }
     }
 
-    private void OnBlockDestroyed(Vector2I position, string _) {
+    private void OnBlockDestroyed(Vector2I position, UInt16 _) {
         RemoveCollisionBlock(position);
     }
 

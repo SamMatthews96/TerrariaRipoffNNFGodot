@@ -48,16 +48,14 @@ public partial class PickupManager : Node2D {
         ServerPickupDestroyed?.Invoke(pickup.Coords);
     }
 
-    private void HostOnBlockDestroyed(Vector2I coords, string resourcePath) {
+    private void HostOnBlockDestroyed(Vector2I coords, UInt16 itemId) {
         Vector2 position = new(
             (coords.X + 0.5f) * Game.BlockSize,
             (coords.Y + 0.5f) * Game.BlockSize
         );
         _pickupCount++;
-        Dictionary resourcePathDict = new();
-        resourcePathDict["ResourcePath"] = resourcePath;
         Rpc(nameof(RpcAllCreatePickup),
-            position, resourcePathDict, _pickupCount);
+            position, itemId, _pickupCount);
         ServerPickupCreated?.Invoke(coords);
     }
 
@@ -66,17 +64,19 @@ public partial class PickupManager : Node2D {
             (coords.X + 0.5f) * Game.BlockSize,
             (coords.Y + 0.5f) * Game.BlockSize);
         _pickupCount++;
+        UInt16 itemId = _world.ItemIdBimap.GetId(item);
         Rpc(nameof(RpcAllCreatePickup),
-            position, item.ToDictionary(), _pickupCount);
+            position, itemId, _pickupCount);
         ServerPickupCreated?.Invoke(coords);
     }
 
     [Rpc(CallLocal = true)]
     private void RpcAllCreatePickup(
-        Vector2 position, Dictionary resourcePath, int pickupCount) {
+        Vector2 position, UInt16 itemId, int pickupCount
+    ) {
         PickupEntity pickup =
             Data.PackedScenes.Pickup.Instantiate<PickupEntity>();
-        Item item = Item.FromDictionary(resourcePath);
+        Item item = _world.ItemIdBimap.GetItem(itemId);
         pickup.Position = position;
         pickup.Coords = new Vector2I(
             (int)(position.X / Game.BlockSize - 0.5f),
@@ -112,7 +112,7 @@ public partial class PickupManager : Node2D {
         Array<Dictionary> pickupData = new();
         foreach (PickupEntity activePickup in _activePickups) {
             Dictionary dict = new();
-            dict["Item"] = activePickup.Item.ResourcePath;
+            dict["ItemId"] = _world.ItemIdBimap.GetId(activePickup.Item);
             dict["Name"] = activePickup.Name;
             pickupData.Add(dict);
         }
@@ -123,11 +123,9 @@ public partial class PickupManager : Node2D {
     [Rpc]
     private void RpcClientProcessPickupData(Array<Dictionary> pickupArray) {
         foreach (Dictionary pickupDict in pickupArray) {
-            string itemResPath = pickupDict["Item"].ToString();
-            int id = pickupDict["Name"].ToString().ToInt();
-            Dictionary dict = new();
-            dict["ResourcePath"] = itemResPath;
-            RpcAllCreatePickup(Vector2.Zero, dict, id);
+            int pickupId = pickupDict["Name"].ToString().ToInt();
+            UInt16 itemId = (UInt16)pickupDict["ItemId"];
+            RpcAllCreatePickup(Vector2.Zero, itemId, pickupId);
         }
 
         RpcId(1, nameof(RpcHostAddClientToSync));

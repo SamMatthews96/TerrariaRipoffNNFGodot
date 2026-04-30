@@ -35,6 +35,7 @@ public partial class Game : Node {
             Dictionary metadata = new();
             metadata["Width"] = worldData["Width"];
             metadata["Height"] = worldData["Height"];
+            metadata["itemMap"] = worldData["itemMap"];
             RpcId(id, nameof(RpcClientCreateWorld), metadata);
         };
         Multiplayer.PeerConnected += peerConnectedHandler;
