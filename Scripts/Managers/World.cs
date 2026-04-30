@@ -60,7 +60,6 @@ public partial class World : Node2D {
             BlockManager.SyncComplete += ClientOnSyncComplete;
             BlockManager.ClientGetWorldData();
         }
-
     }
 
     public bool IsInBounds(Vector2I coords) {

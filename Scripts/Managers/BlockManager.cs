@@ -94,7 +94,6 @@ public partial class BlockManager : Node2D {
         BlockCreated?.Invoke(coords);
     }
 
-
     private void OnHostPlaceWallAction(Item item, Vector2I coords) {
         Rpc(nameof(RpcAllCreateWall), item.ToDictionary(), coords);
     }
@@ -151,23 +150,33 @@ public partial class BlockManager : Node2D {
         int chunkIndex = 0;
         for (int chunkX = 0; chunkX < chunksX; chunkX++) {
             for (int chunkY = 0; chunkY < chunksY; chunkY++) {
-                Array chunkData = SerializeChunk(chunkX, chunkY);
+                Array blockData = SerializeChunk(chunkX, chunkY, Blocks);
 
-                Dictionary chunkPacket = new() {
+                Dictionary blockPacket = new() {
                     ["chunkX"] = chunkX,
                     ["chunkY"] = chunkY,
                     ["chunkIndex"] = chunkIndex,
                     ["totalChunks"] = totalChunks,
-                    ["entities"] = chunkData
+                    ["entities"] = blockData
                 };
 
-                RpcId(requestingPeerId, nameof(RpcProcessWorldChunk), chunkPacket);
+                Array wallData = SerializeChunk(chunkX, chunkY, Walls);
+                Dictionary wallPacket = new() {
+                    ["chunkX"] = chunkX,
+                    ["chunkY"] = chunkY,
+                    ["chunkIndex"] = chunkIndex,
+                    ["totalChunks"] = totalChunks,
+                    ["entities"] = wallData
+                };
+
+                RpcId(requestingPeerId, nameof(RpcProcessWorldChunk),
+                    blockPacket, wallPacket);
                 chunkIndex++;
             }
         }
     }
 
-    private Array SerializeChunk(int chunkX, int chunkY) {
+    private Array SerializeChunk(int chunkX, int chunkY, Block[,] data) {
         Array chunkEntities = new();
 
         int startX = chunkX * ChunkSize;
@@ -177,7 +186,7 @@ public partial class BlockManager : Node2D {
 
         for (int x = startX; x < endX; x++) {
             for (int y = startY; y < endY; y++) {
-                Block block = Blocks[x, y];
+                Block block = data[x, y];
                 if (block is null) continue;
                 Dictionary entityData = new() {
                     ["type"] = "block",
@@ -194,26 +203,31 @@ public partial class BlockManager : Node2D {
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
-    private void RpcProcessWorldChunk(Dictionary chunkPacket) {
-        int chunkIndex = (int)chunkPacket["chunkIndex"];
-        int totalChunks = (int)chunkPacket["totalChunks"];
-        Array entities = chunkPacket["entities"].AsGodotArray();
+    private void RpcProcessWorldChunk(Dictionary blockPacket, Dictionary wallPacket) {
+        int chunkIndex = (int)blockPacket["chunkIndex"];
+        int totalChunks = (int)blockPacket["totalChunks"];
+        Array entities = blockPacket["entities"].AsGodotArray();
+        Array wallEntities = wallPacket["entities"].AsGodotArray();
 
         // Deserialize entities into the world
         foreach (Dictionary entityData in entities) {
             int x = (int)entityData["x"];
             int y = (int)entityData["y"];
 
-            switch (entityData["type"].ToString()) {
-                case "block":
-                    Blocks[x, y] = new Block() {
-                        CurrentHealth = (float)entityData["health"],
-                        ResourcePath = entityData["path"].ToString()
-                    };
-                    break;
-                default:
-                    throw new Exception($"[Client] Unknown entity type: {entityData["type"]}");
-            }
+            Blocks[x, y] = new Block {
+                CurrentHealth = (float)entityData["health"],
+                ResourcePath = entityData["path"].ToString()
+            };
+        }
+
+        foreach (Dictionary entityData in wallEntities) {
+            int x = (int)entityData["x"];
+            int y = (int)entityData["y"];
+
+            Walls[x, y] = new Block {
+                CurrentHealth = (float)entityData["health"],
+                ResourcePath = entityData["path"].ToString()
+            };
         }
 
         // Check if this is the last chunk
