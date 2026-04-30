@@ -11,16 +11,19 @@ public partial class BlockManager : Node2D {
 
     [Export] private World _world;
 
-    public event Action<Vector2I, string> BlockDestroyed; 
+    public event Action SyncComplete;
+    public event Action<Vector2I, string> BlockDestroyed;
     public event Action<Vector2I> BlockCreated;
     public event Action<Vector2I, string> WallDestroyed;
+
+    private const int ChunkSize = 50;
 
     public override void _Ready() {
         Blocks = new Block[_world.WorldSize.X, _world.WorldSize.Y];
         Walls = new Block[_world.WorldSize.X, _world.WorldSize.Y];
 
         if (!_world.IsHost) return;
-        
+
         Array savedBlocks = _world.WorldData["blocks"].AsGodotArray();
         foreach (Dictionary dictionary in savedBlocks) {
             int x = (int)dictionary["xPosition"].ToString().ToFloat();
@@ -32,27 +35,33 @@ public partial class BlockManager : Node2D {
                     .AsGodotDictionary()["ResourcePath"].ToString(),
             };
         }
-        
+
         Array savedWalls = _world.WorldData["walls"].AsGodotArray();
         foreach (Dictionary dictionary in savedWalls) {
             int x = (int)dictionary["xPosition"].ToString().ToFloat();
             int y = (int)dictionary["yPosition"].ToString().ToFloat();
-            
+
             Walls[x, y] = new Block {
                 CurrentHealth = 1,
                 ResourcePath = dictionary["item"]
                     .AsGodotDictionary()["ResourcePath"].ToString(),
             };
         }
-        
+
         _world.PlayerManager.PlayerSpawnedOnHost += OnPlayerSpawnedOnHost;
-        TreeExiting += () => {
-            _world.PlayerManager.PlayerSpawnedOnHost -= OnPlayerSpawnedOnHost;
-        };
+        TreeExiting += () => { _world.PlayerManager.PlayerSpawnedOnHost -= OnPlayerSpawnedOnHost; };
+
+        if (!_world.IsHost) {
+            RpcId(1, nameof(RpcRequestWorldData));
+        }
+    }
+
+    public void ClientGetWorldData() {
+        RpcId(1, nameof(RpcRequestWorldData));
     }
 
     private void OnPlayerSpawnedOnHost(Player player) {
-        player.ActionController.BuildAction.HostPlaceBlockAction 
+        player.ActionController.BuildAction.HostPlaceBlockAction
             += OnHostPlaceBlockAction;
         player.ActionController.BuildAction.HostPlaceWallAction +=
             OnHostPlaceWallAction;
@@ -61,7 +70,7 @@ public partial class BlockManager : Node2D {
         player.ActionController.GatherAction.HostGatherWallAction +=
             OnHostGatherWallAction;
         player.TreeExiting += () => {
-            player.ActionController.BuildAction.HostPlaceBlockAction 
+            player.ActionController.BuildAction.HostPlaceBlockAction
                 -= OnHostPlaceBlockAction;
             player.ActionController.BuildAction.HostPlaceWallAction -=
                 OnHostPlaceWallAction;
@@ -75,7 +84,7 @@ public partial class BlockManager : Node2D {
     private void OnHostPlaceBlockAction(Item item, Vector2I coords) {
         Rpc(nameof(RpcAllCreateBlock), item.ResourcePath, coords);
     }
-    
+
     [Rpc(CallLocal = true)]
     private void RpcAllCreateBlock(string resourcePath, Vector2I coords) {
         Blocks[coords.X, coords.Y] = new Block {
@@ -84,8 +93,8 @@ public partial class BlockManager : Node2D {
         };
         BlockCreated?.Invoke(coords);
     }
-        
-    
+
+
     private void OnHostPlaceWallAction(Item item, Vector2I coords) {
         Rpc(nameof(RpcAllCreateWall), item.ToDictionary(), coords);
     }
@@ -97,7 +106,7 @@ public partial class BlockManager : Node2D {
             ResourcePath = itemDict["ResourcePath"].ToString()
         };
     }
-    
+
     private void OnHostGatherBlockAction(Vector2I coords, float damage) {
         Block block = Blocks[coords.X, coords.Y];
         block.CurrentHealth -= damage;
@@ -119,11 +128,99 @@ public partial class BlockManager : Node2D {
             Rpc(nameof(RpcAllDestroyWall), coords);
         }
     }
-    
+
     [Rpc(CallLocal = true)]
     private void RpcAllDestroyWall(Vector2I coords) {
         string path = Walls[coords.X, coords.Y].ResourcePath;
         Walls[coords.X, coords.Y] = null;
         WallDestroyed?.Invoke(coords, path);
     }
+
+    #region World Synchronization
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    private void RpcRequestWorldData() {
+        int requestingPeerId = Multiplayer.GetRemoteSenderId();
+
+        // Calculate chunks
+        int chunksX = (int)Math.Ceiling((double)_world.WorldSize.X / ChunkSize);
+        int chunksY = (int)Math.Ceiling((double)_world.WorldSize.Y / ChunkSize);
+        int totalChunks = chunksX * chunksY;
+
+        // Send chunks
+        int chunkIndex = 0;
+        for (int chunkX = 0; chunkX < chunksX; chunkX++) {
+            for (int chunkY = 0; chunkY < chunksY; chunkY++) {
+                Array chunkData = SerializeChunk(chunkX, chunkY);
+
+                Dictionary chunkPacket = new() {
+                    ["chunkX"] = chunkX,
+                    ["chunkY"] = chunkY,
+                    ["chunkIndex"] = chunkIndex,
+                    ["totalChunks"] = totalChunks,
+                    ["entities"] = chunkData
+                };
+
+                RpcId(requestingPeerId, nameof(RpcProcessWorldChunk), chunkPacket);
+                chunkIndex++;
+            }
+        }
+    }
+
+    private Array SerializeChunk(int chunkX, int chunkY) {
+        Array chunkEntities = new();
+
+        int startX = chunkX * ChunkSize;
+        int startY = chunkY * ChunkSize;
+        int endX = Math.Min(startX + ChunkSize, _world.WorldSize.X);
+        int endY = Math.Min(startY + ChunkSize, _world.WorldSize.Y);
+
+        for (int x = startX; x < endX; x++) {
+            for (int y = startY; y < endY; y++) {
+                Block block = Blocks[x, y];
+                if (block is null) continue;
+                Dictionary entityData = new() {
+                    ["type"] = "block",
+                    ["x"] = x,
+                    ["y"] = y,
+                    ["health"] = block.CurrentHealth,
+                    ["path"] = block.ResourcePath
+                };
+                chunkEntities.Add(entityData);
+            }
+        }
+
+        return chunkEntities;
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    private void RpcProcessWorldChunk(Dictionary chunkPacket) {
+        int chunkIndex = (int)chunkPacket["chunkIndex"];
+        int totalChunks = (int)chunkPacket["totalChunks"];
+        Array entities = chunkPacket["entities"].AsGodotArray();
+
+        // Deserialize entities into the world
+        foreach (Dictionary entityData in entities) {
+            int x = (int)entityData["x"];
+            int y = (int)entityData["y"];
+
+            switch (entityData["type"].ToString()) {
+                case "block":
+                    Blocks[x, y] = new Block() {
+                        CurrentHealth = (float)entityData["health"],
+                        ResourcePath = entityData["path"].ToString()
+                    };
+                    break;
+                default:
+                    throw new Exception($"[Client] Unknown entity type: {entityData["type"]}");
+            }
+        }
+
+        // Check if this is the last chunk
+        if (chunkIndex == totalChunks - 1) {
+            SyncComplete?.Invoke();
+        }
+    }
+
+    #endregion
 }
