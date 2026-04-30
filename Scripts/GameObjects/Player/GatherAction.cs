@@ -8,6 +8,7 @@ public partial class GatherAction : PlayerAction {
     public delegate void GatherActionDelegate(Vector2I coords, float damage);
     public event GatherActionDelegate HostGatherBlockAction;
     public event GatherActionDelegate HostGatherPropAction;
+    public event GatherActionDelegate HostGatherWallAction;
 
     [Export] private Timer _gatherCooldown;
 
@@ -47,7 +48,6 @@ public partial class GatherAction : PlayerAction {
         int range = 8;
         if (!Player.World.IsInOrthogonalRange(
                 targetCoords, Player.Coords, range)) return;
-        if (Player.PlayerEquipment.Pickaxe is null) return;
         _gatherCooldown.Start();
         RpcId(1, nameof(AttemptGatherOnHost), targetCoords);
     }
@@ -55,8 +55,6 @@ public partial class GatherAction : PlayerAction {
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
     private void AttemptGatherOnHost(Vector2I targetCoords) {
         if (!_gatherCooldown.IsStopped()) return;
-
-        if (Player.PlayerEquipment.Pickaxe is null) return;
 
         int range = Player.PlayerEquipment.Pickaxe.Range;
         if (!Player.World.IsInOrthogonalRange(
@@ -68,6 +66,9 @@ public partial class GatherAction : PlayerAction {
             action = HostGatherBlockAction;
         } else if (Player.World.PropManager.PropCells.ContainsKey(targetCoords)) {
             action = HostGatherPropAction;
+        } else if (Player.World.BlockManager.Walls[
+                       targetCoords.X, targetCoords.Y] is not null) {
+            action = HostGatherWallAction;
         } else return;
 
         _gatherCooldown.Start();

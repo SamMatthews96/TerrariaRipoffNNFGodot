@@ -13,6 +13,7 @@ public partial class BlockManager : Node2D {
 
     public event Action<Vector2I, string> BlockDestroyed; 
     public event Action<Vector2I> BlockCreated;
+    public event Action<Vector2I, string> WallDestroyed;
 
     public override void _Ready() {
         Blocks = new Block[_world.WorldSize.X, _world.WorldSize.Y];
@@ -57,13 +58,17 @@ public partial class BlockManager : Node2D {
             OnHostPlaceWallAction;
         player.ActionController.GatherAction.HostGatherBlockAction +=
             OnHostGatherBlockAction;
+        player.ActionController.GatherAction.HostGatherWallAction +=
+            OnHostGatherWallAction;
         player.TreeExiting += () => {
             player.ActionController.BuildAction.HostPlaceBlockAction 
                 -= OnHostPlaceBlockAction;
-            player.ActionController.GatherAction.HostGatherBlockAction -=
-                OnHostGatherBlockAction;
             player.ActionController.BuildAction.HostPlaceWallAction -=
                 OnHostPlaceWallAction;
+            player.ActionController.GatherAction.HostGatherBlockAction -=
+                OnHostGatherBlockAction;
+            player.ActionController.GatherAction.HostGatherWallAction -=
+                OnHostGatherWallAction;
         };
     }
 
@@ -105,5 +110,20 @@ public partial class BlockManager : Node2D {
     private void RpcAllDestroyBlock(Vector2I coords, string resourcePath) {
         Blocks[coords.X, coords.Y] = null;
         BlockDestroyed?.Invoke(coords, resourcePath);
+    }
+
+    private void OnHostGatherWallAction(Vector2I coords, float damage) {
+        Block block = Walls[coords.X, coords.Y];
+        block.CurrentHealth -= damage;
+        if (block.CurrentHealth <= 0) {
+            Rpc(nameof(RpcAllDestroyWall), coords);
+        }
+    }
+    
+    [Rpc(CallLocal = true)]
+    private void RpcAllDestroyWall(Vector2I coords) {
+        string path = Walls[coords.X, coords.Y].ResourcePath;
+        Walls[coords.X, coords.Y] = null;
+        WallDestroyed?.Invoke(coords, path);
     }
 }

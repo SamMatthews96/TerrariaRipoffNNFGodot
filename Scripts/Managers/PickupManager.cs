@@ -22,10 +22,12 @@ public partial class PickupManager : Node2D {
             _world.BlockManager.BlockDestroyed += HostOnBlockDestroyed;
             _world.PlayerManager.PlayerSpawnedOnHost += OnPlayedSpawnedOnHost;
             _world.PropManager.HostPropDestroyed += OnHostPropDestroyed;
+            _world.BlockManager.WallDestroyed += HostOnBlockDestroyed;
             TreeExiting += () => {
                 _world.BlockManager.BlockDestroyed -= HostOnBlockDestroyed;
                 _world.PlayerManager.PlayerSpawnedOnHost -= OnPlayedSpawnedOnHost;
                 _world.PropManager.HostPropDestroyed -= OnHostPropDestroyed;
+                _world.BlockManager.WallDestroyed -= HostOnBlockDestroyed;
             };
 
             ProcessMode = ProcessModeEnum.Always;
@@ -54,7 +56,7 @@ public partial class PickupManager : Node2D {
         _pickupCount++;
         Dictionary resourcePathDict = new();
         resourcePathDict["ResourcePath"] = resourcePath;
-        Rpc(nameof(RpcAllCreatePickup), 
+        Rpc(nameof(RpcAllCreatePickup),
             position, resourcePathDict, _pickupCount);
         ServerPickupCreated?.Invoke(coords);
     }
@@ -64,8 +66,8 @@ public partial class PickupManager : Node2D {
             (coords.X + 0.5f) * Game.BlockSize,
             (coords.Y + 0.5f) * Game.BlockSize);
         _pickupCount++;
-        Rpc(nameof(RpcAllCreatePickup), 
-            position, item.ToDictionary(), _pickupCount);    
+        Rpc(nameof(RpcAllCreatePickup),
+            position, item.ToDictionary(), _pickupCount);
         ServerPickupCreated?.Invoke(coords);
     }
 
