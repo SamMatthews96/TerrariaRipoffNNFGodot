@@ -20,12 +20,12 @@ public partial class PropManager : Node {
     }
     
     private void OnPlayerSpawnedOnHost(Player player) {
-        player.ActionState.Build.HostPlacePropAction 
+        player.ActionState.Build.HostPlaceProp 
             += OnHostPlaceProp;
         player.ActionState.Gather.HostGatherPropAction
             += OnHostGatherProp;
         player.TreeExiting += () => {
-            player.ActionState.Build.HostPlacePropAction 
+            player.ActionState.Build.HostPlaceProp 
                 -= OnHostPlaceProp;
             player.ActionState.Gather.HostGatherPropAction
                 -= OnHostGatherProp;

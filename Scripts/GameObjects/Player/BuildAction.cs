@@ -8,7 +8,7 @@ public partial class BuildAction : PlayerAction {
     public delegate void BuildActionDelegate(Item item, Vector2I coords);
     public event BuildActionDelegate HostPlacedBlock;
     public event BuildActionDelegate HostPlacedWall;
-    public event BuildActionDelegate HostPlacePropAction;
+    public event BuildActionDelegate HostPlaceProp;
 
     private Item _blockItem;
 
@@ -42,10 +42,8 @@ public partial class BuildAction : PlayerAction {
             (int)Math.Floor(mouseWorldPosition.Y / Game.BlockSize)
         );
 
-        if (!Player.World.IsInBounds(coords)) return;
-        float range = 8;
-        if (Math.Abs(coords.X - Player.Coords.X) > range) return;
-        if (Math.Abs(coords.Y - Player.Coords.Y) > range) return;
+        int range = 8;
+        if (!Player.World.IsInOrthogonalRange(coords, Player.Coords, range)) return;
 
         // check that item is valid
         Item item = Item.FromDictionary(blockItemDict);
@@ -80,7 +78,7 @@ public partial class BuildAction : PlayerAction {
             if (Player.World.BlockManager.Blocks[ground.X, ground.Y] is null) return;
         }
 
-        HostPlacePropAction?.Invoke(item, coords);
+        HostPlaceProp?.Invoke(item, coords);
     }
 
     public override void RightMouseAction(Vector2 mouseWorldPosition) {
@@ -98,12 +96,9 @@ public partial class BuildAction : PlayerAction {
             (int)Math.Floor(mouseWorldPosition.Y / Game.BlockSize)
         );
 
-        if (!Player.World.IsInBounds(coords)) return;
-        float range = 8;
-        if (Math.Abs(coords.X - Player.Coords.X) > range) return;
-        if (Math.Abs(coords.Y - Player.Coords.Y) > range) return;
+        int range = 8;
+        if (!Player.World.IsInOrthogonalRange(coords, Player.Coords, range)) return;
 
-        // check that item is valid
         Item item = Item.FromDictionary(blockItemDict);
         if (item is null) {
             throw new Exception("Item is null");
@@ -115,7 +110,7 @@ public partial class BuildAction : PlayerAction {
     }
     
     private void AttemptBuildWall(Item item, Vector2I coords) {
-        if (Player.World.IsCellFilled(coords)) return;
+        if (Player.World.BlockManager.Walls[coords.X,coords.Y] is not null) return;
         HostPlacedWall?.Invoke(item, coords);
     }
 

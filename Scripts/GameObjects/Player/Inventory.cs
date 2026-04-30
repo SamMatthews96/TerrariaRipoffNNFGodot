@@ -49,14 +49,15 @@ public partial class Inventory : Node {
         }
 
         if (_player.World.IsHost) {
-            _player.ServerPickupArea.CollectedPickup +=
-                HostOnCollectedPickup;
-            _player.ActionState.Build.HostPlacedBlock +=
-                HostOnPlacedBlock;
+            _player.ServerPickupArea.CollectedPickup += HostOnCollectedPickup;
+            _player.ActionState.Build.HostPlacedBlock += HostOnPlacedBlock;
+            _player.ActionState.Build.HostPlacedWall += HostOnPlacedBlock;
+            _player.ActionState.Build.HostPlaceProp += HostOnPlacedBlock;
             TreeExiting += () => {
                 _player.ServerPickupArea.CollectedPickup -= HostOnCollectedPickup;
-                _player.ActionState.Build.HostPlacedBlock -=
-                    HostOnPlacedBlock;
+                _player.ActionState.Build.HostPlacedBlock -= HostOnPlacedBlock;
+                _player.ActionState.Build.HostPlacedWall -= HostOnPlacedBlock;
+                _player.ActionState.Build.HostPlaceProp -= HostOnPlacedBlock;
             };
         }
     }
