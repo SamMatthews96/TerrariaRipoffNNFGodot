@@ -59,7 +59,7 @@ public partial class GatherAction : PlayerAction {
         int range = Player.PlayerEquipment.Pickaxe.Range;
         if (!Player.World.IsInOrthogonalRange(
                 targetCoords, Player.Coords, range)) return;
-
+        
         GatherActionDelegate action;
         if (Player.World.BlockManager.Blocks[
                 targetCoords.X, targetCoords.Y] is not null) {

@@ -64,9 +64,8 @@ public static class WorldCreator {
         }
 
         Array<Dictionary> breakables = new();
-        int ground = mid - 1;
         for (int x = 10; x < worldBasicInfo.Width - 10; x += 10) {
-            for (int y = 5; y < ground; y++) {
+            for (int y = 5; y < mid; y++) {
                 Dictionary tree = new() {
                     { "x", x },
                     { "y", y },
