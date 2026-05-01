@@ -18,8 +18,8 @@ public partial class World : Node2D {
     [Export] public InputManager InputManager { get; private set; }
     [Export] public Interface.Game Interface { get; private set; }
     [Export] public BlockManager BlockManager { get; private set; }
-
-    public ItemIdBimap ItemIdBimap { get; private set; }
+    [Export] public ItemIdBimap ItemIdBimap { get; private set; }
+    
     private Dictionary _localPlayerData;
     public Dictionary WorldData { get; private set; }
 
@@ -29,9 +29,6 @@ public partial class World : Node2D {
         world.IsHost = true;
         world.WorldSize = new Vector2I((int)worldData["Width"], (int)worldData["Height"]);
         world.Game = game;
-        world.ItemIdBimap = new ItemIdBimap(
-            worldData["itemMap"].AsGodotDictionary());
-
         world._localPlayerData = playerData;
         world.WorldData = worldData;
 
@@ -42,8 +39,7 @@ public partial class World : Node2D {
         World world = Data.PackedScenes.World.Instantiate<World>();
         world.WorldSize = new Vector2I((int)metadata["Width"], (int)metadata["Height"]);
         world.Game = game;
-        world.ItemIdBimap = new ItemIdBimap(
-            metadata["itemMap"].AsGodotDictionary());
+        world.WorldData = metadata;
         world._localPlayerData = playerData;
         return world;
     }

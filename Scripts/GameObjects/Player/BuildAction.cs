@@ -1,6 +1,7 @@
 ﻿using System;
 using Godot;
 using Godot.Collections;
+using TerrariaRipoffNNF.TestScenes;
 
 namespace TerrariaRipoffNNF;
 
@@ -20,6 +21,7 @@ public partial class BuildAction : PlayerAction {
 
     public override void _ExitTree() {
         Player.World.Interface.BuildUi.BuildButtonSelected -= OnBuildTypeSelected;
+        // Player.World.Interface.BuildUi.
         Player.Inventory.RemovedItemStack -= OnInventoryRemovedItemStack;
     }
 
@@ -119,7 +121,10 @@ public partial class BuildAction : PlayerAction {
     public override void EndRightMouseAction(Vector2 mouseWorldPosition) { }
 
     private void OnInventoryRemovedItemStack(StackedItems stackedItems) {
-        if (_blockItem == stackedItems.Item) {
+        ItemIdBimap bimap = Player.World.ItemIdBimap;
+        ushort itemId = bimap.GetId(stackedItems.Item);
+        ushort blockId = bimap.GetId(_blockItem); 
+        if (itemId == blockId) {
             _blockItem = null;
         }
     }

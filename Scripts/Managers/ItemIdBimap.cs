@@ -6,39 +6,49 @@ using Array = Godot.Collections.Array;
 
 namespace TerrariaRipoffNNF.TestScenes;
 
-// potential concern: ordering of dict elements
+public partial class ItemIdBimap : Node {
+    private Array<string> _idToString = new();
+    private Dictionary<string, ushort> _stringToId = new();
+    private Dictionary<string, Item> _stringToItem = new();
 
-public class ItemIdBimap {
-    private readonly Array<string> _idToString = new();
-    private readonly Dictionary<string, ushort> _stringToId = new();
-    private readonly Dictionary<string, Item> _stringToItem = new();
-    
-    public ItemIdBimap() {    }
+    [Export] private World _world;
 
-    public ItemIdBimap(Dictionary dict) {
+    public override void _Ready() {
+        Dictionary dict = _world.WorldData["itemMap"].AsGodotDictionary();
         _idToString = dict["IdToString"].AsGodotArray<string>();
         _stringToId = dict["StringToId"].AsGodotDictionary<string, ushort>();
-        
-        // _stringToItem =
+
         Dictionary<string, Dictionary> stringToItemDict =
             dict["StringToItem"].AsGodotDictionary<string, Dictionary>();
         foreach ((string key, Dictionary itemDict) in stringToItemDict) {
             _stringToItem[key] = Item.FromDictionary(itemDict);
         }
     }
-    
+
     public ushort GetId(Item item) {
         string itemString = GetItemString(item);
-        if (_stringToId.TryGetValue(itemString, out ushort id)) {
-            return id;
-        }
+        bool isIdSet = _stringToId.TryGetValue(itemString, out ushort id);
+        if (isIdSet) return id;
 
+        if (!_world.IsHost) throw new Exception("Item not found on client");
         ushort count = (ushort)_idToString.Count;
-        _idToString.Add(itemString);
-        _stringToId[itemString] = count;
-        _stringToItem[itemString] = item;
+        Rpc(nameof(RpcAddItem),
+            count, itemString, item.ToDictionary());
         return count;
     }
+
+    [Rpc(CallLocal = true)]
+    private void RpcAddItem(ushort id, string itemString, Dictionary itemDict) {
+        Item item = Item.FromDictionary(itemDict);
+        if (_idToString.Count != id) {
+            throw new Exception("Id mismatch");
+        }
+
+        _idToString.Add(itemString);
+        _stringToId[itemString] = id;
+        _stringToItem[itemString] = item;
+    }
+
 
     public Item GetItem(ushort id) {
         string itemString = _idToString[id];

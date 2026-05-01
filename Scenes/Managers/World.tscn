@@ -10,8 +10,9 @@
 [ext_resource type="PackedScene" uid="uid://javhx4rej0q4" path="res://Scenes/Interface/Game/GameInterface.tscn" id="8_2udm8"]
 [ext_resource type="Script" uid="uid://cheg1o8gv8pno" path="res://Scripts/Managers/PropManager.cs" id="9_oby1v"]
 [ext_resource type="Script" uid="uid://komhov4gde6p" path="res://Scripts/Managers/BlockManager.cs" id="10_5fdyc"]
+[ext_resource type="Script" uid="uid://micyrdd8cmes" path="res://Scripts/Managers/ItemIdBimap.cs" id="11_t2s1x"]
 
-[node name="World" type="Node2D" unique_id=318249153 node_paths=PackedStringArray("PickupManager", "PlayerManager", "PropManager", "InputManager", "Interface", "BlockManager")]
+[node name="World" type="Node2D" unique_id=318249153 node_paths=PackedStringArray("PickupManager", "PlayerManager", "PropManager", "InputManager", "Interface", "BlockManager", "ItemIdBimap")]
 script = ExtResource("1_qmgnr")
 PickupManager = NodePath("PickupManager")
 PlayerManager = NodePath("PlayerManager")
@@ -19,6 +20,11 @@ PropManager = NodePath("PropManager")
 InputManager = NodePath("InputManager")
 Interface = NodePath("GameInterface")
 BlockManager = NodePath("BlockManager")
+ItemIdBimap = NodePath("ItemIdBimap")
+
+[node name="ItemIdBimap" type="Node" parent="." unique_id=482032795 node_paths=PackedStringArray("_world")]
+script = ExtResource("11_t2s1x")
+_world = NodePath("..")
 
 [node name="GameInterface" parent="." unique_id=503822172 node_paths=PackedStringArray("World") instance=ExtResource("8_2udm8")]
 World = NodePath("..")
