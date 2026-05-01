@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://ef1t35s1gipj"]
+
+[ext_resource type="Script" uid="uid://biy3ghtq7hdmv" path="res://Scripts/GameObjects/WorldObject/BreakableProp.cs" id="1_y8w7a"]
+[ext_resource type="Texture2D" uid="uid://dom0h6yhambyh" path="res://Assets/Images/placedTorch.png" id="2_ntnqs"]
+
+[node name="Breakable" type="Node2D" unique_id=297699570 node_paths=PackedStringArray("_sprite")]
+script = ExtResource("1_y8w7a")
+_sprite = NodePath("Sprite2D")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1819042009]
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("2_ntnqs")
+centered = false

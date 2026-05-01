@@ -10,16 +10,18 @@ public partial class Data : Node {
     public static Items Items { get; private set; }
     public static CraftingStations CraftingStations { get; private set; }
     public static Recipes Recipes { get; private set; }
+    public static Breakables Breakables { get; private set; }
 
     [Export] private PackedScenes _packedScenes;
     [Export] private Items _items;
     [Export] private CraftingStations _craftingStations;
-    // [Export] private Recipes _recipes;
+    [Export] private Breakables _breakables;
 
     public override void _Ready() {
         PackedScenes = _packedScenes;
         Items = _items;
         CraftingStations = _craftingStations;
+        Breakables = _breakables;
         Recipes = new Recipes();
     }
 }

@@ -12,9 +12,6 @@ public static class WorldCreator {
         worldDictionary.Add("Width", worldBasicInfo.Width);
         worldDictionary.Add("Height", worldBasicInfo.Height);
 
-        worldDictionary.Add("PlayerPositions", new Array());
-        worldDictionary.Add("DefaultSpawnPosition", new Array { 5, 5 });
-
         int mid = 15;
 
         Item[] items = {
@@ -35,7 +32,7 @@ public static class WorldCreator {
             stringToItem.Add(itemCode, itemDict);
             count++;
         }
-        
+
         Dictionary mapDict = new() {
             { "IdToString", idToString },
             { "StringToId", stringToId },
@@ -48,7 +45,7 @@ public static class WorldCreator {
         Array wallList = new();
         for (int x = 0; x < worldBasicInfo.Width; x++) {
             for (int y = mid; y < worldBasicInfo.Height; y++) {
-                int itemId = random.Next(0, 3); 
+                int itemId = random.Next(0, 3);
                 Dictionary newBlock = new() {
                     // get id from item
                     { "id", itemId },
@@ -56,7 +53,7 @@ public static class WorldCreator {
                     { "y", y }
                 };
                 blockList.Add(newBlock);
-                
+
                 Dictionary newWall = new() {
                     { "id", earthId },
                     { "x", x },
@@ -66,6 +63,20 @@ public static class WorldCreator {
             }
         }
 
+        Array<Dictionary> breakables = new();
+        int ground = mid - 1;
+        for (int x = 10; x < worldBasicInfo.Width - 10; x += 10) {
+            for (int y = 5; y < ground; y++) {
+                Dictionary tree = new() {
+                    { "x", x },
+                    { "y", y },
+                    { "id", 1 }
+                };
+                breakables.Add(tree);
+            }
+        }
+
+        worldDictionary.Add("breakables", breakables);
         worldDictionary.Add("blocks", blockList);
         worldDictionary.Add("walls", wallList);
         worldDictionary.Add("itemMap", mapDict);

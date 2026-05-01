@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://btjjbewbkdhw8" path="res://Scripts/Data/PackedScenes.cs" id="1_tombv"]
 [ext_resource type="Script" uid="uid://drtqf5igxdrlb" path="res://Scripts/GameObjects/WorldObject/CraftStationArea.cs" id="2_brkhy"]
+[ext_resource type="PackedScene" uid="uid://ef1t35s1gipj" path="res://Scenes/GameObjects/Breakable.tscn" id="2_wi1ls"]
 [ext_resource type="PackedScene" uid="uid://d3hhhiiydcfft" path="res://Scenes/Managers/Game.tscn" id="3_6enwa"]
 [ext_resource type="PackedScene" uid="uid://dsp7h2dpxh0i6" path="res://Scenes/Interface/Game/BlockTypeButton.tscn" id="4_rx88w"]
 [ext_resource type="PackedScene" uid="uid://cy52ebe7eud3c" path="res://Scenes/Interface/LoadingScreen.tscn" id="4_y0gj7"]
@@ -133,6 +134,7 @@ BlockTypeButton = ExtResource("4_rx88w")
 ItemTooltipPropertyGroup = ExtResource("5_8fovs")
 SelectIngredientButton = ExtResource("11_tftwe")
 Prop = ExtResource("16_r0aru")
+Breakable = ExtResource("2_wi1ls")
 LoadingScreen = ExtResource("4_y0gj7")
 World = ExtResource("19_w7gg7")
 WeaponProjectile = ExtResource("16_p2brr")

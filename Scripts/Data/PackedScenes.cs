@@ -24,6 +24,7 @@ public partial class PackedScenes : Resource {
     [Export] public PackedScene ItemTooltipPropertyGroup { get; private set; }
     [Export] public PackedScene SelectIngredientButton { get; private set; }
     [Export] public PackedScene Prop { get; private set; }
+    [Export] public PackedScene Breakable { get; private set; }
     
     // Managers
     [Export] public PackedScene LoadingScreen { get; private set; }
