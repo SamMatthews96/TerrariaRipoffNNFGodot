@@ -12,17 +12,21 @@ public partial class BuildAction : PlayerAction {
     public event BuildActionDelegate HostPlaceProp;
 
     private Item _blockItem;
+    private ItemIdBimap _itemMap;
 
     public override void _Ready() {
         Player = ActionController.Player;
-        Player.World.Interface.BuildUi.BuildButtonSelected += OnBuildTypeSelected;
-        Player.Inventory.RemovedItemStack += OnInventoryRemovedItemStack;
-    }
-
-    public override void _ExitTree() {
-        Player.World.Interface.BuildUi.BuildButtonSelected -= OnBuildTypeSelected;
-        // Player.World.Interface.BuildUi.
-        Player.Inventory.RemovedItemStack -= OnInventoryRemovedItemStack;
+        _itemMap = Player.World.ItemIdBimap;
+        Player.World.Interface.BuildUi.BuildButtonSelected +=
+            OnBuildTypeSelected;
+        Player.Inventory.RemovedItemStack +=
+            OnInventoryRemovedItemStack;
+        TreeExiting += () => {
+            Player.World.Interface.BuildUi.BuildButtonSelected -=
+                OnBuildTypeSelected;
+            Player.Inventory.RemovedItemStack -=
+                OnInventoryRemovedItemStack;
+        };
     }
 
     private void OnBuildTypeSelected(Item item) {
@@ -31,24 +35,26 @@ public partial class BuildAction : PlayerAction {
 
     public override void LeftMouseAction(Vector2 mouseWorldPosition) {
         if (_blockItem is null) return;
-        RpcId(1, nameof(RpcHostAttemptBuildPrimary), mouseWorldPosition,
-            _blockItem.ToDictionary());
+        ushort itemId = _itemMap.GetId(_blockItem);
+        RpcId(1, nameof(RpcHostAttemptBuildPrimary),
+            mouseWorldPosition, itemId);
     }
 
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true,
+        TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void RpcHostAttemptBuildPrimary(
-        Vector2 mouseWorldPosition, Dictionary blockItemDict
+        Vector2 mousePosition, ushort itemId
     ) {
         Vector2I coords = new(
-            (int)Math.Floor(mouseWorldPosition.X / Game.BlockSize),
-            (int)Math.Floor(mouseWorldPosition.Y / Game.BlockSize)
+            (int)Math.Floor(mousePosition.X / Game.BlockSize),
+            (int)Math.Floor(mousePosition.Y / Game.BlockSize)
         );
 
         int range = 8;
         if (!Player.World.IsInOrthogonalRange(coords, Player.Coords, range)) return;
 
         // check that item is valid
-        Item item = Item.FromDictionary(blockItemDict);
+        Item item = _itemMap.GetItem(itemId);
         if (item is null) {
             throw new Exception("Item is null");
         }
@@ -83,15 +89,17 @@ public partial class BuildAction : PlayerAction {
         HostPlaceProp?.Invoke(item, coords);
     }
 
-    public override void RightMouseAction(Vector2 mouseWorldPosition) {
+    public override void RightMouseAction(Vector2 mousePosition) {
         if (_blockItem is null) return;
-        RpcId(1, nameof(RpcHostAttemptBuildSecondary), mouseWorldPosition,
-            _blockItem.ToDictionary());
+        ushort itemId = _itemMap.GetId(_blockItem);
+        RpcId(1, nameof(RpcHostAttemptBuildSecondary),
+            mousePosition, itemId);
     }
 
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true,
+        TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void RpcHostAttemptBuildSecondary(
-        Vector2 mouseWorldPosition, Dictionary blockItemDict
+        Vector2 mouseWorldPosition, ushort itemId
     ) {
         Vector2I coords = new(
             (int)Math.Floor(mouseWorldPosition.X / Game.BlockSize),
@@ -101,7 +109,7 @@ public partial class BuildAction : PlayerAction {
         int range = 8;
         if (!Player.World.IsInOrthogonalRange(coords, Player.Coords, range)) return;
 
-        Item item = Item.FromDictionary(blockItemDict);
+        Item item = _itemMap.GetItem(itemId);
         if (item is null) {
             throw new Exception("Item is null");
         }
@@ -110,9 +118,9 @@ public partial class BuildAction : PlayerAction {
             AttemptBuildWall(item, coords);
         }
     }
-    
+
     private void AttemptBuildWall(Item item, Vector2I coords) {
-        if (Player.World.BlockManager.Walls[coords.X,coords.Y] is not null) return;
+        if (Player.World.BlockManager.Walls[coords.X, coords.Y] is not null) return;
         HostPlacedWall?.Invoke(item, coords);
     }
 
@@ -121,9 +129,15 @@ public partial class BuildAction : PlayerAction {
     public override void EndRightMouseAction(Vector2 mouseWorldPosition) { }
 
     private void OnInventoryRemovedItemStack(StackedItems stackedItems) {
+        if (_blockItem is null) return;
+        if (stackedItems.Item is null) {
+            GD.Print("Item is null");
+            return;
+        }
+
         ItemIdBimap bimap = Player.World.ItemIdBimap;
         ushort itemId = bimap.GetId(stackedItems.Item);
-        ushort blockId = bimap.GetId(_blockItem); 
+        ushort blockId = bimap.GetId(_blockItem);
         if (itemId == blockId) {
             _blockItem = null;
         }

@@ -26,23 +26,23 @@ public partial class BlockManager : Node2D {
 
         Array savedBlocks = _world.WorldData["blocks"].AsGodotArray();
         foreach (Dictionary dictionary in savedBlocks) {
-            int x = (int)dictionary["xPosition"].ToString().ToFloat();
-            int y = (int)dictionary["yPosition"].ToString().ToFloat();
+            int x = (int)dictionary["x"].ToString().ToFloat();
+            int y = (int)dictionary["y"].ToString().ToFloat();
 
             Blocks[x, y] = new Block {
                 CurrentHealth = 1,
-                ItemId = (ushort)dictionary["item"]
+                ItemId = (ushort)dictionary["id"]
             };
         }
 
         Array savedWalls = _world.WorldData["walls"].AsGodotArray();
         foreach (Dictionary dictionary in savedWalls) {
-            int x = (int)dictionary["xPosition"].ToString().ToFloat();
-            int y = (int)dictionary["yPosition"].ToString().ToFloat();
+            int x = (int)dictionary["x"].ToString().ToFloat();
+            int y = (int)dictionary["y"].ToString().ToFloat();
 
             Walls[x, y] = new Block {
                 CurrentHealth = 1,
-                ItemId = (ushort)dictionary["item"]
+                ItemId = (ushort)dictionary["id"]
             };
         }
 

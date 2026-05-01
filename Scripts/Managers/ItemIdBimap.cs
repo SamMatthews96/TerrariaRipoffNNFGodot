@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Threading.Tasks;
 using Godot;
 using Godot.Collections;
 using Array = Godot.Collections.Array;
@@ -13,16 +14,9 @@ public partial class ItemIdBimap : Node {
 
     [Export] private World _world;
 
-    public override void _Ready() {
-        Dictionary dict = _world.WorldData["itemMap"].AsGodotDictionary();
-        _idToString = dict["IdToString"].AsGodotArray<string>();
-        _stringToId = dict["StringToId"].AsGodotDictionary<string, ushort>();
-
-        Dictionary<string, Dictionary> stringToItemDict =
-            dict["StringToItem"].AsGodotDictionary<string, Dictionary>();
-        foreach ((string key, Dictionary itemDict) in stringToItemDict) {
-            _stringToItem[key] = Item.FromDictionary(itemDict);
-        }
+    public Item GetItem(ushort id) {
+        string itemString = _idToString[id];
+        return _stringToItem[itemString];
     }
 
     public ushort GetId(Item item) {
@@ -37,9 +31,59 @@ public partial class ItemIdBimap : Node {
         return count;
     }
 
-    [Rpc(CallLocal = true)]
+    public bool AreItemsSame(Item item1, Item item2) {
+        return GetItemString(item1) == GetItemString(item2);
+    }
+
+    public Dictionary ToDictionary() {
+        Dictionary<string, Dictionary> stringToItemDict = new();
+        foreach ((string key, Item item) in _stringToItem) {
+            stringToItemDict[key] = item.ToDictionary();
+        }
+
+        return new Dictionary {
+            { "IdToString", _idToString },
+            { "StringToId", _stringToId },
+            { "StringToItem", stringToItemDict },
+        };
+    }
+
+    public override void _Ready() {
+        Dictionary dict = _world.WorldData["itemMap"].AsGodotDictionary();
+        _idToString = dict["IdToString"].AsGodotArray<string>();
+        _stringToId = dict["StringToId"].AsGodotDictionary<string, ushort>();
+
+        Dictionary<string, Dictionary> stringToItemDict =
+            dict["StringToItem"].AsGodotDictionary<string, Dictionary>();
+        foreach ((string key, Dictionary itemDict) in stringToItemDict) {
+            _stringToItem[key] = Item.FromDictionary(itemDict);
+        }
+
+        _world.PlayerManager.PlayerSpawnedOnHost += OnPlayerSpawnedOnHost;
+        TreeExiting += () => { _world.PlayerManager.PlayerSpawnedOnHost -= OnPlayerSpawnedOnHost; };
+    }
+
+    private void OnPlayerSpawnedOnHost(Player player) {
+        foreach (StackedItems stackedItems in player.Inventory.StackedItemsList) {
+            Item item = stackedItems.Item;
+            string itemString = GetItemString(item);
+            if (!_stringToId.ContainsKey(itemString)) {
+                ushort id = (ushort)_idToString.Count;
+                Rpc(nameof(RpcAddItem),
+                    id, itemString, item.ToDictionary());
+            }
+        }
+    }
+
+    [Rpc(CallLocal = true,
+        TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void RpcAddItem(ushort id, string itemString, Dictionary itemDict) {
+        GD.Print($"Adding item {id} {itemString} on {Multiplayer.GetUniqueId()}");
+
         Item item = Item.FromDictionary(itemDict);
+        if (item is null) {
+            throw new Exception("Item is null");
+        }
         if (_idToString.Count != id) {
             throw new Exception("Id mismatch");
         }
@@ -47,12 +91,10 @@ public partial class ItemIdBimap : Node {
         _idToString.Add(itemString);
         _stringToId[itemString] = id;
         _stringToItem[itemString] = item;
-    }
 
-
-    public Item GetItem(ushort id) {
-        string itemString = _idToString[id];
-        return _stringToItem[itemString];
+        if (_stringToId.Count != _idToString.Count) {
+            throw new Exception("count mismatch");
+        }
     }
 
     private string GetItemString(Item item) {
@@ -69,18 +111,5 @@ public partial class ItemIdBimap : Node {
         }
 
         return recipeString;
-    }
-
-    public Dictionary ToDictionary() {
-        Dictionary<string, Dictionary> stringToItemDict = new();
-        foreach ((string key, Item item) in _stringToItem) {
-            stringToItemDict[key] = item.ToDictionary();
-        }
-
-        return new Dictionary {
-            { "IdToString", _idToString },
-            { "StringToId", _stringToId },
-            { "StringToItem", stringToItemDict },
-        };
     }
 }

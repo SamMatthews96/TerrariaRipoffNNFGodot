@@ -18,33 +18,49 @@ public static class WorldCreator {
         int mid = 15;
 
         Item[] items = {
-            Data.Items.Stone,
             Data.Items.Earth,
+            Data.Items.Stone,
             Data.Items.IronOre
         };
-        Random random = new();
 
-        ItemIdBimap map = new();
+        Array<string> idToString = new();
+        Dictionary<string, ushort> stringToId = new();
+        Dictionary<string, Dictionary> stringToItem = new();
+        int count = 0;
+        foreach (Item item in items) {
+            string itemCode = item.ResourcePath;
+            Dictionary itemDict = item.ToDictionary();
+            idToString.Add(itemCode);
+            stringToId.Add(itemCode, (ushort)count);
+            stringToItem.Add(itemCode, itemDict);
+            count++;
+        }
         
-        int earthId = map.GetId(Data.Items.Earth);
-        
+        Dictionary mapDict = new() {
+            { "IdToString", idToString },
+            { "StringToId", stringToId },
+            { "StringToItem", stringToItem },
+        };
+
+        int earthId = 0;
+        Random random = new();
         Array blockList = new();
         Array wallList = new();
         for (int x = 0; x < worldBasicInfo.Width; x++) {
             for (int y = mid; y < worldBasicInfo.Height; y++) {
-                Item item = items[random.Next(items.Length)];
+                int itemId = random.Next(0, 3); 
                 Dictionary newBlock = new() {
                     // get id from item
-                    { "item", map.GetId(item) },
-                    { "xPosition", x },
-                    { "yPosition", y }
+                    { "id", itemId },
+                    { "x", x },
+                    { "y", y }
                 };
                 blockList.Add(newBlock);
                 
                 Dictionary newWall = new() {
-                    { "item", earthId },
-                    { "xPosition", x },
-                    { "yPosition", y }
+                    { "id", earthId },
+                    { "x", x },
+                    { "y", y }
                 };
                 wallList.Add(newWall);
             }
@@ -52,7 +68,7 @@ public static class WorldCreator {
 
         worldDictionary.Add("blocks", blockList);
         worldDictionary.Add("walls", wallList);
-        worldDictionary.Add("itemMap", map.ToDictionary());
+        worldDictionary.Add("itemMap", mapDict);
 
         FileManager.SaveWorld(worldDictionary);
     }

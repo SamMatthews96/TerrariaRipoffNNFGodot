@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Godot;
 using Godot.Collections;
+using TerrariaRipoffNNF.TestScenes;
 using Array = Godot.Collections.Array;
 
 namespace TerrariaRipoffNNF;
@@ -28,8 +29,10 @@ public partial class Inventory : Node {
 
     [Export] private Player _player;
     private readonly List<StackedItems> _inventoryItemsList = new();
+    private ItemIdBimap _itemMap;
 
     public override void _Ready() {
+        _itemMap = _player.World.ItemIdBimap;
         if (_player.IsLocalPlayer || _player.World.IsHost) {
             Godot.Collections.Dictionary<string, Array> inventory =
                 _player.PlayerData["Inventory"].AsGodotDictionary<string, Array>();
@@ -43,9 +46,7 @@ public partial class Inventory : Node {
             }
 
             _player.Crafting.HostItemCrafted += OnHostItemCrafted;
-            TreeExiting += () => {
-                _player.Crafting.HostItemCrafted -= OnHostItemCrafted;
-            };
+            TreeExiting += () => { _player.Crafting.HostItemCrafted -= OnHostItemCrafted; };
         }
 
         if (_player.World.IsHost) {
@@ -62,35 +63,36 @@ public partial class Inventory : Node {
         }
     }
 
-    private void OnHostItemCrafted(StackedItems newItems, Array<StackedItems> ingredients) {
+    private void OnHostItemCrafted(
+        StackedItems newItems, Array<StackedItems> ingredients) {
         AddItems(newItems);
         foreach (StackedItems ingredient in ingredients) {
             RemoveItems(ingredient);
         }
 
         if (_player.PeerId == 1) return;
-        Dictionary newItemsDict = newItems.ToDictionary();
-        Array<Dictionary> ingredientDicts = new();
+
+        ushort newItemId = _itemMap.GetId(newItems.Item);
+        RpcId(_player.PeerId, nameof(RpcAddItems),
+            newItemId, newItems.Count);
+
         foreach (StackedItems ingredient in ingredients) {
-            Dictionary ingredientDict = ingredient.ToDictionary();
-            ingredientDicts.Add(ingredientDict);
-        }
-        RpcId(_player.PeerId, nameof(RpcAddItems), newItemsDict);
-        foreach (Dictionary ingredient in ingredientDicts) {
-            RpcId(_player.PeerId, nameof(RpcRemoveItems), ingredient);
+            ushort ingredientId = _itemMap.GetId(ingredient.Item);
+            RpcId(_player.PeerId, nameof(RpcRemoveItems),
+                ingredientId, ingredient.Count);
         }
     }
 
     private void HostOnPlacedBlock(Item item, Vector2I coords) {
         StackedItems inventoryItems = new(item);
         RemoveItems(inventoryItems);
-        
+
+        ushort itemId = _itemMap.GetId(item);
         if (_player.PeerId != 1) {
-            Dictionary stackedItemsDict = inventoryItems.ToDictionary();
-            RpcId(_player.PeerId, nameof(RpcRemoveItems), stackedItemsDict);
+            RpcId(_player.PeerId, nameof(RpcRemoveItems),
+                itemId, 1);
         }
     }
-
 
     private void OnItemActionClicked(StackedItems stackedItems) {
         if (stackedItems.Item.HasProperty<ItemEquipment>()) {
@@ -98,19 +100,20 @@ public partial class Inventory : Node {
         }
     }
 
-
     private void HostOnCollectedPickup(PickupEntity pickup) {
         StackedItems stackedItems = new(pickup.Item);
         AddItems(stackedItems);
         if (_player.PeerId != 1) {
-            Dictionary stackedItemsDict = stackedItems.ToDictionary();
-            RpcId(_player.PeerId, nameof(RpcAddItems), stackedItemsDict);
+            ushort itemId = _itemMap.GetId(stackedItems.Item);
+            RpcId(_player.PeerId, nameof(RpcAddItems),
+                itemId, 1);
         }
     }
 
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
-    private void RpcAddItems(Dictionary stackedItemsDict) {
-        StackedItems inventoryItems = StackedItems.FromDictionary(stackedItemsDict);
+    [Rpc(TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void RpcAddItems(ushort itemId, int count) {
+        Item item = _itemMap.GetItem(itemId);
+        StackedItems inventoryItems = new(item, count);
         AddItems(inventoryItems);
     }
 
@@ -128,24 +131,27 @@ public partial class Inventory : Node {
             ItemStackChangedSize?.Invoke(_inventoryItemsList[index]);
         }
     }
-    
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
-    private void RpcRemoveItems(Dictionary stackedItemsDict) {
-        StackedItems inventoryItems = StackedItems.FromDictionary(stackedItemsDict);
+
+    [Rpc(TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void RpcRemoveItems(ushort itemId, int count) {
+        GD.Print("RpcRemoveItems: " + itemId + " " + count + "");
+        Item item = _itemMap.GetItem(itemId);
+        StackedItems inventoryItems = new(item, count);
         RemoveItems(inventoryItems);
     }
-    
-    private void RemoveItems(StackedItems inventoryItemsToRemove) {
-        UsedSpace -= inventoryItemsToRemove.TotalSpace;
+
+    private void RemoveItems(StackedItems itemsToRemove) {
+        UsedSpace -= itemsToRemove.TotalSpace;
 
         int index = _inventoryItemsList.FindIndex(inventoryItems =>
-            Item.AreEqual(inventoryItems.Item, inventoryItemsToRemove.Item));
+            _itemMap.AreItemsSame(inventoryItems.Item, itemsToRemove.Item
+            ));
 
         if (index == -1) {
             throw new Exception("[20240815.0934.1] Inventory item not found");
         }
 
-        _inventoryItemsList[index] -= inventoryItemsToRemove;
+        _inventoryItemsList[index] -= itemsToRemove;
 
         switch (_inventoryItemsList[index].Count) {
             case > 0:
@@ -153,7 +159,7 @@ public partial class Inventory : Node {
                 break;
             case 0:
                 _inventoryItemsList.RemoveAt(index);
-                RemovedItemStack?.Invoke(inventoryItemsToRemove);
+                RemovedItemStack?.Invoke(itemsToRemove);
                 break;
             case < 0:
                 throw new Exception("[20240815.0934.1] Inventory space went negative");

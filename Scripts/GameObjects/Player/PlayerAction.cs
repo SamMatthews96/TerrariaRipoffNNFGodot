@@ -12,7 +12,7 @@ public abstract partial class PlayerAction : Node {
 
     public abstract void EndLeftMouseAction(Vector2 mouseWorldPosition);
 
-    public virtual void RightMouseAction(Vector2 mouseWorldPosition){}
+    public virtual void RightMouseAction(Vector2 mousePosition){}
 
     public virtual void EndRightMouseAction(Vector2 mouseWorldPosition){}
 }
