@@ -134,7 +134,6 @@ public partial class Inventory : Node {
 
     [Rpc(TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void RpcRemoveItems(ushort itemId, int count) {
-        GD.Print("RpcRemoveItems: " + itemId + " " + count + "");
         Item item = _itemMap.GetItem(itemId);
         StackedItems inventoryItems = new(item, count);
         RemoveItems(inventoryItems);

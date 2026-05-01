@@ -130,10 +130,6 @@ public partial class BuildAction : PlayerAction {
 
     private void OnInventoryRemovedItemStack(StackedItems stackedItems) {
         if (_blockItem is null) return;
-        if (stackedItems.Item is null) {
-            GD.Print("Item is null");
-            return;
-        }
 
         ItemIdBimap bimap = Player.World.ItemIdBimap;
         ushort itemId = bimap.GetId(stackedItems.Item);

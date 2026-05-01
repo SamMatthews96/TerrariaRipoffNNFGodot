@@ -78,8 +78,6 @@ public partial class ItemIdBimap : Node {
     [Rpc(CallLocal = true,
         TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void RpcAddItem(ushort id, string itemString, Dictionary itemDict) {
-        GD.Print($"Adding item {id} {itemString} on {Multiplayer.GetUniqueId()}");
-
         Item item = Item.FromDictionary(itemDict);
         if (item is null) {
             throw new Exception("Item is null");
