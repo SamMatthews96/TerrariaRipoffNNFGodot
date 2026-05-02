@@ -4,8 +4,10 @@ using Godot.Collections;
 namespace TerrariaRipoffNNF;
 
 public partial class BreakableProp : Prop {
+    public Breakable Breakable { get; private set; }
     public static BreakableProp Create(Breakable breakable, Vector2I coords) {
         BreakableProp newProp = Data.PackedScenes.Breakable.Instantiate<BreakableProp>();
+        newProp.Breakable = breakable;
         newProp.Position = coords * Game.BlockSize;
         newProp.Item = breakable.Item;
         // let coords be the top left of the prop
