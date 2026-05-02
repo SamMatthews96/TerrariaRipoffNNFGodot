@@ -8,6 +8,7 @@ namespace TerrariaRipoffNNF;
 public partial class PropManager : Node {
     [Export] private World _world;
     public Dictionary<Vector2I, Prop> PropCells { get; private set; }
+    private Dictionary<Vector2I, Prop> _props = new();
 
     public event Action<Item, Vector2I> HostPropDestroyed;
 
@@ -23,11 +24,7 @@ public partial class PropManager : Node {
                 Breakable breakable = Data.Breakables.GetById(id);
                 Vector2I coords = new(x, y);
                 BreakableProp prop = BreakableProp.Create(breakable, coords);
-                foreach (Vector2I propCell in prop.Cells) {
-                    PropCells[propCell] = prop;
-                }
-
-                AddChild(prop);
+                AddProp(prop, coords);
             }
 
             _world.PlayerManager.PlayerSpawnedOnHost += OnPlayerSpawnedOnHost;
@@ -43,18 +40,26 @@ public partial class PropManager : Node {
 
         Dictionary packet = new();
         Array<Dictionary> breakableData = new();
-        foreach ((Vector2I cell, Prop prop) in PropCells) {
+        Array<Dictionary> propData = new();
+        foreach ((Vector2I cell, Prop prop) in _props) {
+            int id;
+            Dictionary propDict;
             switch (prop) {
                 case BreakableProp breakable:
-                    int id = breakable.Breakable.Id;
-                    Dictionary propDict = new() {
+                    id = breakable.Breakable.Id;
+                    propDict = new() {
                         { "coords", cell },
                         { "id", id }
                     };
                     breakableData.Add(propDict);
                     break;
                 case PlaceableProp:
-                    // int id = _world.ItemIdBimap.GetId(prop.Item);
+                    id = _world.ItemIdBimap.GetId(prop.Item);
+                    propDict = new() {
+                        { "coords", cell },
+                        { "id", id }
+                    };
+                    propData.Add(propDict);
                     break;
                 default:
                     throw new Exception("invalid prop type");
@@ -62,6 +67,7 @@ public partial class PropManager : Node {
         }
 
         packet["breakables"] = breakableData;
+        packet["props"] = propData;
 
         RpcId(senderId, nameof(RpcClientProcessPropData), packet);
     }
@@ -76,10 +82,17 @@ public partial class PropManager : Node {
             Vector2I coords = (Vector2I)breakableDict["coords"];
             Breakable breakable = Data.Breakables.GetById(id);
             BreakableProp prop = BreakableProp.Create(breakable, coords);
-            foreach (Vector2I propCell in prop.Cells) {
-                PropCells[propCell] = prop;
-            }
-            AddChild(prop);
+            AddProp(prop, coords);
+        }
+        
+        Array<Dictionary> props = 
+            packet["props"].AsGodotArray<Dictionary>();
+        foreach (Dictionary propDict in props) {
+            ushort itemId = (ushort)propDict["id"];
+            Vector2I coords = (Vector2I)propDict["coords"];
+            Item item = _world.ItemIdBimap.GetItem(itemId);
+            PlaceableProp prop = PlaceableProp.Create(item, coords);
+            AddProp(prop, coords);
         }
     }
 
@@ -94,11 +107,7 @@ public partial class PropManager : Node {
 
     private void OnHostPlaceProp(Item item, Vector2I coords) {
         PlaceableProp newPlaceableProp = PlaceableProp.Create(item, coords);
-        foreach (Vector2I cell in newPlaceableProp.Cells) {
-            PropCells[cell] = newPlaceableProp;
-        }
-
-        AddChild(newPlaceableProp);
+        AddProp(newPlaceableProp, coords);
         ushort itemId = _world.ItemIdBimap.GetId(item);
         Rpc(nameof(RpcClientsPlaceProp), itemId, coords);
     }
@@ -107,11 +116,7 @@ public partial class PropManager : Node {
     private void RpcClientsPlaceProp(ushort itemId, Vector2I coords) {
         Item item = _world.ItemIdBimap.GetItem(itemId);
         PlaceableProp newPlaceableProp = PlaceableProp.Create(item, coords);
-        foreach (Vector2I cell in newPlaceableProp.Cells) {
-            PropCells[cell] = newPlaceableProp;
-        }
-
-        AddChild(newPlaceableProp);
+        AddProp(newPlaceableProp, coords);
     }
 
     private void OnHostGatherProp(Vector2I coords, float damage) {
@@ -129,4 +134,13 @@ public partial class PropManager : Node {
 
         prop.QueueFree();
     }
+
+    private void AddProp(Prop prop, Vector2I coords) {
+        foreach (Vector2I cell in prop.Cells) {
+            PropCells[cell] = prop;
+        }
+        _props[coords] = prop;
+        AddChild(prop);
+    }
+
 }
