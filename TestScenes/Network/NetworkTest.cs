@@ -49,6 +49,8 @@ public partial class NetworkTest : Node {
         TreeExiting += () => {
             Multiplayer.ConnectedToServer -= OnConnectedToServer;
         };
+        
+        
     }
 
     private void OnConnectedToServer() {

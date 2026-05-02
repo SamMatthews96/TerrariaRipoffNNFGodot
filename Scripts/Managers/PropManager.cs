@@ -70,13 +70,13 @@ public partial class PropManager : Node {
         packet["props"] = propData;
 
         RpcId(senderId, nameof(RpcClientProcessPropData), packet);
+        
     }
 
     [Rpc]
     private void RpcClientProcessPropData(Dictionary packet) {
         Array<Dictionary> breakables = 
             packet["breakables"].AsGodotArray<Dictionary>();
-        
         foreach (Dictionary breakableDict in breakables) {
             int id = (int)breakableDict["id"];
             Vector2I coords = (Vector2I)breakableDict["coords"];
