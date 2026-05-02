@@ -1,5 +1,6 @@
 ﻿using System;
 using Godot;
+using Godot.Collections;
 using TerrariaRipoffNNF.Scripts.GameObjects.WeaponSprites;
 
 namespace TerrariaRipoffNNF;
@@ -11,10 +12,14 @@ public partial class GatherAction : PlayerAction {
     public event GatherActionDelegate HostGatheredWall;
 
     [Export] private Timer _gatherCooldown;
+    private Array<CellEntity> _gatherTypes = new();
 
     public override void _Ready() {
         ProcessMode = ProcessModeEnum.Disabled;
         Player = ActionController.Player;
+        _gatherTypes.Add(CellEntity.Block);
+        _gatherTypes.Add(CellEntity.Prop);
+        _gatherTypes.Add(CellEntity.Wall);
 
         if (!Player.IsLocalPlayer) return;
         Player.ActionState.ActionChanged += OnActionChanged;
@@ -59,20 +64,20 @@ public partial class GatherAction : PlayerAction {
         int range = Player.PlayerEquipment.Pickaxe.Range;
         if (!Player.World.IsInOrthogonalRange(
                 targetCoords, Player.Coords, range)) return;
-        
-        GatherActionDelegate action;
-        if (Player.World.BlockManager.Blocks[
-                targetCoords.X, targetCoords.Y] is not null) {
-            action = HostGatheredBlock;
-        } else if (Player.World.PropManager.PropCells.ContainsKey(targetCoords)) {
-            action = HostGatherProp;
-        } else if (Player.World.BlockManager.Walls[
-                       targetCoords.X, targetCoords.Y] is not null) {
-            action = HostGatheredWall;
-        } else return;
+
+        CellEntity gatherType = Player.World.GetPriorityCellEntity(
+            targetCoords, _gatherTypes
+        );
+        GatherActionDelegate action = gatherType switch {
+            CellEntity.Block => HostGatheredBlock,
+            CellEntity.Prop => HostGatherProp,
+            CellEntity.Wall => HostGatheredWall,
+            _ => null
+        };
+        if (action is null) return;
 
         _gatherCooldown.Start();
         float damage = Player.PlayerEquipment.Pickaxe.Power;
-        action?.Invoke(targetCoords, damage);
+        action.Invoke(targetCoords, damage);
     }
 }

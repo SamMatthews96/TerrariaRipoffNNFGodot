@@ -6,12 +6,12 @@ namespace TerrariaRipoffNNF;
 
 public partial class PropManager : Node {
     [Export] private World _world;
-    public Dictionary<Vector2I, Node2D> PropCells { get; private set; }
+    public Dictionary<Vector2I, Prop> PropCells { get; private set; }
 
     public event Action<Item, Vector2I> HostPropDestroyed;
 
     public override void _Ready() {
-        PropCells = new Dictionary<Vector2I, Node2D>();
+        PropCells = new Dictionary<Vector2I, Prop>();
         
         Array<Dictionary> breakables =
             _world.WorldData["breakables"].AsGodotArray<Dictionary>();
@@ -64,23 +64,17 @@ public partial class PropManager : Node {
     }
     
     private void OnHostGatherProp(Vector2I coords, float damage) {
-        Node2D node = PropCells[coords];
-        if (node is PlaceableProp placeable) {
-            Rpc(nameof(RpcClientsGatherProp), coords);
-            HostPropDestroyed?.Invoke(placeable.Item, coords);
-        }
+        Prop prop = PropCells[coords];
+        Rpc(nameof(RpcClientsGatherProp), coords);
+        HostPropDestroyed?.Invoke(prop.Item, coords);
     }
 
     [Rpc(CallLocal = true)]
     private void RpcClientsGatherProp(Vector2I coords) {
-        Node2D node = PropCells[coords];
-        if (node is PlaceableProp placeableProp) {
-            foreach (Vector2I cell in placeableProp.Cells) {
-                PropCells.Remove(cell);
-            }
-
-            placeableProp.QueueFree();
+        Prop prop = PropCells[coords];
+        foreach (Vector2I cell in prop.Cells) {
+            PropCells.Remove(cell);
         }
-
+        prop.QueueFree();
     }
 }
