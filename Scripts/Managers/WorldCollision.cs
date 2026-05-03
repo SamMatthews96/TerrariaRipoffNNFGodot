@@ -35,7 +35,7 @@ public partial class WorldCollision : Node2D {
     
     private void OnLocalPlayerSpawned(Player player) {
         IncrementObserverCounts(player.Coords);
-        player.LocalPlayerMovedCell += MoveObserver;
+        player.MovedCellLocal += MoveObserver;
     }
 
     private void OnBlockCreated(Vector2I position) {

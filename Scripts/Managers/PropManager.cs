@@ -10,7 +10,8 @@ public partial class PropManager : Node {
     public Dictionary<Vector2I, Prop> PropCells { get; private set; }
     private Dictionary<Vector2I, Prop> _props = new();
 
-    public event Action<Item, Vector2I> HostPropDestroyed;
+    public event Action<Prop, Vector2I> HostPropPlaced;
+    public event Action<Prop, Vector2I> HostPropDestroyed;
 
     public override void _Ready() {
         PropCells = new Dictionary<Vector2I, Prop>();
@@ -74,8 +75,9 @@ public partial class PropManager : Node {
     }
 
     private void OnHostPlaceProp(Item item, Vector2I coords) {
-        Prop newPlaceableProp = Prop.Create(item, coords);
-        AddProp(newPlaceableProp, coords);
+        Prop prop = Prop.Create(item, coords);
+        AddProp(prop, coords);
+        HostPropPlaced?.Invoke(prop, coords);
         ushort itemId = _world.ItemIdBimap.GetId(item);
         Rpc(nameof(RpcClientsPlaceProp), itemId, coords);
     }
@@ -83,14 +85,14 @@ public partial class PropManager : Node {
     [Rpc]
     private void RpcClientsPlaceProp(ushort itemId, Vector2I coords) {
         Item item = _world.ItemIdBimap.GetItem(itemId);
-        Prop newPlaceableProp = Prop.Create(item, coords);
-        AddProp(newPlaceableProp, coords);
+        Prop prop = Prop.Create(item, coords);
+        AddProp(prop, coords);
     }
 
     private void OnHostGatherProp(Vector2I coords, float damage) {
         Prop prop = PropCells[coords];
         Rpc(nameof(RpcClientsGatherProp), coords);
-        HostPropDestroyed?.Invoke(prop.Item, coords);
+        HostPropDestroyed?.Invoke(prop, coords);
     }
 
     [Rpc(CallLocal = true)]

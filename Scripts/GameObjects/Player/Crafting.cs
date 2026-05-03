@@ -8,55 +8,96 @@ public sealed partial class Crafting : Node {
     [Export] private Area2D _craftingArea;
     [Export] private Player _player;
     private Recipe _selectedRecipe;
+    private Dictionary<Prop, CraftingStationType> _nearbyCraftingStations = new();
+    private Array<CraftingStationType> _nearbyStationTypes = new();
 
     private Dictionary<string, Item> _selectedIngredients = new();
-    public event Action<CraftingStationType> CraftingStationAdded;
-    public event Action<CraftingStationType> CraftingStationRemoved;
     public event Action<StackedItems> SelectedIngredientsChanged;
-    public delegate void CraftEventHandler(StackedItems result, Array<StackedItems> ingredients);
+
+    public delegate void CraftEventHandler(
+        StackedItems result, Array<StackedItems> ingredients);
+
     public event CraftEventHandler HostItemCrafted;
+    public int CraftRange { get; private set; } = 8;
 
     public override void _Ready() {
-        if (!_player.IsLocalPlayer) return;
-        Interface.Crafting craftingInterface = _player.World.Interface.CraftingInterface;
+        if (_player.World.IsHost) {
+            _player.MovedCellHost += OnMovedCellHost;
+            TreeExiting += () => { _player.MovedCellHost -= OnMovedCellHost; };
+        }
 
-        craftingInterface.RecipeContainer.RecipeButtonClicked += OnRecipeButtonClicked;
-        craftingInterface.IngredientPopup.SelectIngredientButtonClicked += OnIngredientButtonClicked;
-        craftingInterface.IngredientsContainer.CraftButtonPressed += OnCraftButtonPressed;
-
-        TreeExiting += () => {
-            craftingInterface.RecipeContainer.RecipeButtonClicked -= OnRecipeButtonClicked;
-            craftingInterface.IngredientPopup.SelectIngredientButtonClicked -= OnIngredientButtonClicked;
-            craftingInterface.IngredientsContainer.CraftButtonPressed -= OnCraftButtonPressed;
-        };
+        if (_player.IsLocalPlayer) {
+            Interface.Crafting craftingUi = _player.World.Interface.CraftingInterface;
+            craftingUi.RecipeContainer.RecipeButtonClicked += OnRecipeButtonClicked;
+            craftingUi.IngredientPopup.SelectIngredientButtonClicked += OnIngredientButtonClicked;
+            craftingUi.IngredientsContainer.CraftButtonPressed += OnCraftButtonPressed;
+            TreeExiting += () => {
+                craftingUi.RecipeContainer.RecipeButtonClicked -= OnRecipeButtonClicked;
+                craftingUi.IngredientPopup.SelectIngredientButtonClicked -= OnIngredientButtonClicked;
+                craftingUi.IngredientsContainer.CraftButtonPressed -= OnCraftButtonPressed;
+            };
+        }
     }
 
-    // private void OnCraftingAreaEntered(Area2D area) {
-    //     if (area is not CraftStationArea craftStationArea) {
-    //         throw new Exception("[20250617.1422.1] Crafting area entered by non-crafting area");
-    //     }
-    //
-    //     CraftingStationType newType = craftStationArea.CraftStation.Type;
-    //     if (!LocalCraftStationsAreas.Exists(
-    //             currentArea => currentArea.CraftStation.Type == newType)) {
-    //         CraftingStationAdded?.Invoke(newType);
-    //     }
-    //
-    //     LocalCraftStationsAreas.Add(craftStationArea);
-    // }
+    private void OnMovedCellHost(Vector2I newCoords, Vector2I oldCoords) {
+        // Remove stations that are no longer in range
+        foreach (Prop prop in _nearbyCraftingStations.Keys) {
+            bool inRange = false;
+            foreach (Vector2I propCell in prop.Cells) {
+                if (_player.World.IsInOrthogonalRange(newCoords, propCell, CraftRange)) {
+                    inRange = true;
+                    break;
+                }
+            }
 
-    // private void OnCraftingAreaExited(Area2D area) {
-    //     if (area is not CraftStationArea craftStationArea) {
-    //         throw new Exception("[20250617.1424.1] Crafting area entered by non-crafting area");
-    //     }
-    //
-    //     CraftingStationType exitingType = craftStationArea.CraftStation.Type;
-    //     LocalCraftStationsAreas.Remove(craftStationArea);
-    //     if (!LocalCraftStationsAreas.Exists(
-    //             currentArea => currentArea.CraftStation.Type == exitingType)) {
-    //         CraftingStationRemoved?.Invoke(exitingType);
-    //     }
-    // }
+            if (!inRange) {
+                HostRemoveCraftingStation(prop);
+            }
+        }
+
+        // Add new stations that are now in range
+        Array<Vector2I> newCells =
+            _player.World.GetNewCellsInRange(newCoords, oldCoords, CraftRange);
+        foreach (Vector2I coords in newCells) {
+            if (!_player.World.PropManager.PropCells
+                    .TryGetValue(coords, out Prop prop)) continue;
+            if (!prop.Item.GetProperty<ItemProp>().HasProperty<PropStation>()) continue;
+            if (_nearbyCraftingStations.ContainsKey(prop)) continue;
+            HostAddCraftingStation(prop);
+        }
+    }
+
+    public void HostAddCraftingStation(Prop prop) {
+        PropStation station =
+            prop.Item.GetProperty<ItemProp>().GetProperty<PropStation>();
+        _nearbyCraftingStations[prop] = station.Type;
+        if (!_nearbyStationTypes.Contains(station.Type)) {
+            RpcId(_player.PeerId, 
+                nameof(RpcLocalAddCraftingStation), 
+                (int)station.Type);
+        }
+    }
+
+    [Rpc(CallLocal = true)]
+    private void RpcLocalAddCraftingStation(CraftingStationType type) {
+        _nearbyStationTypes.Add(type);
+    }
+
+    public void HostRemoveCraftingStation(Prop prop) {
+        CraftingStationType type = _nearbyCraftingStations[prop];
+        _nearbyCraftingStations.Remove(prop);
+        if (!_nearbyCraftingStations.Values.Contains(type)) {
+            
+            RpcId(_player.PeerId, 
+                nameof(RpcLocalRemoveCraftingStation), 
+                (int)type);
+        }
+    }
+
+    [Rpc(CallLocal = true)]
+    private void RpcLocalRemoveCraftingStation(CraftingStationType type) {
+        _nearbyStationTypes.Remove(type);
+    }
 
     private void OnRecipeButtonClicked(Recipe recipe) {
         _selectedRecipe = recipe;
@@ -83,8 +124,6 @@ public sealed partial class Crafting : Node {
         RpcId(1, nameof(RpcHostTryCraft),
             _selectedRecipe.Id, ingredientsDictionary);
     }
-    
-    
 
     private bool IsCraftValid(
         Recipe recipe, Dictionary<string, Item> ingredients
@@ -127,7 +166,7 @@ public sealed partial class Crafting : Node {
             StackedItems stackedItems = new(item, amount);
             ingredientsArray.Add(stackedItems);
         }
-    
+
         HostItemCrafted?.Invoke(newItems, ingredientsArray);
     }
 }

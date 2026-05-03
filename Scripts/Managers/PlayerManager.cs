@@ -16,10 +16,34 @@ public partial class PlayerManager : Node2D {
     public override void _Ready() {
         if (!_world.IsHost) return;
 
+        _world.PropManager.HostPropPlaced += OnHostPropPlaced;
+        _world.PropManager.HostPropDestroyed += OnHostPropDestroyed;
         Multiplayer.PeerDisconnected += OnPeerDisconnected;
         TreeExiting += () => {
+            _world.PropManager.HostPropPlaced -= OnHostPropPlaced;
+            _world.PropManager.HostPropDestroyed -= OnHostPropDestroyed;
             Multiplayer.PeerDisconnected -= OnPeerDisconnected;
         };
+    }
+
+    private void OnHostPropPlaced(Prop prop, Vector2I coords) {
+        if (!prop.Item.GetProperty<ItemProp>().HasProperty<PropStation>()) return;
+        foreach (Player player in _players.Values) {
+            int range = player.Crafting.CraftRange;
+            if (_world.IsInOrthogonalRange(player.Coords, coords, range)) {
+                player.Crafting.HostAddCraftingStation(prop);
+            }
+        }
+    }
+
+    private void OnHostPropDestroyed(Prop prop, Vector2I vector2I) {
+        if (!prop.Item.GetProperty<ItemProp>().HasProperty<PropStation>()) return;
+        foreach (Player player in _players.Values) {
+            int range = player.Crafting.CraftRange;
+            if (_world.IsInOrthogonalRange(player.Coords, vector2I, range)) {
+                player.Crafting.HostRemoveCraftingStation(prop);
+            }
+        }
     }
 
     private void OnPeerDisconnected(long id) {
@@ -36,7 +60,7 @@ public partial class PlayerManager : Node2D {
     public void SpawnHostPlayer(Dictionary playerData) {
         int peerId = Multiplayer.GetUniqueId();
         _localPlayer = CreateNewPlayer(peerId, playerData);
-        
+
         LocalPlayerSpawned?.Invoke(_localPlayer);
         PlayerSpawnedOnHost?.Invoke(_localPlayer);
     }
@@ -46,7 +70,7 @@ public partial class PlayerManager : Node2D {
         foreach (int peer in peers) {
             CreateNewPlayer(peer);
         }
-        
+
         int peerId = Multiplayer.GetUniqueId();
         _localPlayer = CreateNewPlayer(peerId, playerData);
         LocalPlayerSpawned?.Invoke(_localPlayer);
@@ -56,11 +80,11 @@ public partial class PlayerManager : Node2D {
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
     private void RpcHostHandleNewPeer(Dictionary playerData) {
         int senderId = Multiplayer.GetRemoteSenderId();
-        
+
         Player remotePlayer = CreateNewPlayer(senderId, playerData);
         _localPlayer.AddPeerToSynchronizer(senderId);
         PlayerSpawnedOnHost?.Invoke(remotePlayer);
-        
+
         int[] peers = Multiplayer.GetPeers();
         foreach (int peerId in peers) {
             if (peerId == senderId) continue;
@@ -73,7 +97,7 @@ public partial class PlayerManager : Node2D {
         CreateNewPlayer(peerId);
         _localPlayer.AddPeerToSynchronizer(peerId);
     }
-    
+
     private Player CreateNewPlayer(int peerId, Dictionary playerData = null) {
         Player player = Player.Create(_world, peerId, playerData);
         AddChild(player, true);

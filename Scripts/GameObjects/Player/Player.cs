@@ -47,7 +47,8 @@ public partial class Player : CharacterBody2D {
     public bool IsLocalPlayer { get; private set; }
 
     public delegate void CellMovedDelegate(Vector2I newCoords, Vector2I oldCoords);
-    public event CellMovedDelegate LocalPlayerMovedCell;
+    public event CellMovedDelegate MovedCellLocal;
+    public event CellMovedDelegate MovedCellHost;
 
     public override void _EnterTree() {
         int peerId = Name.ToString().ToInt();
@@ -70,7 +71,7 @@ public partial class Player : CharacterBody2D {
         }
 
         _nameLabel.Text = PeerId == 1 ? "Host" : "Client";
-
+        
         if (!IsLocalPlayer) return;
 
         World.InputManager.HorizontalInputChanged += OnHorizontalInputChanged;
@@ -125,7 +126,13 @@ public partial class Player : CharacterBody2D {
         MoveAndSlide();
 
         if (previousCoords == Coords) return;
-        LocalPlayerMovedCell?.Invoke(Coords, previousCoords);
+        MovedCellLocal?.Invoke(Coords, previousCoords);
+        RpcId(1, nameof(RpcHostMovedCell), Coords, previousCoords);
+    }
+
+    [Rpc(CallLocal = true)]
+    private void RpcHostMovedCell(Vector2I newCoords, Vector2I oldCoords) {
+        MovedCellHost?.Invoke(newCoords, oldCoords);
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]

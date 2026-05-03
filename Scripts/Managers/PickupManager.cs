@@ -52,14 +52,14 @@ public partial class PickupManager : Node2D {
         HostCreatePickup(coords, itemId);
     }
 
-    private void OnHostPropDestroyed(Item item, Vector2I coords) {
-        ItemProp prop = item.GetProperty<ItemProp>();
-        if (prop.TryGetProperty(out PropDrop propDrop)) {
+    private void OnHostPropDestroyed(Prop prop, Vector2I coords) {
+        ItemProp itemProp = prop.Item.GetProperty<ItemProp>();
+        if (itemProp.TryGetProperty(out PropDrop propDrop)) {
             ushort itemId = _world.ItemIdBimap.GetId(propDrop.Item);
             HostCreatePickup(coords, itemId);
         }
-        if (prop.DoesDropSelf) {
-            ushort itemId = _world.ItemIdBimap.GetId(item);
+        if (itemProp.DoesDropSelf) {
+            ushort itemId = _world.ItemIdBimap.GetId(prop.Item);
             HostCreatePickup(coords, itemId);
         }
     }

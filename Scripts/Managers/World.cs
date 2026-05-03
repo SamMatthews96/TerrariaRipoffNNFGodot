@@ -21,7 +21,7 @@ public partial class World : Node2D {
     [Export] public ItemIdBimap ItemIdBimap { get; private set; }
 
     public event Action GameLoaded;
-    
+
     private Dictionary _localPlayerData;
     public Dictionary WorldData { get; private set; }
 
@@ -92,16 +92,19 @@ public partial class World : Node2D {
                     if (BlockManager.Blocks[coords.X, coords.Y] is not null) {
                         return type;
                     }
+
                     break;
                 case CellEntity.Prop:
                     if (PropManager.PropCells.ContainsKey(coords)) {
                         return type;
                     }
+
                     break;
                 case CellEntity.Wall:
                     if (BlockManager.Walls[coords.X, coords.Y] is not null) {
                         return type;
                     }
+
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -117,5 +120,27 @@ public partial class World : Node2D {
         BlockManager.SyncComplete -= ClientOnSyncComplete;
         Show();
         GameLoaded?.Invoke();
+    }
+
+    public Array<Vector2I> GetNewCellsInRange(
+        Vector2I newCoords, Vector2I oldCoords, int range
+    ) {
+        Array<Vector2I> cells = new();
+
+        int minX = Math.Min(newCoords.X, oldCoords.X) - range;
+        int maxX = Math.Max(newCoords.X, oldCoords.X) + range;
+        int minY = Math.Min(newCoords.Y, oldCoords.Y) - range;
+        int maxY = Math.Max(newCoords.Y, oldCoords.Y) + range;
+
+        for (int x = minX; x <= maxX; x++) {
+            for (int y = minY; y <= maxY; y++) {
+                Vector2I coords = new(x, y);
+                if (!IsInOrthogonalRange(newCoords, coords, range)) continue;
+                if (IsInOrthogonalRange(oldCoords, coords, range)) continue;
+                cells.Add(coords);
+            }
+        }
+
+        return cells;
     }
 }
