@@ -15,16 +15,17 @@ public partial class PropManager : Node {
     public override void _Ready() {
         PropCells = new Dictionary<Vector2I, Prop>();
         if (_world.IsHost) {
-            Array<Dictionary> breakables =
-                _world.WorldData["breakables"].AsGodotArray<Dictionary>();
-            foreach (Dictionary breakableDict in breakables) {
-                int id = (int)breakableDict["id"];
-                int x = (int)breakableDict["x"];
-                int y = (int)breakableDict["y"];
-                Breakable breakable = Data.Breakables.GetById(id);
-                Vector2I coords = new(x, y);
-                BreakableProp prop = BreakableProp.Create(breakable, coords);
-                AddProp(prop, coords);
+            Dictionary<int, Array> breakables =
+                (Dictionary<int, Array>)_world.WorldData["props"];
+            foreach ((int itemId, Array cellArray) in breakables) {
+                Breakable breakable = Data.Breakables.GetById(itemId);
+                foreach (Array cell in cellArray) {
+                    int x = (int)cell[0];
+                    int y = (int)cell[1];
+                    Vector2I coords = new(x, y);
+                    BreakableProp prop = BreakableProp.Create(breakable, coords);
+                    AddProp(prop, coords);
+                }
             }
 
             _world.PlayerManager.PlayerSpawnedOnHost += OnPlayerSpawnedOnHost;

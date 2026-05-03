@@ -14,6 +14,22 @@ public partial class ItemIdBimap : Node {
 
     [Export] private World _world;
 
+    public override void _Ready() {
+       
+        Dictionary dict = _world.WorldData["itemMap"].AsGodotDictionary();
+        _idToString = dict["IdToString"].AsGodotArray<string>();
+        _stringToId = dict["StringToId"].AsGodotDictionary<string, ushort>();
+
+        Dictionary<string, Dictionary> stringToItemDict =
+            dict["StringToItem"].AsGodotDictionary<string, Dictionary>();
+        foreach ((string key, Dictionary itemDict) in stringToItemDict) {
+            _stringToItem[key] = Item.FromDictionary(itemDict);
+        }
+
+        _world.PlayerManager.PlayerSpawnedOnHost += OnPlayerSpawnedOnHost;
+        TreeExiting += () => { _world.PlayerManager.PlayerSpawnedOnHost -= OnPlayerSpawnedOnHost; };
+    }
+
     public Item GetItem(ushort id) {
         string itemString = _idToString[id];
         return _stringToItem[itemString];
@@ -46,21 +62,6 @@ public partial class ItemIdBimap : Node {
             { "StringToId", _stringToId },
             { "StringToItem", stringToItemDict },
         };
-    }
-
-    public override void _Ready() {
-        Dictionary dict = _world.WorldData["itemMap"].AsGodotDictionary();
-        _idToString = dict["IdToString"].AsGodotArray<string>();
-        _stringToId = dict["StringToId"].AsGodotDictionary<string, ushort>();
-
-        Dictionary<string, Dictionary> stringToItemDict =
-            dict["StringToItem"].AsGodotDictionary<string, Dictionary>();
-        foreach ((string key, Dictionary itemDict) in stringToItemDict) {
-            _stringToItem[key] = Item.FromDictionary(itemDict);
-        }
-
-        _world.PlayerManager.PlayerSpawnedOnHost += OnPlayerSpawnedOnHost;
-        TreeExiting += () => { _world.PlayerManager.PlayerSpawnedOnHost -= OnPlayerSpawnedOnHost; };
     }
 
     private void OnPlayerSpawnedOnHost(Player player) {

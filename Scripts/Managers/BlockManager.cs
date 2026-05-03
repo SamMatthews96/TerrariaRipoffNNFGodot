@@ -24,26 +24,31 @@ public partial class BlockManager : Node2D {
 
         if (!_world.IsHost) return;
 
-        Array savedBlocks = _world.WorldData["blocks"].AsGodotArray();
-        foreach (Dictionary dictionary in savedBlocks) {
-            int x = (int)dictionary["x"];
-            int y = (int)dictionary["y"];
-
-            Blocks[x, y] = new Block {
-                CurrentHealth = 1,
-                ItemId = (ushort)dictionary["id"]
-            };
+        Dictionary<int, Array> savedBlocks = 
+            (Dictionary<int, Array>)_world.WorldData["blocks"];
+        foreach ((int itemId, Array cellArray) in savedBlocks) {
+            foreach (Array cell in cellArray) {
+                int x = (int)cell[0];
+                int y = (int)cell[1];
+                Blocks[x, y] = new Block {
+                    CurrentHealth = 1,
+                    ItemId = (ushort)itemId
+                };
+            }
         }
 
-        Array savedWalls = _world.WorldData["walls"].AsGodotArray();
-        foreach (Dictionary dictionary in savedWalls) {
-            int x = (int)dictionary["x"];
-            int y = (int)dictionary["y"];
-
-            Walls[x, y] = new Block {
-                CurrentHealth = 1,
-                ItemId = (ushort)dictionary["id"]
-            };
+        Dictionary<int, Array> savedWalls = 
+            (Dictionary<int, Array>)_world.WorldData["walls"];
+        foreach ((int itemId, Array cellArray) in savedWalls) {
+            foreach (Array cell in cellArray) {
+                int x = (int)cell[0];
+                int y = (int)cell[1];
+                Walls[x, y] = new Block {
+                    CurrentHealth = 1,
+                    ItemId = (ushort)itemId
+                };
+            }
+            
         }
 
         _world.PlayerManager.PlayerSpawnedOnHost += OnPlayerSpawnedOnHost;

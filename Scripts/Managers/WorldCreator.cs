@@ -7,17 +7,18 @@ namespace TerrariaRipoffNNF;
 
 public static class WorldCreator {
     public static void CreateWorld(WorldBasicInfo worldBasicInfo) {
-        Dictionary worldDictionary = new();
-        worldDictionary.Add("Name", worldBasicInfo.Name);
-        worldDictionary.Add("Width", worldBasicInfo.Width);
-        worldDictionary.Add("Height", worldBasicInfo.Height);
-
         int mid = 15;
 
         Item[] items = {
             Data.Items.Earth,
             Data.Items.Stone,
             Data.Items.IronOre
+        };
+
+        int earthId = 0;
+        Dictionary<string, Array> blockList = new();
+        Dictionary<string, Array> wallList = new() {
+            { $"{earthId}", new Array() }
         };
 
         Array<string> idToString = new();
@@ -30,6 +31,7 @@ public static class WorldCreator {
             idToString.Add(itemCode);
             stringToId.Add(itemCode, (ushort)count);
             stringToItem.Add(itemCode, itemDict);
+            blockList.Add($"{count}", new Array());
             count++;
         }
 
@@ -39,43 +41,28 @@ public static class WorldCreator {
             { "StringToItem", stringToItem },
         };
 
-        int earthId = 0;
         Random random = new();
-        Array blockList = new();
-        Array wallList = new();
         for (int x = 0; x < worldBasicInfo.Width; x++) {
             for (int y = mid; y < worldBasicInfo.Height; y++) {
                 int itemId = random.Next(0, 3);
-                Dictionary newBlock = new() {
-                    // get id from item
-                    { "id", itemId },
-                    { "x", x },
-                    { "y", y }
-                };
-                blockList.Add(newBlock);
-
-                Dictionary newWall = new() {
-                    { "id", earthId },
-                    { "x", x },
-                    { "y", y }
-                };
-                wallList.Add(newWall);
+                blockList[$"{itemId}"].Add(new Array { x, y });
+                wallList[$"{earthId}"].Add(new Array { x, y });
             }
         }
 
-        Array<Dictionary> breakables = new();
+        int treeId = 1;
+        Dictionary<string, Array> propList = new() { { $"{treeId}", new Array() } };
         for (int x = 10; x < worldBasicInfo.Width - 10; x += 10) {
             for (int y = 5; y < mid; y++) {
-                Dictionary tree = new() {
-                    { "x", x },
-                    { "y", y },
-                    { "id", 1 }
-                };
-                breakables.Add(tree);
+                propList[$"{treeId}"].Add(new Array { x, y });
             }
         }
 
-        worldDictionary.Add("breakables", breakables);
+        Dictionary worldDictionary = new();
+        worldDictionary.Add("Name", worldBasicInfo.Name);
+        worldDictionary.Add("Width", worldBasicInfo.Width);
+        worldDictionary.Add("Height", worldBasicInfo.Height);
+        worldDictionary.Add("props", propList);
         worldDictionary.Add("blocks", blockList);
         worldDictionary.Add("walls", wallList);
         worldDictionary.Add("itemMap", mapDict);
