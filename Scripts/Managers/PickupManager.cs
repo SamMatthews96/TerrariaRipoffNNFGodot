@@ -60,6 +60,7 @@ public partial class PickupManager : Node2D {
     }
 
     private void OnHostPropDestroyed(Item item, Vector2I coords) {
+        if (!item.GetProperty<ItemProp>().DoesDropSelf) return;
         Vector2 position = new(
             (coords.X + 0.5f) * Game.BlockSize,
             (coords.Y + 0.5f) * Game.BlockSize);

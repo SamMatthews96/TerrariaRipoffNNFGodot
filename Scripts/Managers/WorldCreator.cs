@@ -12,7 +12,8 @@ public static class WorldCreator {
         Item[] items = {
             Data.Items.Earth,
             Data.Items.Stone,
-            Data.Items.IronOre
+            Data.Items.IronOre,
+            Data.Items.Tree,
         };
 
         int earthId = 0;
@@ -50,7 +51,7 @@ public static class WorldCreator {
             }
         }
 
-        int treeId = 1;
+        int treeId = 3;
         Dictionary<string, Array> propList = new() { { $"{treeId}", new Array() } };
         for (int x = 10; x < worldBasicInfo.Width - 10; x += 10) {
             for (int y = 5; y < mid; y++) {

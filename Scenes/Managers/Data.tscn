@@ -7,7 +7,6 @@
 [ext_resource type="Script" uid="uid://dsma6rw4bm7vo" path="res://Scripts/Resources/CraftingStation.cs" id="5_iy35j"]
 [ext_resource type="Texture2D" uid="uid://cyllurh0pjf8q" path="res://Assets/Images/ItemIcons/bench.png" id="6_3tc8q"]
 [ext_resource type="Texture2D" uid="uid://cp78grj0a5nrv" path="res://Assets/Images/furnaceIcon.png" id="7_iy35j"]
-[ext_resource type="Resource" uid="uid://cpqyfa32trikp" path="res://Resources/Data/Breakables.tres" id="8_3tc8q"]
 
 [sub_resource type="Resource" id="Resource_om11x"]
 script = ExtResource("5_iy35j")
@@ -35,4 +34,3 @@ _craftingStations = Dictionary[int, Object]({
 1: SubResource("Resource_i7kqy"),
 2: SubResource("Resource_3tc8q")
 })
-_breakables = ExtResource("8_3tc8q")

@@ -1,12 +1,7 @@
 [gd_resource type="Resource" script_class="PackedScenes" format=3 uid="uid://dllhhokx2wkse"]
 
 [ext_resource type="Script" uid="uid://btjjbewbkdhw8" path="res://Scripts/Data/PackedScenes.cs" id="1_tombv"]
-[ext_resource type="Script" uid="uid://drtqf5igxdrlb" path="res://Scripts/GameObjects/WorldObject/CraftStationArea.cs" id="2_brkhy"]
-[ext_resource type="PackedScene" uid="uid://ef1t35s1gipj" path="res://Scenes/GameObjects/Breakable.tscn" id="2_wi1ls"]
-[ext_resource type="PackedScene" uid="uid://d3hhhiiydcfft" path="res://Scenes/Managers/Game.tscn" id="3_6enwa"]
 [ext_resource type="PackedScene" uid="uid://dsp7h2dpxh0i6" path="res://Scenes/Interface/Game/BlockTypeButton.tscn" id="4_rx88w"]
-[ext_resource type="PackedScene" uid="uid://cy52ebe7eud3c" path="res://Scenes/Interface/LoadingScreen.tscn" id="4_y0gj7"]
-[ext_resource type="PackedScene" uid="uid://tbvohnqfn3cl" path="res://Scenes/Interface/MainMenu/MainMenu.tscn" id="5_3f4ap"]
 [ext_resource type="PackedScene" uid="uid://cvaxo0scr3abv" path="res://Scenes/Interface/Game/ItemPropertyTooltipGroup.tscn" id="5_8fovs"]
 [ext_resource type="PackedScene" uid="uid://bawlysyg56da3" path="res://Scenes/Interface/Game/Crafting/RecipeIngredientSlotTexture.tscn" id="7_6ykcs"]
 [ext_resource type="PackedScene" uid="uid://0tlymjajesh" path="res://Scenes/Interface/Game/Crafting/SelectCraftStationButton.tscn" id="7_eocek"]
@@ -16,68 +11,12 @@
 [ext_resource type="PackedScene" uid="uid://bx6lgpicpfal4" path="res://Scenes/GameObjects/Player.tscn" id="9_0w4qc"]
 [ext_resource type="Script" uid="uid://cxwnlrso3c8bg" path="res://Scripts/GameObjects/Player/ServerPickupArea.cs" id="10_61b5m"]
 [ext_resource type="PackedScene" uid="uid://d3mhbs8it3b2f" path="res://Scenes/Interface/Game/Crafting/SelectIngredientButton.tscn" id="11_tftwe"]
-[ext_resource type="Script" uid="uid://nkve3tokkn8r" path="res://Scripts/GameObjects/Player/ActionController.cs" id="13_66aqs"]
-[ext_resource type="Script" uid="uid://b2qds2g2sqgyu" path="res://Scripts/GameObjects/Player/GatherAction.cs" id="14_3bl5a"]
-[ext_resource type="Script" uid="uid://dvkkdi1y5ho67" path="res://Scripts/GameObjects/Player/BuildAction.cs" id="15_pfyql"]
-[ext_resource type="Script" uid="uid://cgdyjno3yd0yr" path="res://Scripts/GameObjects/Player/WeaponAction.cs" id="16_ahtse"]
 [ext_resource type="PackedScene" uid="uid://oqop40vb15di" path="res://Scenes/WeaponNodes/Projectile.tscn" id="16_p2brr"]
 [ext_resource type="PackedScene" uid="uid://cmeg4ppsu66t8" path="res://Scenes/GameObjects/Prop.tscn" id="16_r0aru"]
-[ext_resource type="Script" uid="uid://kjyoip5nu1o4" path="res://Scripts/GameObjects/Player/Crafting.cs" id="17_2gngu"]
 [ext_resource type="PackedScene" uid="uid://dyxoinb1s88j3" path="res://Scenes/WeaponNodes/Swing.tscn" id="17_w7gg7"]
 [ext_resource type="PackedScene" uid="uid://cakmoct7fr7qe" path="res://Scenes/Managers/World.tscn" id="19_w7gg7"]
 [ext_resource type="Script" uid="uid://grnulx3obxgd" path="res://Scripts/GameObjects/EnemyNpc/EnemyNpc.cs" id="22_ouxkt"]
 [ext_resource type="Texture2D" uid="uid://3mp4qibtswyy" path="res://Assets/Images/ItemIcons/spearPlaceholder.png" id="23_pg2yi"]
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_w2htb"]
-size = Vector2(34, 38)
-
-[sub_resource type="PackedScene" id="PackedScene_2hqwj"]
-_bundled = {
-"conn_count": 0,
-"conns": PackedInt32Array(),
-"editable_instances": [],
-"id_paths": [PackedInt32Array()],
-"names": PackedStringArray("CraftStationArea", "Area2D", "collision_layer", "collision_mask", "script", "CollisionShape2D", "CollisionShape2D", "shape"),
-"node_count": 2,
-"node_ids": PackedInt32Array(0, 0),
-"node_paths": [NodePath(".")],
-"nodes": PackedInt32Array(-1, -1, 1, 0, -1, 3, 2, 0, 3, 1, 4, 2, 0, 1073741824, 0, 6, 5, -1, 1, 7, 3, 0),
-"variants": [8, 8, ExtResource("2_brkhy"), SubResource("RectangleShape2D_w2htb")],
-"version": 3
-}
-
-[sub_resource type="PackedScene" id="PackedScene_58026"]
-_bundled = {
-"conn_count": 0,
-"conns": PackedInt32Array(),
-"editable_instances": [],
-"id_paths": [PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array(), PackedInt32Array()],
-"names": PackedStringArray("ActionController", "Node", "script", "GatherAction", "BuildAction", "WeaponAction", "GatherActionState", "Node", "script", "_gatherCooldown", "ActionController", "GatherCooldown", "Timer", "wait_time", "one_shot", "BuildActionState", "Node", "script", "State", "ActionController", "WeaponActionState", "Node", "script", "_weaponCooldown", "State", "ActionController", "WeaponCooldown", "Timer", "wait_time", "one_shot"),
-"node_count": 6,
-"node_ids": PackedInt32Array(0, 0, 0, 0, 0, 0),
-"node_paths": [NodePath("."), NodePath("./GatherActionState"), NodePath("."), NodePath("."), NodePath("./WeaponActionState")],
-"nodes": PackedInt32Array(-1, -1, 1, 0, -1, 4, 2, 0, 1073741827, 1, 1073741828, 2, 1073741829, 3, 0, 1073741824, 0, 7, 6, -1, 3, 8, 4, 1073741833, 5, 1073741834, 6, 0, 1073741825, 0, 12, 11, -1, 2, 13, 7, 14, 8, 0, 1073741826, 0, 16, 15, -1, 3, 17, 9, 18, 10, 1073741843, 11, 0, 1073741827, 0, 21, 20, -1, 4, 22, 12, 1073741847, 13, 24, 14, 1073741849, 15, 0, 1073741828, 0, 27, 26, -1, 2, 28, 16, 29, 17, 0),
-"variants": [ExtResource("13_66aqs"), NodePath("GatherActionState"), NodePath("BuildActionState"), NodePath("WeaponActionState"), ExtResource("14_3bl5a"), NodePath("GatherCooldown"), NodePath(".."), 0.5, true, ExtResource("15_pfyql"), 1, NodePath(".."), ExtResource("16_ahtse"), NodePath("WeaponCooldown"), 2, NodePath(".."), 0.5, true],
-"version": 3
-}
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_dv6dr"]
-size = Vector2(574, 410)
-
-[sub_resource type="PackedScene" id="PackedScene_gp6b2"]
-_bundled = {
-"conn_count": 0,
-"conns": PackedInt32Array(),
-"editable_instances": [],
-"id_paths": [PackedInt32Array(), PackedInt32Array()],
-"names": PackedStringArray("Crafting", "Node2D", "script", "_craftingArea", "CraftingArea", "Area2D", "collision_layer", "collision_mask", "CollisionShape2D", "CollisionShape2D", "position", "shape"),
-"node_count": 3,
-"node_ids": PackedInt32Array(0, 0, 0),
-"node_paths": [NodePath("."), NodePath("./CraftingArea")],
-"nodes": PackedInt32Array(-1, -1, 1, 0, -1, 2, 2, 0, 1073741827, 1, 0, 1073741824, 0, 5, 4, -1, 2, 6, 2, 7, 3, 0, 1073741825, 0, 9, 8, -1, 2, 10, 4, 11, 5, 0),
-"variants": [ExtResource("17_2gngu"), NodePath("CraftingArea"), 0, 8, Vector2(0, -45), SubResource("RectangleShape2D_dv6dr")],
-"version": 3
-}
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_30h5y"]
 size = Vector2(44, 93)
@@ -119,23 +58,15 @@ _bundled = {
 script = ExtResource("1_tombv")
 Player = ExtResource("9_0w4qc")
 TestNpc = SubResource("PackedScene_iwy67")
-PlayerActionController = SubResource("PackedScene_58026")
 PlayerPickupArea = SubResource("PackedScene_8dp6f")
-PlayerCrafting = SubResource("PackedScene_gp6b2")
 Pickup = ExtResource("8_x5ejh")
-CraftStationArea = SubResource("PackedScene_2hqwj")
-MainMenu = ExtResource("5_3f4ap")
-LoadScreen = ExtResource("4_y0gj7")
-Game = ExtResource("3_6enwa")
+Prop = ExtResource("16_r0aru")
 SelectCraftingStationButton = ExtResource("7_eocek")
 SelectRecipeButton = ExtResource("8_bwf4d")
 RecipeIngredientSlotTexture = ExtResource("7_6ykcs")
 BlockTypeButton = ExtResource("4_rx88w")
 ItemTooltipPropertyGroup = ExtResource("5_8fovs")
 SelectIngredientButton = ExtResource("11_tftwe")
-Prop = ExtResource("16_r0aru")
-Breakable = ExtResource("2_wi1ls")
-LoadingScreen = ExtResource("4_y0gj7")
 World = ExtResource("19_w7gg7")
 WeaponProjectile = ExtResource("16_p2brr")
 WeaponSwing = ExtResource("17_w7gg7")

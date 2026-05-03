@@ -9,7 +9,6 @@ public partial class PackedScenes : Resource {
     [Export] public PackedScene PlayerPickupArea { get; private set; }
     [Export] public PackedScene Pickup { get; private set; }
     [Export] public PackedScene Prop { get; private set; }
-    [Export] public PackedScene Breakable { get; private set; }
     // UI
     [Export] public PackedScene SelectCraftingStationButton { get; private set; }
     [Export] public PackedScene SelectRecipeButton { get; private set; }

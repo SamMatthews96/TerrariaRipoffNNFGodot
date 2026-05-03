@@ -1,9 +1,10 @@
-[gd_resource type="Resource" script_class="Items" load_steps=6 format=3 uid="uid://b4pasm3pwpyq2"]
+[gd_resource type="Resource" script_class="Items" format=3 uid="uid://b4pasm3pwpyq2"]
 
 [ext_resource type="Resource" uid="uid://cysgkfj62akpl" path="res://Resources/Items/Earth.tres" id="1_phlq1"]
 [ext_resource type="Resource" uid="uid://f3lfq0tun5n0" path="res://Resources/Items/IronOre.tres" id="2_rjxfa"]
 [ext_resource type="Resource" uid="uid://bqshlfwn0tksb" path="res://Resources/Items/Stone.tres" id="2_t4our"]
 [ext_resource type="Resource" uid="uid://be8tbdvrre8v8" path="res://Resources/Items/Wood.tres" id="3_t4our"]
+[ext_resource type="Resource" uid="uid://byqw6kafokpvi" path="res://Resources/Items/Tree.tres" id="4_n2ifj"]
 [ext_resource type="Script" uid="uid://18jr81tkmkam" path="res://Scripts/Data/Items.cs" id="5_nyv53"]
 
 [resource]
@@ -12,4 +13,5 @@ Stone = ExtResource("2_t4our")
 Earth = ExtResource("1_phlq1")
 IronOre = ExtResource("2_rjxfa")
 Wood = ExtResource("3_t4our")
+Tree = ExtResource("4_n2ifj")
 metadata/_custom_type_script = "uid://18jr81tkmkam"

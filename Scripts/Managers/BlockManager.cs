@@ -135,8 +135,8 @@ public partial class BlockManager : Node2D {
             ["blocks"] = SerializeChunk(Blocks),
             ["walls"] = SerializeChunk(Walls)
         };
-
-        RpcId(requestingPeerId, nameof(RpcProcessWorldChunk),
+        
+        RpcId(requestingPeerId, nameof(RpcProcessWorld),
             data);
     }
 
@@ -152,7 +152,7 @@ public partial class BlockManager : Node2D {
                     groupedByItemId[block.ItemId] = new Array();
                 }
 
-                Array blockData = new() { x, y, block.CurrentHealth };
+                Array blockData = new() { x, y };
                 groupedByItemId[block.ItemId].Add(blockData);
             }
         }
@@ -161,7 +161,7 @@ public partial class BlockManager : Node2D {
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
-    private void RpcProcessWorldChunk(Dictionary data) {
+    private void RpcProcessWorld(Dictionary data) {
         Dictionary blocksByItemId = data["blocks"].AsGodotDictionary();
         Dictionary wallsByItemId = data["walls"].AsGodotDictionary();
 
@@ -172,10 +172,9 @@ public partial class BlockManager : Node2D {
             foreach (Array blockData in blockDataArray) {
                 int x = (int)blockData[0];
                 int y = (int)blockData[1];
-                float health = (float)blockData[2];
 
                 Blocks[x, y] = new Block {
-                    CurrentHealth = health,
+                    CurrentHealth = 1,
                     ItemId = itemId
                 };
             }
@@ -188,10 +187,9 @@ public partial class BlockManager : Node2D {
             foreach (Array wallData in wallDataArray) {
                 int x = (int)wallData[0];
                 int y = (int)wallData[1];
-                float health = (float)wallData[2];
 
                 Walls[x, y] = new Block {
-                    CurrentHealth = health,
+                    CurrentHealth = 1,
                     ItemId = itemId
                 };
             }

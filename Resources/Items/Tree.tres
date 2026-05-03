@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="Item" format=3 uid="uid://byqw6kafokpvi"]
+
+[ext_resource type="Script" uid="uid://jsfs7spy0f5g" path="res://Scripts/Resources/Item/ItemProperty.cs" id="1_8qrc5"]
+[ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://Assets/Images/icon.svg" id="1_chmlx"]
+[ext_resource type="Script" uid="uid://bavg183x82165" path="res://Scripts/Resources/Item/Item.cs" id="2_apad7"]
+[ext_resource type="Texture2D" uid="uid://cerbvbxscjcpv" path="res://Assets/Images/tree.png" id="3_3c1ot"]
+[ext_resource type="Script" uid="uid://dd1h6wlqqfbik" path="res://Scripts/Resources/Item/ItemProp.cs" id="4_hsnvs"]
+
+[sub_resource type="Resource" id="Resource_dg00r"]
+script = ExtResource("4_hsnvs")
+Texture = ExtResource("3_3c1ot")
+Dimensions = Vector2i(1, 1)
+DoesDropSelf = false
+metadata/_custom_type_script = "uid://dd1h6wlqqfbik"
+
+[resource]
+script = ExtResource("2_apad7")
+Name = "Tree"
+IsStackable = false
+IconTexture = ExtResource("1_chmlx")
+_itemProperties = Array[ExtResource("1_8qrc5")]([SubResource("Resource_dg00r")])
+metadata/_custom_type_script = "uid://bavg183x82165"
