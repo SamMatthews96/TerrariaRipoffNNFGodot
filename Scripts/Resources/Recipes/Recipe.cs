@@ -26,9 +26,9 @@ public partial class Recipe : Resource {
         Array<ItemProperty> newItemProperties = new() {
             new ItemCrafted(this, suppliedIngredients)
         };
-        foreach (ItemPropertyOutputTemplate itemPropertyOutputTemplate in ResultItemProperties) {
+        foreach (ItemPropertyOutputTemplate template in ResultItemProperties) {
             ItemProperty newItemProperty
-                = itemPropertyOutputTemplate.Build(suppliedIngredients);
+                = template.Build(suppliedIngredients);
             newItemProperties.Add(newItemProperty);
         }
     

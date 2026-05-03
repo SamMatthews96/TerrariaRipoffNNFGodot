@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://bsnw8muyx5lhx" path="res://Assets/Images/ItemIcons/stonePlaceholder.png" id="1_kmiyo"]
 [ext_resource type="Script" uid="uid://drhtbuywngnuq" path="res://Scripts/Resources/Recipes/RecipeFieldMaps/Float/RecipeFieldMapFloatConstant.cs" id="2_kmiyo"]
 [ext_resource type="Script" uid="uid://bfcev5h2r3enq" path="res://Scripts/Resources/Recipes/RecipeFieldMaps/String/RecipeFieldMapStringConstant.cs" id="3_w51hq"]
+[ext_resource type="Script" uid="uid://cleomv3k1ji4u" path="res://Scripts/Resources/Recipes/OutputTemplates/PropProperty/PropStationOutputTemplate.cs" id="4_pwi0r"]
 [ext_resource type="Texture2D" uid="uid://c4xxd5bays5fi" path="res://Assets/Images/placedBench.png" id="4_qh1d6"]
 [ext_resource type="Texture2D" uid="uid://cyllurh0pjf8q" path="res://Assets/Images/ItemIcons/bench.png" id="4_xeeua"]
 [ext_resource type="Script" uid="uid://d2pqak21epjnt" path="res://Scripts/Resources/Recipes/RecipeFieldMaps/Texture/RecipeFieldMapTextureConstant.cs" id="5_qh1d6"]
@@ -24,10 +25,16 @@ script = ExtResource("2_kmiyo")
 _value = 3.0
 metadata/_custom_type_script = "uid://drhtbuywngnuq"
 
+[sub_resource type="Resource" id="Resource_5gmoa"]
+script = ExtResource("4_pwi0r")
+Type = 1
+metadata/_custom_type_script = "uid://cleomv3k1ji4u"
+
 [sub_resource type="Resource" id="Resource_qh1d6"]
 script = ExtResource("5_xeeua")
 Texture = ExtResource("4_qh1d6")
 Dimensions = Vector2i(2, 1)
+PropProperties = Array[Object]([SubResource("Resource_5gmoa")])
 metadata/_custom_type_script = "uid://lu1xiw1272cu"
 
 [sub_resource type="Resource" id="Resource_1p1fj"]
