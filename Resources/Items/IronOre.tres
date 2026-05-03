@@ -1,23 +1,20 @@
-[gd_resource type="Resource" script_class="Item" load_steps=7 format=3 uid="uid://f3lfq0tun5n0"]
+[gd_resource type="Resource" script_class="Item" format=3 uid="uid://f3lfq0tun5n0"]
 
 [ext_resource type="Texture2D" uid="uid://dyh5du11bl005" path="res://Assets/Images/ItemIcons/ironOre.png" id="1_3hk8f"]
 [ext_resource type="Script" uid="uid://bavg183x82165" path="res://Scripts/Resources/Item/Item.cs" id="1_httpj"]
 [ext_resource type="Script" uid="uid://jsfs7spy0f5g" path="res://Scripts/Resources/Item/ItemProperty.cs" id="2_t6mi6"]
-[ext_resource type="Script" uid="uid://ctwdtjjrpbdwg" path="res://Scripts/Resources/Item/ItemPlaceable.cs" id="2_xtae4"]
 [ext_resource type="Resource" uid="uid://cif2w0im58ikd" path="res://Resources/Items/ItemIngredient/IronOre.tres" id="3_t6mi6"]
+[ext_resource type="Script" uid="uid://ctwdtjjrpbdwg" path="res://Scripts/Resources/Item/ItemBlock.cs" id="4_xtae4"]
 
-[sub_resource type="Resource" id="Resource_hwcvf"]
-script = ExtResource("2_xtae4")
-Type = 0
+[sub_resource type="Resource" id="Resource_t6mi6"]
+script = ExtResource("4_xtae4")
 Texture = ExtResource("1_3hk8f")
-OccupiedCells = Array[Object]([])
 metadata/_custom_type_script = "uid://ctwdtjjrpbdwg"
 
 [resource]
 script = ExtResource("1_httpj")
 Name = "Iron Ore"
 InventorySpace = 2.0
-IsStackable = true
 IconTexture = ExtResource("1_3hk8f")
-_itemProperties = Array[ExtResource("2_t6mi6")]([SubResource("Resource_hwcvf"), ExtResource("3_t6mi6")])
+_itemProperties = Array[ExtResource("2_t6mi6")]([ExtResource("3_t6mi6"), SubResource("Resource_t6mi6")])
 metadata/_custom_type_script = "uid://bavg183x82165"

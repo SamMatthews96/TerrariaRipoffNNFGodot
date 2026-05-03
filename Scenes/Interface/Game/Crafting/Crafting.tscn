@@ -1,107 +1,108 @@
-[gd_scene load_steps=10 format=3 uid="uid://b7mdvg74802mv"]
+[gd_scene format=3 uid="uid://b7mdvg74802mv"]
 
 [ext_resource type="Script" uid="uid://chga670axxwh6" path="res://Scripts/Interface/Game/Crafting/Crafting.cs" id="1_t416l"]
 [ext_resource type="PackedScene" uid="uid://d31jlx7lau6lq" path="res://Scenes/Interface/Game/Crafting/RecipePopup.tscn" id="2_0ra1c"]
-[ext_resource type="Script" uid="uid://djguw8ysdjviw" path="res://Scripts/Interface/Game/Crafting/SelectStationContainer.cs" id="3_rcspo"]
+[ext_resource type="Script" uid="uid://djguw8ysdjviw" path="res://Scripts/Interface/Game/Crafting/StationContainer.cs" id="3_rcspo"]
 [ext_resource type="Texture2D" uid="uid://c1dlk5ira363n" path="res://Assets/Images/hand.png" id="4_eu8om"]
-[ext_resource type="Script" uid="uid://bi8ajy153uqa0" path="res://Scripts/Interface/Game/Crafting/SelectRecipeContainer.cs" id="5_0yb3w"]
+[ext_resource type="Script" uid="uid://bi8ajy153uqa0" path="res://Scripts/Interface/Game/Crafting/RecipeContainer.cs" id="5_0yb3w"]
 [ext_resource type="Texture2D" uid="uid://dfscdvvt4bdr6" path="res://Assets/Images/pickaxePlaceholder.png" id="6_bhvgf"]
-[ext_resource type="Script" uid="uid://jxhgabm7a16r" path="res://Scripts/Interface/Game/Crafting/SelectIngredientsContainer.cs" id="7_l8j2k"]
+[ext_resource type="Script" uid="uid://jxhgabm7a16r" path="res://Scripts/Interface/Game/Crafting/IngredientsContainer.cs" id="7_l8j2k"]
 [ext_resource type="PackedScene" uid="uid://bawlysyg56da3" path="res://Scenes/Interface/Game/Crafting/RecipeIngredientSlotTexture.tscn" id="8_oxyri"]
 [ext_resource type="Texture2D" uid="uid://wrf00jfy174v" path="res://Assets/Images/woodPlaceholder.png" id="9_gfgye"]
 
-[node name="Crafting" type="HBoxContainer" node_paths=PackedStringArray("_selectCraftingStationMenuButton", "CraftSelectStationContainer", "SelectRecipeContainer", "SelectIngredientsContainer", "SelectIngredientPopup")]
+[node name="Crafting" type="HBoxContainer" unique_id=295219936 node_paths=PackedStringArray("_selectCraftingStationMenuButton", "StationContainer", "RecipeContainer", "IngredientsContainer", "IngredientPopup")]
 offset_right = 872.0
 offset_bottom = 343.0
 mouse_filter = 2
 script = ExtResource("1_t416l")
 _selectCraftingStationMenuButton = NodePath("SelectStationContainer/TitleContainer/SelectCraftingStationMenuButton")
-CraftSelectStationContainer = NodePath("SelectStationContainer")
-SelectRecipeContainer = NodePath("SelectRecipeContainer")
-SelectIngredientsContainer = NodePath("SelectIngredientsContainer")
-SelectIngredientPopup = NodePath("SelectIngredientPopup")
+StationContainer = NodePath("SelectStationContainer")
+RecipeContainer = NodePath("SelectRecipeContainer")
+IngredientsContainer = NodePath("SelectIngredientsContainer")
+IngredientPopup = NodePath("SelectIngredientPopup")
 
-[node name="SelectIngredientPopup" parent="." node_paths=PackedStringArray("SelectIngredientsContainer") instance=ExtResource("2_0ra1c")]
+[node name="SelectIngredientPopup" parent="." unique_id=1609194623 node_paths=PackedStringArray("_craftingInterface") instance=ExtResource("2_0ra1c")]
 position = Vector2i(345, 320)
 visible = false
-SelectIngredientsContainer = NodePath("../SelectIngredientsContainer")
+_craftingInterface = NodePath("..")
 
-[node name="SelectStationContainer" type="VBoxContainer" parent="." node_paths=PackedStringArray("_craftingStationButtonContainer")]
+[node name="SelectStationContainer" type="VBoxContainer" parent="." unique_id=768364216 node_paths=PackedStringArray("_craftingStationButtonContainer", "_craftingInterface")]
 layout_mode = 2
 script = ExtResource("3_rcspo")
 _craftingStationButtonContainer = NodePath("ListContainer/MarginContainer/VBoxContainer")
+_craftingInterface = NodePath("..")
 
-[node name="TitleContainer" type="MarginContainer" parent="SelectStationContainer"]
+[node name="TitleContainer" type="MarginContainer" parent="SelectStationContainer" unique_id=887540066]
 layout_mode = 2
 size_flags_horizontal = 0
 theme_override_constants/margin_left = 10
 
-[node name="SelectCraftingStationMenuButton" type="Button" parent="SelectStationContainer/TitleContainer"]
+[node name="SelectCraftingStationMenuButton" type="Button" parent="SelectStationContainer/TitleContainer" unique_id=1544031429]
 custom_minimum_size = Vector2(100, 54)
 layout_mode = 2
 text = "Crafting 
 Station"
 
-[node name="ListContainer" type="PanelContainer" parent="SelectStationContainer"]
+[node name="ListContainer" type="PanelContainer" parent="SelectStationContainer" unique_id=1331699955]
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="SelectStationContainer/ListContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="SelectStationContainer/ListContainer" unique_id=924287956]
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="VBoxContainer" type="VBoxContainer" parent="SelectStationContainer/ListContainer/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="SelectStationContainer/ListContainer/MarginContainer" unique_id=1498477569]
 layout_mode = 2
 
-[node name="TextureButton" type="TextureButton" parent="SelectStationContainer/ListContainer/MarginContainer/VBoxContainer"]
+[node name="TextureButton" type="TextureButton" parent="SelectStationContainer/ListContainer/MarginContainer/VBoxContainer" unique_id=588411859]
 layout_mode = 2
 texture_normal = ExtResource("4_eu8om")
 
-[node name="SelectRecipeContainer" type="VBoxContainer" parent="." node_paths=PackedStringArray("CraftingInterface", "_selectRecipeButtonContainer")]
+[node name="SelectRecipeContainer" type="VBoxContainer" parent="." unique_id=833480790 node_paths=PackedStringArray("CraftingInterface", "_selectRecipeButtonContainer")]
 layout_mode = 2
 script = ExtResource("5_0yb3w")
 CraftingInterface = NodePath("..")
 _selectRecipeButtonContainer = NodePath("RecipeContainer/MarginContainer/ScrollContainer/GridContainer")
 
-[node name="TitleContainer" type="MarginContainer" parent="SelectRecipeContainer"]
+[node name="TitleContainer" type="MarginContainer" parent="SelectRecipeContainer" unique_id=494755943]
 layout_mode = 2
 size_flags_horizontal = 0
 theme_override_constants/margin_left = 10
 
-[node name="Button" type="Button" parent="SelectRecipeContainer/TitleContainer"]
+[node name="Button" type="Button" parent="SelectRecipeContainer/TitleContainer" unique_id=87573230]
 custom_minimum_size = Vector2(100, 54)
 layout_mode = 2
 text = "Handcrafted
 Recipes"
 
-[node name="RecipeContainer" type="PanelContainer" parent="SelectRecipeContainer"]
+[node name="RecipeContainer" type="PanelContainer" parent="SelectRecipeContainer" unique_id=287295424]
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="SelectRecipeContainer/RecipeContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="SelectRecipeContainer/RecipeContainer" unique_id=1107672715]
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="ScrollContainer" type="ScrollContainer" parent="SelectRecipeContainer/RecipeContainer/MarginContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="SelectRecipeContainer/RecipeContainer/MarginContainer" unique_id=1783830422]
 custom_minimum_size = Vector2(0, 265)
 layout_mode = 2
 horizontal_scroll_mode = 0
 
-[node name="GridContainer" type="GridContainer" parent="SelectRecipeContainer/RecipeContainer/MarginContainer/ScrollContainer"]
+[node name="GridContainer" type="GridContainer" parent="SelectRecipeContainer/RecipeContainer/MarginContainer/ScrollContainer" unique_id=1636747159]
 layout_mode = 2
 theme_override_constants/h_separation = 6
 theme_override_constants/v_separation = 6
 columns = 4
 
-[node name="TextureButton" type="TextureButton" parent="SelectRecipeContainer/RecipeContainer/MarginContainer/ScrollContainer/GridContainer"]
+[node name="TextureButton" type="TextureButton" parent="SelectRecipeContainer/RecipeContainer/MarginContainer/ScrollContainer/GridContainer" unique_id=1588188698]
 layout_mode = 2
 texture_normal = ExtResource("6_bhvgf")
 
-[node name="SelectIngredientsContainer" type="VBoxContainer" parent="." node_paths=PackedStringArray("_recipeNameButton", "_craftingInterface", "_ingredientContainer", "_craftButton", "_resultItemIcon", "_ingredientPopup")]
+[node name="SelectIngredientsContainer" type="VBoxContainer" parent="." unique_id=343660360 node_paths=PackedStringArray("_recipeNameButton", "_craftingInterface", "_ingredientContainer", "_craftButton", "_resultItemIcon", "_ingredientPopup")]
 layout_mode = 2
 script = ExtResource("7_l8j2k")
 _recipeNameButton = NodePath("MarginContainer/SelectCraftingStationMenuButton")
@@ -111,55 +112,55 @@ _craftButton = NodePath("PanelContainer/MarginContainer/HBoxContainer/MarginCont
 _resultItemIcon = NodePath("PanelContainer/MarginContainer/HBoxContainer/CenterContainer/TextureRect")
 _ingredientPopup = NodePath("../SelectIngredientPopup")
 
-[node name="MarginContainer" type="MarginContainer" parent="SelectIngredientsContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="SelectIngredientsContainer" unique_id=1788313510]
 layout_mode = 2
 size_flags_horizontal = 0
 theme_override_constants/margin_left = 10
 
-[node name="SelectCraftingStationMenuButton" type="Button" parent="SelectIngredientsContainer/MarginContainer"]
+[node name="SelectCraftingStationMenuButton" type="Button" parent="SelectIngredientsContainer/MarginContainer" unique_id=136633201]
 custom_minimum_size = Vector2(100, 54)
 layout_mode = 2
 text = "Pickaxe
 "
 
-[node name="PanelContainer" type="PanelContainer" parent="SelectIngredientsContainer"]
+[node name="PanelContainer" type="PanelContainer" parent="SelectIngredientsContainer" unique_id=65724988]
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="SelectIngredientsContainer/PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="SelectIngredientsContainer/PanelContainer" unique_id=373508309]
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="HBoxContainer" type="HBoxContainer" parent="SelectIngredientsContainer/PanelContainer/MarginContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="SelectIngredientsContainer/PanelContainer/MarginContainer" unique_id=1407024156]
 layout_mode = 2
 
-[node name="Ingredients" type="GridContainer" parent="SelectIngredientsContainer/PanelContainer/MarginContainer/HBoxContainer"]
+[node name="Ingredients" type="GridContainer" parent="SelectIngredientsContainer/PanelContainer/MarginContainer/HBoxContainer" unique_id=1526555932]
 layout_mode = 2
 columns = 3
 
-[node name="TextureRect" parent="SelectIngredientsContainer/PanelContainer/MarginContainer/HBoxContainer/Ingredients" instance=ExtResource("8_oxyri")]
+[node name="TextureRect" parent="SelectIngredientsContainer/PanelContainer/MarginContainer/HBoxContainer/Ingredients" unique_id=1455385885 instance=ExtResource("8_oxyri")]
 layout_mode = 2
 
-[node name="TextureRect2" parent="SelectIngredientsContainer/PanelContainer/MarginContainer/HBoxContainer/Ingredients" instance=ExtResource("8_oxyri")]
+[node name="TextureRect2" parent="SelectIngredientsContainer/PanelContainer/MarginContainer/HBoxContainer/Ingredients" unique_id=579025572 instance=ExtResource("8_oxyri")]
 layout_mode = 2
 texture = ExtResource("9_gfgye")
 
-[node name="MarginContainer" type="MarginContainer" parent="SelectIngredientsContainer/PanelContainer/MarginContainer/HBoxContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="SelectIngredientsContainer/PanelContainer/MarginContainer/HBoxContainer" unique_id=1970580411]
 layout_mode = 2
 theme_override_constants/margin_left = 20
 theme_override_constants/margin_right = 20
 
-[node name="Button" type="Button" parent="SelectIngredientsContainer/PanelContainer/MarginContainer/HBoxContainer/MarginContainer"]
+[node name="Button" type="Button" parent="SelectIngredientsContainer/PanelContainer/MarginContainer/HBoxContainer/MarginContainer" unique_id=152136564]
 custom_minimum_size = Vector2(100, 40)
 layout_mode = 2
 size_flags_vertical = 4
 text = "Craft"
 
-[node name="CenterContainer" type="CenterContainer" parent="SelectIngredientsContainer/PanelContainer/MarginContainer/HBoxContainer"]
+[node name="CenterContainer" type="CenterContainer" parent="SelectIngredientsContainer/PanelContainer/MarginContainer/HBoxContainer" unique_id=677684471]
 layout_mode = 2
 
-[node name="TextureRect" type="TextureRect" parent="SelectIngredientsContainer/PanelContainer/MarginContainer/HBoxContainer/CenterContainer"]
+[node name="TextureRect" type="TextureRect" parent="SelectIngredientsContainer/PanelContainer/MarginContainer/HBoxContainer/CenterContainer" unique_id=44602567]
 layout_mode = 2
 texture = ExtResource("6_bhvgf")

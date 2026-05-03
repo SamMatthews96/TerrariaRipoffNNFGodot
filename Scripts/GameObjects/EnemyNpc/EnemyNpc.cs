@@ -7,7 +7,7 @@ public partial class EnemyNpc : CharacterBody2D {
     private float _health = 100;
     [Export] private Area2D _hitbox;
 
-    public static EnemyNpc Create(IntVector spawnCoords) {
+    public static EnemyNpc Create(Vector2I spawnCoords) {
         EnemyNpc newEnemyNpc = Data.PackedScenes.TestNpc.Instantiate<EnemyNpc>();
         newEnemyNpc.Position = new Vector2(
             spawnCoords.X * Game.BlockSize,

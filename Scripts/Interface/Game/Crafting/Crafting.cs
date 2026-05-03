@@ -3,31 +3,29 @@
 namespace TerrariaRipoffNNF.Interface;
 
 public partial class Crafting : Control {
-    [Export] private Game _gameInterface;
+    [Export] public Game GameInterface { get; private set; }
     [Export] private Button _selectCraftingStationMenuButton;
 
-    [Export] public SelectStationContainer CraftSelectStationContainer { get; private set; }
-    [Export] public SelectRecipeContainer SelectRecipeContainer { get; private set; }
-    [Export] public SelectIngredientsContainer SelectIngredientsContainer { get; private set; }
-    [Export] public SelectIngredientPopup SelectIngredientPopup { get; private set; }
+    [Export] public StationContainer StationContainer { get; private set; }
+    [Export] public RecipeContainer RecipeContainer { get; private set; }
+    [Export] public IngredientsContainer IngredientsContainer { get; private set; }
+    [Export] public IngredientPopup IngredientPopup { get; private set; }
 
     public override void _Ready() {
-        Hide();
-        _gameInterface.GameManager.InputManager.ToggleInventoryPressed += OnToggleInventoryPressed;
-        _gameInterface.GameManager.InputManager.EscapePressed += OnEscapePressed;
+        Visible = false;
+        GameInterface.World.InputManager.ToggleInventoryPressed += OnToggleInventoryPressed;
+        GameInterface.World.InputManager.EscapePressed += OnEscapePressed;
+        TreeExiting += () => {
+            GameInterface.World.InputManager.ToggleInventoryPressed -= OnToggleInventoryPressed;
+            GameInterface.World.InputManager.EscapePressed -= OnEscapePressed;
+        };
     }
 
     private void OnToggleInventoryPressed() {
-        if (Visible) {
-            Hide();
-        } else {
-            Show();
-        }
+        Visible = !Visible;
     }
-    
+
     private void OnEscapePressed() {
-        if (Visible) {
-            Hide();
-        }
+        Visible = false;
     }
 }

@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://ch0g7opleupwc"]
+
+[ext_resource type="Script" uid="uid://djqfbeub5nvad" path="res://TestScenes/ReadyOrder/ReadyOrder.cs" id="1_fjlih"]
+
+[node name="L0" type="Node" unique_id=1052627943]
+script = ExtResource("1_fjlih")
+
+[node name="L0>N1" type="Node" parent="." unique_id=467028415]
+script = ExtResource("1_fjlih")
+
+[node name="L0>N1>N1" type="Node" parent="L0>N1" unique_id=1975903072]
+script = ExtResource("1_fjlih")
+
+[node name="L0>N2" type="Node" parent="." unique_id=1259045653]
+script = ExtResource("1_fjlih")

@@ -6,6 +6,7 @@ namespace TerrariaRipoffNNF.Interface;
 
 public partial class ActionBar : PanelContainer {
     [Export] private Array<ActionBarButton> _buttons;
+    [Export] private Game _gameInterface;
     
     public event Action<PlayerActionType> ButtonClicked;
     
@@ -16,11 +17,14 @@ public partial class ActionBar : PanelContainer {
             };
         }
         
-        Player.LocalPlayerSpawned += OnLocalPlayerSpawned;
+        _gameInterface.World.PlayerManager.LocalPlayerSpawned += OnLocalPlayerSpawned;
+        TreeExiting += () => {
+            _gameInterface.World.PlayerManager.LocalPlayerSpawned -= OnLocalPlayerSpawned;
+        };
     }
     
     private void OnLocalPlayerSpawned(Player player) {
-        player.ActionController.ActionChanged += OnPlayerActionChanged;
+        player.ActionState.ActionChanged += OnPlayerActionChanged;
     }
     
     private void OnPlayerActionChanged(PlayerActionType state) {
@@ -32,9 +36,5 @@ public partial class ActionBar : PanelContainer {
                 button.SetDefocus();
             }
         }
-    }
-    
-    public override void _ExitTree() {
-        Player.LocalPlayerSpawned -= OnLocalPlayerSpawned;
     }
 }

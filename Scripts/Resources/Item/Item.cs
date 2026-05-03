@@ -16,6 +16,7 @@ public sealed partial class Item : Resource {
         if (a.ResourcePath != "" || b.ResourcePath != "") {
             return a.ResourcePath == b.ResourcePath;
         }
+
         if (
             a.TryGetProperty(out ItemCrafted aItemCrafted) &&
             b.TryGetProperty(out ItemCrafted bItemCrafted)
@@ -82,6 +83,7 @@ public sealed partial class Item : Resource {
                 Item item = FromDictionary(itemDict);
                 suppliedIngredients.Add(key, item);
             }
+
             Item newItem = recipe.Build(suppliedIngredients).Item;
             return newItem;
         }

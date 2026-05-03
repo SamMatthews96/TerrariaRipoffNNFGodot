@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://bnyey5puj43gh"]
+
+[ext_resource type="Script" uid="uid://be5by64ygiidc" path="res://TestScenes/RpcDict/RpcDict.cs" id="1_qpc31"]
+
+[node name="RpcDict" type="Node" unique_id=1965726667]
+script = ExtResource("1_qpc31")

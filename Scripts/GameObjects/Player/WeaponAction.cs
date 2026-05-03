@@ -8,7 +8,6 @@ public partial class WeaponAction : PlayerAction {
 
     public override void _Ready() {
         Player = ActionController.Player;
-        Game = ActionController.Game;
     }
 
     public override void LeftMouseAction(Vector2 mouseWorldPosition) {
@@ -20,7 +19,7 @@ public partial class WeaponAction : PlayerAction {
 
         WeaponAttackNode proj = WeaponAttackNode.Create(
             Player.PlayerEquipment.Weapon, Player, mouseWorldPosition);
-        Game.WorldObjectManager.AddChild(proj);
+        Player.World.AddChild(proj);
         _weaponCooldown.Start();
     }
 

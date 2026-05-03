@@ -1,18 +1,18 @@
-[gd_scene load_steps=3 format=3 uid="uid://dpvw8x6fjjkkg"]
+[gd_scene format=3 uid="uid://dpvw8x6fjjkkg"]
 
 [ext_resource type="Script" uid="uid://kjyoip5nu1o4" path="res://Scripts/GameObjects/Player/Crafting.cs" id="1_wvuew"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_dv6dr"]
 size = Vector2(574, 410)
 
-[node name="Crafting" type="Node2D" node_paths=PackedStringArray("_craftingArea")]
+[node name="Crafting" type="Node2D" unique_id=98362136 node_paths=PackedStringArray("_craftingArea")]
 script = ExtResource("1_wvuew")
 _craftingArea = NodePath("CraftingArea")
 
-[node name="CraftingArea" type="Area2D" parent="."]
+[node name="CraftingArea" type="Area2D" parent="." unique_id=1408343996]
 collision_layer = 0
 collision_mask = 8
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="CraftingArea"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CraftingArea" unique_id=1467964774]
 position = Vector2(0, -45)
 shape = SubResource("RectangleShape2D_dv6dr")

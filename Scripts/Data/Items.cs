@@ -8,4 +8,5 @@ public partial class Items : Resource {
     [Export] public Item Earth { get; private set; }
     [Export] public Item IronOre { get; private set; }
     [Export] public Item Wood { get; private set; }
+    [Export] public Item Tree { get; private set; }
 }

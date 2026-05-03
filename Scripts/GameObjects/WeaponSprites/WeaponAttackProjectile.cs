@@ -26,10 +26,6 @@ public partial class WeaponAttackProjectile : WeaponAttackNode {
 
     private void OnBodyEntered(Node2D body) {
         QueueFree();
-
-        if (body is WorldSolid) {
-            // QueueFree();
-        }
     }
 
     public override void _ExitTree() {

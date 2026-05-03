@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://c8u386chg2fea"]
+
+[ext_resource type="Script" path="res://Scripts/GameObjects/Player/ServerPickupArea.cs" id="1_f8g2b"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_raw6a"]
+size = Vector2(44, 93)
+
+[node name="ServerPickupArea" type="Area2D" unique_id=1416512291]
+collision_layer = 0
+collision_mask = 4
+script = ExtResource("1_f8g2b")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=539389201]
+position = Vector2(0, -46.5)
+shape = SubResource("RectangleShape2D_raw6a")

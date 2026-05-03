@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://b3m68jlq5adp0"]
+
+[ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://Assets/Images/icon.svg" id="1_6gkq4"]
+[ext_resource type="Script" uid="uid://byo7dc42ewclt" path="res://TestScenes/SyncVisibility/SyncTestObject.cs" id="1_wcm7y"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_wcm7y"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+
+[node name="SyncTestObject" type="Node2D" unique_id=1016531462 node_paths=PackedStringArray("Sync")]
+script = ExtResource("1_wcm7y")
+Sync = NodePath("MultiplayerSynchronizer")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1738882091]
+texture = ExtResource("1_6gkq4")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=768297643]
+replication_config = SubResource("SceneReplicationConfig_wcm7y")
+public_visibility = false

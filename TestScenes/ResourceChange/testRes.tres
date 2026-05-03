@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="TestResource" format=3 uid="uid://d2mtp72rghbct"]
+
+[ext_resource type="Script" uid="uid://ds3qsim0eaxwu" path="res://TestScenes/ResourceChange/TestResource.cs" id="1_l54fm"]
+
+[resource]
+script = ExtResource("1_l54fm")
+metadata/_custom_type_script = "uid://ds3qsim0eaxwu"

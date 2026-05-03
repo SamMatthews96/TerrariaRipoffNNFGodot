@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://c7dpe04jscc5f"]
+[gd_scene format=3 uid="uid://c7dpe04jscc5f"]
 
 [ext_resource type="Script" uid="uid://c1d21p320xi1u" path="res://Scripts/Data/Data.cs" id="1_f38oj"]
 [ext_resource type="Resource" uid="uid://dllhhokx2wkse" path="res://Resources/Data/PackedScenes.tres" id="2_4ri16"]
@@ -10,7 +10,6 @@
 
 [sub_resource type="Resource" id="Resource_om11x"]
 script = ExtResource("5_iy35j")
-Type = 0
 Icon = ExtResource("4_2ebmr")
 metadata/_custom_type_script = "uid://dsma6rw4bm7vo"
 
@@ -26,7 +25,7 @@ Type = 2
 Icon = ExtResource("7_iy35j")
 metadata/_custom_type_script = "uid://dsma6rw4bm7vo"
 
-[node name="Data" type="Node"]
+[node name="Data" type="Node" unique_id=1136139934]
 script = ExtResource("1_f38oj")
 _packedScenes = ExtResource("2_4ri16")
 _items = ExtResource("4_esico")

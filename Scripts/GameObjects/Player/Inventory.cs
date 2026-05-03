@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Godot;
 using Godot.Collections;
+using TerrariaRipoffNNF.TestScenes;
 using Array = Godot.Collections.Array;
 
 namespace TerrariaRipoffNNF;
@@ -9,7 +10,6 @@ namespace TerrariaRipoffNNF;
 public partial class Inventory : Node {
     public float MaximumSpace { get; private set; } = 100;
     public float UsedSpace { get; private set; }
-
     public List<StackedItems> StackedItemsList => _inventoryItemsList;
 
     public bool IsContainingStackedItems(StackedItems stackedItems) {
@@ -25,46 +25,73 @@ public partial class Inventory : Node {
     public event Action<StackedItems> ItemStackChangedSize;
     public event Action<StackedItems> AddedItemStack;
     public event Action<StackedItems> RemovedItemStack;
-    public event Action<WorldObject> PickupLooted;
-
     public event Action<Item> EquipItemClicked;
 
-    private Player _player;
-    private Game _game;
-    private Dictionary _playerData;
+    [Export] private Player _player;
     private readonly List<StackedItems> _inventoryItemsList = new();
-
-    public static Inventory Create(
-        Game game, Dictionary playerData, Player player
-    ) {
-        Inventory inventory = new();
-        inventory._game = game;
-        inventory._player = player;
-        inventory._playerData = playerData;
-
-        return inventory;
-    }
+    private ItemIdBimap _itemMap;
 
     public override void _Ready() {
-        _player.Crafting.ItemCrafted += OnItemCrafted;
-        _player.PickupArea.TouchedItem += OnCollidedWithPickup;
-        _game.Interface.InventoryUi.ItemActionClicked += OnItemActionClicked;
-        
-        if (!_playerData.TryGetValue("Inventory", out Variant inventoryData)) return;
-        if (!inventoryData.AsGodotDictionary<string, Array>().TryGetValue(
-                "InventoryItemsList", out Array inventoryItems)) return;
+        _itemMap = _player.World.ItemIdBimap;
+        if (_player.IsLocalPlayer || _player.World.IsHost) {
+            Godot.Collections.Dictionary<string, Array> inventory =
+                _player.PlayerData["Inventory"].AsGodotDictionary<string, Array>();
+            Array inventoryItems = inventory["InventoryItemsList"];
 
-        foreach (Dictionary savedItem in inventoryItems) {
-            Item newItem = Item.FromDictionary(savedItem["Item"].AsGodotDictionary());
-            int count = (int)savedItem["Count"].ToString().ToFloat();
-            StackedItems newStack = new(newItem, count);
-            AddItems(newStack);
+            foreach (Dictionary savedItem in inventoryItems) {
+                Item newItem = Item.FromDictionary(savedItem["Item"].AsGodotDictionary());
+                int count = (int)savedItem["Count"].ToString().ToFloat();
+                StackedItems newStack = new(newItem, count);
+                AddItems(newStack);
+            }
+
+            _player.Crafting.HostItemCrafted += OnHostItemCrafted;
+            TreeExiting += () => { _player.Crafting.HostItemCrafted -= OnHostItemCrafted; };
+        }
+
+        if (_player.World.IsHost) {
+            _player.ServerPickupArea.CollectedPickup += HostOnCollectedPickup;
+            _player.ActionState.Build.HostPlacedBlock += HostOnPlacedBlock;
+            _player.ActionState.Build.HostPlacedWall += HostOnPlacedBlock;
+            _player.ActionState.Build.HostPlaceProp += HostOnPlacedBlock;
+            TreeExiting += () => {
+                _player.ServerPickupArea.CollectedPickup -= HostOnCollectedPickup;
+                _player.ActionState.Build.HostPlacedBlock -= HostOnPlacedBlock;
+                _player.ActionState.Build.HostPlacedWall -= HostOnPlacedBlock;
+                _player.ActionState.Build.HostPlaceProp -= HostOnPlacedBlock;
+            };
         }
     }
 
-    public override void _ExitTree() {
-        _game.Interface.InventoryUi.ItemActionClicked -= OnItemActionClicked;
-        _player.Crafting.ItemCrafted -= OnItemCrafted;
+    private void OnHostItemCrafted(
+        StackedItems newItems, Array<StackedItems> ingredients) {
+        AddItems(newItems);
+        foreach (StackedItems ingredient in ingredients) {
+            RemoveItems(ingredient);
+        }
+
+        if (_player.PeerId == 1) return;
+
+        ushort newItemId = _itemMap.GetId(newItems.Item);
+        RpcId(_player.PeerId, nameof(RpcAddItems),
+            newItemId, newItems.Count);
+
+        foreach (StackedItems ingredient in ingredients) {
+            ushort ingredientId = _itemMap.GetId(ingredient.Item);
+            RpcId(_player.PeerId, nameof(RpcRemoveItems),
+                ingredientId, ingredient.Count);
+        }
+    }
+
+    private void HostOnPlacedBlock(Item item, Vector2I coords) {
+        StackedItems inventoryItems = new(item);
+        RemoveItems(inventoryItems);
+
+        ushort itemId = _itemMap.GetId(item);
+        if (_player.PeerId != 1) {
+            RpcId(_player.PeerId, nameof(RpcRemoveItems),
+                itemId, 1);
+        }
     }
 
     private void OnItemActionClicked(StackedItems stackedItems) {
@@ -73,27 +100,21 @@ public partial class Inventory : Node {
         }
     }
 
-    private void OnItemCrafted(StackedItems newItems, List<StackedItems> ingredients) {
-        AddItems(newItems);
-        foreach (StackedItems ingredient in ingredients) {
-            RemoveItems(ingredient);
+    private void HostOnCollectedPickup(PickupEntity pickup) {
+        StackedItems stackedItems = new(pickup.Item);
+        AddItems(stackedItems);
+        if (_player.PeerId != 1) {
+            ushort itemId = _itemMap.GetId(stackedItems.Item);
+            RpcId(_player.PeerId, nameof(RpcAddItems),
+                itemId, 1);
         }
     }
 
-    private void OnCollidedWithPickup(WorldPickup pickup) {
-        if (pickup.Item.InventorySpace > MaximumSpace - UsedSpace) {
-            return;
-        }
-
-        StackedItems items = new(pickup.Item);
-
-        AddItems(items);
-        PickupLooted?.Invoke(pickup.WorldObject);
-    }
-
-    public void OnAfterBuildSuccess(Item item) {
-        StackedItems inventoryItems = new(item, 1);
-        RemoveItems(inventoryItems);
+    [Rpc(TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void RpcAddItems(ushort itemId, int count) {
+        Item item = _itemMap.GetItem(itemId);
+        StackedItems inventoryItems = new(item, count);
+        AddItems(inventoryItems);
     }
 
     private void AddItems(StackedItems inventoryItemsToAdd) {
@@ -111,17 +132,25 @@ public partial class Inventory : Node {
         }
     }
 
-    private void RemoveItems(StackedItems inventoryItemsToRemove) {
-        UsedSpace -= inventoryItemsToRemove.TotalSpace;
+    [Rpc(TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void RpcRemoveItems(ushort itemId, int count) {
+        Item item = _itemMap.GetItem(itemId);
+        StackedItems inventoryItems = new(item, count);
+        RemoveItems(inventoryItems);
+    }
+
+    private void RemoveItems(StackedItems itemsToRemove) {
+        UsedSpace -= itemsToRemove.TotalSpace;
 
         int index = _inventoryItemsList.FindIndex(inventoryItems =>
-            Item.AreEqual(inventoryItems.Item,inventoryItemsToRemove.Item));
+            _itemMap.AreItemsSame(inventoryItems.Item, itemsToRemove.Item
+            ));
 
         if (index == -1) {
             throw new Exception("[20240815.0934.1] Inventory item not found");
         }
 
-        _inventoryItemsList[index] -= inventoryItemsToRemove;
+        _inventoryItemsList[index] -= itemsToRemove;
 
         switch (_inventoryItemsList[index].Count) {
             case > 0:
@@ -129,7 +158,7 @@ public partial class Inventory : Node {
                 break;
             case 0:
                 _inventoryItemsList.RemoveAt(index);
-                RemovedItemStack?.Invoke(inventoryItemsToRemove);
+                RemovedItemStack?.Invoke(itemsToRemove);
                 break;
             case < 0:
                 throw new Exception("[20240815.0934.1] Inventory space went negative");

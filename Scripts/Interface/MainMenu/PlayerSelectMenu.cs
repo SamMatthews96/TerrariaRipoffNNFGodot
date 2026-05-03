@@ -37,10 +37,8 @@ public partial class PlayerSelectMenu : Control {
     }
 
     private void OnCreatePlayerButtonDown() {
-        Dictionary newPlayer = new();
-        newPlayer.Add("Name", _playerNameTextEdit.Text);
+        Dictionary newPlayer = PlayerCreator.CreatePlayer(_playerNameTextEdit.Text);
         AddSelectPlayerButton(newPlayer);
-        FileManager.SavePlayer(newPlayer);
     }
 
     private void OnBackButtonDown() {

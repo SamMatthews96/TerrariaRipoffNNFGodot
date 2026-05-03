@@ -5,30 +5,34 @@ using Godot;
 namespace TerrariaRipoffNNF.Interface;
 
 public partial class Build : Container {
-    private readonly Dictionary<string, BlockTypeButton> _blockButtons = new();
-    private readonly Dictionary<string, BlockTypeButton> _placeableButtons = new();
-
-
+    [Export] private Game _gameInterface;
     [Export] private BoxContainer _blockButtonContainer;
-    [Export] private BoxContainer _placeableButtonContainer;
+    [Export] private BoxContainer _propButtonContainer;
+    
+    private readonly Dictionary<string, BlockTypeButton> _blockButtons = new();
+    private readonly Dictionary<ushort, BlockTypeButton> _propButtons = new();
+
+    
     private BlockTypeButton _selectedButton;
 
     public event Action<Item> BuildButtonSelected;
+    
 
     public override void _Ready() {
-        Player.LocalPlayerSpawned += OnLocalPlayerSpawned;
+        _gameInterface.World.PlayerManager.LocalPlayerSpawned += OnLocalPlayerSpawned;
         foreach (Node node in _blockButtonContainer.GetChildren()) {
             node.QueueFree();
         }
 
-        foreach (Node node in _placeableButtonContainer.GetChildren()) {
+        foreach (Node node in _propButtonContainer.GetChildren()) {
             node.QueueFree();
         }
-    }
 
-    public override void _ExitTree() {
-        Player.LocalPlayerSpawned -= OnLocalPlayerSpawned;
+        TreeExiting += () => {
+            _gameInterface.World.PlayerManager.LocalPlayerSpawned -= OnLocalPlayerSpawned;
+        };
     }
+    
 
     private void OnPlayerActionChanged(PlayerActionType playerActionType) {
         if (playerActionType == PlayerActionType.Build) {
@@ -39,27 +43,25 @@ public partial class Build : Container {
     }
 
     private void OnLocalPlayerSpawned(Player player) {
-        player.ActionController.ActionChanged += OnPlayerActionChanged;
+        foreach (StackedItems stackedItems in player.Inventory.StackedItemsList) {
+            OnInventoryAddedItemStack(stackedItems);    
+        }
+        player.ActionState.ActionChanged += OnPlayerActionChanged;
         player.Inventory.AddedItemStack += OnInventoryAddedItemStack;
         player.Inventory.RemovedItemStack += OnInventoryRemovedItemStack;
-        player.PlayerDespawned += OnLocalPlayerDespawned;
+        player.TreeExiting += () => {
+            player.ActionState.ActionChanged -= OnPlayerActionChanged;
+            player.Inventory.AddedItemStack -= OnInventoryAddedItemStack;
+            player.Inventory.RemovedItemStack -= OnInventoryRemovedItemStack;
+        };
     }
-
-    private void OnLocalPlayerDespawned(Player player) {
-        player.ActionController.ActionChanged -= OnPlayerActionChanged;
-        player.Inventory.AddedItemStack -= OnInventoryAddedItemStack;
-        player.Inventory.RemovedItemStack -= OnInventoryRemovedItemStack;
-        player.PlayerDespawned -= OnLocalPlayerDespawned;
-    }
-
+    
     private void OnInventoryAddedItemStack(StackedItems stackedItems) {
-        if (stackedItems.Item.HasProperty<ItemPlaceable>()) {
+        if (stackedItems.Item.HasProperty<ItemBlock>()) {
             AddBlockButton(stackedItems);
+        } else if (stackedItems.Item.HasProperty<ItemProp>()) {
+            AddPropButton(stackedItems);
         }
-
-        // if (stackedItems.Item.HasProperty<ItemPlaceableOld>()) {
-        //     AddPlaceableButton(stackedItems);
-        // }
     }
 
     private void AddBlockButton(StackedItems stackedItems) {
@@ -72,31 +74,39 @@ public partial class Build : Container {
         }
     }
 
-    private void AddPlaceableButton(StackedItems stackedItems) {
+    private void AddPropButton(StackedItems stackedItems) {
         BlockTypeButton button = BlockTypeButton.Create(stackedItems.Item, false);
-        button.BuildBlockSelected += SelectPlaceableButton;
-        _placeableButtonContainer.AddChild(button);
-        _placeableButtons.Add(stackedItems.Item.Name, button);
+        button.BuildBlockSelected += SelectPropButton;
+        _propButtonContainer.AddChild(button);
+        ushort itemId = 
+            _gameInterface.World.ItemIdBimap.GetId(stackedItems.Item);
+        _propButtons.Add(itemId, button);
         if (_selectedButton == null) {
-            SelectPlaceableButton(stackedItems.Item);
+            SelectPropButton(stackedItems.Item);
         }
     }
 
     private void OnInventoryRemovedItemStack(StackedItems stackedItems) {
-        if (!_blockButtons.TryGetValue(stackedItems.Item.Name, out BlockTypeButton button)) {
-            return;
-        }
+        if (_blockButtons.TryGetValue(stackedItems.Item.Name, out BlockTypeButton button)) {
+            if (_selectedButton == button) {
+                _selectedButton = null;
+            }
 
-        _placeableButtons.Remove(stackedItems.Item.Name);
-        
-        
-        if (_selectedButton == button) {
-            _selectedButton = null;
+            button.BuildBlockSelected -= SelectBlockButton;
+            button.QueueFree();
+            _blockButtons.Remove(stackedItems.Item.Name);
         }
-
-        button.BuildBlockSelected -= SelectBlockButton;
-        button.QueueFree();
-        _blockButtons.Remove(stackedItems.Item.Name);
+        ushort itemId = 
+            _gameInterface.World.ItemIdBimap.GetId(stackedItems.Item);
+        if (_propButtons.TryGetValue(itemId, out button)) {
+            if (_selectedButton == button) {
+                _selectedButton = null;
+            }
+            button.BuildBlockSelected -= SelectPropButton;
+            button.QueueFree();
+            _propButtons.Remove(itemId);
+        
+        }
     }
 
     private void SelectBlockButton(Item item) {
@@ -107,10 +117,10 @@ public partial class Build : Container {
         BuildButtonSelected?.Invoke(item);
     }
 
-    private void SelectPlaceableButton(Item item) {
+    private void SelectPropButton(Item item) {
         _selectedButton?.SetUnfocus();
-
-        _selectedButton = _placeableButtons[item.Name];
+        ushort itemId = _gameInterface.World.ItemIdBimap.GetId(item);
+        _selectedButton = _propButtons[itemId];
         _selectedButton.SetFocus();
         BuildButtonSelected?.Invoke(item);
     }

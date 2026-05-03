@@ -6,114 +6,68 @@ namespace TerrariaRipoffNNF;
 
 public partial class Game : Node {
     public const int BlockSize = 32;
+    public World World { get; private set; }
 
+    public event Action Loaded;
     public event Action ExitGameFinished;
-
-    [Export] public Interface.Game Interface { get; private set; }
-
-    [Export] public InputManager InputManager { get; private set; }
-
-    //@todo set these dynamically on peer from worldInfo
-    [Export] public int Width { get; private set; } = 100;
-    [Export] public int Height { get; private set; } = 100;
-    public int PeerId => Multiplayer.GetUniqueId();
-
-    public IntVector DefaultSpawnPosition { get; private set; }
 
     private MultiplayerHost _multiplayerHost;
     private MultiplayerClient _multiplayerClient;
 
     private Dictionary _playerData;
 
-    private bool _isPlayerSaved;
-    private bool _isWorldSaved;
-
-    [Export] public WorldObjectManager WorldObjectManager { get; private set; }
-
-
-    public static Game Create() {
-        return Data.PackedScenes.Game.Instantiate<Game>();
-    }
-
     public void InitAsSinglePlayer(Dictionary worldData, Dictionary playerData) {
-        CreateWorld(worldData, playerData);
+        World = World.CreateAsHost(this, worldData, playerData);
+        World.GameLoaded += OnWorldLoaded;
+        World.Interface.GameMenu.ExitGameButtonDown += OnExitGameButtonDown;
+        AddChild(World);
+        _playerData = FileManager.LoadPlayer(playerData);
     }
 
     public void InitAsHost(Dictionary worldData, Dictionary playerData) {
         _multiplayerHost = new MultiplayerHost();
         AddChild(_multiplayerHost);
 
-        CreateWorld(worldData, playerData);
+        World = World.CreateAsHost(this, worldData, playerData);
+        World.GameLoaded += OnWorldLoaded;
+        AddChild(World);
+        World.Interface.GameMenu.ExitGameButtonDown += OnExitGameButtonDown;
+        _playerData = FileManager.LoadPlayer(playerData);
+
+       MultiplayerApi.PeerConnectedEventHandler peerConnectedHandler = id => {
+            Dictionary metadata = new();
+            metadata["Width"] = worldData["Width"];
+            metadata["Height"] = worldData["Height"];
+            metadata["itemMap"] = World.ItemIdBimap.ToDictionary();
+            RpcId(id, nameof(RpcClientCreateWorld), metadata);
+        };
+        Multiplayer.PeerConnected += peerConnectedHandler;
+        TreeExiting += () => {
+            Multiplayer.PeerConnected -= peerConnectedHandler;
+        };
     }
 
     public void InitAsClient(Dictionary playerData) {
         _playerData = FileManager.LoadPlayer(playerData);
-        _multiplayerClient = new MultiplayerClient(this);
+        _multiplayerClient = new MultiplayerClient();
         AddChild(_multiplayerClient);
-
-        Multiplayer.ConnectedToServer += () => {
-            WorldObjectManager.SetGameAsClient(this, playerData);
-            DefaultSpawnPosition = new IntVector(5, 5);
-        };
     }
 
-    private void CreateWorld(Dictionary worldData, Dictionary playerData) {
-        Width = (int)worldData["Width"];
-        Height = (int)worldData["Height"];
-        WorldObjectManager.SetGameAsHost(this, worldData, playerData);
-
-        DefaultSpawnPosition = new IntVector(
-            worldData["DefaultSpawnPosition"].AsGodotArray()[0].AsInt32(),
-            worldData["DefaultSpawnPosition"].AsGodotArray()[1].AsInt32());
-
-        _playerData = FileManager.LoadPlayer(playerData);
+    [Rpc]
+    private void RpcClientCreateWorld(Dictionary metadata) {
+        World = World.CreateAsClient(metadata, _playerData, this);
+        World.GameLoaded += OnWorldLoaded;
+        AddChild(World);
+        World.Interface.GameMenu.ExitGameButtonDown += OnExitGameButtonDown;
     }
-
-    public override void _Ready() {
-        Interface.GameMenu.ExitGameButtonDown += OnExitClicked;
-    }
-
-    public override void _ExitTree() {
-        Interface.GameMenu.ExitGameButtonDown -= OnExitClicked;
-    }
-
-    private void OnExitClicked() {
-        if (_multiplayerClient is not null) {
-            
-        }
-        // Save World (done)
-        // remember that we don't need to save the world on the client
-        // Save Player (done)
-        // Start clearing up worldObjects (todo)
-        Player.PlayerSaved += OnPlayerSaved;
-        WorldObjectManager.WorldSaved += OnWorldSaved;
-        // once all are done, QueueFree() and load main menu
-
-    }
-
-    private void OnWorldSaved() {
-        _isWorldSaved = true;
-        WorldObjectManager.WorldSaved -= OnWorldSaved;
-        TryExitGame();
-    }
-
-    private void OnPlayerSaved() {
-        _isPlayerSaved = true;
-        Player.PlayerSaved -= OnPlayerSaved;
-        TryExitGame();
-    }
-
-    private void TryExitGame() {
-        if (!_isPlayerSaved) return;
-        if (_multiplayerClient is null && !_isWorldSaved) return;
-        GetTree().Paused = false;
+    
+    private void OnExitGameButtonDown() {
+        World.Interface.GameMenu.ExitGameButtonDown -= OnExitGameButtonDown;
         ExitGameFinished?.Invoke();
     }
-
-    public bool IsInBounds(IntVector intVector) {
-        return intVector.X >= 0
-               && intVector.X < Width
-               && intVector.Y >= 0
-               && intVector.Y < Height;
+    
+    private void OnWorldLoaded() {
+        World.GameLoaded -= OnWorldLoaded;
+        Loaded?.Invoke();
     }
 }

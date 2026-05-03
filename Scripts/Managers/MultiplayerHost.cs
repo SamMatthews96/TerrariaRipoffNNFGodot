@@ -17,4 +17,9 @@ public partial class MultiplayerHost : Node {
         _peer.Host.Compress(ENetConnection.CompressionMode.RangeCoder);
         Multiplayer.MultiplayerPeer = _peer;
     }
+    
+    public override void _ExitTree() {
+        _peer.Close();
+        Multiplayer.MultiplayerPeer = new OfflineMultiplayerPeer();
+    }
 }

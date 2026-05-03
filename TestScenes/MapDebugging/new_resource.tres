@@ -1,0 +1,19 @@
+[gd_resource type="Resource" format=3 uid="uid://b2uys0v1pxxfs"]
+
+[ext_resource type="Script" uid="uid://drhtbuywngnuq" path="res://Scripts/Resources/Recipes/RecipeFieldMaps/Float/RecipeFieldMapFloatConstant.cs" id="1_od0xk"]
+[ext_resource type="Script" path="res://TestScenes/MapDebugging/MapDebugging.cs" id="1_uwdr0"]
+
+[sub_resource type="Resource" id="Resource_od0xk"]
+script = ExtResource("1_od0xk")
+metadata/_custom_type_script = "uid://drhtbuywngnuq"
+
+[sub_resource type="Resource" id="Resource_tpxms"]
+script = ExtResource("1_od0xk")
+metadata/_custom_type_script = "uid://drhtbuywngnuq"
+
+[resource]
+script = ExtResource("1_uwdr0")
+_number = 2
+_field = SubResource("Resource_tpxms")
+_constant = SubResource("Resource_od0xk")
+metadata/_custom_type_script = "uid://wufmphxsnnhm"

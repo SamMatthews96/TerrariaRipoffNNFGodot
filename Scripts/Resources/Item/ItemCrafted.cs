@@ -5,20 +5,20 @@ namespace TerrariaRipoffNNF;
 
 [GlobalClass]
 public partial class ItemCrafted : ItemProperty {
-    private Recipe _recipe;
-    private Dictionary<string, Item> _suppliedIngredients;
+    public Recipe Recipe { get; private set; }
+    public Dictionary<string, Item> SuppliedIngredients { get; private set; }
 
     public static bool AreEqual(ItemCrafted a, ItemCrafted b) {
-        if (a._recipe != b._recipe) {
+        if (a.Recipe != b.Recipe) {
             return false;
         }
 
-        if (a._suppliedIngredients.Count != b._suppliedIngredients.Count) {
+        if (a.SuppliedIngredients.Count != b.SuppliedIngredients.Count) {
             return false;
         }
 
-        foreach ((string key, Item aItem) in a._suppliedIngredients) {
-            Item bItem = b._suppliedIngredients[key];
+        foreach ((string key, Item aItem) in a.SuppliedIngredients) {
+            Item bItem = b.SuppliedIngredients[key];
             if (!Item.AreEqual(aItem,bItem)) {
                 return false;
             }
@@ -28,17 +28,17 @@ public partial class ItemCrafted : ItemProperty {
     }
 
     public ItemCrafted(Recipe recipe, Dictionary<string, Item> suppliedIngredients) {
-        _recipe = recipe;
-        _suppliedIngredients = suppliedIngredients;
+        Recipe = recipe;
+        SuppliedIngredients = suppliedIngredients;
     }
 
     public ItemCrafted() { }
 
     public Dictionary ToDictionary() {
         Dictionary newDictionary = new();
-        newDictionary.Add("RecipeResourcePath", _recipe.ResourcePath);
+        newDictionary.Add("RecipeResourcePath", Recipe.ResourcePath);
         Dictionary suppliedIngredientsDict = new();
-        foreach ((string key, Item item) in _suppliedIngredients) {
+        foreach ((string key, Item item) in SuppliedIngredients) {
             suppliedIngredientsDict.Add(key, item.ToDictionary());
         }
 

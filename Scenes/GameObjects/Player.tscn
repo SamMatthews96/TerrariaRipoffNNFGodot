@@ -1,8 +1,10 @@
-[gd_scene load_steps=9 format=3 uid="uid://bx6lgpicpfal4"]
+[gd_scene format=3 uid="uid://bx6lgpicpfal4"]
 
 [ext_resource type="Script" uid="uid://b11uqw4ifwmss" path="res://Scripts/GameObjects/Player/Player.cs" id="1_hx4ms"]
 [ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://Assets/Images/icon.svg" id="2_5yc1a"]
-[ext_resource type="PackedScene" uid="uid://c8u386chg2fea" path="res://Scenes/GameObjects/PickupArea.tscn" id="3_om7r2"]
+[ext_resource type="Script" uid="uid://de0rc4wpvdrwn" path="res://Scripts/GameObjects/Player/Inventory.cs" id="5_4qtyd"]
+[ext_resource type="PackedScene" uid="uid://cn7bp5sib73p6" path="res://Scenes/GameObjects/ActionController.tscn" id="6_q1p12"]
+[ext_resource type="PackedScene" uid="uid://dpvw8x6fjjkkg" path="res://Scenes/GameObjects/Crafting.tscn" id="7_4qtyd"]
 [ext_resource type="Script" uid="uid://b43ui7yk16ekk" path="res://Scripts/GameObjects/Player/PlayerEquipment.cs" id="7_in65p"]
 [ext_resource type="Script" uid="uid://dfb4kfm2jhuiq" path="res://Scripts/Resources/Item/ItemMining.cs" id="9_pqpyq"]
 
@@ -21,35 +23,55 @@ Range = 4.0
 Power = 4.0
 metadata/_custom_type_script = "uid://dfb4kfm2jhuiq"
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("PlayerEquipment", "_positionSynchronizer", "_camera")]
+[node name="Player" type="CharacterBody2D" unique_id=943920394 node_paths=PackedStringArray("Inventory", "ActionState", "Crafting", "PlayerEquipment", "_positionSynchronizer", "_camera", "_nameLabel")]
 collision_mask = 2
 script = ExtResource("1_hx4ms")
-PlayerEquipment = NodePath("CurrentEquipment")
+Inventory = NodePath("Inventory")
+ActionState = NodePath("ActionController")
+Crafting = NodePath("Crafting")
+PlayerEquipment = NodePath("PlayerEquipment")
 _positionSynchronizer = NodePath("PositionSync")
 _camera = NodePath("Camera2D")
+_nameLabel = NodePath("Label")
 
-[node name="PositionSync" type="MultiplayerSynchronizer" parent="."]
+[node name="PositionSync" type="MultiplayerSynchronizer" parent="." unique_id=842846356]
 replication_config = SubResource("SceneReplicationConfig_3bb8o")
 public_visibility = false
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=936925100]
 position = Vector2(0, -46)
 scale = Vector2(0.335, 0.72)
 texture = ExtResource("2_5yc1a")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1933293113]
 visible = false
 position = Vector2(0, -46.5)
 shape = SubResource("RectangleShape2D_raw6a")
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="Camera2D" type="Camera2D" parent="." unique_id=886433680]
 enabled = false
 position_smoothing_enabled = true
 position_smoothing_speed = 25.0
 
-[node name="PickupArea" parent="." instance=ExtResource("3_om7r2")]
-
-[node name="CurrentEquipment" type="Node" parent="." node_paths=PackedStringArray("_player")]
+[node name="PlayerEquipment" type="Node" parent="." unique_id=810167592 node_paths=PackedStringArray("_player")]
 script = ExtResource("7_in65p")
 _player = NodePath("..")
 Pickaxe = SubResource("Resource_7vd2l")
+
+[node name="Inventory" type="Node" parent="." unique_id=1004616247 node_paths=PackedStringArray("_player")]
+script = ExtResource("5_4qtyd")
+_player = NodePath("..")
+
+[node name="ActionController" parent="." unique_id=1000042214 node_paths=PackedStringArray("Player") instance=ExtResource("6_q1p12")]
+Player = NodePath("..")
+
+[node name="Crafting" parent="." unique_id=287332979 node_paths=PackedStringArray("_player") instance=ExtResource("7_4qtyd")]
+_player = NodePath("..")
+
+[node name="Label" type="Label" parent="." unique_id=1236692075]
+offset_left = -57.0
+offset_top = -120.0
+offset_right = 55.0
+offset_bottom = -97.0
+text = "Label"
+horizontal_alignment = 1

@@ -17,11 +17,11 @@ public partial class Inventory : Control {
     public event Action<InventoryItem> MouseEnteredItemIcon;
     public event Action MouseLeftItemIcon;
     public event Action<StackedItems> ItemActionClicked;
-    
+
     private void OnInputManagerToggleInventoryPressed() {
         Visible = !Visible;
     }
-    
+
     private void OnEscapePressed() {
         if (Visible) {
             Visible = false;
@@ -30,33 +30,33 @@ public partial class Inventory : Control {
 
     public override void _Ready() {
         Visible = false;
-        _gameInterface.GameManager.InputManager.ToggleInventoryPressed += OnInputManagerToggleInventoryPressed;
-        _gameInterface.GameManager.InputManager.EscapePressed += OnEscapePressed;
-        Player.LocalPlayerSpawned += OnLocalPlayerSpawned;
-        
-    }
-
-    public override void _ExitTree() {
-        _gameInterface.GameManager.InputManager.ToggleInventoryPressed -= OnInputManagerToggleInventoryPressed;
-        
-        _gameInterface.GameManager.InputManager.EscapePressed -= OnEscapePressed;
-        Player.LocalPlayerSpawned -= OnLocalPlayerSpawned;
+        _gameInterface.World.InputManager.ToggleInventoryPressed += OnInputManagerToggleInventoryPressed;
+        _gameInterface.World.InputManager.EscapePressed += OnEscapePressed;
+        _gameInterface.World.PlayerManager.LocalPlayerSpawned += OnLocalPlayerSpawned;
+        TreeExiting += () => {
+            _gameInterface.World.InputManager.ToggleInventoryPressed -= OnInputManagerToggleInventoryPressed;
+            _gameInterface.World.InputManager.EscapePressed -= OnEscapePressed;
+            _gameInterface.World.PlayerManager.LocalPlayerSpawned -= OnLocalPlayerSpawned;
+        };
     }
 
     private void OnLocalPlayerSpawned(Player player) {
         _localPlayer = player;
+        List<StackedItems> stackedItemsList = 
+            _localPlayer.Inventory.StackedItemsList;
+        foreach (StackedItems stackedItems in stackedItemsList) {
+            OnInventoryAddedItemStack(stackedItems);
+        }
         SetCapacityLabelText();
+
         _localPlayer.Inventory.AddedItemStack += OnInventoryAddedItemStack;
         _localPlayer.Inventory.RemovedItemStack += OnInventoryRemovedItemStack;
         _localPlayer.Inventory.ItemStackChangedSize += OnInventoryItemStackChanged;
-        _localPlayer.PlayerDespawned += OnLocalPlayerDespawned;
-    }
-
-    private void OnLocalPlayerDespawned(Player player) {
-        _localPlayer.Inventory.AddedItemStack -= OnInventoryAddedItemStack;
-        _localPlayer.Inventory.RemovedItemStack -= OnInventoryRemovedItemStack;
-        _localPlayer.Inventory.ItemStackChangedSize -= OnInventoryItemStackChanged;
-        _localPlayer.PlayerDespawned -= OnLocalPlayerDespawned;
+        _localPlayer.TreeExiting += () => {
+            _localPlayer.Inventory.AddedItemStack -= OnInventoryAddedItemStack;
+            _localPlayer.Inventory.RemovedItemStack -= OnInventoryRemovedItemStack;
+            _localPlayer.Inventory.ItemStackChangedSize -= OnInventoryItemStackChanged;
+        };
     }
 
     private void OnInventoryAddedItemStack(StackedItems stackedItems) {
@@ -84,13 +84,14 @@ public partial class Inventory : Control {
 
     private void OnInventoryRemovedItemStack(StackedItems stackedItems) {
         InventoryItem inventoryItemUi = _inventoryItemUiList.Find(e =>
-            e.StackedItems.Item == stackedItems.Item);
+            Item.AreEqual(e.StackedItems.Item, stackedItems.Item));
         if (inventoryItemUi != null) {
             inventoryItemUi.MouseEnteredItem -= OnInventoryMouseEnteredItem;
             inventoryItemUi.MouseLeftItem -= OnInventoryMouseLeftItem;
             inventoryItemUi.QueueFree();
             _inventoryItemUiList.Remove(inventoryItemUi);
         }
+
         SetCapacityLabelText();
     }
 
@@ -103,6 +104,6 @@ public partial class Inventory : Control {
 
     private void SetCapacityLabelText() {
         _capacityLabel.Text =
-            $"{Math.Round(_localPlayer.Inventory.UsedSpace,2)}/{_localPlayer.Inventory.MaximumSpace}";
+            $"{Math.Round(_localPlayer.Inventory.UsedSpace, 2)}/{_localPlayer.Inventory.MaximumSpace}";
     }
 }

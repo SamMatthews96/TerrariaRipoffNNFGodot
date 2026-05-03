@@ -1,36 +1,37 @@
-[gd_scene load_steps=5 format=3 uid="uid://cn7bp5sib73p6"]
+[gd_scene format=3 uid="uid://cn7bp5sib73p6"]
 
 [ext_resource type="Script" uid="uid://nkve3tokkn8r" path="res://Scripts/GameObjects/Player/ActionController.cs" id="1_akseq"]
 [ext_resource type="Script" uid="uid://b2qds2g2sqgyu" path="res://Scripts/GameObjects/Player/GatherAction.cs" id="2_tpcfn"]
 [ext_resource type="Script" uid="uid://dvkkdi1y5ho67" path="res://Scripts/GameObjects/Player/BuildAction.cs" id="3_ca5xg"]
 [ext_resource type="Script" uid="uid://cgdyjno3yd0yr" path="res://Scripts/GameObjects/Player/WeaponAction.cs" id="4_da70o"]
 
-[node name="ActionController" type="Node" node_paths=PackedStringArray("GatherAction", "BuildAction", "WeaponAction")]
+[node name="ActionController" type="Node" unique_id=1959633914 node_paths=PackedStringArray("Gather", "Build", "WeaponAction")]
 script = ExtResource("1_akseq")
-GatherAction = NodePath("GatherActionState")
-BuildAction = NodePath("BuildActionState")
+Gather = NodePath("GatherActionState")
+Build = NodePath("BuildActionState")
 WeaponAction = NodePath("WeaponActionState")
 
-[node name="GatherActionState" type="Node" parent="." node_paths=PackedStringArray("_gatherCooldown", "ActionController")]
+[node name="GatherActionState" type="Node" parent="." unique_id=397095415 node_paths=PackedStringArray("_gatherCooldown", "ActionController")]
 script = ExtResource("2_tpcfn")
 _gatherCooldown = NodePath("GatherCooldown")
 ActionController = NodePath("..")
 
-[node name="GatherCooldown" type="Timer" parent="GatherActionState"]
+[node name="GatherCooldown" type="Timer" parent="GatherActionState" unique_id=697486406]
+process_mode = 3
 wait_time = 0.5
 one_shot = true
 
-[node name="BuildActionState" type="Node" parent="." node_paths=PackedStringArray("ActionController")]
+[node name="BuildActionState" type="Node" parent="." unique_id=1477135366 node_paths=PackedStringArray("ActionController")]
 script = ExtResource("3_ca5xg")
 State = 1
 ActionController = NodePath("..")
 
-[node name="WeaponActionState" type="Node" parent="." node_paths=PackedStringArray("_weaponCooldown", "ActionController")]
+[node name="WeaponActionState" type="Node" parent="." unique_id=1350685572 node_paths=PackedStringArray("_weaponCooldown", "ActionController")]
 script = ExtResource("4_da70o")
 _weaponCooldown = NodePath("WeaponCooldown")
 State = 2
 ActionController = NodePath("..")
 
-[node name="WeaponCooldown" type="Timer" parent="WeaponActionState"]
+[node name="WeaponCooldown" type="Timer" parent="WeaponActionState" unique_id=1483605500]
 wait_time = 0.5
 one_shot = true
