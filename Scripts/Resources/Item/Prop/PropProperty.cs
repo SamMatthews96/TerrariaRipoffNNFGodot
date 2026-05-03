@@ -3,6 +3,6 @@
 namespace TerrariaRipoffNNF;
 
 [GlobalClass]
-public partial class IngredientProperty : Resource {
-
+public abstract partial class PropProperty : Resource {
+    
 }

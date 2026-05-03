@@ -49,23 +49,26 @@ public partial class PickupManager : Node2D {
     }
 
     private void HostOnBlockDestroyed(Vector2I coords, ushort itemId) {
-        Vector2 position = new(
-            (coords.X + 0.5f) * Game.BlockSize,
-            (coords.Y + 0.5f) * Game.BlockSize
-        );
-        _pickupCount++;
-        Rpc(nameof(RpcAllCreatePickup),
-            position, itemId, _pickupCount);
-        ServerPickupCreated?.Invoke(coords);
+        HostCreatePickup(coords, itemId);
     }
 
     private void OnHostPropDestroyed(Item item, Vector2I coords) {
-        if (!item.GetProperty<ItemProp>().DoesDropSelf) return;
+        ItemProp prop = item.GetProperty<ItemProp>();
+        if (prop.TryGetProperty(out PropDrop propDrop)) {
+            ushort itemId = _world.ItemIdBimap.GetId(propDrop.Item);
+            HostCreatePickup(coords, itemId);
+        }
+        if (prop.DoesDropSelf) {
+            ushort itemId = _world.ItemIdBimap.GetId(item);
+            HostCreatePickup(coords, itemId);
+        }
+    }
+
+    private void HostCreatePickup(Vector2I coords, ushort itemId) {
         Vector2 position = new(
             (coords.X + 0.5f) * Game.BlockSize,
             (coords.Y + 0.5f) * Game.BlockSize);
         _pickupCount++;
-        ushort itemId = _world.ItemIdBimap.GetId(item);
         Rpc(nameof(RpcAllCreatePickup),
             position, itemId, _pickupCount);
         ServerPickupCreated?.Invoke(coords);

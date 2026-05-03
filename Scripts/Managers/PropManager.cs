@@ -39,32 +39,23 @@ public partial class PropManager : Node {
     private void RpcHostRequestWorldData() {
         int senderId = Multiplayer.GetRemoteSenderId();
 
-        Dictionary packet = new();
-        Array<Dictionary> breakableData = new();
         Array<Dictionary> propData = new();
         foreach ((Vector2I cell, Prop prop) in _props) {
-            int id;
-            Dictionary propDict;
-            id = _world.ItemIdBimap.GetId(prop.Item);
-            propDict = new() {
+            int id = _world.ItemIdBimap.GetId(prop.Item);
+            Dictionary propDict = new() {
                 { "coords", cell },
                 { "id", id }
             };
             propData.Add(propDict);
-            break;
         }
 
-        packet["breakables"] = breakableData;
-        packet["props"] = propData;
-
-        RpcId(senderId, nameof(RpcClientProcessPropData), packet);
+        RpcId(senderId, nameof(RpcClientProcessPropData), 
+            propData);
     }
 
     [Rpc]
-    private void RpcClientProcessPropData(Dictionary packet) {
-        Array<Dictionary> props =
-            packet["props"].AsGodotArray<Dictionary>();
-        foreach (Dictionary propDict in props) {
+    private void RpcClientProcessPropData(Array<Dictionary> packet) {
+        foreach (Dictionary propDict in packet) {
             ushort itemId = (ushort)propDict["id"];
             Vector2I coords = (Vector2I)propDict["coords"];
             Item item = _world.ItemIdBimap.GetItem(itemId);
