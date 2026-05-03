@@ -8,8 +8,6 @@ public partial class PackedScenes : Resource {
     [Export] public PackedScene TestNpc { get; private set; }
     [Export] public PackedScene PlayerPickupArea { get; private set; }
     [Export] public PackedScene Pickup { get; private set; }
-    [Export] public PackedScene MainMenu { get; private set; }
-    [Export] public PackedScene Game { get; private set; }
     [Export] public PackedScene Prop { get; private set; }
     [Export] public PackedScene Breakable { get; private set; }
     // UI

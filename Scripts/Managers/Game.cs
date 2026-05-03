@@ -8,6 +8,7 @@ public partial class Game : Node {
     public const int BlockSize = 32;
     public World World { get; private set; }
 
+    public event Action Loaded;
     public event Action ExitGameFinished;
 
     private MultiplayerHost _multiplayerHost;
@@ -17,8 +18,9 @@ public partial class Game : Node {
 
     public void InitAsSinglePlayer(Dictionary worldData, Dictionary playerData) {
         World = World.CreateAsHost(this, worldData, playerData);
-        AddChild(World);
+        World.GameLoaded += OnWorldLoaded;
         World.Interface.GameMenu.ExitGameButtonDown += OnExitGameButtonDown;
+        AddChild(World);
         _playerData = FileManager.LoadPlayer(playerData);
     }
 
@@ -27,6 +29,7 @@ public partial class Game : Node {
         AddChild(_multiplayerHost);
 
         World = World.CreateAsHost(this, worldData, playerData);
+        World.GameLoaded += OnWorldLoaded;
         AddChild(World);
         World.Interface.GameMenu.ExitGameButtonDown += OnExitGameButtonDown;
         _playerData = FileManager.LoadPlayer(playerData);
@@ -53,6 +56,7 @@ public partial class Game : Node {
     [Rpc]
     private void RpcClientCreateWorld(Dictionary metadata) {
         World = World.CreateAsClient(metadata, _playerData, this);
+        World.GameLoaded += OnWorldLoaded;
         AddChild(World);
         World.Interface.GameMenu.ExitGameButtonDown += OnExitGameButtonDown;
     }
@@ -60,5 +64,10 @@ public partial class Game : Node {
     private void OnExitGameButtonDown() {
         World.Interface.GameMenu.ExitGameButtonDown -= OnExitGameButtonDown;
         ExitGameFinished?.Invoke();
+    }
+    
+    private void OnWorldLoaded() {
+        World.GameLoaded -= OnWorldLoaded;
+        Loaded?.Invoke();
     }
 }

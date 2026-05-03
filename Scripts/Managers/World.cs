@@ -19,6 +19,8 @@ public partial class World : Node2D {
     [Export] public Interface.Game Interface { get; private set; }
     [Export] public BlockManager BlockManager { get; private set; }
     [Export] public ItemIdBimap ItemIdBimap { get; private set; }
+
+    public event Action GameLoaded;
     
     private Dictionary _localPlayerData;
     public Dictionary WorldData { get; private set; }
@@ -55,7 +57,9 @@ public partial class World : Node2D {
         if (IsHost) {
             PlayerManager.SpawnHostPlayer(_localPlayerData);
             _localPlayerData = null;
+            GameLoaded?.Invoke();
         } else {
+            Hide();
             BlockManager.SyncComplete += ClientOnSyncComplete;
             BlockManager.ClientGetWorldData();
         }
@@ -111,5 +115,7 @@ public partial class World : Node2D {
         PlayerManager.SpawnPlayersOnClient(_localPlayerData);
         _localPlayerData = null;
         BlockManager.SyncComplete -= ClientOnSyncComplete;
+        Show();
+        GameLoaded?.Invoke();
     }
 }
