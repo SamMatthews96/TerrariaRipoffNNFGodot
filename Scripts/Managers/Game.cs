@@ -1,6 +1,7 @@
 using System;
 using Godot;
 using Godot.Collections;
+using Array = Godot.Collections.Array;
 
 namespace TerrariaRipoffNNF;
 
@@ -52,7 +53,7 @@ public partial class Game : Node {
         _multiplayerClient = new MultiplayerClient();
         AddChild(_multiplayerClient);
     }
-
+    
     [Rpc]
     private void RpcClientCreateWorld(Dictionary metadata) {
         World = World.CreateAsClient(metadata, _playerData, this);
@@ -63,7 +64,60 @@ public partial class Game : Node {
     
     private void OnExitGameButtonDown() {
         World.Interface.GameMenu.ExitGameButtonDown -= OnExitGameButtonDown;
+
+        if (World.IsHost) {
+            Dictionary worldData = new() {
+                ["Name"] = World.WorldData["Name"],
+                ["Width"] = World.WorldSize.X,
+                ["Height"] = World.WorldSize.Y,
+                ["blocks"] = SerializeBlocks(World.BlockManager.Blocks),
+                ["walls"] = SerializeBlocks(World.BlockManager.Walls),
+                ["props"] = SerializeProps(),
+                ["itemMap"] = World.ItemIdBimap.ToDictionary()
+            };
+
+            FileManager.SaveWorld(worldData);
+        }
+
         ExitGameFinished?.Invoke();
+    }
+
+    private Dictionary<string, Array> SerializeBlocks(Block[,] data) {
+        Dictionary<string, Array> groupedByItemId = new();
+
+        for (int x = 0; x < World.WorldSize.X; x++) {
+            for (int y = 0; y < World.WorldSize.Y; y++) {
+                Block block = data[x, y];
+                if (block is null) continue;
+                string idStr = block.ItemId.ToString();
+                if (!groupedByItemId.ContainsKey(idStr)) {
+                    groupedByItemId[idStr] = new Array();
+                }
+
+                Array blockData = new() { x, y };
+                groupedByItemId[idStr].Add(blockData);
+            }
+        }
+
+        return groupedByItemId;
+    }
+
+    private Dictionary<string, Array> SerializeProps() {
+        Dictionary<string, Array> groupedByItemId = new();
+
+        foreach ((Vector2I coords, Prop prop) in World.PropManager.Props) {
+            Item item = prop.Item;
+            string itemId = World.ItemIdBimap.GetId(item).ToString();
+
+            if (!groupedByItemId.ContainsKey(itemId)) {
+                groupedByItemId[itemId] = new Array();
+            }
+
+            Array propData = new() { coords.X, coords.Y };
+            groupedByItemId[itemId].Add(propData);
+        }
+
+        return groupedByItemId;
     }
     
     private void OnWorldLoaded() {

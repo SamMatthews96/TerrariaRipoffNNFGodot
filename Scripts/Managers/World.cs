@@ -47,8 +47,6 @@ public partial class World : Node2D {
 
     private void OnExitGameClicked() {
         Visible = false;
-        Interface.GameMenu.ExitGameButtonDown -= OnExitGameClicked;
-        QueueFree();
     }
 
     public override void _Ready() {

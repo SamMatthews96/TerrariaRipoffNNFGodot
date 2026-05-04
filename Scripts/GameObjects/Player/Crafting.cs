@@ -33,11 +33,28 @@ public sealed partial class Crafting : Node {
             craftingUi.RecipeContainer.RecipeButtonClicked += OnRecipeButtonClicked;
             craftingUi.IngredientPopup.SelectIngredientButtonClicked += OnIngredientButtonClicked;
             craftingUi.IngredientsContainer.CraftButtonPressed += OnCraftButtonPressed;
+            _player.World.PlayerManager.LocalPlayerSpawned += OnLocalPlayerSpawned;
             TreeExiting += () => {
                 craftingUi.RecipeContainer.RecipeButtonClicked -= OnRecipeButtonClicked;
                 craftingUi.IngredientPopup.SelectIngredientButtonClicked -= OnIngredientButtonClicked;
                 craftingUi.IngredientsContainer.CraftButtonPressed -= OnCraftButtonPressed;
+                _player.World.PlayerManager.LocalPlayerSpawned -= OnLocalPlayerSpawned;
             };
+        }
+    }
+
+    private void OnLocalPlayerSpawned(Player player) {
+        Vector2I playerCoords = _player.SpawnCoords;
+
+        for (int x = playerCoords.X - CraftRange; x <= playerCoords.X + CraftRange; x++) {
+            for (int y = playerCoords.Y - CraftRange; y <= playerCoords.Y + CraftRange; y++) {
+                Vector2I coords = new(x, y);
+                if (!_player.World.IsInBounds(coords)) continue;
+                if (!_player.World.PropManager.Props.TryGetValue(coords, out Prop prop)) continue;
+
+                if (!prop.Item.GetProperty<ItemProp>().HasProperty<PropStation>()) continue;
+                HostAddCraftingStation(prop);
+            }
         }
     }
 
@@ -74,8 +91,8 @@ public sealed partial class Crafting : Node {
             prop.Item.GetProperty<ItemProp>().GetProperty<PropStation>();
         _nearbyCraftingStations[prop] = station.Type;
         if (!_nearbyStationTypes.Contains(station.Type)) {
-            RpcId(_player.PeerId, 
-                nameof(RpcLocalAddCraftingStation), 
+            RpcId(_player.PeerId,
+                nameof(RpcLocalAddCraftingStation),
                 (int)station.Type);
         }
     }
@@ -90,9 +107,8 @@ public sealed partial class Crafting : Node {
         CraftingStationType type = _nearbyCraftingStations[prop];
         _nearbyCraftingStations.Remove(prop);
         if (!_nearbyCraftingStations.Values.Contains(type)) {
-            
-            RpcId(_player.PeerId, 
-                nameof(RpcLocalRemoveCraftingStation), 
+            RpcId(_player.PeerId,
+                nameof(RpcLocalRemoveCraftingStation),
                 (int)type);
         }
     }

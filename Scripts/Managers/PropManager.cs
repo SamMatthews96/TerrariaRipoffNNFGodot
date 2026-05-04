@@ -8,7 +8,7 @@ namespace TerrariaRipoffNNF;
 public partial class PropManager : Node {
     [Export] private World _world;
     public Dictionary<Vector2I, Prop> PropCells { get; private set; }
-    private Dictionary<Vector2I, Prop> _props = new();
+    public Dictionary<Vector2I, Prop> Props { get; private set; } = new();
 
     public event Action<Prop, Vector2I> HostPropPlaced;
     public event Action<Prop, Vector2I> HostPropDestroyed;
@@ -41,7 +41,7 @@ public partial class PropManager : Node {
         int senderId = Multiplayer.GetRemoteSenderId();
 
         Array<Dictionary> propData = new();
-        foreach ((Vector2I cell, Prop prop) in _props) {
+        foreach ((Vector2I cell, Prop prop) in Props) {
             int id = _world.ItemIdBimap.GetId(prop.Item);
             Dictionary propDict = new() {
                 { "coords", cell },
@@ -102,6 +102,7 @@ public partial class PropManager : Node {
             PropCells.Remove(cell);
         }
 
+        Props.Remove(coords);
         prop.QueueFree();
     }
 
@@ -110,7 +111,7 @@ public partial class PropManager : Node {
             PropCells[cell] = prop;
         }
 
-        _props[coords] = prop;
+        Props[coords] = prop;
         AddChild(prop);
     }
 }
