@@ -12,8 +12,9 @@ public partial class BlockManager : Node2D {
     [Export] private World _world;
 
     public event Action SyncComplete;
-    public event Action<Vector2I, ushort> BlockDestroyed;
     public event Action<Vector2I> BlockCreated;
+    public event Action<Vector2I, ushort> BlockDestroyed;
+    public event Action<Vector2I> WallCreated;
     public event Action<Vector2I, ushort> WallDestroyed;
 
     public override void _Ready() {
@@ -94,6 +95,7 @@ public partial class BlockManager : Node2D {
             CurrentHealth = 1,
             ItemId = itemId
         };
+        WallCreated?.Invoke(coords);
     }
 
     private void OnHostGatheredBlock(Vector2I coords, float damage) {

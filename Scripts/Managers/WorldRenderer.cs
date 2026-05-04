@@ -5,7 +5,7 @@ using TerrariaRipoffNNF.Scripts.GameObjects;
 namespace TerrariaRipoffNNF;
 
 public partial class WorldRenderer : Node2D {
-    private const int BlockDrawDistance = 20;
+    private const int DrawDistance = 20;
 
     [Export] private World _world;
     private Player _localPlayer;
@@ -14,8 +14,8 @@ public partial class WorldRenderer : Node2D {
     public override void _Ready() {
         _canvas = RenderingServer.CanvasItemCreate();
         RenderingServer.CanvasItemSetParent(_canvas, GetCanvasItem());
-        RenderingServer.CanvasItemSetTransform(_canvas, new Transform2D(0, Vector2.Zero));
-        ProcessMode = ProcessModeEnum.Disabled;
+        RenderingServer.CanvasItemSetTransform(
+            _canvas, new Transform2D(0, Vector2.Zero));
 
         _world.PlayerManager.LocalPlayerSpawned += OnLocalPlayerSpawned;
         TreeExiting += () => {
@@ -24,20 +24,38 @@ public partial class WorldRenderer : Node2D {
         };
     }
 
+
     private void OnLocalPlayerSpawned(Player player) {
         _localPlayer = player;
-        ProcessMode = ProcessModeEnum.Always;
+
+        Action<Vector2I> onCreated = _ => UpdateView();
+        Action<Vector2I, ushort> onDestroyed = (_, __) => UpdateView();
+        Player.CellMovedDelegate onMoved = (_, __) => UpdateView();
+
+        _world.BlockManager.BlockCreated += onCreated;
+        _world.BlockManager.BlockDestroyed += onDestroyed;
+        _world.BlockManager.WallCreated += onCreated;
+        _world.BlockManager.WallDestroyed += onDestroyed;
+        player.MovedCellLocal += onMoved;
+        TreeExiting += () => {
+            _world.BlockManager.BlockCreated -= onCreated;
+            _world.BlockManager.BlockDestroyed -= onDestroyed;
+            _world.BlockManager.WallCreated -= onCreated;
+            _world.BlockManager.WallDestroyed -= onDestroyed;
+            player.MovedCellLocal -= onMoved;
+        };
+        UpdateView();
     }
 
-    public override void _Process(double delta) {
+    private void UpdateView() {
         RenderingServer.CanvasItemClear(_canvas);
         int playerX = _localPlayer.Coords.X;
         int playerY = _localPlayer.Coords.Y;
-        
-        int drawPositionXStart = Math.Max(0, playerX - BlockDrawDistance);
-        int drawPositionXEnd = Math.Min(_world.WorldSize.X, playerX + BlockDrawDistance);
-        int drawPositionYStart = Math.Max(0, playerY - BlockDrawDistance);
-        int drawPositionYEnd = Math.Min(_world.WorldSize.Y, playerY + BlockDrawDistance);
+
+        int drawPositionXStart = Math.Max(0, playerX - DrawDistance);
+        int drawPositionXEnd = Math.Min(_world.WorldSize.X, playerX + DrawDistance);
+        int drawPositionYStart = Math.Max(0, playerY - DrawDistance);
+        int drawPositionYEnd = Math.Min(_world.WorldSize.Y, playerY + DrawDistance);
 
         for (int x = drawPositionXStart; x < drawPositionXEnd; x++) {
             for (int y = drawPositionYStart; y < drawPositionYEnd; y++) {
@@ -47,6 +65,7 @@ public partial class WorldRenderer : Node2D {
                     isBlock = false;
                     block = _world.BlockManager.Walls[x, y];
                 }
+
                 if (block is null) continue;
 
                 Rect2 drawDimensions = new(
