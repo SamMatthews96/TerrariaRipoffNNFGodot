@@ -97,13 +97,7 @@ public partial class PropManager : Node {
 
     [Rpc(CallLocal = true)]
     private void RpcClientsGatherProp(Vector2I coords) {
-        Prop prop = PropCells[coords];
-        foreach (Vector2I cell in prop.Cells) {
-            PropCells.Remove(cell);
-        }
-
-        Props.Remove(coords);
-        prop.QueueFree();
+        RemoveProp(coords);
     }
 
     private void AddProp(Prop prop, Vector2I coords) {
@@ -113,5 +107,15 @@ public partial class PropManager : Node {
 
         Props[coords] = prop;
         AddChild(prop);
+    }
+
+    private void RemoveProp(Vector2I coords) {
+        Prop prop = PropCells[coords];
+        foreach (Vector2I cell in prop.Cells) {
+            PropCells.Remove(cell);
+        }
+
+        Props.Remove(prop.Anchor);
+        prop.QueueFree();
     }
 }
