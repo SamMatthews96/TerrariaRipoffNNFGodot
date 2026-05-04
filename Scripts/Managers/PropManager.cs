@@ -16,16 +16,16 @@ public partial class PropManager : Node {
     public override void _Ready() {
         PropCells = new Dictionary<Vector2I, Prop>();
         if (_world.IsHost) {
-            Dictionary<ushort, Array> props =
-                (Dictionary<ushort, Array>)_world.WorldData["props"];
-            foreach ((ushort itemId, Array cellArray) in props) {
-                foreach (Array cell in cellArray) {
-                    int x = (int)cell[0];
-                    int y = (int)cell[1];
-                    Vector2I coords = new(x, y);
-                    Item item = _world.ItemIdBimap.GetItem(itemId);
-                    Prop prop = Prop.Create(item, coords);
-                    AddProp(prop, coords);
+            Dictionary<ushort, Dictionary<int, Array>> props =
+                (Dictionary<ushort, Dictionary<int, Array>>)_world.WorldData["props"];
+            foreach ((ushort itemId, Dictionary<int, Array> xDict) in props) {
+                Item item = _world.ItemIdBimap.GetItem(itemId);
+                foreach ((int x, Array yArray) in xDict) {
+                    foreach (int y in yArray) {
+                        Vector2I coords = new(x, y);
+                        Prop prop = Prop.Create(item, coords);
+                        AddProp(prop, coords);
+                    }
                 }
             }
 
@@ -50,7 +50,7 @@ public partial class PropManager : Node {
             propData.Add(propDict);
         }
 
-        RpcId(senderId, nameof(RpcClientProcessPropData), 
+        RpcId(senderId, nameof(RpcClientProcessPropData),
             propData);
     }
 

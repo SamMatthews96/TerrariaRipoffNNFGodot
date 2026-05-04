@@ -23,29 +23,29 @@ public partial class BlockManager : Node2D {
 
         if (!_world.IsHost) return;
 
-        Dictionary<int, Array> savedBlocks =
-            (Dictionary<int, Array>)_world.WorldData["blocks"];
-        foreach ((int itemId, Array cellArray) in savedBlocks) {
-            foreach (Array cell in cellArray) {
-                int x = (int)cell[0];
-                int y = (int)cell[1];
-                Blocks[x, y] = new Block {
-                    CurrentHealth = 1,
-                    ItemId = (ushort)itemId
-                };
+        Dictionary<ushort, Dictionary<int, Array>> savedBlocks =
+            (Dictionary<ushort, Dictionary<int, Array>>)_world.WorldData["blocks"];
+        foreach ((ushort itemId, Dictionary<int, Array> xDict) in savedBlocks) {
+            foreach ((int x, Array yArray) in xDict) {
+                foreach (int y in yArray) {
+                    Blocks[x, y] = new Block {
+                        CurrentHealth = 1,
+                        ItemId = itemId
+                    };
+                }
             }
         }
 
-        Dictionary<int, Array> savedWalls =
-            (Dictionary<int, Array>)_world.WorldData["walls"];
-        foreach ((int itemId, Array cellArray) in savedWalls) {
-            foreach (Array cell in cellArray) {
-                int x = (int)cell[0];
-                int y = (int)cell[1];
-                Walls[x, y] = new Block {
-                    CurrentHealth = 1,
-                    ItemId = (ushort)itemId
-                };
+        Dictionary<ushort, Dictionary<int, Array>> savedWalls =
+            (Dictionary<ushort, Dictionary<int, Array>>)_world.WorldData["walls"];
+        foreach ((ushort itemId, Dictionary<int, Array> xDict) in savedWalls) {
+            foreach ((int x, Array yArray) in xDict) {
+                foreach (int y in yArray) {
+                    Walls[x, y] = new Block {
+                        CurrentHealth = 1,
+                        ItemId = itemId
+                    };
+                }
             }
         }
 
@@ -142,8 +142,8 @@ public partial class BlockManager : Node2D {
             data);
     }
 
-    private Dictionary<ushort, Array> SerializeChunk(Block[,] data) {
-        Dictionary<ushort, Array> groupedByItemId = new();
+    private Dictionary<ushort, Dictionary> SerializeChunk(Block[,] data) {
+        Dictionary<ushort, Dictionary> groupedByItemId = new();
 
         for (int x = 0; x < _world.WorldSize.X; x++) {
             for (int y = 0; y < _world.WorldSize.Y; y++) {
@@ -151,11 +151,14 @@ public partial class BlockManager : Node2D {
                 if (block is null) continue;
 
                 if (!groupedByItemId.ContainsKey(block.ItemId)) {
-                    groupedByItemId[block.ItemId] = new Array();
+                    groupedByItemId[block.ItemId] = new Dictionary();
                 }
 
-                Array blockData = new() { x, y };
-                groupedByItemId[block.ItemId].Add(blockData);
+                if (!groupedByItemId[block.ItemId].ContainsKey($"{x}")) {
+                    groupedByItemId[block.ItemId][$"{x}"] = new Array();
+                }
+
+                ((Array)groupedByItemId[block.ItemId][$"{x}"]).Add(y);
             }
         }
 
@@ -169,36 +172,40 @@ public partial class BlockManager : Node2D {
 
         foreach (var kvp in blocksByItemId) {
             ushort itemId = (ushort)kvp.Key;
-            Array blockDataArray = (Array)kvp.Value;
+            Dictionary xDict = (Dictionary)kvp.Value;
 
-            foreach (Array blockData in blockDataArray) {
-                int x = (int)blockData[0];
-                int y = (int)blockData[1];
+            foreach (var xKvp in xDict) {
+                int x = xKvp.Key.ToString().ToInt();
+                Array yArray = (Array)xKvp.Value;
 
-                Blocks[x, y] = new Block {
-                    CurrentHealth = 1,
-                    ItemId = itemId
-                };
+                foreach (int y in yArray) {
+                    Blocks[x, y] = new Block {
+                        CurrentHealth = 1,
+                        ItemId = itemId
+                    };
+                }
             }
         }
 
         foreach (var kvp in wallsByItemId) {
             ushort itemId = (ushort)kvp.Key;
-            Array wallDataArray = (Array)kvp.Value;
+            Dictionary xDict = (Dictionary)kvp.Value;
 
-            foreach (Array wallData in wallDataArray) {
-                int x = (int)wallData[0];
-                int y = (int)wallData[1];
+            foreach (var xKvp in xDict) {
+                int x = xKvp.Key.ToString().ToInt();
+                Array yArray = (Array)xKvp.Value;
 
-                Walls[x, y] = new Block {
-                    CurrentHealth = 1,
-                    ItemId = itemId
-                };
+                foreach (int y in yArray) {
+                    Walls[x, y] = new Block {
+                        CurrentHealth = 1,
+                        ItemId = itemId
+                    };
+                }
             }
         }
 
         SyncComplete?.Invoke();
-        
+
     }
 
     #endregion

@@ -17,10 +17,8 @@ public static class WorldCreator {
         };
 
         int earthId = 0;
-        Dictionary<string, Array> blockList = new();
-        Dictionary<string, Array> wallList = new() {
-            { $"{earthId}", new Array() }
-        };
+        Dictionary<string, Dictionary> blockList = new();
+        Dictionary<string, Dictionary> wallList = new();
 
         Array<string> idToString = new();
         Dictionary<string, ushort> stringToId = new();
@@ -32,7 +30,8 @@ public static class WorldCreator {
             idToString.Add(itemCode);
             stringToId.Add(itemCode, (ushort)count);
             stringToItem.Add(itemCode, itemDict);
-            blockList.Add($"{count}", new Array());
+            blockList.Add($"{count}", new Dictionary());
+            wallList.Add($"{count}", new Dictionary());
             count++;
         }
 
@@ -44,18 +43,24 @@ public static class WorldCreator {
 
         Random random = new();
         for (int x = 0; x < worldBasicInfo.Width; x++) {
+            for (int itemId = 0; itemId < items.Length; itemId++) {
+                blockList[$"{itemId}"].Add($"{x}", new Array());
+                wallList[$"{itemId}"].Add($"{x}", new Array());
+            }
             for (int y = mid; y < worldBasicInfo.Height; y++) {
                 int itemId = random.Next(0, 3);
-                blockList[$"{itemId}"].Add(new Array { x, y });
-                wallList[$"{earthId}"].Add(new Array { x, y });
+                
+                ((Array)blockList[$"{itemId}"][$"{x}"]).Add(y);
+                ((Array)wallList[$"{earthId}"][$"{x}"]).Add(y);
             }
         }
 
         int treeId = 3;
-        Dictionary<string, Array> propList = new() { { $"{treeId}", new Array() } };
+        Dictionary<string, Dictionary> propList = new() { { $"{treeId}", new Dictionary() } };
         for (int x = 10; x < worldBasicInfo.Width - 10; x += 10) {
+            propList[$"{treeId}"][$"{x}"] = new Array();
             for (int y = 5; y < mid; y++) {
-                propList[$"{treeId}"].Add(new Array { x, y });
+                ((Array)propList[$"{treeId}"][$"{x}"]).Add(y);
             }
         }
 

@@ -82,8 +82,8 @@ public partial class Game : Node {
         ExitGameFinished?.Invoke();
     }
 
-    private Dictionary<string, Array> SerializeBlocks(Block[,] data) {
-        Dictionary<string, Array> groupedByItemId = new();
+    private Dictionary<string, Dictionary> SerializeBlocks(Block[,] data) {
+        Dictionary<string, Dictionary> groupedByItemId = new();
 
         for (int x = 0; x < World.WorldSize.X; x++) {
             for (int y = 0; y < World.WorldSize.Y; y++) {
@@ -91,30 +91,36 @@ public partial class Game : Node {
                 if (block is null) continue;
                 string idStr = block.ItemId.ToString();
                 if (!groupedByItemId.ContainsKey(idStr)) {
-                    groupedByItemId[idStr] = new Array();
+                    groupedByItemId[idStr] = new Dictionary();
                 }
 
-                Array blockData = new() { x, y };
-                groupedByItemId[idStr].Add(blockData);
+                if (!groupedByItemId[idStr].ContainsKey($"{x}")) {
+                    groupedByItemId[idStr][$"{x}"] = new Array();
+                }
+
+                ((Array)groupedByItemId[idStr][$"{x}"]).Add(y);
             }
         }
 
         return groupedByItemId;
     }
 
-    private Dictionary<string, Array> SerializeProps() {
-        Dictionary<string, Array> groupedByItemId = new();
+    private Dictionary<string, Dictionary> SerializeProps() {
+        Dictionary<string, Dictionary> groupedByItemId = new();
 
         foreach ((Vector2I coords, Prop prop) in World.PropManager.Props) {
             Item item = prop.Item;
             string itemId = World.ItemIdBimap.GetId(item).ToString();
 
             if (!groupedByItemId.ContainsKey(itemId)) {
-                groupedByItemId[itemId] = new Array();
+                groupedByItemId[itemId] = new Dictionary();
             }
 
-            Array propData = new() { coords.X, coords.Y };
-            groupedByItemId[itemId].Add(propData);
+            if (!groupedByItemId[itemId].ContainsKey($"{coords.X}")) {
+                groupedByItemId[itemId][$"{coords.X}"] = new Array();
+            }
+
+            ((Array)groupedByItemId[itemId][$"{coords.X}"]).Add(coords.Y);
         }
 
         return groupedByItemId;
