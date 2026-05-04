@@ -15,7 +15,7 @@ public partial class IngredientPopup : Window {
     private bool _isMouseOverPopup;
     private bool _isMouseOverIngredientMouseover;
     private string _slotName;
-
+    private Recipe _selectedRecipe;
     public event Action<Item, string> SelectIngredientButtonClicked;
 
     public override void _Ready() {
@@ -28,6 +28,7 @@ public partial class IngredientPopup : Window {
             OnIngredientIconMouseEntered;
         _craftingInterface.IngredientsContainer.IngredientIconMouseLeft +=
             OnIngredientIconMouseExited;
+        _craftingInterface.RecipeContainer.RecipeButtonClicked += OnRecipeButtonClicked;
 
         TreeExiting += () => {
             _craftingInterface.GameInterface.World.PlayerManager.LocalPlayerSpawned -=
@@ -35,7 +36,12 @@ public partial class IngredientPopup : Window {
             _hideTimer.Timeout -= OnHideTimerTimeout;
             MouseEntered -= OnMouseEntered;
             MouseExited -= OnMouseExited;
+            _craftingInterface.RecipeContainer.RecipeButtonClicked -= OnRecipeButtonClicked;
         };
+    }
+
+    private void OnRecipeButtonClicked(Recipe recipe) {
+        _selectedRecipe = recipe;
     }
 
     private void OnIngredientIconMouseExited() {
@@ -93,7 +99,9 @@ public partial class IngredientPopup : Window {
         _ingredientButtons.Clear();
 
         _player?.Inventory.StackedItemsList.ForEach(stackedItems => {
-            if (!stackedItems.Item.HasProperty<ItemIngredient>()) return;
+            if (!stackedItems.Item.TryGetProperty(out ItemIngredient ingredient)) return;
+            if (ingredient.IngredientType != 
+                _selectedRecipe.RecipeIngredients[_slotName].IngredientType) return;
             IngredientButton newButton = IngredientButton.Create(stackedItems.Item);
             _ingredientButtons.Add(newButton);
             _buttonContainer.AddChild(newButton);

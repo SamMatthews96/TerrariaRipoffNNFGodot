@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Item" load_steps=5 format=3 uid="uid://be8tbdvrre8v8"]
+[gd_resource type="Resource" script_class="Item" format=3 uid="uid://be8tbdvrre8v8"]
 
 [ext_resource type="Script" uid="uid://bavg183x82165" path="res://Scripts/Resources/Item/Item.cs" id="1_ga8wg"]
 [ext_resource type="Texture2D" uid="uid://dh51pmlsc06fg" path="res://Assets/Images/ItemIcons/log2.png" id="1_qklcq"]
@@ -9,7 +9,6 @@
 script = ExtResource("1_ga8wg")
 Name = "Wood"
 InventorySpace = 1.0
-IsStackable = true
 IconTexture = ExtResource("1_qklcq")
 _itemProperties = Array[ExtResource("2_qklcq")]([ExtResource("3_qklcq")])
 metadata/_custom_type_script = "uid://bavg183x82165"
