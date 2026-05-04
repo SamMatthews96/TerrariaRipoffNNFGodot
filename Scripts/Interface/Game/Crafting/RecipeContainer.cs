@@ -8,7 +8,8 @@ public partial class RecipeContainer : Control {
     [Export] public Crafting CraftingInterface { get; private set; }
     [Export] private Container _selectRecipeButtonContainer;
     private readonly List<RecipeButton> _recipeSelectButtons = new();
-
+    private CraftingStationType _selectedType;
+    
     public event Action<Recipe> RecipeButtonClicked;
 
     public override void _Ready() {
@@ -17,11 +18,23 @@ public partial class RecipeContainer : Control {
         }
 
         Hide();
-        CraftingInterface.StationContainer.CraftingStationButtonClicked +=
-            OnCraftingCraftStationButtonClicked;
+        StationContainer stationContainer = CraftingInterface.StationContainer;
+        stationContainer.StationButtonClicked += OnStationButtonClicked;
+        stationContainer.PlayerRemovedStation += OnPlayerRemovedStation;
+        TreeExiting += () => {
+            stationContainer.StationButtonClicked -= OnStationButtonClicked;
+            stationContainer.PlayerRemovedStation -= OnPlayerRemovedStation;
+        };
     }
 
-    private void OnCraftingCraftStationButtonClicked(CraftingStation craftingStation) {
+    private void OnPlayerRemovedStation(CraftingStationType type) {
+        if (type == _selectedType) {
+            Hide();
+        }
+    }
+
+    private void OnStationButtonClicked(CraftingStation craftingStation) {
+        _selectedType = craftingStation.Type;
         _recipeSelectButtons.ForEach(button => {
             button.RecipeButtonClicked -= OnRecipeButtonClicked;
             button.QueueFree();

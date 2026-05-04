@@ -6,7 +6,7 @@ namespace TerrariaRipoffNNF.Interface;
 public partial class CraftStationButton : TextureButton {
     private CraftingStation _craftingStation;
    
-    public event Action<CraftingStation> CraftingStationButtonClicked;
+    public event Action<CraftingStation> StationButtonClicked;
     
     public static CraftStationButton Create(CraftingStation craftingStation) {
         CraftStationButton button =
@@ -26,6 +26,6 @@ public partial class CraftStationButton : TextureButton {
     }
     
     private void OnButtonDown() {
-        CraftingStationButtonClicked?.Invoke(_craftingStation);
+        StationButtonClicked?.Invoke(_craftingStation);
     }
 }

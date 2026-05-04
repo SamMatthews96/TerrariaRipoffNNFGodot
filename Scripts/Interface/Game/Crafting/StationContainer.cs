@@ -10,7 +10,8 @@ public partial class StationContainer : Control {
 
     private Dictionary<CraftingStationType, CraftStationButton> _craftingStationButtons = new();
 
-    public event Action<CraftingStation> CraftingStationButtonClicked;
+    public event Action<CraftingStation> StationButtonClicked;
+    public event Action<CraftingStationType> PlayerRemovedStation;
 
     public override void _Ready() {
         foreach (Node node in _craftingStationButtonContainer.GetChildren()) {
@@ -26,29 +27,30 @@ public partial class StationContainer : Control {
     }
 
     private void OnLocalPlayerSpawned(Player player) {
-        OnCraftingStationAdded(CraftingStationType.Handcrafting);
-        // player.Crafting.CraftingStationAdded += OnCraftingStationAdded;
-        // player.Crafting.CraftingStationRemoved += OnCraftingStationRemoved;
+        OnAddedNewStation(CraftingStationType.Handcrafting);
+        player.Crafting.AddedNewStation += OnAddedNewStation;
+        player.Crafting.RemovedStation += OnRemovedStation;
     }
 
-    private void OnCraftingStationAdded(CraftingStationType type) {
+    private void OnAddedNewStation(CraftingStationType type) {
         CraftingStation craftingStation = Data.CraftingStations[type];
         CraftStationButton newButton
             = CraftStationButton.Create(craftingStation);
-        newButton.CraftingStationButtonClicked += OnCraftingStationButtonClicked;
+        newButton.StationButtonClicked += OnStationButtonClicked;
         _craftingStationButtonContainer.AddChild(newButton);
 
         _craftingStationButtons.Add(type, newButton);
     }
 
-    private void OnCraftingStationRemoved(CraftingStationType type) {
+    private void OnRemovedStation(CraftingStationType type) {
         CraftStationButton button = _craftingStationButtons[type];
-        button.CraftingStationButtonClicked -= OnCraftingStationButtonClicked;
+        button.StationButtonClicked -= OnStationButtonClicked;
         button.QueueFree();
         _craftingStationButtons.Remove(type);
+        PlayerRemovedStation?.Invoke(type);
     }
 
-    private void OnCraftingStationButtonClicked(CraftingStation craftingStation) {
-        CraftingStationButtonClicked?.Invoke(craftingStation);
+    private void OnStationButtonClicked(CraftingStation craftingStation) {
+        StationButtonClicked?.Invoke(craftingStation);
     }
 }

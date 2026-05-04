@@ -87,10 +87,11 @@ public partial class IngredientsContainer : Container {
     
             newIngredientMouseover.MouseEntered += Entered;
             newIngredientMouseover.MouseExited += Exited;
-            TreeExiting += () => {
+            newIngredientMouseover.TreeExiting += () => {
                 newIngredientMouseover.MouseEntered -= Entered;
                 newIngredientMouseover.MouseExited -= Exited;
             };
+            
     
             _ingredientContainer.AddChild(newIngredientMouseover);
         }

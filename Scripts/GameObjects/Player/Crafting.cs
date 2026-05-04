@@ -13,11 +13,13 @@ public sealed partial class Crafting : Node {
 
     private Dictionary<string, Item> _selectedIngredients = new();
     public event Action<StackedItems> SelectedIngredientsChanged;
+    public event CraftEventHandler HostItemCrafted;
+    public event Action<CraftingStationType> AddedNewStation;
+    public event Action<CraftingStationType> RemovedStation;
 
     public delegate void CraftEventHandler(
         StackedItems result, Array<StackedItems> ingredients);
 
-    public event CraftEventHandler HostItemCrafted;
     public int CraftRange { get; private set; } = 8;
 
     public override void _Ready() {
@@ -81,6 +83,7 @@ public sealed partial class Crafting : Node {
     [Rpc(CallLocal = true)]
     private void RpcLocalAddCraftingStation(CraftingStationType type) {
         _nearbyStationTypes.Add(type);
+        AddedNewStation?.Invoke(type);
     }
 
     public void HostRemoveCraftingStation(Prop prop) {
@@ -97,6 +100,7 @@ public sealed partial class Crafting : Node {
     [Rpc(CallLocal = true)]
     private void RpcLocalRemoveCraftingStation(CraftingStationType type) {
         _nearbyStationTypes.Remove(type);
+        RemovedStation?.Invoke(type);
     }
 
     private void OnRecipeButtonClicked(Recipe recipe) {
