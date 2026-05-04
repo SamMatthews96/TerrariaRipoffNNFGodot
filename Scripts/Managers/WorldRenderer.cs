@@ -29,8 +29,8 @@ public partial class WorldRenderer : Node2D {
         _localPlayer = player;
 
         Action<Vector2I> onCreated = _ => UpdateView();
-        Action<Vector2I, ushort> onDestroyed = (_, __) => UpdateView();
-        Player.CellMovedDelegate onMoved = (_, __) => UpdateView();
+        Action<Vector2I, ushort> onDestroyed = (_, _) => UpdateView();
+        Player.CellMovedDelegate onMoved = (_, _) => UpdateView();
 
         _world.BlockManager.BlockCreated += onCreated;
         _world.BlockManager.BlockDestroyed += onDestroyed;
@@ -75,8 +75,10 @@ public partial class WorldRenderer : Node2D {
                     Game.BlockSize
                 );
                 Item item = _world.ItemIdBimap.GetItem(block.ItemId);
-                float modulate = isBlock ? 1 : 0.3f;
-                Color color = new(modulate, modulate, modulate);
+                Color color = isBlock
+                    ? new Color(1, 1, 1)
+                    : new Color(0.3f, 0.3f, 0.3f);
+
                 RenderingServer.CanvasItemAddTextureRect(
                     _canvas,
                     drawDimensions,
