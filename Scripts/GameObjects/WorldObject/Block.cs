@@ -1,9 +1,8 @@
 ﻿
-using System;
 
 namespace TerrariaRipoffNNF;
 
-public class Block {
+public struct Block {
     public float CurrentHealth;
     public ushort ItemId;
     // UInt16 id - 2

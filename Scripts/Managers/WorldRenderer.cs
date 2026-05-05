@@ -60,13 +60,13 @@ public partial class WorldRenderer : Node2D {
         for (int x = drawPositionXStart; x < drawPositionXEnd; x++) {
             for (int y = drawPositionYStart; y < drawPositionYEnd; y++) {
                 bool isBlock = true;
-                Block block = _world.BlockManager.Blocks[x, y];
-                if (block is null) {
+                Block? value = _world.BlockManager.Blocks[x, y];
+                if (value is null) {
                     isBlock = false;
-                    block = _world.BlockManager.Walls[x, y];
+                    value = _world.BlockManager.Walls[x, y];
                 }
 
-                if (block is null) continue;
+                if (value is not {} block) continue;
 
                 Rect2 drawDimensions = new(
                     x * Game.BlockSize,

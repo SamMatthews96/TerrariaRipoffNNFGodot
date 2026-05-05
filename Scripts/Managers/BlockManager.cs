@@ -6,8 +6,8 @@ using Array = Godot.Collections.Array;
 namespace TerrariaRipoffNNF;
 
 public partial class BlockManager : Node2D {
-    public Block[,] Blocks { get; private set; }
-    public Block[,] Walls { get; private set; }
+    public Block?[,] Blocks { get; private set; }
+    public Block?[,] Walls { get; private set; }
 
     [Export] private World _world;
 
@@ -18,8 +18,8 @@ public partial class BlockManager : Node2D {
     public event Action<Vector2I, ushort> WallDestroyed;
 
     public override void _Ready() {
-        Blocks = new Block[_world.WorldSize.X, _world.WorldSize.Y];
-        Walls = new Block[_world.WorldSize.X, _world.WorldSize.Y];
+        Blocks = new Block?[_world.WorldSize.X, _world.WorldSize.Y];
+        Walls = new Block?[_world.WorldSize.X, _world.WorldSize.Y];
 
         if (!_world.IsHost) return;
 
@@ -99,7 +99,8 @@ public partial class BlockManager : Node2D {
     }
 
     private void OnHostGatheredBlock(Vector2I coords, float damage) {
-        Block block = Blocks[coords.X, coords.Y];
+        Block? res = Blocks[coords.X, coords.Y];
+        if (res is not { } block) return;
         block.CurrentHealth -= damage;
         if (block.CurrentHealth <= 0) {
             Rpc(nameof(RpcAllDestroyBlock), coords, block.ItemId);
@@ -113,7 +114,8 @@ public partial class BlockManager : Node2D {
     }
 
     private void OnHostGatheredWall(Vector2I coords, float damage) {
-        Block block = Walls[coords.X, coords.Y];
+        Block? value = Walls[coords.X, coords.Y];
+        if (value is not { } block) return;
         block.CurrentHealth -= damage;
         if (block.CurrentHealth <= 0) {
             Rpc(nameof(RpcAllDestroyWall), coords);
@@ -122,9 +124,10 @@ public partial class BlockManager : Node2D {
 
     [Rpc(CallLocal = true)]
     private void RpcAllDestroyWall(Vector2I coords) {
-        ushort itemId = Walls[coords.X, coords.Y].ItemId;
+        Block? value = Walls[coords.X, coords.Y];
+        if (value is not { } block) return;
         Walls[coords.X, coords.Y] = null;
-        WallDestroyed?.Invoke(coords, itemId);
+        WallDestroyed?.Invoke(coords, block.ItemId);
     }
 
     #region World Synchronization
@@ -142,14 +145,14 @@ public partial class BlockManager : Node2D {
             data);
     }
 
-    private Dictionary<ushort, Dictionary> SerializeChunk(Block[,] data) {
+    private Dictionary<ushort, Dictionary> SerializeChunk(Block?[,] data) {
         Dictionary<ushort, Dictionary> groupedByItemId = new();
 
         for (int x = 0; x < _world.WorldSize.X; x++) {
             for (int y = 0; y < _world.WorldSize.Y; y++) {
-                Block block = data[x, y];
-                if (block is null) continue;
-
+                Block? value = data[x, y];
+                if (value is not { } block) continue;
+                
                 if (!groupedByItemId.ContainsKey(block.ItemId)) {
                     groupedByItemId[block.ItemId] = new Dictionary();
                 }

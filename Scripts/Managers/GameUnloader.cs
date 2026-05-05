@@ -3,8 +3,6 @@ using Godot;
 using Godot.Collections;
 using Array = Godot.Collections.Array;
 using System.Threading.Tasks;
-using Castle.Components.DictionaryAdapter;
-using Environment = System.Environment;
 
 namespace TerrariaRipoffNNF;
 
@@ -56,7 +54,7 @@ public partial class GameUnloader : Node {
         _completedSave = true;
     }
 
-    private Dictionary<string, Dictionary> SerializeBlocks(Block[,] data) {
+    private Dictionary<string, Dictionary> SerializeBlocks(Block?[,] data) {
         Dictionary<string, Dictionary> groupedByItemId = new();
         int itemCount = _world.ItemIdBimap.getItemCount();
         for (int i = 0; i < itemCount; i++) {
@@ -77,8 +75,8 @@ public partial class GameUnloader : Node {
             }
 
             for (int y = 0; y < _world.WorldSize.Y; y++) {
-                Block block = data[x, y];
-                if (block is null) continue;
+                Block? value = data[x, y];
+                if (value is not { } block) continue;
 
                 columnArrays[block.ItemId].Add(y);
             }
