@@ -1,0 +1,97 @@
+[gd_scene format=3 uid="uid://brg7l2xq2w17e"]
+
+[ext_resource type="Script" uid="uid://cjuuqa6lruj37" path="res://Scripts/Interface/MainMenu/WorldMenu.cs" id="1_a7uwc"]
+[ext_resource type="PackedScene" uid="uid://buekj451osmbs" path="res://Scenes/Interface/MainMenu/WorldMenuItem.tscn" id="2_3nli2"]
+
+[node name="WorldMenu" type="Control" unique_id=1967200901 node_paths=PackedStringArray("_createWorldButton", "_backButton", "_worldListContainer", "_worldNameEdit", "_worldWidthEdit", "_worldHeightEdit")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -3.0
+offset_bottom = -3.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_a7uwc")
+_createWorldButton = NodePath("CreateWorldContainer/MarginContainer/CreateWorldButton")
+_backButton = NodePath("BackButton")
+_worldListContainer = NodePath("WorldListContainer")
+_packedWorldListItem = ExtResource("2_3nli2")
+_worldNameEdit = NodePath("CreateWorldContainer/MarginContainer/NameContainer/WorldNameEdit")
+_worldWidthEdit = NodePath("CreateWorldContainer/MarginContainer/WidthContainer/WidthEdit")
+_worldHeightEdit = NodePath("CreateWorldContainer/MarginContainer/HeightContainer/HeightEdit")
+
+[node name="BackButton" type="Button" parent="." unique_id=441211750]
+layout_mode = 0
+offset_left = 1484.0
+offset_top = 950.0
+offset_right = 1799.0
+offset_bottom = 995.0
+text = "Back"
+
+[node name="WorldListContainer" type="VBoxContainer" parent="." unique_id=313930085]
+layout_mode = 0
+offset_left = 772.0
+offset_top = 177.0
+offset_right = 1153.0
+offset_bottom = 220.0
+
+[node name="CreateWorldContainer" type="MarginContainer" parent="." unique_id=1566451616]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -271.0
+offset_top = -99.0
+offset_right = 271.5
+offset_bottom = 2.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="MarginContainer" type="VBoxContainer" parent="CreateWorldContainer" unique_id=967617135]
+layout_mode = 2
+
+[node name="HeightContainer" type="HBoxContainer" parent="CreateWorldContainer/MarginContainer" unique_id=1232560312]
+layout_mode = 2
+
+[node name="HeightLabel" type="Label" parent="CreateWorldContainer/MarginContainer/HeightContainer" unique_id=45981849]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Height"
+
+[node name="HeightEdit" type="LineEdit" parent="CreateWorldContainer/MarginContainer/HeightContainer" unique_id=603970618]
+custom_minimum_size = Vector2(400, 40)
+layout_mode = 2
+text = "100"
+
+[node name="WidthContainer" type="HBoxContainer" parent="CreateWorldContainer/MarginContainer" unique_id=474833450]
+layout_mode = 2
+
+[node name="WidthLabel" type="Label" parent="CreateWorldContainer/MarginContainer/WidthContainer" unique_id=2130645385]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Width
+"
+
+[node name="WidthEdit" type="LineEdit" parent="CreateWorldContainer/MarginContainer/WidthContainer" unique_id=1358993490]
+custom_minimum_size = Vector2(400, 40)
+layout_mode = 2
+text = "100"
+
+[node name="NameContainer" type="HBoxContainer" parent="CreateWorldContainer/MarginContainer" unique_id=744893672]
+layout_mode = 2
+
+[node name="NameLabel" type="Label" parent="CreateWorldContainer/MarginContainer/NameContainer" unique_id=1489657430]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Name"
+
+[node name="WorldNameEdit" type="LineEdit" parent="CreateWorldContainer/MarginContainer/NameContainer" unique_id=673178940]
+custom_minimum_size = Vector2(400, 40)
+layout_mode = 2
+
+[node name="CreateWorldButton" type="Button" parent="CreateWorldContainer/MarginContainer" unique_id=1668649207]
+layout_mode = 2
+text = "Create World"

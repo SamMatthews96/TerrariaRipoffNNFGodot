@@ -1,14 +1,14 @@
-[gd_scene load_steps=8 format=3 uid="uid://tbvohnqfn3cl"]
+[gd_scene format=3 uid="uid://tbvohnqfn3cl"]
 
 [ext_resource type="Script" uid="uid://kbxs8fup33e" path="res://Scripts/Interface/MainMenu/MainMenu.cs" id="1_tso7g"]
 [ext_resource type="PackedScene" uid="uid://buekj451osmbs" path="res://Scenes/Interface/MainMenu/WorldMenuItem.tscn" id="2_5m7q5"]
 [ext_resource type="Script" uid="uid://bqehbx3a2bp8c" path="res://Scripts/Interface/MainMenu/SelectGameTypeMenu.cs" id="3_xna4i"]
-[ext_resource type="Script" uid="uid://cjuuqa6lruj37" path="res://Scripts/Interface/MainMenu/WorldMenu.cs" id="4_vxgly"]
+[ext_resource type="PackedScene" uid="uid://brg7l2xq2w17e" path="res://Scenes/Interface/MainMenu/WorldMenu.tscn" id="4_qy0ro"]
 [ext_resource type="Script" uid="uid://xmgh3e66kr67" path="res://Scripts/Interface/MainMenu/MultiplayerMenu.cs" id="5_lsepk"]
 [ext_resource type="Script" uid="uid://c1u7i4af6ieen" path="res://Scripts/Interface/MainMenu/PlayerSelectMenu.cs" id="7_n0wde"]
 [ext_resource type="PackedScene" uid="uid://cgxj5nohkfa6v" path="res://Scenes/Interface/MainMenu/PlayerMenuItem.tscn" id="8_vv6pa"]
 
-[node name="MainMenuScene" type="Control" node_paths=PackedStringArray("_selectGameTypeMenu", "_multiplayerMenu", "_worldMenu", "_playerSelectMenu")]
+[node name="MainMenuScene" type="Control" unique_id=603843495 node_paths=PackedStringArray("_selectGameTypeMenu", "_multiplayerMenu", "_worldMenu", "_playerSelectMenu")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -22,7 +22,7 @@ _worldMenu = NodePath("WorldMenu")
 _playerSelectMenu = NodePath("PlayerSelectMenu")
 _packedWorldListItem = ExtResource("2_5m7q5")
 
-[node name="SelectGameTypeMenu" type="Control" parent="." node_paths=PackedStringArray("_singlePlayerButton", "_multiplayerButton", "_exitButton")]
+[node name="SelectGameTypeMenu" type="Control" parent="." unique_id=569284319 node_paths=PackedStringArray("_singlePlayerButton", "_multiplayerButton", "_exitButton")]
 layout_mode = 1
 anchor_right = 1.0
 anchor_bottom = 0.248
@@ -36,7 +36,7 @@ _singlePlayerButton = NodePath("VBoxContainer/SinglePlayerButton")
 _multiplayerButton = NodePath("VBoxContainer/MultiplayerButton")
 _exitButton = NodePath("VBoxContainer/ExitButton")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="SelectGameTypeMenu"]
+[node name="VBoxContainer" type="VBoxContainer" parent="SelectGameTypeMenu" unique_id=1888246779]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -50,64 +50,22 @@ offset_bottom = 50.5
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="SinglePlayerButton" type="Button" parent="SelectGameTypeMenu/VBoxContainer"]
+[node name="SinglePlayerButton" type="Button" parent="SelectGameTypeMenu/VBoxContainer" unique_id=1524091661]
 layout_mode = 2
 text = "Single Player"
 
-[node name="MultiplayerButton" type="Button" parent="SelectGameTypeMenu/VBoxContainer"]
+[node name="MultiplayerButton" type="Button" parent="SelectGameTypeMenu/VBoxContainer" unique_id=1301366728]
 layout_mode = 2
 text = "Multiplayer"
 
-[node name="ExitButton" type="Button" parent="SelectGameTypeMenu/VBoxContainer"]
+[node name="ExitButton" type="Button" parent="SelectGameTypeMenu/VBoxContainer" unique_id=1051279116]
 layout_mode = 2
 text = "Exit"
 
-[node name="WorldMenu" type="Control" parent="." node_paths=PackedStringArray("_createWorldButton", "_backButton", "_worldListContainer", "_worldNameEdit")]
-visible = false
+[node name="WorldMenu" parent="." unique_id=1967200901 instance=ExtResource("4_qy0ro")]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("4_vxgly")
-_createWorldButton = NodePath("CreateWorldButton")
-_backButton = NodePath("BackButton")
-_worldListContainer = NodePath("WorldListContainer")
-_packedWorldListItem = ExtResource("2_5m7q5")
-_worldNameEdit = NodePath("WorldNameEdit")
 
-[node name="CreateWorldButton" type="Button" parent="WorldMenu"]
-layout_mode = 1
-offset_left = 634.0
-offset_top = 924.0
-offset_right = 949.0
-offset_bottom = 969.0
-text = "Create World"
-
-[node name="BackButton" type="Button" parent="WorldMenu"]
-layout_mode = 0
-offset_left = 980.0
-offset_top = 923.0
-offset_right = 1295.0
-offset_bottom = 968.0
-text = "Back"
-
-[node name="WorldListContainer" type="VBoxContainer" parent="WorldMenu"]
-layout_mode = 0
-offset_left = 772.0
-offset_top = 177.0
-offset_right = 1153.0
-offset_bottom = 220.0
-
-[node name="WorldNameEdit" type="LineEdit" parent="WorldMenu"]
-layout_mode = 0
-offset_left = 826.0
-offset_top = 860.0
-offset_right = 1114.0
-offset_bottom = 891.0
-
-[node name="MultiplayerMenu" type="Control" parent="." node_paths=PackedStringArray("_hostButton", "_joinButton", "_backButton")]
+[node name="MultiplayerMenu" type="Control" parent="." unique_id=1782215717 node_paths=PackedStringArray("_hostButton", "_joinButton", "_backButton")]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -120,7 +78,7 @@ _hostButton = NodePath("VBoxContainer/HostButton")
 _joinButton = NodePath("VBoxContainer/JoinButton")
 _backButton = NodePath("VBoxContainer/BackButton")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MultiplayerMenu"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MultiplayerMenu" unique_id=1924936966]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
@@ -130,19 +88,19 @@ offset_top = 73.0
 offset_right = -716.0
 offset_bottom = -129.48
 
-[node name="HostButton" type="Button" parent="MultiplayerMenu/VBoxContainer"]
+[node name="HostButton" type="Button" parent="MultiplayerMenu/VBoxContainer" unique_id=442101707]
 layout_mode = 2
 text = "Host"
 
-[node name="JoinButton" type="Button" parent="MultiplayerMenu/VBoxContainer"]
+[node name="JoinButton" type="Button" parent="MultiplayerMenu/VBoxContainer" unique_id=105930853]
 layout_mode = 2
 text = "Join"
 
-[node name="BackButton" type="Button" parent="MultiplayerMenu/VBoxContainer"]
+[node name="BackButton" type="Button" parent="MultiplayerMenu/VBoxContainer" unique_id=1587101625]
 layout_mode = 2
 text = "Back"
 
-[node name="PlayerSelectMenu" type="Control" parent="." node_paths=PackedStringArray("_mainMenu", "_createPlayerButton", "_backButton", "_playerListContainer", "_playerNameTextEdit")]
+[node name="PlayerSelectMenu" type="Control" parent="." unique_id=478757860 node_paths=PackedStringArray("_mainMenu", "_createPlayerButton", "_backButton", "_playerListContainer", "_playerNameTextEdit")]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -157,7 +115,7 @@ _playerListContainer = NodePath("PlayerListContainer")
 _playerNameTextEdit = NodePath("PlayerNameTextEdit")
 _packedPlayerSelectButton = ExtResource("8_vv6pa")
 
-[node name="BackButton" type="Button" parent="PlayerSelectMenu"]
+[node name="BackButton" type="Button" parent="PlayerSelectMenu" unique_id=309806908]
 layout_mode = 0
 offset_left = 999.0
 offset_top = 960.0
@@ -165,22 +123,22 @@ offset_right = 1143.0
 offset_bottom = 1023.0
 text = "Back"
 
-[node name="CreatePlayerButton" type="Button" parent="PlayerSelectMenu"]
-layout_mode = 2
+[node name="CreatePlayerButton" type="Button" parent="PlayerSelectMenu" unique_id=1479174699]
+layout_mode = 0
 offset_left = 806.0
 offset_top = 960.0
 offset_right = 950.0
 offset_bottom = 1023.0
 text = "Create"
 
-[node name="PlayerListContainer" type="VBoxContainer" parent="PlayerSelectMenu"]
+[node name="PlayerListContainer" type="VBoxContainer" parent="PlayerSelectMenu" unique_id=1274016717]
 layout_mode = 0
 offset_left = 697.0
 offset_top = 50.0
 offset_right = 1254.0
 offset_bottom = 870.0
 
-[node name="PlayerNameTextEdit" type="TextEdit" parent="PlayerSelectMenu"]
+[node name="PlayerNameTextEdit" type="TextEdit" parent="PlayerSelectMenu" unique_id=2124112488]
 layout_mode = 0
 offset_left = 772.0
 offset_top = 898.0
