@@ -15,7 +15,6 @@ public partial class ItemIdBimap : Node {
     [Export] private World _world;
 
     public override void _Ready() {
-       
         Dictionary dict = _world.WorldData["itemMap"].AsGodotDictionary();
         _idToString = dict["IdToString"].AsGodotArray<string>();
         _stringToId = dict["StringToId"].AsGodotDictionary<string, ushort>();
@@ -49,6 +48,10 @@ public partial class ItemIdBimap : Node {
 
     public bool AreItemsSame(Item item1, Item item2) {
         return GetItemString(item1) == GetItemString(item2);
+    }
+
+    public int getItemCount() {
+        return _idToString.Count;
     }
 
     public Dictionary ToDictionary() {

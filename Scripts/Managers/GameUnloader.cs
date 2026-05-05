@@ -3,6 +3,8 @@ using Godot;
 using Godot.Collections;
 using Array = Godot.Collections.Array;
 using System.Threading.Tasks;
+using Castle.Components.DictionaryAdapter;
+using Environment = System.Environment;
 
 namespace TerrariaRipoffNNF;
 
@@ -21,20 +23,32 @@ public partial class GameUnloader : Node {
     public override void _Ready() {
         Task.Run(SaveWorld);
     }
-    
+
     public override void _Process(double delta) {
         if (!_completedSave) return;
         SaveComplete?.Invoke();
     }
 
     private void SaveWorld() {
+        // Serialize blocks, walls, and props in parallel
+        Task<Dictionary<string, Dictionary>> blocksTask =
+            Task.Run(() =>
+                SerializeBlocks(_world.BlockManager.Blocks));
+        Task<Dictionary<string, Dictionary>> wallsTask =
+            Task.Run(() =>
+                SerializeBlocks(_world.BlockManager.Walls));
+        Task<Dictionary<string, Dictionary>> propsTask =
+            Task.Run(SerializeProps);
+
+        Task.WaitAll(blocksTask, wallsTask, propsTask);
+
         Dictionary worldData = new() {
             ["Name"] = _world.WorldData["Name"],
             ["Width"] = _world.WorldSize.X,
             ["Height"] = _world.WorldSize.Y,
-            ["blocks"] = SerializeBlocks(_world.BlockManager.Blocks),
-            ["walls"] = SerializeBlocks(_world.BlockManager.Walls),
-            ["props"] = SerializeProps(),
+            ["blocks"] = blocksTask.Result,
+            ["walls"] = wallsTask.Result,
+            ["props"] = propsTask.Result,
             ["itemMap"] = _world.ItemIdBimap.ToDictionary()
         };
 
@@ -44,19 +58,21 @@ public partial class GameUnloader : Node {
 
     private Dictionary<string, Dictionary> SerializeBlocks(Block[,] data) {
         Dictionary<string, Dictionary> groupedByItemId = new();
-
+        int itemCount = _world.ItemIdBimap.getItemCount();
+        for (int i = 0; i < itemCount; i++) {
+            string idStr = i.ToString();
+            groupedByItemId[idStr] = new Dictionary();
+        }
+        
         for (int x = 0; x < _world.WorldSize.X; x++) {
+            foreach (Dictionary value in groupedByItemId.Values) {
+                value[$"{x}"] = new Array();
+            }
+            
             for (int y = 0; y < _world.WorldSize.Y; y++) {
                 Block block = data[x, y];
                 if (block is null) continue;
                 string idStr = block.ItemId.ToString();
-                if (!groupedByItemId.ContainsKey(idStr)) {
-                    groupedByItemId[idStr] = new Dictionary();
-                }
-
-                if (!groupedByItemId[idStr].ContainsKey($"{x}")) {
-                    groupedByItemId[idStr][$"{x}"] = new Array();
-                }
 
                 ((Array)groupedByItemId[idStr][$"{x}"]).Add(y);
             }

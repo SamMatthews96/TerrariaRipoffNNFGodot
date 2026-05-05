@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://cy52ebe7eud3c"]
+[gd_scene format=3 uid="uid://cy52ebe7eud3c"]
 
 [ext_resource type="Script" uid="uid://2py1dy3q71tm" path="res://Scripts/Interface/LoadingScreen.cs" id="1_2d5mq"]
 [ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://Assets/Images/icon.svg" id="2_rx5y7"]
 
-[node name="LoadingScreen" type="Control" node_paths=PackedStringArray("_loadingSprite")]
+[node name="LoadingScreen" type="Control" unique_id=822211829 node_paths=PackedStringArray("_loadingSprite", "_loadingText", "_loadingTimer")]
 process_mode = 3
 layout_mode = 3
 anchors_preset = 15
@@ -13,8 +13,10 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_2d5mq")
 _loadingSprite = NodePath("Sprite2D")
+_loadingText = NodePath("Label")
+_loadingTimer = NodePath("Timer")
 
-[node name="Label" type="Label" parent="."]
+[node name="Label" type="Label" parent="." unique_id=2076434808]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -24,6 +26,10 @@ text = "Loading Screen"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=903958427]
 position = Vector2(960, 252)
 texture = ExtResource("2_rx5y7")
+
+[node name="Timer" type="Timer" parent="." unique_id=529491624]
+wait_time = 0.1
+autostart = true
