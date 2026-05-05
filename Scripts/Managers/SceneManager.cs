@@ -41,23 +41,33 @@ public partial class SceneManager : Node {
         
         _game = _packedGame.Instantiate<Game>();
         AddChild(_game);
-        _loadingScreen = _packedLoadingScreen.Instantiate<LoadingScreen>();
-        AddChild(_loadingScreen);
+        ShowLoadingScreen();
 
-        _game.Loaded += OnGameWorldLoaded;
-        _game.ExitGameFinished += ExitGame;
+        _game.Loaded += HideLoadingScreen;
+        _game.ExitGameStarted += ShowLoadingScreen;
+        _game.ExitGameFinished += OnExitGameFinished;
+        _game.TreeExiting += () => {
+            _game.Loaded -= HideLoadingScreen;
+            _game.ExitGameStarted -= ShowLoadingScreen;
+            _game.ExitGameFinished -= OnExitGameFinished;
+        };
     }
 
-    private void OnGameWorldLoaded() {
-        _game.Loaded -= OnGameWorldLoaded;
+    private void ShowLoadingScreen() {
+        _loadingScreen = _packedLoadingScreen.Instantiate<LoadingScreen>();
+        AddChild(_loadingScreen);
+    }
+    
+    private void HideLoadingScreen() {
         _loadingScreen.QueueFree();
         _loadingScreen = null;
     }
 
-    private void ExitGame() {
+    private void OnExitGameFinished() {
         CreateMainMenu();
-        _game.ExitGameFinished -= ExitGame;
+        _game.ExitGameFinished -= OnExitGameFinished;
         _game.QueueFree();
+        HideLoadingScreen();
     }
 
     private void CreateMainMenu() {
