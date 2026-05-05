@@ -65,16 +65,22 @@ public partial class GameUnloader : Node {
         }
         
         for (int x = 0; x < _world.WorldSize.X; x++) {
-            foreach (Dictionary value in groupedByItemId.Values) {
-                value[$"{x}"] = new Array();
+            string xStr = x.ToString();
+
+            // Pre-create arrays for this column and cache references
+            Array[] columnArrays = new Array[itemCount];
+            for (int i = 0; i < itemCount; i++) {
+                string idStr = i.ToString();
+                Array arr = new();
+                groupedByItemId[idStr][xStr] = arr;
+                columnArrays[i] = arr;
             }
-            
+
             for (int y = 0; y < _world.WorldSize.Y; y++) {
                 Block block = data[x, y];
                 if (block is null) continue;
-                string idStr = block.ItemId.ToString();
 
-                ((Array)groupedByItemId[idStr][$"{x}"]).Add(y);
+                columnArrays[block.ItemId].Add(y);
             }
         }
 
