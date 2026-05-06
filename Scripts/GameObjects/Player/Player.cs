@@ -71,7 +71,7 @@ public partial class Player : CharacterBody2D {
         }
 
         _nameLabel.Text = PeerId == 1 ? "Host" : "Client";
-        
+
         if (!IsLocalPlayer) return;
 
         World.InputManager.HorizontalInputChanged += OnHorizontalInputChanged;
@@ -130,7 +130,7 @@ public partial class Player : CharacterBody2D {
         RpcId(1, nameof(RpcHostMovedCell), Coords, previousCoords);
     }
 
-    [Rpc(CallLocal = true)]
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void RpcHostMovedCell(Vector2I newCoords, Vector2I oldCoords) {
         MovedCellHost?.Invoke(newCoords, oldCoords);
     }
