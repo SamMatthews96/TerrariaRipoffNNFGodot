@@ -8,7 +8,7 @@ public partial class RecipeContainer : Control {
     [Export] public Crafting CraftingInterface { get; private set; }
     [Export] private Container _selectRecipeButtonContainer;
     private readonly List<RecipeButton> _recipeSelectButtons = new();
-    private CraftingStationType _selectedType;
+    private StationType _selectedType;
     
     public event Action<Recipe> RecipeButtonClicked;
 
@@ -27,7 +27,7 @@ public partial class RecipeContainer : Control {
         };
     }
 
-    private void OnPlayerRemovedStation(CraftingStationType type) {
+    private void OnPlayerRemovedStation(StationType type) {
         if (type == _selectedType) {
             Hide();
         }

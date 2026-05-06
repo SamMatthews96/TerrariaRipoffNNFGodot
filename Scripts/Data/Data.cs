@@ -1,5 +1,5 @@
 global using CraftingStations = Godot.Collections.Dictionary<
-    TerrariaRipoffNNF.CraftingStationType,
+    TerrariaRipoffNNF.StationType,
     TerrariaRipoffNNF.CraftingStation>;
 using Godot;
 

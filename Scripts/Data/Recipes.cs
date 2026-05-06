@@ -20,13 +20,13 @@ public partial class Recipes : Resource {
         }
     }
 
-    public Array<Recipe> GetRecipes(CraftingStationType craftingStationType) {
+    public Array<Recipe> GetRecipes(StationType stationType) {
         Array<Recipe> recipes = new();
         int count = 0;
         foreach (Recipe recipe in _recipeList) {
             recipe.Id = count;
             count++;
-            if (recipe.RequiredCraftingStation == craftingStationType) {
+            if (recipe.RequiredStation == stationType) {
                 recipes.Add(recipe);
             }
         }

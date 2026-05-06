@@ -50,7 +50,7 @@ public partial class ItemIdBimap : Node {
         return GetItemString(item1) == GetItemString(item2);
     }
 
-    public int getItemCount() {
+    public int GetItemCount() {
         return _idToString.Count;
     }
 

@@ -5,7 +5,7 @@ namespace TerrariaRipoffNNF;
 
 [GlobalClass]
 public partial class ItemCraftStation : ItemProperty {
-    [Export] public CraftingStationType Type { get; private set; }
+    [Export] public StationType Type { get; private set; }
     
     public override Dictionary GetTooltipAttributes() {
         return new Dictionary();
@@ -15,7 +15,7 @@ public partial class ItemCraftStation : ItemProperty {
         
     }
     
-    public ItemCraftStation(CraftingStationType type) {
+    public ItemCraftStation(StationType type) {
         Type = type;
     }
     

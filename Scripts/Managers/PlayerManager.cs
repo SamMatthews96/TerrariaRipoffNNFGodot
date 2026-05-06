@@ -16,36 +16,32 @@ public partial class PlayerManager : Node2D {
     public override void _Ready() {
         if (!_world.IsHost) return;
 
-        _world.PropManager.HostPropPlaced += OnHostPropPlaced;
-        _world.PropManager.HostPropDestroyed += OnHostPropDestroyed;
+        _world.StationManager.StationCreated += OnStationCreated;
+        _world.StationManager.StationDestroyed += OnStationDestroyed;
         Multiplayer.PeerDisconnected += OnPeerDisconnected;
         TreeExiting += () => {
-            _world.PropManager.HostPropPlaced -= OnHostPropPlaced;
-            _world.PropManager.HostPropDestroyed -= OnHostPropDestroyed;
             Multiplayer.PeerDisconnected -= OnPeerDisconnected;
         };
     }
 
-    private void OnHostPropPlaced(Prop prop, Vector2I coords) {
-        if (!prop.Item.GetProperty<ItemProp>().HasProperty<PropStation>()) return;
+    private void OnStationCreated(Vector2I coords, StationType type) {
         foreach (Player player in _players.Values) {
             int range = player.Crafting.CraftRange;
             if (_world.IsInOrthogonalRange(player.Coords, coords, range)) {
-                player.Crafting.HostAddCraftingStation(prop);
+                player.Crafting.HostAddCraftingStation(coords, type);
             }
         }
     }
 
-    private void OnHostPropDestroyed(Prop prop, Vector2I vector2I) {
-        if (!prop.Item.GetProperty<ItemProp>().HasProperty<PropStation>()) return;
+    private void OnStationDestroyed(Vector2I coords, StationType type) {
         foreach (Player player in _players.Values) {
             int range = player.Crafting.CraftRange;
-            if (_world.IsInOrthogonalRange(player.Coords, vector2I, range)) {
-                player.Crafting.HostRemoveCraftingStation(prop);
+            if (_world.IsInOrthogonalRange(player.Coords, coords, range)) {
+                player.Crafting.HostRemoveCraftingStation(coords, type);
             }
         }
     }
-
+    
     private void OnPeerDisconnected(long id) {
         Rpc(nameof(RpcAllDeletePlayer), id);
     }

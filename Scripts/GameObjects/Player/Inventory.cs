@@ -117,17 +117,17 @@ public partial class Inventory : Node {
         AddItems(inventoryItems);
     }
 
-    private void AddItems(StackedItems inventoryItemsToAdd) {
-        UsedSpace += inventoryItemsToAdd.TotalSpace;
+    private void AddItems(StackedItems itemsToAdd) {
+        UsedSpace += itemsToAdd.TotalSpace;
 
-        int index = _inventoryItemsList.FindIndex(inventoryItems =>
-            Item.AreEqual(inventoryItems.Item, inventoryItemsToAdd.Item));
+        int index = _inventoryItemsList.FindIndex(items =>
+            Item.AreEqual(items.Item, itemsToAdd.Item));
 
         if (index == -1) {
-            _inventoryItemsList.Add(inventoryItemsToAdd);
-            AddedItemStack?.Invoke(inventoryItemsToAdd);
+            _inventoryItemsList.Add(itemsToAdd);
+            AddedItemStack?.Invoke(itemsToAdd);
         } else {
-            _inventoryItemsList[index] += inventoryItemsToAdd;
+            _inventoryItemsList[index] += itemsToAdd;
             ItemStackChangedSize?.Invoke(_inventoryItemsList[index]);
         }
     }

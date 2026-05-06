@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Godot;
 using Godot.Collections;
+using TerrariaRipoffNNF.Scripts.Managers;
 using TerrariaRipoffNNF.TestScenes;
 using Array = Godot.Collections.Array;
 
@@ -19,7 +20,8 @@ public partial class World : Node2D {
     [Export] public Interface.Game Interface { get; private set; }
     [Export] public BlockManager BlockManager { get; private set; }
     [Export] public ItemIdBimap ItemIdBimap { get; private set; }
-
+    [Export] public StationManager StationManager { get; private set; }
+    
     public event Action GameLoaded;
 
     private Dictionary _localPlayerData;

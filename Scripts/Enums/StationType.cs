@@ -1,6 +1,6 @@
 ﻿namespace TerrariaRipoffNNF;
 
-public enum CraftingStationType {
+public enum StationType {
     Handcrafting,
     Workbench,
     Furnace,

@@ -8,10 +8,10 @@ public partial class StationContainer : Control {
     [Export] private Container _craftingStationButtonContainer;
     [Export] private Crafting _craftingInterface;
 
-    private Dictionary<CraftingStationType, CraftStationButton> _craftingStationButtons = new();
+    private Dictionary<StationType, CraftStationButton> _craftingStationButtons = new();
 
     public event Action<CraftingStation> StationButtonClicked;
-    public event Action<CraftingStationType> PlayerRemovedStation;
+    public event Action<StationType> PlayerRemovedStation;
 
     public override void _Ready() {
         foreach (Node node in _craftingStationButtonContainer.GetChildren()) {
@@ -27,12 +27,12 @@ public partial class StationContainer : Control {
     }
 
     private void OnLocalPlayerSpawned(Player player) {
-        OnAddedNewStation(CraftingStationType.Handcrafting);
+        OnAddedNewStation(StationType.Handcrafting);
         player.Crafting.AddedNewStation += OnAddedNewStation;
         player.Crafting.RemovedStation += OnRemovedStation;
     }
 
-    private void OnAddedNewStation(CraftingStationType type) {
+    private void OnAddedNewStation(StationType type) {
         CraftingStation craftingStation = Data.CraftingStations[type];
         CraftStationButton newButton
             = CraftStationButton.Create(craftingStation);
@@ -42,7 +42,7 @@ public partial class StationContainer : Control {
         _craftingStationButtons.Add(type, newButton);
     }
 
-    private void OnRemovedStation(CraftingStationType type) {
+    private void OnRemovedStation(StationType type) {
         CraftStationButton button = _craftingStationButtons[type];
         button.StationButtonClicked -= OnStationButtonClicked;
         button.QueueFree();

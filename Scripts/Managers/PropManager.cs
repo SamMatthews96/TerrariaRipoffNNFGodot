@@ -5,26 +5,29 @@ using Array = Godot.Collections.Array;
 
 namespace TerrariaRipoffNNF;
 
+using PropsByCoords = Dictionary<Vector2I, ActiveProp>;
+using ColumnByX = Dictionary<int, Array<int>>;
+using ColumnByXByBlockId =
+    Dictionary<ushort, Dictionary<int, Array<int>>>;
+
 public partial class PropManager : Node {
     [Export] private World _world;
-    public Dictionary<Vector2I, Prop> PropCells { get; private set; }
-    public Dictionary<Vector2I, Prop> Props { get; private set; } = new();
+    public PropsByCoords PropCells { get; private set; } = new();
+    public PropsByCoords Props { get; private set; } = new();
 
-    public event Action<Prop, Vector2I> HostPropPlaced;
-    public event Action<Prop, Vector2I> HostPropDestroyed;
+    public event Action<ActiveProp, Vector2I> HostPropPlaced;
+    public event Action<ActiveProp, Vector2I> HostPropDestroyed;
 
     public override void _Ready() {
-        PropCells = new Dictionary<Vector2I, Prop>();
         if (_world.IsHost) {
-            Dictionary<ushort, Dictionary<int, Array>> props =
-                (Dictionary<ushort, Dictionary<int, Array>>)_world.WorldData["props"];
-            foreach ((ushort itemId, Dictionary<int, Array> xDict) in props) {
+            ColumnByXByBlockId props =
+                (ColumnByXByBlockId)_world.WorldData["props"];
+            foreach ((ushort itemId, ColumnByX xDict) in props) {
                 Item item = _world.ItemIdBimap.GetItem(itemId);
-                foreach ((int x, Array yArray) in xDict) {
+                foreach ((int x, Array<int> yArray) in xDict) {
                     foreach (int y in yArray) {
                         Vector2I coords = new(x, y);
-                        Prop prop = Prop.Create(item, coords);
-                        AddProp(prop, coords);
+                        AddProp(item, coords);
                     }
                 }
             }
@@ -41,7 +44,7 @@ public partial class PropManager : Node {
         int senderId = Multiplayer.GetRemoteSenderId();
 
         Array<Dictionary> propData = new();
-        foreach ((Vector2I cell, Prop prop) in Props) {
+        foreach ((Vector2I cell, ActiveProp prop) in Props) {
             int id = _world.ItemIdBimap.GetId(prop.Item);
             Dictionary propDict = new() {
                 { "coords", cell },
@@ -60,8 +63,7 @@ public partial class PropManager : Node {
             ushort itemId = (ushort)propDict["id"];
             Vector2I coords = (Vector2I)propDict["coords"];
             Item item = _world.ItemIdBimap.GetItem(itemId);
-            Prop prop = Prop.Create(item, coords);
-            AddProp(prop, coords);
+            AddProp(item, coords);
         }
     }
 
@@ -75,9 +77,8 @@ public partial class PropManager : Node {
     }
 
     private void OnHostPlaceProp(Item item, Vector2I coords) {
-        Prop prop = Prop.Create(item, coords);
-        AddProp(prop, coords);
-        HostPropPlaced?.Invoke(prop, coords);
+        ActiveProp activeProp = AddProp(item, coords);
+        HostPropPlaced?.Invoke(activeProp, coords);
         ushort itemId = _world.ItemIdBimap.GetId(item);
         Rpc(nameof(RpcClientsPlaceProp), itemId, coords);
     }
@@ -85,14 +86,13 @@ public partial class PropManager : Node {
     [Rpc]
     private void RpcClientsPlaceProp(ushort itemId, Vector2I coords) {
         Item item = _world.ItemIdBimap.GetItem(itemId);
-        Prop prop = Prop.Create(item, coords);
-        AddProp(prop, coords);
+        AddProp(item, coords);
     }
 
     private void OnHostGatherProp(Vector2I coords, float damage) {
-        Prop prop = PropCells[coords];
+        ActiveProp activeProp = PropCells[coords];
         Rpc(nameof(RpcClientsGatherProp), coords);
-        HostPropDestroyed?.Invoke(prop, coords);
+        HostPropDestroyed?.Invoke(activeProp, coords);
     }
 
     [Rpc(CallLocal = true)]
@@ -100,22 +100,30 @@ public partial class PropManager : Node {
         RemoveProp(coords);
     }
 
-    private void AddProp(Prop prop, Vector2I coords) {
-        foreach (Vector2I cell in prop.Cells) {
-            PropCells[cell] = prop;
+    private ActiveProp AddProp(Item item, Vector2I coords) {
+        ActiveProp activeProp = ActiveProp.Create(item, coords);
+
+        foreach (Vector2I cell in activeProp.Cells) {
+            PropCells[cell] = activeProp;
         }
 
-        Props[coords] = prop;
-        AddChild(prop);
+        Props[coords] = activeProp;
+        ItemProp itemProp = item.GetProperty<ItemProp>();
+        foreach (PropProperty propProperty in itemProp.Properties) {
+            propProperty.Apply(activeProp, _world);
+        }
+
+        AddChild(activeProp);
+        return activeProp;
     }
 
     private void RemoveProp(Vector2I coords) {
-        Prop prop = PropCells[coords];
-        foreach (Vector2I cell in prop.Cells) {
+        ActiveProp activeProp = PropCells[coords];
+        foreach (Vector2I cell in activeProp.Cells) {
             PropCells.Remove(cell);
         }
 
-        Props.Remove(prop.Anchor);
-        prop.QueueFree();
+        Props.Remove(activeProp.Anchor);
+        activeProp.QueueFree();
     }
 }

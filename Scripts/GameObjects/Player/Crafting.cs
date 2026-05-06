@@ -8,14 +8,13 @@ public sealed partial class Crafting : Node {
     [Export] private Area2D _craftingArea;
     [Export] private Player _player;
     private Recipe _selectedRecipe;
-    private Dictionary<Prop, CraftingStationType> _nearbyCraftingStations = new();
-    private Array<CraftingStationType> _nearbyStationTypes = new();
+    private Dictionary<Vector2I, StationType> _nearbyStations = new();
 
     private Dictionary<string, Item> _selectedIngredients = new();
     public event Action<StackedItems> SelectedIngredientsChanged;
     public event CraftEventHandler HostItemCrafted;
-    public event Action<CraftingStationType> AddedNewStation;
-    public event Action<CraftingStationType> RemovedStation;
+    public event Action<StationType> AddedNewStation;
+    public event Action<StationType> RemovedStation;
 
     public delegate void CraftEventHandler(
         StackedItems result, Array<StackedItems> ingredients);
@@ -49,28 +48,19 @@ public sealed partial class Crafting : Node {
         for (int x = playerCoords.X - CraftRange; x <= playerCoords.X + CraftRange; x++) {
             for (int y = playerCoords.Y - CraftRange; y <= playerCoords.Y + CraftRange; y++) {
                 Vector2I coords = new(x, y);
-                if (!_player.World.IsInBounds(coords)) continue;
-                if (!_player.World.PropManager.Props.TryGetValue(coords, out Prop prop)) continue;
 
-                if (!prop.Item.GetProperty<ItemProp>().HasProperty<PropStation>()) continue;
-                HostAddCraftingStation(prop);
+                if (!_player.World.StationManager.Stations
+                        .TryGetValue(coords, out StationType type)) continue;
+                HostAddCraftingStation(coords, type);
             }
         }
     }
 
     private void OnMovedCellHost(Vector2I newCoords, Vector2I oldCoords) {
-        // Remove stations that are no longer in range
-        foreach (Prop prop in _nearbyCraftingStations.Keys) {
-            bool inRange = false;
-            foreach (Vector2I propCell in prop.Cells) {
-                if (_player.World.IsInOrthogonalRange(newCoords, propCell, CraftRange)) {
-                    inRange = true;
-                    break;
-                }
-            }
-
-            if (!inRange) {
-                HostRemoveCraftingStation(prop);
+        foreach (Vector2I coords in _nearbyStations.Keys) {
+            if (_player.World.IsInOrthogonalRange(coords, newCoords, CraftRange)) {
+                StationType type = _nearbyStations[coords];
+                HostRemoveCraftingStation(coords, type);
             }
         }
 
@@ -78,35 +68,28 @@ public sealed partial class Crafting : Node {
         Array<Vector2I> newCells =
             _player.World.GetNewCellsInRange(newCoords, oldCoords, CraftRange);
         foreach (Vector2I coords in newCells) {
-            if (!_player.World.PropManager.PropCells
-                    .TryGetValue(coords, out Prop prop)) continue;
-            if (!prop.Item.GetProperty<ItemProp>().HasProperty<PropStation>()) continue;
-            if (_nearbyCraftingStations.ContainsKey(prop)) continue;
-            HostAddCraftingStation(prop);
+            if (!_player.World.StationManager.Stations
+                    .TryGetValue(coords, out StationType type)) continue;
+            HostAddCraftingStation(coords, type);
         }
     }
 
-    public void HostAddCraftingStation(Prop prop) {
-        PropStation station =
-            prop.Item.GetProperty<ItemProp>().GetProperty<PropStation>();
-        _nearbyCraftingStations[prop] = station.Type;
-        if (!_nearbyStationTypes.Contains(station.Type)) {
-            RpcId(_player.PeerId,
-                nameof(RpcLocalAddCraftingStation),
-                (int)station.Type);
+    public void HostAddCraftingStation(Vector2I coords, StationType type) {
+        _nearbyStations[coords] = type;
+        if (!_nearbyStations.Values.Contains(type)) {
+            RpcId(_player.PeerId, nameof(RpcLocalAddCraftingStation),
+                (int)type);
         }
     }
 
     [Rpc(CallLocal = true)]
-    private void RpcLocalAddCraftingStation(CraftingStationType type) {
-        _nearbyStationTypes.Add(type);
+    private void RpcLocalAddCraftingStation(StationType type) {
         AddedNewStation?.Invoke(type);
     }
 
-    public void HostRemoveCraftingStation(Prop prop) {
-        CraftingStationType type = _nearbyCraftingStations[prop];
-        _nearbyCraftingStations.Remove(prop);
-        if (!_nearbyCraftingStations.Values.Contains(type)) {
+    public void HostRemoveCraftingStation(Vector2I coords, StationType type) {
+        _nearbyStations.Remove(coords);
+        if (!_nearbyStations.Values.Contains(type)) {
             RpcId(_player.PeerId,
                 nameof(RpcLocalRemoveCraftingStation),
                 (int)type);
@@ -114,8 +97,7 @@ public sealed partial class Crafting : Node {
     }
 
     [Rpc(CallLocal = true)]
-    private void RpcLocalRemoveCraftingStation(CraftingStationType type) {
-        _nearbyStationTypes.Remove(type);
+    private void RpcLocalRemoveCraftingStation(StationType type) {
         RemovedStation?.Invoke(type);
     }
 

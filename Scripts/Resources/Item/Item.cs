@@ -10,7 +10,8 @@ public sealed partial class Item : Resource {
     [Export] public float InventorySpace { get; private set; }
     [Export] public bool IsStackable { get; private set; } = true;
     [Export] public Texture2D IconTexture { get; private set; }
-    [Export] private Array<ItemProperty> _itemProperties = new();
+
+    [Export] private Array<ItemProperty> _properties = new();
 
     public static bool AreEqual(Item a, Item b) {
         if (a.ResourcePath != "" || b.ResourcePath != "") {
@@ -36,7 +37,7 @@ public sealed partial class Item : Resource {
     }
 
     public bool TryGetProperty<T>(out T property) where T : ItemProperty {
-        foreach (ItemProperty itemProperty in _itemProperties) {
+        foreach (ItemProperty itemProperty in _properties) {
             if (itemProperty is not T castedProperty) continue;
             property = castedProperty;
             return true;
@@ -62,7 +63,7 @@ public sealed partial class Item : Resource {
 
     public Dictionary<string, Dictionary> GetTooltipAttributes() {
         Dictionary<string, Dictionary> newDictionary = new();
-        foreach (ItemProperty itemProperty in _itemProperties) {
+        foreach (ItemProperty itemProperty in _properties) {
             Dictionary tooltipAttributes = itemProperty.GetTooltipAttributes();
             newDictionary.Add(tooltipAttributes["PropertyName"].ToString(), tooltipAttributes);
         }
@@ -97,7 +98,7 @@ public sealed partial class Item : Resource {
             IconTexture = iconTexture,
             InventorySpace = inventorySpace,
             IsStackable = isStackable,
-            _itemProperties = itemProperties ?? new Array<ItemProperty>()
+            _properties = itemProperties ?? new Array<ItemProperty>()
         };
     }
 }

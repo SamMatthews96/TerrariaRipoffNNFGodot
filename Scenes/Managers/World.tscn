@@ -11,8 +11,9 @@
 [ext_resource type="Script" uid="uid://cheg1o8gv8pno" path="res://Scripts/Managers/PropManager.cs" id="9_oby1v"]
 [ext_resource type="Script" uid="uid://komhov4gde6p" path="res://Scripts/Managers/BlockManager.cs" id="10_5fdyc"]
 [ext_resource type="Script" uid="uid://micyrdd8cmes" path="res://Scripts/Managers/ItemIdBimap.cs" id="11_t2s1x"]
+[ext_resource type="Script" uid="uid://vaflusj5a4bn" path="res://Scripts/Managers/StationManager.cs" id="12_mm7vv"]
 
-[node name="World" type="Node2D" unique_id=318249153 node_paths=PackedStringArray("PickupManager", "PlayerManager", "PropManager", "InputManager", "Interface", "BlockManager", "ItemIdBimap")]
+[node name="World" type="Node2D" unique_id=318249153 node_paths=PackedStringArray("PickupManager", "PlayerManager", "PropManager", "InputManager", "Interface", "BlockManager", "ItemIdBimap", "StationManager")]
 script = ExtResource("1_qmgnr")
 PickupManager = NodePath("PickupManager")
 PlayerManager = NodePath("PlayerManager")
@@ -21,6 +22,7 @@ InputManager = NodePath("InputManager")
 Interface = NodePath("GameInterface")
 BlockManager = NodePath("BlockManager")
 ItemIdBimap = NodePath("ItemIdBimap")
+StationManager = NodePath("StationManager")
 
 [node name="ItemIdBimap" type="Node" parent="." unique_id=482032795 node_paths=PackedStringArray("_world")]
 script = ExtResource("11_t2s1x")
@@ -57,4 +59,8 @@ _world = NodePath("..")
 
 [node name="BlockManager" type="Node2D" parent="." unique_id=1172766626 node_paths=PackedStringArray("_world")]
 script = ExtResource("10_5fdyc")
+_world = NodePath("..")
+
+[node name="StationManager" type="Node" parent="." unique_id=674416704 node_paths=PackedStringArray("_world")]
+script = ExtResource("12_mm7vv")
 _world = NodePath("..")

@@ -3,12 +3,19 @@
 [ext_resource type="Script" uid="uid://bavg183x82165" path="res://Scripts/Resources/Item/Item.cs" id="1_ga8wg"]
 [ext_resource type="Texture2D" uid="uid://dh51pmlsc06fg" path="res://Assets/Images/ItemIcons/log2.png" id="1_qklcq"]
 [ext_resource type="Script" uid="uid://jsfs7spy0f5g" path="res://Scripts/Resources/Item/ItemProperty.cs" id="2_qklcq"]
-[ext_resource type="Resource" uid="uid://bolojhwxf18dq" path="res://Resources/Items/ItemIngredient/Wood.tres" id="3_qklcq"]
+[ext_resource type="Script" uid="uid://dp8bgot75ojla" path="res://Scripts/Resources/Item/ItemIngredient.cs" id="3_qklcq"]
+
+[sub_resource type="Resource" id="Resource_7yecp"]
+script = ExtResource("3_qklcq")
+IngredientType = 2
+Quality = 1.0
+Name = "Wood"
+metadata/_custom_type_script = "uid://dp8bgot75ojla"
 
 [resource]
 script = ExtResource("1_ga8wg")
 Name = "Wood"
 InventorySpace = 1.0
 IconTexture = ExtResource("1_qklcq")
-_itemProperties = Array[ExtResource("2_qklcq")]([ExtResource("3_qklcq")])
+_properties = Array[ExtResource("2_qklcq")]([SubResource("Resource_7yecp")])
 metadata/_custom_type_script = "uid://bavg183x82165"

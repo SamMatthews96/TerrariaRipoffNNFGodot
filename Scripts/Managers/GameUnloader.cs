@@ -56,7 +56,7 @@ public partial class GameUnloader : Node {
 
     private Dictionary<string, Dictionary> SerializeBlocks(Block?[,] data) {
         Dictionary<string, Dictionary> groupedByItemId = new();
-        int itemCount = _world.ItemIdBimap.getItemCount();
+        int itemCount = _world.ItemIdBimap.GetItemCount();
         for (int i = 0; i < itemCount; i++) {
             string idStr = i.ToString();
             groupedByItemId[idStr] = new Dictionary();
@@ -88,7 +88,7 @@ public partial class GameUnloader : Node {
     private Dictionary<string, Dictionary> SerializeProps() {
         Dictionary<string, Dictionary> groupedByItemId = new();
 
-        foreach ((Vector2I coords, Prop prop) in _world.PropManager.Props) {
+        foreach ((Vector2I coords, ActiveProp prop) in _world.PropManager.Props) {
             Item item = prop.Item;
             string itemId = _world.ItemIdBimap.GetId(item).ToString();
 

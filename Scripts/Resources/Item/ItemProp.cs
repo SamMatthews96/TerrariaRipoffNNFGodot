@@ -10,14 +10,14 @@ public partial class ItemProp : ItemProperty {
     [Export] public Texture2D Texture { get; private set; }
     [Export] public Vector2I Dimensions { get; private set; }
     [Export] public bool DoesDropSelf { get; private set; } = true;
-    [Export] private Array<PropProperty> _props = new();
+    [Export] public Array<PropProperty> Properties = new();
 
     public override Dictionary GetTooltipAttributes() {
         return new Dictionary();
     }
 
     public T GetProperty<T>() where T : PropProperty {
-        foreach (PropProperty prop in _props) {
+        foreach (PropProperty prop in Properties) {
             if (prop is T typedProp) {
                 return typedProp;
             }
@@ -28,7 +28,7 @@ public partial class ItemProp : ItemProperty {
     }
 
     public bool TryGetProperty<T>(out T property) where T : PropProperty {
-        foreach (PropProperty prop in _props) {
+        foreach (PropProperty prop in Properties) {
             if (prop is not T typedProp) continue;
             property = typedProp;
             return true;
@@ -39,16 +39,16 @@ public partial class ItemProp : ItemProperty {
     }
 
     public bool HasProperty<T>() where T : PropProperty {
-        return _props.OfType<T>().Any();
+        return Properties.OfType<T>().Any();
     }
 
     public ItemProp(
         Texture2D texture, Vector2I dimensions,
-        Array<PropProperty> props = null
+        Array<PropProperty> properties = null
     ) {
         Texture = texture;
         Dimensions = dimensions;
-        _props = props;
+        Properties = properties;
     }
 
     public ItemProp() { }

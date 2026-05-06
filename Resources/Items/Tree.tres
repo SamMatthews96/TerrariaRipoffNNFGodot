@@ -9,17 +9,17 @@
 [ext_resource type="Resource" uid="uid://be8tbdvrre8v8" path="res://Resources/Items/Wood.tres" id="4_oiofc"]
 [ext_resource type="Script" uid="uid://clqy47oasxm2j" path="res://Scripts/Resources/Item/Prop/PropDrop.cs" id="5_4fprc"]
 
-[sub_resource type="Resource" id="Resource_oiofc"]
+[sub_resource type="Resource" id="Resource_dg00r"]
 script = ExtResource("5_4fprc")
 Item = ExtResource("4_oiofc")
 metadata/_custom_type_script = "uid://clqy47oasxm2j"
 
-[sub_resource type="Resource" id="Resource_dg00r"]
+[sub_resource type="Resource" id="Resource_oiofc"]
 script = ExtResource("4_hsnvs")
 Texture = ExtResource("3_3c1ot")
 Dimensions = Vector2i(1, 1)
 DoesDropSelf = false
-_props = Array[ExtResource("3_dg00r")]([SubResource("Resource_oiofc")])
+Properties = Array[ExtResource("3_dg00r")]([SubResource("Resource_dg00r")])
 metadata/_custom_type_script = "uid://dd1h6wlqqfbik"
 
 [resource]
@@ -27,5 +27,5 @@ script = ExtResource("2_apad7")
 Name = "Tree"
 IsStackable = false
 IconTexture = ExtResource("1_chmlx")
-_itemProperties = Array[ExtResource("1_8qrc5")]([SubResource("Resource_dg00r")])
+_properties = Array[ExtResource("1_8qrc5")]([SubResource("Resource_oiofc")])
 metadata/_custom_type_script = "uid://bavg183x82165"

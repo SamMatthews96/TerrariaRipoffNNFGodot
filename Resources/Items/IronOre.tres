@@ -3,18 +3,25 @@
 [ext_resource type="Texture2D" uid="uid://dyh5du11bl005" path="res://Assets/Images/ItemIcons/ironOre.png" id="1_3hk8f"]
 [ext_resource type="Script" uid="uid://bavg183x82165" path="res://Scripts/Resources/Item/Item.cs" id="1_httpj"]
 [ext_resource type="Script" uid="uid://jsfs7spy0f5g" path="res://Scripts/Resources/Item/ItemProperty.cs" id="2_t6mi6"]
-[ext_resource type="Resource" uid="uid://cif2w0im58ikd" path="res://Resources/Items/ItemIngredient/IronOre.tres" id="3_t6mi6"]
+[ext_resource type="Script" uid="uid://dp8bgot75ojla" path="res://Scripts/Resources/Item/ItemIngredient.cs" id="4_t6mi6"]
 [ext_resource type="Script" uid="uid://ctwdtjjrpbdwg" path="res://Scripts/Resources/Item/ItemBlock.cs" id="4_xtae4"]
 
-[sub_resource type="Resource" id="Resource_t6mi6"]
+[sub_resource type="Resource" id="Resource_3hk8f"]
 script = ExtResource("4_xtae4")
 Texture = ExtResource("1_3hk8f")
 metadata/_custom_type_script = "uid://ctwdtjjrpbdwg"
+
+[sub_resource type="Resource" id="Resource_hwcvf"]
+script = ExtResource("4_t6mi6")
+IngredientType = 1
+Quality = 1.0
+Name = "Iron Ore"
+metadata/_custom_type_script = "uid://dp8bgot75ojla"
 
 [resource]
 script = ExtResource("1_httpj")
 Name = "Iron Ore"
 InventorySpace = 2.0
 IconTexture = ExtResource("1_3hk8f")
-_itemProperties = Array[ExtResource("2_t6mi6")]([ExtResource("3_t6mi6"), SubResource("Resource_t6mi6")])
+_properties = Array[ExtResource("2_t6mi6")]([SubResource("Resource_3hk8f"), SubResource("Resource_hwcvf")])
 metadata/_custom_type_script = "uid://bavg183x82165"
