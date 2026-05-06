@@ -92,7 +92,7 @@ public partial class PropManager : Node {
     private void OnHostGatherProp(Vector2I coords, float damage) {
         ActiveProp activeProp = PropCells[coords];
         Rpc(nameof(RpcClientsGatherProp), coords);
-        HostPropDestroyed?.Invoke(activeProp, coords);
+        HostPropDestroyed?.Invoke(activeProp, activeProp.Anchor);
     }
 
     [Rpc(CallLocal = true)]

@@ -58,10 +58,10 @@ public sealed partial class Crafting : Node {
 
     private void OnMovedCellHost(Vector2I newCoords, Vector2I oldCoords) {
         foreach (Vector2I coords in _nearbyStations.Keys) {
-            if (_player.World.IsInOrthogonalRange(coords, newCoords, CraftRange)) {
-                StationType type = _nearbyStations[coords];
-                HostRemoveCraftingStation(coords, type);
-            }
+            if (_player.World.IsInOrthogonalRange(
+                    coords, newCoords, CraftRange)) continue;
+            StationType type = _nearbyStations[coords];
+            HostRemoveCraftingStation(coords, type);
         }
 
         // Add new stations that are now in range
@@ -75,11 +75,11 @@ public sealed partial class Crafting : Node {
     }
 
     public void HostAddCraftingStation(Vector2I coords, StationType type) {
-        _nearbyStations[coords] = type;
         if (!_nearbyStations.Values.Contains(type)) {
             RpcId(_player.PeerId, nameof(RpcLocalAddCraftingStation),
                 (int)type);
         }
+        _nearbyStations[coords] = type;
     }
 
     [Rpc(CallLocal = true)]
