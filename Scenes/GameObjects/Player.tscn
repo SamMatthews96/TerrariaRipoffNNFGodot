@@ -39,6 +39,7 @@ replication_config = SubResource("SceneReplicationConfig_3bb8o")
 public_visibility = false
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=936925100]
+z_index = 10
 position = Vector2(0, -46)
 scale = Vector2(0.335, 0.72)
 texture = ExtResource("2_5yc1a")

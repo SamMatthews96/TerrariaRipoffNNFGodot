@@ -2,7 +2,7 @@
 using Godot;
 using Godot.Collections;
 
-namespace TerrariaRipoffNNF.Scripts.Managers.GameObjectManagers;
+namespace TerrariaRipoffNNF;
 
 public partial class TriggerManager : Node {
     [Export] private World _world;

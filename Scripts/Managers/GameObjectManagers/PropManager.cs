@@ -1,7 +1,6 @@
 ﻿using System;
 using Godot;
 using Godot.Collections;
-using Array = Godot.Collections.Array;
 
 namespace TerrariaRipoffNNF;
 

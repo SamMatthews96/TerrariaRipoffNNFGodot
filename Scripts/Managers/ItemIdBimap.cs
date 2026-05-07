@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Text;
-using System.Threading.Tasks;
 using Godot;
 using Godot.Collections;
-using Array = Godot.Collections.Array;
 
 namespace TerrariaRipoffNNF.TestScenes;
 

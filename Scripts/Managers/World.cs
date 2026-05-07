@@ -1,11 +1,8 @@
 using System;
-using System.Collections.Generic;
 using Godot;
 using Godot.Collections;
 using TerrariaRipoffNNF.Scripts.Managers;
-using TerrariaRipoffNNF.Scripts.Managers.GameObjectManagers;
 using TerrariaRipoffNNF.TestScenes;
-using Array = Godot.Collections.Array;
 
 namespace TerrariaRipoffNNF;
 

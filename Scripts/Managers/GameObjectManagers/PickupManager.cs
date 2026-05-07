@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using Godot;
 using Godot.Collections;
-using TerrariaRipoffNNF.Scripts.GameObjects;
-using Array = Godot.Collections.Array;
 
 namespace TerrariaRipoffNNF;
 
