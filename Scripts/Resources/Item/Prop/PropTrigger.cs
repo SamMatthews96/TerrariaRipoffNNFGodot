@@ -3,11 +3,11 @@
 namespace TerrariaRipoffNNF;
 
 [GlobalClass]
-public partial class PropButton : PropProperty {
+public partial class PropTrigger : PropProperty {
     [Export] private PackedScene _packedScene;
     
-    public static PropButton Create(PackedScene packedScene) {
-        return new PropButton {
+    public static PropTrigger Create(PackedScene packedScene) {
+        return new PropTrigger {
             _packedScene = packedScene
         };
     }

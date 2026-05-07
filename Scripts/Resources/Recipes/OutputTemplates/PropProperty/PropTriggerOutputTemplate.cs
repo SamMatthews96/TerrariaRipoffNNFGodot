@@ -7,6 +7,6 @@ namespace TerrariaRipoffNNF;
 public partial class PropTriggerOutputTemplate : PropPropertyOutputTemplate {
     [Export] public PackedScene TriggerScene { get; private set; }
     public override PropProperty Build(Dictionary<string, Item> suppliedIngredients) {
-        return PropButton.Create(TriggerScene);
+        return PropTrigger.Create(TriggerScene);
     }
 }
