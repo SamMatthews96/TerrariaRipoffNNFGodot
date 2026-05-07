@@ -3,16 +3,15 @@
 namespace TerrariaRipoffNNF;
 
 [GlobalClass]
-public partial class PropButton : PropProperty {
+public partial class PropActor : PropProperty {
     [Export] private PackedScene _packedScene;
-    
-    public static PropButton Create(PackedScene packedScene) {
-        return new PropButton {
+    public static PropActor Create(PackedScene packedScene) {
+        return new PropActor {
             _packedScene = packedScene
         };
     }
-    
+
     public override void Apply(ActiveProp prop, World world) {
-        world.TriggerManager.RegisterTrigger(prop, _packedScene);
+        world.TriggerManager.RegisterActor(prop, _packedScene);
     }
 }

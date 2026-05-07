@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://d3xtion5mlbvk"]
+
+[ext_resource type="Script" uid="uid://db6y3imutw6pv" path="res://Scripts/GameObjects/WorldObject/ActivePrinter.cs" id="1_dx1ou"]
+
+[node name="ActivePrinter" type="Node2D" unique_id=1654591962]
+script = ExtResource("1_dx1ou")

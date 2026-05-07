@@ -17,6 +17,8 @@ public partial class InputManager : Node2D {
     private const string Escape = "escape";
     private const string ToggleDevTools = "toggleDevTools";
     
+    private const string Test = "test";
+    
     public event Action<Vector2> LeftMouseDown;
     public event Action<Vector2> LeftMouseUp;
     public event Action<Vector2> RightMouseDown;
@@ -28,6 +30,7 @@ public partial class InputManager : Node2D {
     public event Action<PlayerActionType> PlayerActionModeChanged;
     public event Action EscapePressed;
     public event Action ToggleDevToolsPressed;
+    public event Action TestPressed;
     
     public override void _UnhandledInput(InputEvent e) {
         switch (e) {
@@ -109,6 +112,10 @@ public partial class InputManager : Node2D {
         
         if (Input.IsActionJustPressed(ToggleDevTools)) {
             ToggleDevToolsPressed?.Invoke();
+        }
+
+        if (Input.IsActionJustPressed(Test)) {
+            TestPressed?.Invoke();
         }
         
         

@@ -67,5 +67,6 @@ _world = NodePath("..")
 script = ExtResource("12_mm7vv")
 _world = NodePath("..")
 
-[node name="TriggerManager" type="Node" parent="." unique_id=504642433]
+[node name="TriggerManager" type="Node" parent="." unique_id=504642433 node_paths=PackedStringArray("_world")]
 script = ExtResource("13_f1qag")
+_world = NodePath("..")
