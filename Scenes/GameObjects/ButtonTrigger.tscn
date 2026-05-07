@@ -1,21 +1,22 @@
 [gd_scene format=3 uid="uid://cin87hb2nngwu"]
 
 [ext_resource type="Script" uid="uid://bg8ek6axdyrg4" path="res://Scripts/GameObjects/WorldObject/ActiveButton.cs" id="1_5inu7"]
-[ext_resource type="Texture2D" uid="uid://l163n0iti3i2" path="res://Assets/Images/icon.svg" id="1_y83wm"]
+[ext_resource type="Texture2D" uid="uid://wrf00jfy174v" path="res://Assets/Images/woodPlaceholder.png" id="2_5inu7"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5inu7"]
-size = Vector2(30.5, 32.5)
+size = Vector2(31.5, 32.5)
 
 [node name="ButtonTrigger" type="StaticBody2D" unique_id=1389275173]
 input_pickable = true
 script = ExtResource("1_5inu7")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1965544891]
-position = Vector2(15.75, 15.75)
+position = Vector2(16, 16)
 shape = SubResource("RectangleShape2D_5inu7")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1055952853]
+visible = false
 modulate = Color(0, 0, 0, 1)
 position = Vector2(16, 16)
 scale = Vector2(0.25, 0.25)
-texture = ExtResource("1_y83wm")
+texture = ExtResource("2_5inu7")

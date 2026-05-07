@@ -47,10 +47,9 @@ public partial class ItemIdBimap : Node {
     }
 
     public bool AreItemsSame(Item item1, Item item2) {
-        GD.Print("");
         string item1String = GetItemString(item1);
         string item2String = GetItemString(item2);
-        return GetItemString(item1) == GetItemString(item2);
+        return item1String == item2String;
     }
 
     public int GetItemCount() {

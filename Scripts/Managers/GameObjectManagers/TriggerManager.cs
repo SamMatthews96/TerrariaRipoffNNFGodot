@@ -8,6 +8,7 @@ public partial class TriggerManager : Node {
 
     public void Register(ActiveProp prop, PackedScene scene) {
         ActiveButton button = scene.Instantiate<ActiveButton>();
+        button.Scale = prop.Item.GetProperty<ItemProp>().Dimensions;
         prop.AddChild(button);
         button.Triggered += Listener;
         button.TreeExiting += () => {
