@@ -4,9 +4,15 @@ namespace TerrariaRipoffNNF;
 
 [GlobalClass]
 public partial class PropButton : PropProperty {
-    // create an element that can be clicked
-    // clicking it sends an event.
-    // TriggerManager can listen for all trigger events
+    [Export] private PackedScene _packedScene;
     
+    public static PropButton Create(PackedScene packedScene) {
+        return new PropButton {
+            _packedScene = packedScene
+        };
+    }
     
+    public override void Apply(ActiveProp prop, World world) {
+        world.TriggerManager.Register(prop, _packedScene);
+    }
 }

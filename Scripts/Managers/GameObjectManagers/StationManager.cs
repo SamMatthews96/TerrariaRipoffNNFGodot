@@ -11,7 +11,7 @@ public partial class StationManager : Node {
     public event Action<Vector2I, StationType> StationCreated;
     public event Action<Vector2I, StationType> StationDestroyed;
     
-    public void RegisterStation(StationType type, Vector2I coords) {
+    public void Register(StationType type, Vector2I coords) {
         Stations.Add(coords, type);
         StationCreated?.Invoke(coords, type);
     }

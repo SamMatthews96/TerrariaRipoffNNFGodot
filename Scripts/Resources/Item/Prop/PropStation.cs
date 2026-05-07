@@ -13,7 +13,7 @@ public partial class PropStation : PropProperty {
     }
 
     public override void Apply(ActiveProp prop, World world) {
-        world.StationManager.RegisterStation(Type, prop.Anchor);
+        world.StationManager.Register(Type, prop.Anchor);
     }
     
 }

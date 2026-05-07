@@ -51,7 +51,6 @@ metadata/_custom_type_script = "uid://d2pqak21epjnt"
 script = ExtResource("1_kse5l")
 Id = 1
 RecipeName = "Furnace"
-RequiredCraftingStation = 1
 RecipeIngredients = Dictionary[String, Object]({
 "stone": SubResource("Resource_xbt6y")
 })

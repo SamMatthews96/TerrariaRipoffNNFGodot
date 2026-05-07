@@ -15,7 +15,6 @@ public partial class PropManager : Node {
     public PropsByCoords PropCells { get; private set; } = new();
     public PropsByCoords Props { get; private set; } = new();
 
-    public event Action<ActiveProp, Vector2I> HostPropPlaced;
     public event Action<ActiveProp, Vector2I> HostPropDestroyed;
 
     public override void _Ready() {
@@ -77,8 +76,7 @@ public partial class PropManager : Node {
     }
 
     private void OnHostPlaceProp(Item item, Vector2I coords) {
-        ActiveProp activeProp = AddProp(item, coords);
-        HostPropPlaced?.Invoke(activeProp, coords);
+        AddProp(item, coords);
         ushort itemId = _world.ItemIdBimap.GetId(item);
         Rpc(nameof(RpcClientsPlaceProp), itemId, coords);
     }
