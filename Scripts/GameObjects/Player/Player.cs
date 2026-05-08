@@ -76,14 +76,13 @@ public partial class Player : CharacterBody2D {
 
         World.InputManager.HorizontalInputChanged += OnHorizontalInputChanged;
         World.InputManager.JumpPressed += OnJumpPressed;
-        World.Interface.GameMenu.ExitGameButtonDown += OnExitClicked;
 
         _characterName = PlayerData["Name"].ToString();
 
         TreeExiting += () => {
             World.InputManager.HorizontalInputChanged -= OnHorizontalInputChanged;
             World.InputManager.JumpPressed -= OnJumpPressed;
-            World.Interface.GameMenu.ExitGameButtonDown -= OnExitClicked;
+            OnExitTreeLocal();
         };
     }
 
@@ -91,7 +90,7 @@ public partial class Player : CharacterBody2D {
         _positionSynchronizer.SetVisibilityFor(peerId, true);
     }
 
-    private void OnExitClicked() {
+    private void OnExitTreeLocal() {
         _camera.Enabled = false;
         Dictionary playerData = new() {
             { "Name", _characterName },

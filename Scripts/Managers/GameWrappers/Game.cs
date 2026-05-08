@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Godot;
 using Godot.Collections;
 
@@ -51,6 +52,15 @@ public partial class Game : Node {
         _playerData = FileManager.LoadPlayer(playerData);
         _multiplayerClient = new MultiplayerClient();
         AddChild(_multiplayerClient);
+        Multiplayer.ServerDisconnected += OnServerDisconnected;
+        TreeExiting += () => {
+            Multiplayer.ServerDisconnected -= OnServerDisconnected;
+        };
+    }
+
+    private void OnServerDisconnected() {
+        ExitGameStarted?.Invoke();
+        ExitGameFinished?.Invoke();
     }
 
     [Rpc]
