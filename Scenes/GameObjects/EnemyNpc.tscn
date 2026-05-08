@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://b2jynpjxk8k06"]
+[gd_scene format=3 uid="uid://b2jynpjxk8k06"]
 
 [ext_resource type="Texture2D" uid="uid://3mp4qibtswyy" path="res://Assets/Images/ItemIcons/spearPlaceholder.png" id="1_1knae"]
 [ext_resource type="Script" uid="uid://grnulx3obxgd" path="res://Scripts/GameObjects/EnemyNpc/EnemyNpc.cs" id="1_gti2g"]
@@ -6,22 +6,32 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_gti2g"]
 size = Vector2(38, 38)
 
-[node name="EnemyNpc" type="CharacterBody2D" node_paths=PackedStringArray("_hitbox")]
+[node name="EnemyNpc" type="CharacterBody2D" unique_id=619522432 node_paths=PackedStringArray("_hitbox", "_healthBar")]
 collision_layer = 32
 collision_mask = 18
 script = ExtResource("1_gti2g")
 _hitbox = NodePath("HitBox")
+_healthBar = NodePath("")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=420222866]
 shape = SubResource("RectangleShape2D_gti2g")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1105327626]
 scale = Vector2(0.3, 0.3)
 texture = ExtResource("1_1knae")
 
-[node name="HitBox" type="Area2D" parent="."]
+[node name="HitBox" type="Area2D" parent="." unique_id=1860703703]
 collision_layer = 32
 collision_mask = 16
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="HitBox"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitBox" unique_id=828734332]
 shape = SubResource("RectangleShape2D_gti2g")
+
+[node name="Node2D" type="Node2D" parent="." unique_id=1051700965]
+
+[node name="ColorRect" type="ColorRect" parent="Node2D" unique_id=1602005771]
+offset_left = -23.0
+offset_top = -29.0
+offset_right = 23.0
+offset_bottom = -24.0
+color = Color(0.19607843, 0.70980394, 0.19215687, 1)

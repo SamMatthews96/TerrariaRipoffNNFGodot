@@ -2,6 +2,7 @@ using System;
 using Godot;
 using Godot.Collections;
 using TerrariaRipoffNNF.Scripts.Managers;
+using TerrariaRipoffNNF.Scripts.Managers.GameObjectManagers;
 using TerrariaRipoffNNF.TestScenes;
 
 namespace TerrariaRipoffNNF;
@@ -20,6 +21,7 @@ public partial class World : Node2D {
     [Export] public ItemIdBimap ItemIdBimap { get; private set; }
     [Export] public StationManager StationManager { get; private set; }
     [Export] public TriggerManager TriggerManager { get; private set; }
+    [Export] public NpcManager NpcManager { get; private set; }
     
     public event Action GameLoaded;
 

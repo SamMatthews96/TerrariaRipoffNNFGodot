@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://ctnpltbig6wvy"]
+
+[ext_resource type="Script" uid="uid://cnixrhcxpanwp" path="res://TestScenes/TestSceneContainer.cs" id="1_2706n"]
+[ext_resource type="PackedScene" uid="uid://b2jynpjxk8k06" path="res://Scenes/GameObjects/EnemyNpc.tscn" id="2_2k61d"]
+
+[node name="Container" type="Node2D" unique_id=1071557955 node_paths=PackedStringArray("_spawnPoint")]
+script = ExtResource("1_2706n")
+_spawnPoint = NodePath("SpawnPoint")
+_npcScene = ExtResource("2_2k61d")
+
+[node name="SpawnPoint" type="Node2D" parent="." unique_id=795904664]
+position = Vector2(152, 170)

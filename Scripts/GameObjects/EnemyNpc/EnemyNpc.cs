@@ -6,6 +6,7 @@ namespace TerrariaRipoffNNF.Scripts.GameObjects.EnemyNpc;
 public partial class EnemyNpc : CharacterBody2D {
     private float _health = 100;
     [Export] private Area2D _hitbox;
+    [Export] private ColorRect _healthBar;
 
     public static EnemyNpc Create(Vector2I spawnCoords) {
         EnemyNpc newEnemyNpc = Data.PackedScenes.TestNpc.Instantiate<EnemyNpc>();
