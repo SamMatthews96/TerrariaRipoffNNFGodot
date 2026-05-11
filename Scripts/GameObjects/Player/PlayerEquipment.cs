@@ -37,11 +37,11 @@ public partial class PlayerEquipment : Node {
 
     private void OnEquipItemClicked(Item item) {
         ItemEquipment itemEquipment = item.GetProperty<ItemEquipment>();
-        switch (itemEquipment.Slot) {
-            case EquipmentSlot.Mining:
+        switch (itemEquipment) {
+            case ItemMining:
                 Pickaxe = item.GetProperty<ItemMining>();
                 break;
-            case EquipmentSlot.Weapon:
+            case ItemWeapon:
                 Weapon = item.GetProperty<ItemWeapon>();
                 break;
         }

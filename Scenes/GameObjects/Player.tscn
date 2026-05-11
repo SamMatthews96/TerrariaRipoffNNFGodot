@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://cn7bp5sib73p6" path="res://Scenes/GameObjects/ActionController.tscn" id="6_q1p12"]
 [ext_resource type="PackedScene" uid="uid://dpvw8x6fjjkkg" path="res://Scenes/GameObjects/Crafting.tscn" id="7_4qtyd"]
 [ext_resource type="Script" uid="uid://b43ui7yk16ekk" path="res://Scripts/GameObjects/Player/PlayerEquipment.cs" id="7_in65p"]
-[ext_resource type="Script" uid="uid://dfb4kfm2jhuiq" path="res://Scripts/Resources/Item/ItemMining.cs" id="9_pqpyq"]
+[ext_resource type="Script" uid="uid://dfb4kfm2jhuiq" path="res://Scripts/Resources/Item/Equipment/ItemMining.cs" id="9_pqpyq"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_3bb8o"]
 properties/0/path = NodePath(".:position")

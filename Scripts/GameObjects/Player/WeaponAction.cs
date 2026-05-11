@@ -17,9 +17,9 @@ public partial class WeaponAction : PlayerAction {
         // listen to weapon changes
         // when weapon changes, set Weapon
 
-        WeaponAttackNode proj = WeaponAttackNode.Create(
-            Player.PlayerEquipment.Weapon, Player, mouseWorldPosition);
-        Player.World.AddChild(proj);
+        // WeaponAttackNode proj = WeaponAttackNode.Create(
+            // Player.PlayerEquipment.Weapon, Player, mouseWorldPosition);
+        // Player.World.AddChild(proj);
         _weaponCooldown.Start();
     }
 

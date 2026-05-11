@@ -55,11 +55,11 @@ public partial class PlayerEquipment : Container {
 
     private void OnItemEquipped(Item item) {
         ItemEquipment equipment = item.GetProperty<ItemEquipment>();
-        switch (equipment.Slot) {
-            case EquipmentSlot.Mining:
+        switch (equipment) {
+            case ItemMining:
                 _pickaxeIcon.TextureNormal = item.IconTexture;
                 break;
-            case EquipmentSlot.Weapon:
+            case ItemWeapon:
                 _weaponIcon.TextureNormal = item.IconTexture;
                 break;
         }

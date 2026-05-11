@@ -23,11 +23,11 @@ public partial class EnemyNpc : CharacterBody2D {
     }
 
     private void OnAreaEntered(Area2D area) {
-        if (area is WeaponAttackNode weaponAttackNode) {
-            _health -= weaponAttackNode.Weapon.Damage;
-            if (_health <= 0) {
-                QueueFree();
-            }
-        }
+        // if (area is WeaponAttackNode weaponAttackNode) {
+        //     _health -= weaponAttackNode.Weapon.Damage;
+        //     if (_health <= 0) {
+        //         QueueFree();
+        //     }
+        // }
     }
 }

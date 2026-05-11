@@ -19,4 +19,7 @@
     <!--Required for GdUnit4-->
     <PackageReference Include="gdUnit4.api" Version="4.2.0-rc*" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Scripts\Resources\Item\Equipment\" />
+  </ItemGroup>
 </Project>

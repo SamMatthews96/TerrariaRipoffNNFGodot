@@ -20,6 +20,8 @@ public partial class PlayerManager : Node2D {
         _world.StationManager.StationDestroyed += OnStationDestroyed;
         Multiplayer.PeerDisconnected += OnPeerDisconnected;
         TreeExiting += () => {
+            _world.StationManager.StationCreated -= OnStationCreated;
+            _world.StationManager.StationDestroyed -= OnStationDestroyed;
             Multiplayer.PeerDisconnected -= OnPeerDisconnected;
         };
     }

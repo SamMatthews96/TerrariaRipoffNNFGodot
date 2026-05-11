@@ -14,7 +14,6 @@ public sealed partial class ItemMining : ItemEquipment {
             Speed = speed,
             Range = range,
             Power = power,
-            Slot = EquipmentSlot.Mining
         };
     }
 
