@@ -5,6 +5,8 @@ using Godot.Collections;
 
 namespace TerrariaRipoffNNF;
 
+using ObjectDictionary = System.Collections.Generic.Dictionary<string, object>;
+
 [GlobalClass]
 public partial class ItemProp : ItemProperty {
     [Export] public Texture2D Texture { get; private set; }
@@ -49,6 +51,10 @@ public partial class ItemProp : ItemProperty {
         Texture = texture;
         Dimensions = dimensions;
         Properties = properties;
+    }
+
+    public ItemProp(ObjectDictionary ingredients) {
+        
     }
 
     public ItemProp() { }

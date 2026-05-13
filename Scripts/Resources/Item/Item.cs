@@ -8,10 +8,20 @@ namespace TerrariaRipoffNNF;
 public sealed partial class Item : Resource {
     [Export] public string Name { get; private set; }
     [Export] public float InventorySpace { get; private set; }
-    [Export] public bool IsStackable { get; private set; } = true;
     [Export] public Texture2D IconTexture { get; private set; }
 
     [Export] private Array<ItemProperty> _properties = new();
+
+    public Item() { }
+
+    public Item(ItemOutputTemplate outputTemplate,
+        Dictionary<string, Item> suppliedIngredients
+    ) {
+        Name = outputTemplate.Name.ResolveTemplate(suppliedIngredients);
+        InventorySpace = outputTemplate.Space.ResolveTemplate(suppliedIngredients);
+        IconTexture = outputTemplate.Texture.ResolveTemplate(suppliedIngredients);
+        
+    }
 
     public static bool AreEqual(Item a, Item b) {
         if (a.ResourcePath != "" || b.ResourcePath != "") {
@@ -88,17 +98,5 @@ public sealed partial class Item : Resource {
             Item newItem = recipe.Build(suppliedIngredients).Item;
             return newItem;
         }
-    }
-
-    public static Item Create(
-        string name, Texture2D iconTexture, float inventorySpace, bool isStackable = true,
-        Array<ItemProperty> itemProperties = null) {
-        return new Item {
-            Name = name,
-            IconTexture = iconTexture,
-            InventorySpace = inventorySpace,
-            IsStackable = isStackable,
-            _properties = itemProperties ?? new Array<ItemProperty>()
-        };
     }
 }

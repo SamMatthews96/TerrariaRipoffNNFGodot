@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://tl101b2ohjdm"]
+
+[ext_resource type="Script" uid="uid://cpk7gqre26j0q" path="res://TestScenes/MyDict.cs" id="1_huswj"]
+
+[node name="MyDict" type="Node2D" unique_id=462431603]
+script = ExtResource("1_huswj")
+_dict = {}

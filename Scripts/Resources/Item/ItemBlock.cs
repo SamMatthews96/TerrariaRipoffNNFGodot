@@ -15,5 +15,5 @@ public partial class ItemBlock : ItemProperty {
         Texture = texture;
     }
 
-    public ItemBlock() { }
+    private ItemBlock() { }
 }
