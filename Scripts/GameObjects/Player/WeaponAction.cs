@@ -1,5 +1,4 @@
 ﻿using Godot;
-using TerrariaRipoffNNF.Scripts.GameObjects.WeaponSprites;
 
 namespace TerrariaRipoffNNF;
 
