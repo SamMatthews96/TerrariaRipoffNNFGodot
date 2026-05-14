@@ -64,7 +64,8 @@ public partial class Inventory : Node {
     }
 
     private void OnHostItemCrafted(
-        StackedItems newItems, Array<StackedItems> ingredients) {
+        StackedItems newItems, Array<StackedItems> ingredients
+    ) {
         AddItems(newItems);
         foreach (StackedItems ingredient in ingredients) {
             RemoveItems(ingredient);

@@ -10,15 +10,13 @@ public partial class WeaponAction : PlayerAction {
     }
 
     public override void LeftMouseAction(Vector2 mouseWorldPosition) {
-        if (Player.PlayerEquipment.Weapon is null) return;
+        ItemWeapon weapon = Player.PlayerEquipment.Weapon;
+        if (weapon is null) return;
         if (!_weaponCooldown.IsStopped()) return;
-        // temporarily just reach through the tree,
-        // listen to weapon changes
-        // when weapon changes, set Weapon
-
-        // WeaponAttackNode proj = WeaponAttackNode.Create(
-            // Player.PlayerEquipment.Weapon, Player, mouseWorldPosition);
-        // Player.World.AddChild(proj);
+        
+        WeaponAttackNode.Create(weapon, Player, mouseWorldPosition);
+        
+        
         _weaponCooldown.Start();
     }
 
