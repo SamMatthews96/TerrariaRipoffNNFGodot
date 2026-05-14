@@ -1,4 +1,5 @@
-﻿using Godot;
+﻿using System;
+using Godot;
 using Godot.Collections;
 
 namespace TerrariaRipoffNNF;
@@ -9,7 +10,7 @@ public partial class ItemIngredientOutputTemplate : ItemPropertyOutputTemplate {
 
     public override ItemProperty Build(
         Dictionary<string, Item> suppliedIngredients
-    ) {
-        return Output;
+    ) {        
+        throw new NotImplementedException();
     }
 }

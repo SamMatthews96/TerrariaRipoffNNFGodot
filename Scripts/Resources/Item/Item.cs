@@ -14,13 +14,21 @@ public sealed partial class Item : Resource {
 
     public Item() { }
 
-    public Item(ItemOutputTemplate outputTemplate,
+    public Item(
+        Recipe recipe,
+        ItemOutputTemplate outputTemplate,
         Dictionary<string, Item> suppliedIngredients
     ) {
         Name = outputTemplate.Name.ResolveTemplate(suppliedIngredients);
         InventorySpace = outputTemplate.Space.ResolveTemplate(suppliedIngredients);
         IconTexture = outputTemplate.Texture.ResolveTemplate(suppliedIngredients);
-        
+        foreach (ItemPropertyOutputTemplate template in outputTemplate.Properties) {
+            ItemProperty property = template.Build(suppliedIngredients);
+            _properties.Add(property);
+        }
+
+        ItemCrafted crafted = new(recipe, suppliedIngredients);
+        _properties.Add(crafted);
     }
 
     public static bool AreEqual(Item a, Item b) {

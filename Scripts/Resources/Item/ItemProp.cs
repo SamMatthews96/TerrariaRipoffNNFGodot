@@ -53,8 +53,17 @@ public partial class ItemProp : ItemProperty {
         Properties = properties;
     }
 
-    public ItemProp(ObjectDictionary ingredients) {
-        
+    public ItemProp(
+        ItemPropOutputTemplate template,
+        Dictionary<string, Item> suppliedIngredients
+    ) {
+        Texture = template.Texture;
+        Dimensions = template.Dimensions;
+        foreach (PropPropertyOutputTemplate propTemplate in
+                 template.PropProperties) {
+            PropProperty prop = propTemplate.Build(suppliedIngredients);
+            Properties.Add(prop);
+        }
     }
 
     public ItemProp() { }

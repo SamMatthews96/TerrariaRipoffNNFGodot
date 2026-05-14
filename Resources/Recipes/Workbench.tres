@@ -1,9 +1,52 @@
 [gd_resource type="Resource" script_class="Recipe" format=3 uid="uid://b7wkhkutl431l"]
 
 [ext_resource type="Script" uid="uid://fn1nx4h2shbl" path="res://Scripts/Resources/Recipes/Ingredient.cs" id="1_kbmfy"]
+[ext_resource type="Script" uid="uid://bfcev5h2r3enq" path="res://Scripts/Resources/Recipes/RecipeFieldMaps/String/RecipeFieldMapStringConstant.cs" id="1_pwi0r"]
 [ext_resource type="Texture2D" uid="uid://wrf00jfy174v" path="res://Assets/Images/woodPlaceholder.png" id="1_qh1d6"]
+[ext_resource type="Script" uid="uid://cleomv3k1ji4u" path="res://Scripts/Resources/Recipes/OutputTemplates/PropProperty/PropStationOutputTemplate.cs" id="2_5gmoa"]
+[ext_resource type="Texture2D" uid="uid://c4xxd5bays5fi" path="res://Assets/Images/placedBench.png" id="3_kvka3"]
+[ext_resource type="Script" uid="uid://lu1xiw1272cu" path="res://Scripts/Resources/Recipes/OutputTemplates/ItemPropOutputTemplate.cs" id="4_mj3rb"]
+[ext_resource type="Script" uid="uid://drhtbuywngnuq" path="res://Scripts/Resources/Recipes/RecipeFieldMaps/Float/RecipeFieldMapFloatConstant.cs" id="5_1p1fj"]
+[ext_resource type="Texture2D" uid="uid://cyllurh0pjf8q" path="res://Assets/Images/ItemIcons/bench.png" id="6_0chpu"]
 [ext_resource type="Texture2D" uid="uid://cd8fw3qgjwmu3" path="res://Assets/Images/ItemIcons/benchPlaceholder.png" id="6_pwi0r"]
+[ext_resource type="Script" uid="uid://d2pqak21epjnt" path="res://Scripts/Resources/Recipes/RecipeFieldMaps/Texture/RecipeFieldMapTextureConstant.cs" id="7_1bf1g"]
 [ext_resource type="Script" uid="uid://wufmphxsnnhm" path="res://Scripts/Resources/Recipes/Recipe.cs" id="7_5gmoa"]
+[ext_resource type="Script" uid="uid://cj21dtr1mr43w" path="res://Scripts/Resources/Recipes/OutputTemplates/ItemOutputTemplate.cs" id="8_fwl3a"]
+
+[sub_resource type="Resource" id="Resource_xyomu"]
+script = ExtResource("1_pwi0r")
+_value = "Workbench"
+metadata/_custom_type_script = "uid://bfcev5h2r3enq"
+
+[sub_resource type="Resource" id="Resource_gscfa"]
+script = ExtResource("2_5gmoa")
+Type = 1
+metadata/_custom_type_script = "uid://cleomv3k1ji4u"
+
+[sub_resource type="Resource" id="Resource_vvjh1"]
+script = ExtResource("4_mj3rb")
+Texture = ExtResource("3_kvka3")
+Dimensions = Vector2i(2, 1)
+PropProperties = Array[Object]([SubResource("Resource_gscfa")])
+metadata/_custom_type_script = "uid://lu1xiw1272cu"
+
+[sub_resource type="Resource" id="Resource_jyayf"]
+script = ExtResource("5_1p1fj")
+_value = 3.0
+metadata/_custom_type_script = "uid://drhtbuywngnuq"
+
+[sub_resource type="Resource" id="Resource_1aean"]
+script = ExtResource("7_1bf1g")
+_value = ExtResource("6_0chpu")
+metadata/_custom_type_script = "uid://d2pqak21epjnt"
+
+[sub_resource type="Resource" id="Resource_hy8to"]
+script = ExtResource("8_fwl3a")
+Name = SubResource("Resource_xyomu")
+Texture = SubResource("Resource_1aean")
+Space = SubResource("Resource_jyayf")
+Properties = Array[Object]([SubResource("Resource_vvjh1")])
+metadata/_custom_type_script = "uid://cj21dtr1mr43w"
 
 [sub_resource type="Resource" id="Resource_kvka3"]
 script = ExtResource("1_kbmfy")
@@ -20,5 +63,5 @@ TemplateIcon = ExtResource("6_pwi0r")
 RecipeIngredients = Dictionary[String, Object]({
 "wood": SubResource("Resource_kvka3")
 })
-RecipeFieldMaps = Dictionary[String, Object]({})
+ItemOutputTemplate = SubResource("Resource_hy8to")
 metadata/_custom_type_script = "uid://wufmphxsnnhm"

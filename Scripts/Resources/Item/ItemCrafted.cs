@@ -19,7 +19,7 @@ public partial class ItemCrafted : ItemProperty {
 
         foreach ((string key, Item aItem) in a.SuppliedIngredients) {
             Item bItem = b.SuppliedIngredients[key];
-            if (!Item.AreEqual(aItem,bItem)) {
+            if (!Item.AreEqual(aItem, bItem)) {
                 return false;
             }
         }
@@ -27,7 +27,9 @@ public partial class ItemCrafted : ItemProperty {
         return true;
     }
 
-    public ItemCrafted(Recipe recipe, Dictionary<string, Item> suppliedIngredients) {
+    public ItemCrafted(
+        Recipe recipe, Dictionary<string, Item> suppliedIngredients
+    ) {
         Recipe = recipe;
         SuppliedIngredients = suppliedIngredients;
     }

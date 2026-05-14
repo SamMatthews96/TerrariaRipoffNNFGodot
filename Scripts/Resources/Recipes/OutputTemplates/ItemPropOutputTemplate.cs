@@ -14,10 +14,6 @@ public partial class ItemPropOutputTemplate : ItemPropertyOutputTemplate {
     public override ItemProperty Build(
         Dictionary<string, Item> suppliedIngredients
     ) {
-        Array<PropProperty> newPropProperties = new();
-        foreach (PropPropertyOutputTemplate template in PropProperties) {
-            newPropProperties.Add(template.Build(suppliedIngredients));
-        }
-        return new ItemProp(Texture, Dimensions, newPropProperties);
+        return new ItemProp(this, suppliedIngredients);
     }
 }

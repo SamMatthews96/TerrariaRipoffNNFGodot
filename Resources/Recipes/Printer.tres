@@ -7,9 +7,42 @@
 [ext_resource type="PackedScene" uid="uid://d3xtion5mlbvk" path="res://Scenes/GameObjects/ActivePrinter.tscn" id="4_nfkc2"]
 [ext_resource type="Texture2D" uid="uid://b61ugh8gr1kqo" path="res://Assets/Images/Printer.png" id="4_r6qer"]
 [ext_resource type="Script" uid="uid://lu1xiw1272cu" path="res://Scripts/Resources/Recipes/OutputTemplates/ItemPropOutputTemplate.cs" id="5_fauh8"]
+[ext_resource type="Script" uid="uid://cj21dtr1mr43w" path="res://Scripts/Resources/Recipes/OutputTemplates/ItemOutputTemplate.cs" id="5_oxik4"]
 [ext_resource type="Script" uid="uid://crxr0ifgpxgwb" path="res://Scripts/Resources/Recipes/OutputTemplates/PropProperty/PropActorOutputTemplate.cs" id="5_r6qer"]
 [ext_resource type="Script" uid="uid://bfcev5h2r3enq" path="res://Scripts/Resources/Recipes/RecipeFieldMaps/String/RecipeFieldMapStringConstant.cs" id="6_0u8hu"]
 [ext_resource type="Script" uid="uid://d2pqak21epjnt" path="res://Scripts/Resources/Recipes/RecipeFieldMaps/Texture/RecipeFieldMapTextureConstant.cs" id="7_u8dku"]
+
+[sub_resource type="Resource" id="Resource_nfkc2"]
+script = ExtResource("6_0u8hu")
+metadata/_custom_type_script = "uid://bfcev5h2r3enq"
+
+[sub_resource type="Resource" id="Resource_0kiuf"]
+script = ExtResource("5_r6qer")
+ActorScene = ExtResource("4_nfkc2")
+metadata/_custom_type_script = "uid://crxr0ifgpxgwb"
+
+[sub_resource type="Resource" id="Resource_r6qer"]
+script = ExtResource("5_fauh8")
+Texture = ExtResource("4_r6qer")
+Dimensions = Vector2i(1, 1)
+PropProperties = Array[Object]([SubResource("Resource_0kiuf")])
+metadata/_custom_type_script = "uid://lu1xiw1272cu"
+
+[sub_resource type="Resource" id="Resource_fauh8"]
+script = ExtResource("3_nfkc2")
+metadata/_custom_type_script = "uid://drhtbuywngnuq"
+
+[sub_resource type="Resource" id="Resource_0u8hu"]
+script = ExtResource("7_u8dku")
+metadata/_custom_type_script = "uid://d2pqak21epjnt"
+
+[sub_resource type="Resource" id="Resource_u8dku"]
+script = ExtResource("5_oxik4")
+Name = SubResource("Resource_nfkc2")
+Texture = SubResource("Resource_0u8hu")
+Space = SubResource("Resource_fauh8")
+Properties = Array[Object]([SubResource("Resource_r6qer")])
+metadata/_custom_type_script = "uid://cj21dtr1mr43w"
 
 [sub_resource type="Resource" id="Resource_d7k8m"]
 script = ExtResource("2_oxik4")
@@ -19,45 +52,14 @@ Icon = ExtResource("1_7s2e4")
 Required = true
 metadata/_custom_type_script = "uid://fn1nx4h2shbl"
 
-[sub_resource type="Resource" id="Resource_0kiuf"]
-script = ExtResource("3_nfkc2")
-_value = 1.0
-metadata/_custom_type_script = "uid://drhtbuywngnuq"
-
-[sub_resource type="Resource" id="Resource_fauh8"]
-script = ExtResource("5_r6qer")
-ActorScene = ExtResource("4_nfkc2")
-metadata/_custom_type_script = "uid://crxr0ifgpxgwb"
-
-[sub_resource type="Resource" id="Resource_dqsmg"]
-script = ExtResource("5_fauh8")
-Texture = ExtResource("4_r6qer")
-Dimensions = Vector2i(1, 1)
-PropProperties = Array[Object]([SubResource("Resource_fauh8")])
-metadata/_custom_type_script = "uid://lu1xiw1272cu"
-
-[sub_resource type="Resource" id="Resource_l1s2c"]
-script = ExtResource("6_0u8hu")
-_value = "Printer"
-metadata/_custom_type_script = "uid://bfcev5h2r3enq"
-
-[sub_resource type="Resource" id="Resource_agavb"]
-script = ExtResource("7_u8dku")
-_value = ExtResource("4_r6qer")
-metadata/_custom_type_script = "uid://d2pqak21epjnt"
-
 [resource]
 script = ExtResource("1_3w7mp")
 Id = 3
 RecipeName = "Printer"
 RequiredStation = 1
+TemplateIcon = ExtResource("4_r6qer")
 RecipeIngredients = Dictionary[String, Object]({
 "stone": SubResource("Resource_d7k8m")
 })
-TemplateIcon = ExtResource("4_r6qer")
-IsStackable = true
-ResultNameMap = SubResource("Resource_l1s2c")
-ResultInventorySpaceMap = SubResource("Resource_0kiuf")
-ResultTextureSingleMap = SubResource("Resource_agavb")
-ResultItemProperties = Array[Object]([SubResource("Resource_dqsmg")])
+ItemOutputTemplate = SubResource("Resource_u8dku")
 metadata/_custom_type_script = "uid://wufmphxsnnhm"

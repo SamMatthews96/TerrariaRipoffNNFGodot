@@ -25,7 +25,6 @@ metadata/_custom_type_script = "uid://dd1h6wlqqfbik"
 [resource]
 script = ExtResource("2_apad7")
 Name = "Tree"
-IsStackable = false
 IconTexture = ExtResource("1_chmlx")
 _properties = Array[ExtResource("1_8qrc5")]([SubResource("Resource_oiofc")])
 metadata/_custom_type_script = "uid://bavg183x82165"

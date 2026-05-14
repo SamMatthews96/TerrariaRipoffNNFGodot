@@ -1,4 +1,5 @@
-﻿using Godot;
+﻿using System;
+using Godot;
 using Godot.Collections;
 
 namespace TerrariaRipoffNNF;
@@ -12,10 +13,6 @@ public partial class ItemMiningOutputTemplate : ItemPropertyOutputTemplate {
     public override ItemProperty Build(
         Dictionary<string, Item> suppliedIngredients
     ) {
-        return ItemMining.Create(
-            speed: Speed.ResolveTemplate(suppliedIngredients),
-            range: (int)Range.ResolveTemplate(suppliedIngredients),
-            power: Power.ResolveTemplate(suppliedIngredients)
-        );
+        throw new NotImplementedException();
     }
 }

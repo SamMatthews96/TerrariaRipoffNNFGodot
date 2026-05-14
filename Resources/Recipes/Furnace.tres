@@ -8,9 +8,45 @@
 [ext_resource type="Texture2D" uid="uid://bixfe4w2g8q3s" path="res://Assets/Images/placedFurnace.png" id="5_ew4ru"]
 [ext_resource type="Script" uid="uid://lu1xiw1272cu" path="res://Scripts/Resources/Recipes/OutputTemplates/ItemPropOutputTemplate.cs" id="6_mkqw4"]
 [ext_resource type="Script" uid="uid://bfcev5h2r3enq" path="res://Scripts/Resources/Recipes/RecipeFieldMaps/String/RecipeFieldMapStringConstant.cs" id="7_boihl"]
+[ext_resource type="Script" uid="uid://cj21dtr1mr43w" path="res://Scripts/Resources/Recipes/OutputTemplates/ItemOutputTemplate.cs" id="8_pdopp"]
 [ext_resource type="Texture2D" uid="uid://cp78grj0a5nrv" path="res://Assets/Images/furnaceIcon.png" id="8_xasl8"]
 [ext_resource type="Script" uid="uid://d2pqak21epjnt" path="res://Scripts/Resources/Recipes/RecipeFieldMaps/Texture/RecipeFieldMapTextureConstant.cs" id="9_ylu6s"]
 [ext_resource type="Texture2D" uid="uid://dhbuyben131w6" path="res://Assets/Images/furnacePlaceholder.png" id="10_g5dl0"]
+
+[sub_resource type="Resource" id="Resource_dnip1"]
+script = ExtResource("7_boihl")
+_value = "Furnace"
+metadata/_custom_type_script = "uid://bfcev5h2r3enq"
+
+[sub_resource type="Resource" id="Resource_g6aax"]
+script = ExtResource("4_g6aax")
+Type = 2
+metadata/_custom_type_script = "uid://cleomv3k1ji4u"
+
+[sub_resource type="Resource" id="Resource_ew4ru"]
+script = ExtResource("6_mkqw4")
+Texture = ExtResource("5_ew4ru")
+Dimensions = Vector2i(2, 2)
+PropProperties = Array[Object]([SubResource("Resource_g6aax")])
+metadata/_custom_type_script = "uid://lu1xiw1272cu"
+
+[sub_resource type="Resource" id="Resource_mkqw4"]
+script = ExtResource("3_dnip1")
+_value = 5.0
+metadata/_custom_type_script = "uid://drhtbuywngnuq"
+
+[sub_resource type="Resource" id="Resource_boihl"]
+script = ExtResource("9_ylu6s")
+_value = ExtResource("8_xasl8")
+metadata/_custom_type_script = "uid://d2pqak21epjnt"
+
+[sub_resource type="Resource" id="Resource_xasl8"]
+script = ExtResource("8_pdopp")
+Name = SubResource("Resource_dnip1")
+Texture = SubResource("Resource_boihl")
+Space = SubResource("Resource_mkqw4")
+Properties = Array[Object]([SubResource("Resource_ew4ru")])
+metadata/_custom_type_script = "uid://cj21dtr1mr43w"
 
 [sub_resource type="Resource" id="Resource_xbt6y"]
 script = ExtResource("2_pdopp")
@@ -20,44 +56,13 @@ Icon = ExtResource("1_ou3xu")
 Required = true
 metadata/_custom_type_script = "uid://fn1nx4h2shbl"
 
-[sub_resource type="Resource" id="Resource_ejgtq"]
-script = ExtResource("3_dnip1")
-_value = 5.0
-metadata/_custom_type_script = "uid://drhtbuywngnuq"
-
-[sub_resource type="Resource" id="Resource_exjux"]
-script = ExtResource("4_g6aax")
-Type = 2
-metadata/_custom_type_script = "uid://cleomv3k1ji4u"
-
-[sub_resource type="Resource" id="Resource_datbr"]
-script = ExtResource("6_mkqw4")
-Texture = ExtResource("5_ew4ru")
-Dimensions = Vector2i(2, 2)
-PropProperties = Array[Object]([SubResource("Resource_exjux")])
-metadata/_custom_type_script = "uid://lu1xiw1272cu"
-
-[sub_resource type="Resource" id="Resource_e178r"]
-script = ExtResource("7_boihl")
-_value = "Furnace"
-metadata/_custom_type_script = "uid://bfcev5h2r3enq"
-
-[sub_resource type="Resource" id="Resource_gqlsm"]
-script = ExtResource("9_ylu6s")
-_value = ExtResource("8_xasl8")
-metadata/_custom_type_script = "uid://d2pqak21epjnt"
-
 [resource]
 script = ExtResource("1_kse5l")
 Id = 1
 RecipeName = "Furnace"
+TemplateIcon = ExtResource("10_g5dl0")
 RecipeIngredients = Dictionary[String, Object]({
 "stone": SubResource("Resource_xbt6y")
 })
-TemplateIcon = ExtResource("10_g5dl0")
-IsStackable = true
-ResultNameMap = SubResource("Resource_e178r")
-ResultInventorySpaceMap = SubResource("Resource_ejgtq")
-ResultTextureSingleMap = SubResource("Resource_gqlsm")
-ResultItemProperties = Array[Object]([SubResource("Resource_datbr")])
+ItemOutputTemplate = SubResource("Resource_xasl8")
 metadata/_custom_type_script = "uid://wufmphxsnnhm"
