@@ -85,7 +85,7 @@ public partial class Inventory : Control {
     private void OnInventoryRemovedItemStack(StackedItems stackedItems) {
         InventoryItem inventoryItemUi = _inventoryItemUiList.Find(e =>
             Item.AreEqual(e.StackedItems.Item, stackedItems.Item));
-        if (inventoryItemUi != null) {
+        if (inventoryItemUi is not null) {
             inventoryItemUi.MouseEnteredItem -= OnInventoryMouseEnteredItem;
             inventoryItemUi.MouseLeftItem -= OnInventoryMouseLeftItem;
             inventoryItemUi.QueueFree();

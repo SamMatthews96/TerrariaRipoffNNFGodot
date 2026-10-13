@@ -69,7 +69,7 @@ public partial class Build : Container {
         button.BuildBlockSelected += SelectBlockButton;
         _blockButtonContainer.AddChild(button);
         _blockButtons.Add(stackedItems.Item.Name, button);
-        if (_selectedButton == null) {
+        if (_selectedButton is null) {
             SelectBlockButton(stackedItems.Item);
         }
     }
@@ -81,7 +81,7 @@ public partial class Build : Container {
         ushort itemId = 
             _gameInterface.World.ItemIdBimap.GetId(stackedItems.Item);
         _propButtons.Add(itemId, button);
-        if (_selectedButton == null) {
+        if (_selectedButton is null) {
             SelectPropButton(stackedItems.Item);
         }
     }

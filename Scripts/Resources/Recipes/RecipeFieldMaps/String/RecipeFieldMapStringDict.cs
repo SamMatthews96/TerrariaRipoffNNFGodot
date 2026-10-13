@@ -18,7 +18,7 @@ public partial class RecipeFieldMapStringDict : RecipeFieldMapString {
         string currentTemplate = _stringTemplate;
         foreach (object templateVariable in templateVariables) {
             string templateString = templateVariable.ToString();
-            if (templateString == null) {
+            if (templateString is null) {
                 throw new Exception("[20250518.1531.1] Invalid string template: " + _stringTemplate);
             }
 
