@@ -1,5 +1,6 @@
 using System;
 using Godot;
+using TerrariaRipoffNNF.TestScenes;
 
 namespace TerrariaRipoffNNF;
 
@@ -9,17 +10,27 @@ public partial class WorldRenderer : Node2D {
     [Export] private World _world;
     private Player _localPlayer;
     private Rid _canvas;
+    
+    private PlayerManager _playerManager;
+    private BlockManager _blockManager;
+    private ItemIdBimap _itemIdBimap;
+    private Vector2I _worldSize;
 
     public override void _Ready() {
+        _playerManager = _world.PlayerManager;
+        _blockManager = _world.BlockManager;
+        _itemIdBimap = _world.ItemIdBimap;
+        _worldSize = _world.WorldSize;
+        
         _canvas = RenderingServer.CanvasItemCreate();
         RenderingServer.CanvasItemSetParent(_canvas, GetCanvasItem());
         RenderingServer.CanvasItemSetTransform(
             _canvas, new Transform2D(0, Vector2.Zero));
 
-        _world.PlayerManager.LocalPlayerSpawned += OnLocalPlayerSpawned;
+        _playerManager.LocalPlayerSpawned += OnLocalPlayerSpawned;
         TreeExiting += () => {
             RenderingServer.FreeRid(_canvas);
-            _world.PlayerManager.LocalPlayerSpawned -= OnLocalPlayerSpawned;
+            _playerManager.LocalPlayerSpawned -= OnLocalPlayerSpawned;
         };
     }
 
@@ -31,16 +42,16 @@ public partial class WorldRenderer : Node2D {
         Action<Vector2I, ushort> onDestroyed = (_, _) => UpdateView();
         Player.CellMovedDelegate onMoved = (_, _) => UpdateView();
 
-        _world.BlockManager.BlockCreated += onCreated;
-        _world.BlockManager.BlockDestroyed += onDestroyed;
-        _world.BlockManager.WallCreated += onCreated;
-        _world.BlockManager.WallDestroyed += onDestroyed;
+        _blockManager.BlockCreated += onCreated;
+        _blockManager.BlockDestroyed += onDestroyed;
+        _blockManager.WallCreated += onCreated;
+        _blockManager.WallDestroyed += onDestroyed;
         player.MovedCellLocal += onMoved;
         TreeExiting += () => {
-            _world.BlockManager.BlockCreated -= onCreated;
-            _world.BlockManager.BlockDestroyed -= onDestroyed;
-            _world.BlockManager.WallCreated -= onCreated;
-            _world.BlockManager.WallDestroyed -= onDestroyed;
+            _blockManager.BlockCreated -= onCreated;
+            _blockManager.BlockDestroyed -= onDestroyed;
+            _blockManager.WallCreated -= onCreated;
+            _blockManager.WallDestroyed -= onDestroyed;
             player.MovedCellLocal -= onMoved;
         };
         UpdateView();
@@ -50,19 +61,20 @@ public partial class WorldRenderer : Node2D {
         RenderingServer.CanvasItemClear(_canvas);
         int playerX = _localPlayer.Coords.X;
         int playerY = _localPlayer.Coords.Y;
-
         int drawPositionXStart = Math.Max(0, playerX - DrawDistance);
-        int drawPositionXEnd = Math.Min(_world.WorldSize.X, playerX + DrawDistance);
+        int drawPositionXEnd = Math.Min(_worldSize.X, playerX + DrawDistance);
         int drawPositionYStart = Math.Max(0, playerY - DrawDistance);
-        int drawPositionYEnd = Math.Min(_world.WorldSize.Y, playerY + DrawDistance);
+        int drawPositionYEnd = Math.Min(_worldSize.Y, playerY + DrawDistance);
 
+        Block?[,] blocks = _blockManager.Blocks;
+        Block?[,] walls = _blockManager.Walls;
         for (int x = drawPositionXStart; x < drawPositionXEnd; x++) {
             for (int y = drawPositionYStart; y < drawPositionYEnd; y++) {
                 bool isBlock = true;
-                Block? value = _world.BlockManager.Blocks[x, y];
+                Block? value = blocks[x, y];
                 if (value is null) {
                     isBlock = false;
-                    value = _world.BlockManager.Walls[x, y];
+                    value = walls[x, y];
                 }
 
                 if (value is not {} block) continue;
@@ -73,7 +85,7 @@ public partial class WorldRenderer : Node2D {
                     Game.BlockSize,
                     Game.BlockSize
                 );
-                Item item = _world.ItemIdBimap.GetItem(block.ItemId);
+                Item item = _itemIdBimap.GetItem(block.ItemId);
                 Color color = isBlock
                     ? new Color(1, 1, 1)
                     : new Color(0.3f, 0.3f, 0.3f);
