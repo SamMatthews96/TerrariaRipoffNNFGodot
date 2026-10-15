@@ -1,6 +1,7 @@
 ﻿using System;
 using Godot;
 using Godot.Collections;
+using TerrariaRipoffNNF.Scripts.Managers;
 
 namespace TerrariaRipoffNNF;
 
@@ -22,9 +23,17 @@ public sealed partial class Crafting : Node {
     public int CraftRange { get; private set; } = 8;
 
     public override void _Ready() {
+        StationManager stationManager = _player.World.StationManager;
         if (_player.World.IsHost) {
             _player.MovedCellHost += OnMovedCellHost;
-            TreeExiting += () => { _player.MovedCellHost -= OnMovedCellHost; };
+            stationManager.StationCreated += OnStationCreated;
+            stationManager.StationDestroyed += OnStationDestroyed;
+            
+            TreeExiting += () => {
+                _player.MovedCellHost -= OnMovedCellHost;
+                stationManager.StationCreated -= OnStationCreated;
+                stationManager.StationDestroyed -= OnStationDestroyed;
+            };
         }
 
         if (_player.IsLocalPlayer) {
@@ -39,6 +48,20 @@ public sealed partial class Crafting : Node {
                 craftingUi.IngredientsContainer.CraftButtonPressed -= OnCraftButtonPressed;
                 _player.World.PlayerManager.LocalPlayerSpawned -= OnLocalPlayerSpawned;
             };
+        }
+    }
+    
+    private void OnStationCreated(Vector2I coords, StationType type) {
+        if (_player.World.IsInOrthogonalRange(
+                _player.Coords, coords, CraftRange)) {
+            HostAddCraftingStation(coords, type);
+        }
+    }
+    
+    private void OnStationDestroyed(Vector2I coords, StationType type) {
+        if (_player.World.IsInOrthogonalRange(
+                _player.Coords, coords, CraftRange)) {
+            HostRemoveCraftingStation(coords, type);
         }
     }
 

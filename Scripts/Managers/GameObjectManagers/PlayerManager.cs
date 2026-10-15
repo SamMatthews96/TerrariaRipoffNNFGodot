@@ -17,35 +17,12 @@ public partial class PlayerManager : Node2D {
 
     public override void _Ready() {
         _stationManager = _world.StationManager;
-
         if (!_world.IsHost) return;
 
-        _stationManager.StationCreated += OnStationCreated;
-        _stationManager.StationDestroyed += OnStationDestroyed;
         Multiplayer.PeerDisconnected += OnPeerDisconnected;
         TreeExiting += () => {
-            _stationManager.StationCreated -= OnStationCreated;
-            _stationManager.StationDestroyed -= OnStationDestroyed;
             Multiplayer.PeerDisconnected -= OnPeerDisconnected;
         };
-    }
-
-    private void OnStationCreated(Vector2I coords, StationType type) {
-        foreach (Player player in _players.Values) {
-            int range = player.Crafting.CraftRange;
-            if (_world.IsInOrthogonalRange(player.Coords, coords, range)) {
-                player.Crafting.HostAddCraftingStation(coords, type);
-            }
-        }
-    }
-
-    private void OnStationDestroyed(Vector2I coords, StationType type) {
-        foreach (Player player in _players.Values) {
-            int range = player.Crafting.CraftRange;
-            if (_world.IsInOrthogonalRange(player.Coords, coords, range)) {
-                player.Crafting.HostRemoveCraftingStation(coords, type);
-            }
-        }
     }
     
     private void OnPeerDisconnected(long id) {
