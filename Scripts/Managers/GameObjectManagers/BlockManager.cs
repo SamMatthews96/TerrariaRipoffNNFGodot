@@ -58,15 +58,15 @@ public partial class BlockManager : Node2D {
     }
 
     private void OnPlayerSpawnedOnHost(Player player) {
-        player.ActionState.Build.HostPlacedBlock += OnHostPlacedBlock;
-        player.ActionState.Build.HostPlacedWall += OnHostPlacedWall;
-        player.ActionState.Gather.HostGatheredBlock += OnHostGatheredBlock;
-        player.ActionState.Gather.HostGatheredWall += OnHostGatheredWall;
+        player.BlockPlaced += OnHostPlacedBlock;
+        player.WallPlaced += OnHostPlacedWall;
+        player.BlockGathered += OnHostGatheredBlock;
+        player.WallGathered += OnHostGatheredWall;
         player.TreeExiting += () => {
-            player.ActionState.Build.HostPlacedBlock -= OnHostPlacedBlock;
-            player.ActionState.Build.HostPlacedWall -= OnHostPlacedWall;
-            player.ActionState.Gather.HostGatheredBlock -= OnHostGatheredBlock;
-            player.ActionState.Gather.HostGatheredWall -= OnHostGatheredWall;
+            player.BlockPlaced -= OnHostPlacedBlock;
+            player.WallPlaced -= OnHostPlacedWall;
+            player.BlockGathered -= OnHostGatheredBlock;
+            player.WallGathered -= OnHostGatheredWall;
         };
     }
 

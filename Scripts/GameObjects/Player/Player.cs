@@ -50,6 +50,39 @@ public partial class Player : CharacterBody2D {
     public event CellMovedDelegate MovedCellLocal;
     public event CellMovedDelegate MovedCellHost;
 
+    #region Event Wrappers
+    public event BuildAction.BuildActionDelegate BlockPlaced {
+        add => ActionState.Build.HostPlacedBlock += value;
+        remove => ActionState.Build.HostPlacedBlock -= value;
+    }
+
+    public event BuildAction.BuildActionDelegate WallPlaced {
+        add => ActionState.Build.HostPlacedWall += value;
+        remove => ActionState.Build.HostPlacedWall -= value;
+    }
+
+    public event BuildAction.BuildActionDelegate PropPlaced {
+        add => ActionState.Build.HostPlaceProp += value;
+        remove => ActionState.Build.HostPlaceProp -= value;
+    }
+
+    public event GatherAction.GatherActionDelegate BlockGathered {
+        add => ActionState.Gather.HostGatheredBlock += value;
+        remove => ActionState.Gather.HostGatheredBlock -= value;
+    }
+
+    public event GatherAction.GatherActionDelegate WallGathered {
+        add => ActionState.Gather.HostGatheredWall += value;
+        remove => ActionState.Gather.HostGatheredWall -= value;
+    }
+
+    public event GatherAction.GatherActionDelegate PropGathered {
+        add => ActionState.Gather.HostGatherProp += value;
+        remove => ActionState.Gather.HostGatherProp -= value;
+    }
+    
+    #endregion
+
     public override void _EnterTree() {
         int peerId = Name.ToString().ToInt();
         _positionSynchronizer.SetMultiplayerAuthority(peerId);

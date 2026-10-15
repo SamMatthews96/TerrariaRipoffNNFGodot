@@ -14,16 +14,12 @@ public partial class PlayerEquipment : Node {
         if (!_player.IsLocalPlayer) return;
         
         _player.Inventory.EquipItemClicked += OnEquipItemClicked;
-        _player.World.Interface.PlayerEquipment.ClickedUnequipWeapon +=
-            OnUnequipWeaponClicked;
-        _player.World.Interface.PlayerEquipment.ClickedUnequipPickaxe +=
-            OnUnequipPickaxeClicked;
+        _player.World.UnequipWeaponClicked += OnUnequipWeaponClicked;
+        _player.World.UnequipPickaxeClicked += OnUnequipPickaxeClicked;
         TreeExiting += () => {
             _player.Inventory.EquipItemClicked -= OnEquipItemClicked;
-            _player.World.Interface.PlayerEquipment.ClickedUnequipWeapon -=
-                OnUnequipWeaponClicked;
-            _player.World.Interface.PlayerEquipment.ClickedUnequipPickaxe -=
-                OnUnequipPickaxeClicked;
+            _player.World.UnequipWeaponClicked -= OnUnequipWeaponClicked;
+            _player.World.UnequipPickaxeClicked -= OnUnequipPickaxeClicked;
         };
     }
 

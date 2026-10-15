@@ -28,7 +28,7 @@ public sealed partial class Crafting : Node {
         }
 
         if (_player.IsLocalPlayer) {
-            Interface.Crafting craftingUi = _player.World.Interface.CraftingInterface;
+            Interface.Crafting craftingUi = _player.World.CraftingInterface;
             craftingUi.RecipeContainer.RecipeButtonClicked += OnRecipeButtonClicked;
             craftingUi.IngredientPopup.SelectIngredientButtonClicked += OnIngredientButtonClicked;
             craftingUi.IngredientsContainer.CraftButtonPressed += OnCraftButtonPressed;

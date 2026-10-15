@@ -25,6 +25,20 @@ public partial class World : Node2D {
     
     public event Action GameLoaded;
 
+    // Event wrappers to reduce Law of Demeter violations
+    public event Action UnequipWeaponClicked {
+        add => Interface.PlayerEquipment.ClickedUnequipWeapon += value;
+        remove => Interface.PlayerEquipment.ClickedUnequipWeapon -= value;
+    }
+
+    public event Action UnequipPickaxeClicked {
+        add => Interface.PlayerEquipment.ClickedUnequipPickaxe += value;
+        remove => Interface.PlayerEquipment.ClickedUnequipPickaxe -= value;
+    }
+
+    // Property wrapper for CraftingInterface
+    public Interface.Crafting CraftingInterface => Interface.CraftingInterface;
+
     private Dictionary _localPlayerData;
     public Dictionary WorldData { get; private set; }
 
