@@ -1,11 +1,13 @@
 ﻿using System;
 using Godot;
 using Godot.Collections;
+using TerrariaRipoffNNF.Scripts.Managers;
 
 namespace TerrariaRipoffNNF;
 
 public partial class PlayerManager : Node2D {
     [Export] private World _world;
+    private StationManager _stationManager;
     private Player _localPlayer;
     private Dictionary _playerData;
     private Dictionary<long, Player> _players = new();
@@ -14,14 +16,16 @@ public partial class PlayerManager : Node2D {
     public event Action<Player> PlayerSpawnedOnHost;
 
     public override void _Ready() {
+        _stationManager = _world.StationManager;
+
         if (!_world.IsHost) return;
 
-        _world.StationManager.StationCreated += OnStationCreated;
-        _world.StationManager.StationDestroyed += OnStationDestroyed;
+        _stationManager.StationCreated += OnStationCreated;
+        _stationManager.StationDestroyed += OnStationDestroyed;
         Multiplayer.PeerDisconnected += OnPeerDisconnected;
         TreeExiting += () => {
-            _world.StationManager.StationCreated -= OnStationCreated;
-            _world.StationManager.StationDestroyed -= OnStationDestroyed;
+            _stationManager.StationCreated -= OnStationCreated;
+            _stationManager.StationDestroyed -= OnStationDestroyed;
             Multiplayer.PeerDisconnected -= OnPeerDisconnected;
         };
     }

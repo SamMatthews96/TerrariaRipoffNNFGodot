@@ -6,20 +6,24 @@ namespace TerrariaRipoffNNF.Scripts.Managers;
 
 public partial class StationManager : Node {
     [Export] private World _world;
+    private PropManager _propManager;
+
     public Dictionary<Vector2I, StationType> Stations = new();
-   
+
     public event Action<Vector2I, StationType> StationCreated;
     public event Action<Vector2I, StationType> StationDestroyed;
-    
+
     public void Register(StationType type, Vector2I coords) {
         Stations.Add(coords, type);
         StationCreated?.Invoke(coords, type);
     }
 
     public override void _Ready() {
-        _world.PropManager.HostPropDestroyed += OnHostPropDestroyed;
+        _propManager = _world.PropManager;
+
+        _propManager.HostPropDestroyed += OnHostPropDestroyed;
         TreeExiting += () => {
-            _world.PropManager.HostPropDestroyed -= OnHostPropDestroyed;
+            _propManager.HostPropDestroyed -= OnHostPropDestroyed;
         };
     }
 

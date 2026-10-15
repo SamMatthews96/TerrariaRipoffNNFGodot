@@ -2,7 +2,7 @@
 using Godot;
 using Godot.Collections;
 
-namespace TerrariaRipoffNNF.TestScenes;
+namespace TerrariaRipoffNNF;
 
 public partial class ItemIdBimap : Node {
     private Array<string> _idToString = new();

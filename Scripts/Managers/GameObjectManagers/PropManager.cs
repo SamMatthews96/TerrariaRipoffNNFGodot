@@ -11,17 +11,23 @@ using ColumnByXByBlockId =
 
 public partial class PropManager : Node {
     [Export] private World _world;
+    private PlayerManager _playerManager;
+    private ItemIdBimap _itemIdBimap;
+
     public PropsByCoords PropCells { get; private set; } = new();
     public PropsByCoords Props { get; private set; } = new();
 
     public event Action<ActiveProp, Vector2I> HostPropDestroyed;
 
     public override void _Ready() {
+        _playerManager = _world.PlayerManager;
+        _itemIdBimap = _world.ItemIdBimap;
+
         if (_world.IsHost) {
             ColumnByXByBlockId props =
                 (ColumnByXByBlockId)_world.WorldData["props"];
             foreach ((ushort itemId, ColumnByX xDict) in props) {
-                Item item = _world.ItemIdBimap.GetItem(itemId);
+                Item item = _itemIdBimap.GetItem(itemId);
                 foreach ((int x, Array<int> yArray) in xDict) {
                     foreach (int y in yArray) {
                         Vector2I coords = new(x, y);
@@ -30,8 +36,8 @@ public partial class PropManager : Node {
                 }
             }
 
-            _world.PlayerManager.PlayerSpawnedOnHost += OnPlayerSpawnedOnHost;
-            TreeExiting += () => { _world.PlayerManager.PlayerSpawnedOnHost -= OnPlayerSpawnedOnHost; };
+            _playerManager.PlayerSpawnedOnHost += OnPlayerSpawnedOnHost;
+            TreeExiting += () => { _playerManager.PlayerSpawnedOnHost -= OnPlayerSpawnedOnHost; };
         } else {
             RpcId(1, nameof(RpcHostRequestWorldData));
         }
@@ -43,7 +49,7 @@ public partial class PropManager : Node {
 
         Array<Dictionary> propData = new();
         foreach ((Vector2I cell, ActiveProp prop) in Props) {
-            int id = _world.ItemIdBimap.GetId(prop.Item);
+            int id = _itemIdBimap.GetId(prop.Item);
             Dictionary propDict = new() {
                 { "coords", cell },
                 { "id", id }
@@ -60,7 +66,7 @@ public partial class PropManager : Node {
         foreach (Dictionary propDict in packet) {
             ushort itemId = (ushort)propDict["id"];
             Vector2I coords = (Vector2I)propDict["coords"];
-            Item item = _world.ItemIdBimap.GetItem(itemId);
+            Item item = _itemIdBimap.GetItem(itemId);
             AddProp(item, coords);
         }
     }
@@ -76,13 +82,13 @@ public partial class PropManager : Node {
 
     private void OnHostPlaceProp(Item item, Vector2I coords) {
         AddProp(item, coords);
-        ushort itemId = _world.ItemIdBimap.GetId(item);
+        ushort itemId = _itemIdBimap.GetId(item);
         Rpc(nameof(RpcClientsPlaceProp), itemId, coords);
     }
 
     [Rpc]
     private void RpcClientsPlaceProp(ushort itemId, Vector2I coords) {
-        Item item = _world.ItemIdBimap.GetItem(itemId);
+        Item item = _itemIdBimap.GetItem(itemId);
         AddProp(item, coords);
     }
 

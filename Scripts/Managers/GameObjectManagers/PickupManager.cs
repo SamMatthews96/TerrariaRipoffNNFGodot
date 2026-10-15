@@ -8,6 +8,10 @@ namespace TerrariaRipoffNNF;
 public partial class PickupManager : Node2D {
     private readonly List<PickupEntity> _activePickups = new();
     [Export] private World _world;
+    private BlockManager _blockManager;
+    private PlayerManager _playerManager;
+    private PropManager _propManager;
+    private ItemIdBimap _itemIdBimap;
     private int _pickupCount;
 
     public event Action<Vector2I> ServerPickupCreated;
@@ -16,16 +20,21 @@ public partial class PickupManager : Node2D {
     public event Action<Vector2I> ServerPickupDestroyed;
 
     public override void _Ready() {
+        _blockManager = _world.BlockManager;
+        _playerManager = _world.PlayerManager;
+        _propManager = _world.PropManager;
+        _itemIdBimap = _world.ItemIdBimap;
+
         if (_world.IsHost) {
-            _world.BlockManager.BlockDestroyed += HostOnBlockDestroyed;
-            _world.PlayerManager.PlayerSpawnedOnHost += OnPlayedSpawnedOnHost;
-            _world.PropManager.HostPropDestroyed += OnHostPropDestroyed;
-            _world.BlockManager.WallDestroyed += HostOnBlockDestroyed;
+            _blockManager.BlockDestroyed += HostOnBlockDestroyed;
+            _playerManager.PlayerSpawnedOnHost += OnPlayedSpawnedOnHost;
+            _propManager.HostPropDestroyed += OnHostPropDestroyed;
+            _blockManager.WallDestroyed += HostOnBlockDestroyed;
             TreeExiting += () => {
-                _world.BlockManager.BlockDestroyed -= HostOnBlockDestroyed;
-                _world.PlayerManager.PlayerSpawnedOnHost -= OnPlayedSpawnedOnHost;
-                _world.PropManager.HostPropDestroyed -= OnHostPropDestroyed;
-                _world.BlockManager.WallDestroyed -= HostOnBlockDestroyed;
+                _blockManager.BlockDestroyed -= HostOnBlockDestroyed;
+                _playerManager.PlayerSpawnedOnHost -= OnPlayedSpawnedOnHost;
+                _propManager.HostPropDestroyed -= OnHostPropDestroyed;
+                _blockManager.WallDestroyed -= HostOnBlockDestroyed;
             };
 
             ProcessMode = ProcessModeEnum.Always;
@@ -53,11 +62,11 @@ public partial class PickupManager : Node2D {
     private void OnHostPropDestroyed(ActiveProp activeProp, Vector2I coords) {
         ItemProp itemProp = activeProp.Item.GetProperty<ItemProp>();
         if (itemProp.TryGetProperty(out PropDrop propDrop)) {
-            ushort itemId = _world.ItemIdBimap.GetId(propDrop.Item);
+            ushort itemId = _itemIdBimap.GetId(propDrop.Item);
             HostCreatePickup(coords, itemId);
         }
         if (itemProp.DoesDropSelf) {
-            ushort itemId = _world.ItemIdBimap.GetId(activeProp.Item);
+            ushort itemId = _itemIdBimap.GetId(activeProp.Item);
             HostCreatePickup(coords, itemId);
         }
     }
@@ -78,7 +87,7 @@ public partial class PickupManager : Node2D {
     ) {
         PickupEntity pickup =
             Data.PackedScenes.Pickup.Instantiate<PickupEntity>();
-        Item item = _world.ItemIdBimap.GetItem(itemId);
+        Item item = _itemIdBimap.GetItem(itemId);
         pickup.Position = position;
         pickup.Coords = new Vector2I(
             (int)(position.X / Game.BlockSize - 0.5f),
@@ -114,7 +123,7 @@ public partial class PickupManager : Node2D {
         Array<Dictionary> pickupData = new();
         foreach (PickupEntity activePickup in _activePickups) {
             Dictionary dict = new();
-            dict["ItemId"] = _world.ItemIdBimap.GetId(activePickup.Item);
+            dict["ItemId"] = _itemIdBimap.GetId(activePickup.Item);
             dict["Name"] = activePickup.Name;
             pickupData.Add(dict);
         }

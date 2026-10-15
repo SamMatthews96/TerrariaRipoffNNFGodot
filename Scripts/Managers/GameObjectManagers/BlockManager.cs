@@ -10,6 +10,9 @@ public partial class BlockManager : Node2D {
     public Block?[,] Walls { get; private set; }
 
     [Export] private World _world;
+    private PlayerManager _playerManager;
+    private ItemIdBimap _itemIdBimap;
+    private Vector2I _worldSize;
 
     public event Action SyncComplete;
     public event Action<Vector2I> BlockCreated;
@@ -18,8 +21,12 @@ public partial class BlockManager : Node2D {
     public event Action<Vector2I, ushort> WallDestroyed;
 
     public override void _Ready() {
-        Blocks = new Block?[_world.WorldSize.X, _world.WorldSize.Y];
-        Walls = new Block?[_world.WorldSize.X, _world.WorldSize.Y];
+        _playerManager = _world.PlayerManager;
+        _itemIdBimap = _world.ItemIdBimap;
+        _worldSize = _world.WorldSize;
+
+        Blocks = new Block?[_worldSize.X, _worldSize.Y];
+        Walls = new Block?[_worldSize.X, _worldSize.Y];
 
         if (!_world.IsHost) return;
 
@@ -49,8 +56,8 @@ public partial class BlockManager : Node2D {
             }
         }
 
-        _world.PlayerManager.PlayerSpawnedOnHost += OnPlayerSpawnedOnHost;
-        TreeExiting += () => { _world.PlayerManager.PlayerSpawnedOnHost -= OnPlayerSpawnedOnHost; };
+        _playerManager.PlayerSpawnedOnHost += OnPlayerSpawnedOnHost;
+        TreeExiting += () => { _playerManager.PlayerSpawnedOnHost -= OnPlayerSpawnedOnHost; };
     }
 
     public void ClientGetWorldData() {
@@ -71,7 +78,7 @@ public partial class BlockManager : Node2D {
     }
 
     private void OnHostPlacedBlock(Item item, Vector2I coords) {
-        ushort itemId = _world.ItemIdBimap.GetId(item);
+        ushort itemId = _itemIdBimap.GetId(item);
         Rpc(nameof(RpcAllCreateBlock), itemId, coords);
     }
 
@@ -85,7 +92,7 @@ public partial class BlockManager : Node2D {
     }
 
     private void OnHostPlacedWall(Item item, Vector2I coords) {
-        ushort itemId = _world.ItemIdBimap.GetId(item);
+        ushort itemId = _itemIdBimap.GetId(item);
         Rpc(nameof(RpcAllCreateWall), itemId, coords);
     }
 
@@ -148,8 +155,8 @@ public partial class BlockManager : Node2D {
     private Dictionary<ushort, Dictionary> SerializeChunk(Block?[,] data) {
         Dictionary<ushort, Dictionary> groupedByItemId = new();
 
-        for (int x = 0; x < _world.WorldSize.X; x++) {
-            for (int y = 0; y < _world.WorldSize.Y; y++) {
+        for (int x = 0; x < _worldSize.X; x++) {
+            for (int y = 0; y < _worldSize.Y; y++) {
                 Block? value = data[x, y];
                 if (value is not { } block) continue;
                 
