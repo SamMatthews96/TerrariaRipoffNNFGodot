@@ -56,8 +56,8 @@ public partial class BlockManager : Node2D {
             }
         }
 
-        _playerManager.PlayerSpawnedOnHost += OnPlayerSpawnedOnHost;
-        TreeExiting += () => { _playerManager.PlayerSpawnedOnHost -= OnPlayerSpawnedOnHost; };
+        _playerManager.HostPlayerSpawned += OnPlayerSpawnedOnHost;
+        TreeExiting += () => { _playerManager.HostPlayerSpawned -= OnPlayerSpawnedOnHost; };
     }
 
     public void ClientGetWorldData() {

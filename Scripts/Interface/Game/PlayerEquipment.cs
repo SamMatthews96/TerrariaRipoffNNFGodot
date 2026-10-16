@@ -10,8 +10,8 @@ public partial class PlayerEquipment : Container {
     [Export] private TextureButton _weaponIcon;
     [Export] private TextureButton _pickaxeIcon;
 
-    public event Action ClickedUnequipWeapon;
-    public event Action ClickedUnequipPickaxe;
+    public event Action UnequipWeaponClicked;
+    public event Action UnequipPickaxeClicked;
 
     public override void _Ready() {
         Visible = false;
@@ -30,11 +30,11 @@ public partial class PlayerEquipment : Container {
     }
 
     private void OnMiningIconPressed() {
-        ClickedUnequipPickaxe?.Invoke();
+        UnequipPickaxeClicked?.Invoke();
     }
 
     private void OnWeaponIconPressed() {
-        ClickedUnequipWeapon?.Invoke();
+        UnequipWeaponClicked?.Invoke();
     }
 
 

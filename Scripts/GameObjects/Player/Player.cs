@@ -47,8 +47,8 @@ public partial class Player : CharacterBody2D {
     public bool IsLocalPlayer { get; private set; }
 
     public delegate void CellMovedDelegate(Vector2I newCoords, Vector2I oldCoords);
-    public event CellMovedDelegate MovedCellLocal;
-    public event CellMovedDelegate MovedCellHost;
+    public event CellMovedDelegate LocalCellMoved;
+    public event CellMovedDelegate HostCellMoved;
 
     #region Event Wrappers
     public event BuildAction.BuildActionDelegate BlockPlaced {
@@ -158,13 +158,13 @@ public partial class Player : CharacterBody2D {
         MoveAndSlide();
 
         if (previousCoords == Coords) return;
-        MovedCellLocal?.Invoke(Coords, previousCoords);
+        LocalCellMoved?.Invoke(Coords, previousCoords);
         RpcId(1, nameof(RpcHostMovedCell), Coords, previousCoords);
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void RpcHostMovedCell(Vector2I newCoords, Vector2I oldCoords) {
-        MovedCellHost?.Invoke(newCoords, oldCoords);
+        HostCellMoved?.Invoke(newCoords, oldCoords);
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]

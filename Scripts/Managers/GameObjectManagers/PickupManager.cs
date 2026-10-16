@@ -27,12 +27,12 @@ public partial class PickupManager : Node2D {
 
         if (_world.IsHost) {
             _blockManager.BlockDestroyed += HostOnBlockDestroyed;
-            _playerManager.PlayerSpawnedOnHost += OnPlayedSpawnedOnHost;
+            _playerManager.HostPlayerSpawned += OnPlayedSpawnedOnHost;
             _propManager.HostPropDestroyed += OnHostPropDestroyed;
             _blockManager.WallDestroyed += HostOnBlockDestroyed;
             TreeExiting += () => {
                 _blockManager.BlockDestroyed -= HostOnBlockDestroyed;
-                _playerManager.PlayerSpawnedOnHost -= OnPlayedSpawnedOnHost;
+                _playerManager.HostPlayerSpawned -= OnPlayedSpawnedOnHost;
                 _propManager.HostPropDestroyed -= OnHostPropDestroyed;
                 _blockManager.WallDestroyed -= HostOnBlockDestroyed;
             };

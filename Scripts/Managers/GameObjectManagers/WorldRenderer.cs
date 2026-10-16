@@ -46,13 +46,13 @@ public partial class WorldRenderer : Node2D {
         _blockManager.BlockDestroyed += onDestroyed;
         _blockManager.WallCreated += onCreated;
         _blockManager.WallDestroyed += onDestroyed;
-        player.MovedCellLocal += onMoved;
+        player.LocalCellMoved += onMoved;
         TreeExiting += () => {
             _blockManager.BlockCreated -= onCreated;
             _blockManager.BlockDestroyed -= onDestroyed;
             _blockManager.WallCreated -= onCreated;
             _blockManager.WallDestroyed -= onDestroyed;
-            player.MovedCellLocal -= onMoved;
+            player.LocalCellMoved -= onMoved;
         };
         UpdateView();
     }

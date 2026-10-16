@@ -36,8 +36,8 @@ public partial class PropManager : Node {
                 }
             }
 
-            _playerManager.PlayerSpawnedOnHost += OnPlayerSpawnedOnHost;
-            TreeExiting += () => { _playerManager.PlayerSpawnedOnHost -= OnPlayerSpawnedOnHost; };
+            _playerManager.HostPlayerSpawned += OnPlayerSpawnedOnHost;
+            TreeExiting += () => { _playerManager.HostPlayerSpawned -= OnPlayerSpawnedOnHost; };
         } else {
             RpcId(1, nameof(RpcHostRequestWorldData));
         }
