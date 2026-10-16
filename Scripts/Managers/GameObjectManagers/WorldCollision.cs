@@ -8,27 +8,37 @@ public partial class WorldCollision : Node2D {
     [Export] private PackedScene _collisionBlockScene;
     [Export] private int _observerRadius = 3;
 
+    private PlayerManager _playerManager;
+    private BlockManager _blockManager;
+    private PickupManager _pickupManager;
+    private Vector2I _worldSize;
+
     private readonly Dictionary<Vector2I, StaticBody2D> _activeCollisionBlocks = new();
-    private readonly Dictionary<Vector2I, int> _observerCounts = new(); 
+    private readonly Dictionary<Vector2I, int> _observerCounts = new();
 
     public override void _Ready() {
-        _world.PlayerManager.LocalPlayerSpawned += OnLocalPlayerSpawned;
-        _world.BlockManager.BlockDestroyed += OnBlockDestroyed;
-        _world.BlockManager.BlockCreated += OnBlockCreated;
+        _playerManager = _world.PlayerManager;
+        _blockManager = _world.BlockManager;
+        _pickupManager = _world.PickupManager;
+        _worldSize = _world.WorldSize;
+
+        _playerManager.LocalPlayerSpawned += OnLocalPlayerSpawned;
+        _blockManager.BlockDestroyed += OnBlockDestroyed;
+        _blockManager.BlockCreated += OnBlockCreated;
         TreeExiting += () => {
-            _world.PlayerManager.LocalPlayerSpawned -= OnLocalPlayerSpawned;
-            _world.BlockManager.BlockCreated -= OnBlockCreated;
-            _world.BlockManager.BlockDestroyed -= OnBlockDestroyed;
+            _playerManager.LocalPlayerSpawned -= OnLocalPlayerSpawned;
+            _blockManager.BlockCreated -= OnBlockCreated;
+            _blockManager.BlockDestroyed -= OnBlockDestroyed;
         };
 
         if (!_world.IsHost) return;
-        _world.PickupManager.ServerPickupCreated += OnPickupCreated;
-        _world.PickupManager.ServerPickupMoved += OnPickupMoved;
-        _world.PickupManager.ServerPickupDestroyed += OnPickupDestroyed;
+        _pickupManager.ServerPickupCreated += OnPickupCreated;
+        _pickupManager.ServerPickupMoved += OnPickupMoved;
+        _pickupManager.ServerPickupDestroyed += OnPickupDestroyed;
         TreeExiting += () => {
-            _world.PickupManager.ServerPickupCreated -= OnPickupCreated;
-            _world.PickupManager.ServerPickupMoved -= OnPickupMoved;
-            _world.PickupManager.ServerPickupDestroyed -= OnPickupDestroyed;
+            _pickupManager.ServerPickupCreated -= OnPickupCreated;
+            _pickupManager.ServerPickupMoved -= OnPickupMoved;
+            _pickupManager.ServerPickupDestroyed -= OnPickupDestroyed;
         };
     }
     
@@ -66,9 +76,9 @@ public partial class WorldCollision : Node2D {
 
     private void IncrementObserverCounts(Vector2I position) {
         int startX = Mathf.Max(0, position.X - _observerRadius);
-        int endX = Mathf.Min(_world.WorldSize.X - 1, position.X + _observerRadius);
+        int endX = Mathf.Min(_worldSize.X - 1, position.X + _observerRadius);
         int startY = Mathf.Max(0, position.Y - _observerRadius);
-        int endY = Mathf.Min(_world.WorldSize.Y - 1, position.Y + _observerRadius);
+        int endY = Mathf.Min(_worldSize.Y - 1, position.Y + _observerRadius);
 
         for (int x = startX; x <= endX; x++) {
             for (int y = startY; y <= endY; y++) {
@@ -84,9 +94,9 @@ public partial class WorldCollision : Node2D {
 
     private void DecrementObserverCounts(Vector2I position) {
         int startX = Mathf.Max(0, position.X - _observerRadius);
-        int endX = Mathf.Min(_world.WorldSize.X - 1, position.X + _observerRadius);
+        int endX = Mathf.Min(_worldSize.X - 1, position.X + _observerRadius);
         int startY = Mathf.Max(0, position.Y - _observerRadius);
-        int endY = Mathf.Min(_world.WorldSize.Y - 1, position.Y + _observerRadius);
+        int endY = Mathf.Min(_worldSize.Y - 1, position.Y + _observerRadius);
 
         for (int x = startX; x <= endX; x++) {
             for (int y = startY; y <= endY; y++) {
@@ -102,7 +112,7 @@ public partial class WorldCollision : Node2D {
     }
     
     private bool HasBlockEntity(int x, int y) {
-        return _world.BlockManager.Blocks[x, y] is not null;
+        return _blockManager.Blocks[x, y] is not null;
     }
 
     private void CreateCollisionBlock(Vector2I position) {

@@ -10,8 +10,11 @@ public partial class ItemIdBimap : Node {
     private Dictionary<string, Item> _stringToItem = new();
 
     [Export] private World _world;
+    private PlayerManager _playerManager;
 
     public override void _Ready() {
+        _playerManager = _world.PlayerManager;
+
         Dictionary dict = _world.WorldData["itemMap"].AsGodotDictionary();
         _idToString = dict["IdToString"].AsGodotArray<string>();
         _stringToId = dict["StringToId"].AsGodotDictionary<string, ushort>();
@@ -22,8 +25,8 @@ public partial class ItemIdBimap : Node {
             _stringToItem[key] = Item.FromDictionary(itemDict);
         }
 
-        _world.PlayerManager.PlayerSpawnedOnHost += OnPlayerSpawnedOnHost;
-        TreeExiting += () => { _world.PlayerManager.PlayerSpawnedOnHost -= OnPlayerSpawnedOnHost; };
+        _playerManager.PlayerSpawnedOnHost += OnPlayerSpawnedOnHost;
+        TreeExiting += () => { _playerManager.PlayerSpawnedOnHost -= OnPlayerSpawnedOnHost; };
     }
 
     public Item GetItem(ushort id) {

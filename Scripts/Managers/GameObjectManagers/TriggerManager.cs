@@ -6,16 +6,19 @@ namespace TerrariaRipoffNNF;
 
 public partial class TriggerManager : Node {
     [Export] private World _world;
+    private InputManager _inputManager;
 
     private Dictionary<Vector2I, ActiveTrigger> _triggers = new();
     private Dictionary<Vector2I, ActiveActor> _actors = new();
 
-    private Dictionary<ActiveTrigger, Array<ActiveActor>> 
+    private Dictionary<ActiveTrigger, Array<ActiveActor>>
         _listenersByTrigger = new();
-    private Dictionary<ActiveActor, Array<ActiveTrigger>> 
+    private Dictionary<ActiveActor, Array<ActiveTrigger>>
         _triggersByListener = new();
-    
+
     public override void _Ready() {
+        _inputManager = _world.InputManager;
+
         Action action = () => {
             foreach (ActiveTrigger trigger in _triggers.Values) {
                 foreach (ActiveActor actor in _actors.Values) {
@@ -23,8 +26,8 @@ public partial class TriggerManager : Node {
                 }
             }
         };
-        _world.InputManager.TestPressed += action;
-        TreeExiting += () => { _world.InputManager.TestPressed -= action; };
+        _inputManager.TestPressed += action;
+        TreeExiting += () => { _inputManager.TestPressed -= action; };
     }
 
     public void RegisterTrigger(ActiveProp prop, PackedScene scene) {

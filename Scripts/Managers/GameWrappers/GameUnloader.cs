@@ -8,6 +8,10 @@ namespace TerrariaRipoffNNF;
 
 public partial class GameUnloader : Node {
     private readonly World _world;
+    private BlockManager _blockManager;
+    private PropManager _propManager;
+    private ItemIdBimap _itemIdBimap;
+    private Vector2I _worldSize;
     private bool _completedSave;
 
     public event Action SaveComplete;
@@ -19,6 +23,11 @@ public partial class GameUnloader : Node {
     public GameUnloader() { }
 
     public override void _Ready() {
+        _blockManager = _world.BlockManager;
+        _propManager = _world.PropManager;
+        _itemIdBimap = _world.ItemIdBimap;
+        _worldSize = _world.WorldSize;
+
         Task.Run(SaveWorld);
     }
 
@@ -31,10 +40,10 @@ public partial class GameUnloader : Node {
         // Serialize blocks, walls, and props in parallel
         Task<Dictionary<string, Dictionary>> blocksTask =
             Task.Run(() =>
-                SerializeBlocks(_world.BlockManager.Blocks));
+                SerializeBlocks(_blockManager.Blocks));
         Task<Dictionary<string, Dictionary>> wallsTask =
             Task.Run(() =>
-                SerializeBlocks(_world.BlockManager.Walls));
+                SerializeBlocks(_blockManager.Walls));
         Task<Dictionary<string, Dictionary>> propsTask =
             Task.Run(SerializeProps);
 
@@ -42,12 +51,12 @@ public partial class GameUnloader : Node {
 
         Dictionary worldData = new() {
             ["Name"] = _world.WorldData["Name"],
-            ["Width"] = _world.WorldSize.X,
-            ["Height"] = _world.WorldSize.Y,
+            ["Width"] = _worldSize.X,
+            ["Height"] = _worldSize.Y,
             ["blocks"] = blocksTask.Result,
             ["walls"] = wallsTask.Result,
             ["props"] = propsTask.Result,
-            ["itemMap"] = _world.ItemIdBimap.ToDictionary()
+            ["itemMap"] = _itemIdBimap.ToDictionary()
         };
 
         FileManager.SaveWorld(worldData);
@@ -56,13 +65,13 @@ public partial class GameUnloader : Node {
 
     private Dictionary<string, Dictionary> SerializeBlocks(Block?[,] data) {
         Dictionary<string, Dictionary> groupedByItemId = new();
-        int itemCount = _world.ItemIdBimap.GetItemCount();
+        int itemCount = _itemIdBimap.GetItemCount();
         for (int i = 0; i < itemCount; i++) {
             string idStr = i.ToString();
             groupedByItemId[idStr] = new Dictionary();
         }
-        
-        for (int x = 0; x < _world.WorldSize.X; x++) {
+
+        for (int x = 0; x < _worldSize.X; x++) {
             string xStr = x.ToString();
 
             // Pre-create arrays for this column and cache references
@@ -74,7 +83,7 @@ public partial class GameUnloader : Node {
                 columnArrays[i] = arr;
             }
 
-            for (int y = 0; y < _world.WorldSize.Y; y++) {
+            for (int y = 0; y < _worldSize.Y; y++) {
                 Block? value = data[x, y];
                 if (value is not { } block) continue;
 
@@ -88,9 +97,9 @@ public partial class GameUnloader : Node {
     private Dictionary<string, Dictionary> SerializeProps() {
         Dictionary<string, Dictionary> groupedByItemId = new();
 
-        foreach ((Vector2I coords, ActiveProp prop) in _world.PropManager.Props) {
+        foreach ((Vector2I coords, ActiveProp prop) in _propManager.Props) {
             Item item = prop.Item;
-            string itemId = _world.ItemIdBimap.GetId(item).ToString();
+            string itemId = _itemIdBimap.GetId(item).ToString();
 
             if (!groupedByItemId.ContainsKey(itemId)) {
                 groupedByItemId[itemId] = new Dictionary();

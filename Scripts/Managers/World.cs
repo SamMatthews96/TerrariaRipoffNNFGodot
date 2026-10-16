@@ -2,8 +2,6 @@ using System;
 using Godot;
 using Godot.Collections;
 using TerrariaRipoffNNF.Scripts.Managers;
-using TerrariaRipoffNNF.Scripts.Managers.GameObjectManagers;
-using TerrariaRipoffNNF.TestScenes;
 
 namespace TerrariaRipoffNNF;
 
