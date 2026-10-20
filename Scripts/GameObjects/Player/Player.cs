@@ -47,8 +47,7 @@ public partial class Player : CharacterBody2D {
     public bool IsLocalPlayer { get; private set; }
 
     public delegate void CellMovedDelegate(Vector2I newCoords, Vector2I oldCoords);
-    public event CellMovedDelegate LocalCellMoved;
-    public event CellMovedDelegate HostCellMoved;
+    public event CellMovedDelegate CellMoved;
 
     #region Event Wrappers
     public event BuildActionDelegate BlockPlaced {
@@ -168,16 +167,12 @@ public partial class Player : CharacterBody2D {
         MoveAndSlide();
 
         if (previousCoords == Coords) return;
-        // @todo
-        // Does it make sense for the event to distinguish between local and remote?
-        // Or should that be decided by the listener?
-        LocalCellMoved?.Invoke(Coords, previousCoords);
-        RpcId(1, nameof(RpcHostMovedCell), Coords, previousCoords);
+        Rpc(nameof(RpcHostMovedCell), Coords, previousCoords);
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void RpcHostMovedCell(Vector2I newCoords, Vector2I oldCoords) {
-        HostCellMoved?.Invoke(newCoords, oldCoords);
+        CellMoved?.Invoke(newCoords, oldCoords);
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]

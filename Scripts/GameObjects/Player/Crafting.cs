@@ -25,12 +25,12 @@ public sealed partial class Crafting : Node {
     public override void _Ready() {
         StationManager stationManager = _player.World.StationManager;
         if (_player.World.IsHost) {
-            _player.HostCellMoved += OnHostCellMoved;
+            _player.CellMoved += OnHostCellMoved;
             stationManager.StationCreated += OnStationCreated;
             stationManager.StationDestroyed += OnStationDestroyed;
             
             TreeExiting += () => {
-                _player.HostCellMoved -= OnHostCellMoved;
+                _player.CellMoved -= OnHostCellMoved;
                 stationManager.StationCreated -= OnStationCreated;
                 stationManager.StationDestroyed -= OnStationDestroyed;
             };
