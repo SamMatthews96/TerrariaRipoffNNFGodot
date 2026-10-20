@@ -45,17 +45,17 @@ public partial class Inventory : Node {
                 AddItems(newStack);
             }
 
-            _player.Crafting.HostItemCrafted += OnHostItemCrafted;
-            TreeExiting += () => { _player.Crafting.HostItemCrafted -= OnHostItemCrafted; };
+            _player.HostItemCrafted += OnHostItemCrafted;
+            TreeExiting += () => { _player.HostItemCrafted -= OnHostItemCrafted; };
         }
 
         if (_player.World.IsHost) {
-            _player.ServerPickupArea.CollectedPickup += HostOnCollectedPickup;
+            _player.CollectedPickup += HostOnCollectedPickup;
             _player.BlockPlaced += HostOnPlacedBlock;
             _player.WallPlaced += HostOnPlacedBlock;
             _player.PropPlaced += HostOnPlacedBlock;
             TreeExiting += () => {
-                _player.ServerPickupArea.CollectedPickup -= HostOnCollectedPickup;
+                _player.CollectedPickup -= HostOnCollectedPickup;
                 _player.BlockPlaced -= HostOnPlacedBlock;
                 _player.WallPlaced -= HostOnPlacedBlock;
                 _player.PropPlaced -= HostOnPlacedBlock;

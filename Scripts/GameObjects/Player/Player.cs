@@ -51,34 +51,44 @@ public partial class Player : CharacterBody2D {
     public event CellMovedDelegate HostCellMoved;
 
     #region Event Wrappers
-    public event BuildAction.BuildActionDelegate BlockPlaced {
+    public event BuildActionDelegate BlockPlaced {
         add => ActionState.Build.HostPlacedBlock += value;
         remove => ActionState.Build.HostPlacedBlock -= value;
     }
 
-    public event BuildAction.BuildActionDelegate WallPlaced {
+    public event BuildActionDelegate WallPlaced {
         add => ActionState.Build.HostPlacedWall += value;
         remove => ActionState.Build.HostPlacedWall -= value;
     }
 
-    public event BuildAction.BuildActionDelegate PropPlaced {
+    public event BuildActionDelegate PropPlaced {
         add => ActionState.Build.HostPlaceProp += value;
         remove => ActionState.Build.HostPlaceProp -= value;
     }
 
-    public event GatherAction.GatherActionDelegate BlockGathered {
+    public event GatherActionDelegate BlockGathered {
         add => ActionState.Gather.HostGatheredBlock += value;
         remove => ActionState.Gather.HostGatheredBlock -= value;
     }
 
-    public event GatherAction.GatherActionDelegate WallGathered {
+    public event GatherActionDelegate WallGathered {
         add => ActionState.Gather.HostGatheredWall += value;
         remove => ActionState.Gather.HostGatheredWall -= value;
     }
 
-    public event GatherAction.GatherActionDelegate PropGathered {
+    public event GatherActionDelegate PropGathered {
         add => ActionState.Gather.HostGatherProp += value;
         remove => ActionState.Gather.HostGatherProp -= value;
+    }
+    
+    public event CraftEventDelegate HostItemCrafted {
+        add => Crafting.HostItemCrafted += value;
+        remove => Crafting.HostItemCrafted -= value;
+    }
+    
+    public event PickupCollectedDelegate CollectedPickup {
+        add => ServerPickupArea.CollectedPickup += value;
+        remove => ServerPickupArea.CollectedPickup -= value;
     }
     
     #endregion
@@ -158,6 +168,9 @@ public partial class Player : CharacterBody2D {
         MoveAndSlide();
 
         if (previousCoords == Coords) return;
+        // @todo
+        // Does it make sense for the event to distinguish between local and remote?
+        // Or should that be decided by the listener?
         LocalCellMoved?.Invoke(Coords, previousCoords);
         RpcId(1, nameof(RpcHostMovedCell), Coords, previousCoords);
     }

@@ -5,8 +5,9 @@ using TerrariaRipoffNNF.TestScenes;
 
 namespace TerrariaRipoffNNF;
 
+public delegate void BuildActionDelegate(Item item, Vector2I coords);
+
 public partial class BuildAction : PlayerAction {
-    public delegate void BuildActionDelegate(Item item, Vector2I coords);
     public event BuildActionDelegate HostPlacedBlock;
     public event BuildActionDelegate HostPlacedWall;
     public event BuildActionDelegate HostPlaceProp;

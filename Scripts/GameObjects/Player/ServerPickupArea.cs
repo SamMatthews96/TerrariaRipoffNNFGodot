@@ -3,13 +3,16 @@ using Godot;
 
 namespace TerrariaRipoffNNF;
 
+public delegate void PickupCollectedDelegate(PickupEntity pickupEntity);
+
 public partial class ServerPickupArea : Area2D {
     private Player _player;
 
-    public event Action<PickupEntity> CollectedPickup;
+    public event PickupCollectedDelegate CollectedPickup;
 
     public static ServerPickupArea Create(Player player) {
-        ServerPickupArea serverPickupArea = Data.PackedScenes.PlayerPickupArea
+        ServerPickupArea serverPickupArea = 
+            Data.PackedScenes.PlayerPickupArea
             .Instantiate<ServerPickupArea>();
         serverPickupArea._player = player;
         return serverPickupArea;

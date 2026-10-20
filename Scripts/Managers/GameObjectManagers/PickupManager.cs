@@ -45,8 +45,8 @@ public partial class PickupManager : Node2D {
     }
 
     private void OnPlayedSpawnedOnHost(Player player) {
-        player.ServerPickupArea.CollectedPickup += HostOnPlayerCollectedPickup;
-        player.TreeExiting += () => { player.ServerPickupArea.CollectedPickup -= HostOnPlayerCollectedPickup; };
+        player.CollectedPickup += HostOnPlayerCollectedPickup;
+        player.TreeExiting += () => { player.CollectedPickup -= HostOnPlayerCollectedPickup; };
     }
 
     private void HostOnPlayerCollectedPickup(PickupEntity pickup) {

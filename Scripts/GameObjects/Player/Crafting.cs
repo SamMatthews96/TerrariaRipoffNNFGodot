@@ -5,6 +5,9 @@ using TerrariaRipoffNNF.Scripts.Managers;
 
 namespace TerrariaRipoffNNF;
 
+public delegate void CraftEventDelegate(
+    StackedItems result, Array<StackedItems> ingredients);
+
 public sealed partial class Crafting : Node {
     [Export] private Area2D _craftingArea;
     [Export] private Player _player;
@@ -13,24 +16,21 @@ public sealed partial class Crafting : Node {
 
     private Dictionary<string, Item> _selectedIngredients = new();
     public event Action<StackedItems> SelectedIngredientsChanged;
-    public event CraftEventHandler HostItemCrafted;
+    public event CraftEventDelegate HostItemCrafted;
     public event Action<StationType> AddedNewStation;
     public event Action<StationType> RemovedStation;
-
-    public delegate void CraftEventHandler(
-        StackedItems result, Array<StackedItems> ingredients);
 
     public int CraftRange { get; private set; } = 8;
 
     public override void _Ready() {
         StationManager stationManager = _player.World.StationManager;
         if (_player.World.IsHost) {
-            _player.MovedCellHost += OnMovedCellHost;
+            _player.HostCellMoved += OnHostCellMoved;
             stationManager.StationCreated += OnStationCreated;
             stationManager.StationDestroyed += OnStationDestroyed;
             
             TreeExiting += () => {
-                _player.MovedCellHost -= OnMovedCellHost;
+                _player.HostCellMoved -= OnHostCellMoved;
                 stationManager.StationCreated -= OnStationCreated;
                 stationManager.StationDestroyed -= OnStationDestroyed;
             };
@@ -79,7 +79,7 @@ public sealed partial class Crafting : Node {
         }
     }
 
-    private void OnMovedCellHost(Vector2I newCoords, Vector2I oldCoords) {
+    private void OnHostCellMoved(Vector2I newCoords, Vector2I oldCoords) {
         foreach (Vector2I coords in _nearbyStations.Keys) {
             if (_player.World.IsInOrthogonalRange(
                     coords, newCoords, CraftRange)) continue;

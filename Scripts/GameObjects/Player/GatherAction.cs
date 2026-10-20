@@ -4,8 +4,9 @@ using Godot.Collections;
 
 namespace TerrariaRipoffNNF;
 
+public delegate void GatherActionDelegate(Vector2I coords, float damage);
+
 public partial class GatherAction : PlayerAction {
-    public delegate void GatherActionDelegate(Vector2I coords, float damage);
     public event GatherActionDelegate HostGatheredBlock;
     public event GatherActionDelegate HostGatherProp;
     public event GatherActionDelegate HostGatheredWall;
