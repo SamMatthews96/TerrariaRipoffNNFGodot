@@ -8,13 +8,13 @@ public partial class StationManager : Node {
     [Export] private World _world;
     private PropManager _propManager;
 
-    public Dictionary<Vector2I, StationType> Stations = new();
+    private Dictionary<Vector2I, StationType> _stations = new();
 
     public event Action<Vector2I, StationType> StationCreated;
     public event Action<Vector2I, StationType> StationDestroyed;
 
     public void Register(StationType type, Vector2I coords) {
-        Stations.Add(coords, type);
+        _stations.Add(coords, type);
         StationCreated?.Invoke(coords, type);
     }
 
@@ -22,14 +22,24 @@ public partial class StationManager : Node {
         _propManager = _world.PropManager;
 
         _propManager.HostPropDestroyed += OnHostPropDestroyed;
-        TreeExiting += () => {
-            _propManager.HostPropDestroyed -= OnHostPropDestroyed;
-        };
+        TreeExiting += () => { _propManager.HostPropDestroyed -= OnHostPropDestroyed; };
+    }
+
+    public Dictionary<Vector2I, StationType> GetStationsInRegion(
+        Array<Vector2I> region) {
+        Dictionary<Vector2I, StationType> localStations = new();
+        foreach (Vector2I coords in region) {
+            if (_stations.TryGetValue(coords, out StationType type)) {
+                localStations[coords] = type;
+            }
+        }
+
+        return localStations;
     }
 
     private void OnHostPropDestroyed(ActiveProp _, Vector2I coords) {
-        if (!Stations.TryGetValue(coords, out StationType type)) return;
+        if (!_stations.TryGetValue(coords, out StationType type)) return;
         StationDestroyed?.Invoke(coords, type);
-        Stations.Remove(coords);
+        _stations.Remove(coords);
     }
 }

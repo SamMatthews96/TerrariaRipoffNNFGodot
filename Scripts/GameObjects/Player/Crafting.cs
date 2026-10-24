@@ -11,6 +11,9 @@ public delegate void CraftEventDelegate(
 public sealed partial class Crafting : Node {
     [Export] private Area2D _craftingArea;
     [Export] private Player _player;
+    private StationManager _stationManager;
+    private World _world;
+    
     private Recipe _selectedRecipe;
     private Dictionary<Vector2I, StationType> _nearbyStations = new();
 
@@ -21,18 +24,22 @@ public sealed partial class Crafting : Node {
     public event Action<StationType> RemovedStation;
 
     public int CraftRange { get; private set; } = 8;
+    
+    // monitors the crafting state for one character
 
     public override void _Ready() {
-        StationManager stationManager = _player.World.StationManager;
+        
+        _world = _player.World;
+        _stationManager = _player.World.StationManager;
         if (_player.World.IsHost) {
             _player.CellMoved += OnHostCellMoved;
-            stationManager.StationCreated += OnStationCreated;
-            stationManager.StationDestroyed += OnStationDestroyed;
+            _stationManager.StationCreated += OnStationCreated;
+            _stationManager.StationDestroyed += OnStationDestroyed;
             
             TreeExiting += () => {
                 _player.CellMoved -= OnHostCellMoved;
-                stationManager.StationCreated -= OnStationCreated;
-                stationManager.StationDestroyed -= OnStationDestroyed;
+                _stationManager.StationCreated -= OnStationCreated;
+                _stationManager.StationDestroyed -= OnStationDestroyed;
             };
         }
 
@@ -66,33 +73,27 @@ public sealed partial class Crafting : Node {
     }
 
     private void OnLocalPlayerSpawned(Player player) {
-        Vector2I playerCoords = _player.SpawnCoords;
-
-        for (int x = playerCoords.X - CraftRange; x <= playerCoords.X + CraftRange; x++) {
-            for (int y = playerCoords.Y - CraftRange; y <= playerCoords.Y + CraftRange; y++) {
-                Vector2I coords = new(x, y);
-
-                if (!_player.World.StationManager.Stations
-                        .TryGetValue(coords, out StationType type)) continue;
-                HostAddCraftingStation(coords, type);
-            }
+        Array<Vector2I> localCells = _world.GetCellsInRange(player.Coords, CraftRange);
+        Dictionary<Vector2I, StationType> localStations = 
+            _stationManager.GetStationsInRegion(localCells);
+        foreach ((Vector2I coords, StationType type) in localStations) {
+            HostAddCraftingStation(coords, type);
         }
     }
 
     private void OnHostCellMoved(Vector2I newCoords, Vector2I oldCoords) {
         foreach (Vector2I coords in _nearbyStations.Keys) {
-            if (_player.World.IsInOrthogonalRange(
+            if (_world.IsInOrthogonalRange(
                     coords, newCoords, CraftRange)) continue;
             StationType type = _nearbyStations[coords];
             HostRemoveCraftingStation(coords, type);
         }
 
-        // Add new stations that are now in range
         Array<Vector2I> newCells =
             _player.World.GetNewCellsInRange(newCoords, oldCoords, CraftRange);
-        foreach (Vector2I coords in newCells) {
-            if (!_player.World.StationManager.Stations
-                    .TryGetValue(coords, out StationType type)) continue;
+        Dictionary<Vector2I, StationType> localStations = 
+            _stationManager.GetStationsInRegion(newCells);
+        foreach ((Vector2I coords, StationType type) in localStations) {
             HostAddCraftingStation(coords, type);
         }
     }

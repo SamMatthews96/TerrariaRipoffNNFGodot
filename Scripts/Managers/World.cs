@@ -20,7 +20,7 @@ public partial class World : Node2D {
     [Export] public StationManager StationManager { get; private set; }
     [Export] public TriggerManager TriggerManager { get; private set; }
     [Export] public NpcManager NpcManager { get; private set; }
-    
+
     public event Action GameLoaded;
 
     // Event wrappers to reduce Law of Demeter violations
@@ -60,23 +60,7 @@ public partial class World : Node2D {
         return world;
     }
 
-    private void OnExitGameClicked() {
-        Visible = false;
-    }
-
-    public override void _Ready() {
-        Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
-        TreeExiting += () => { Interface.GameMenu.ExitGameButtonDown -= OnExitGameClicked; };
-        if (IsHost) {
-            PlayerManager.SpawnHostPlayer(_localPlayerData);
-            _localPlayerData = null;
-            GameLoaded?.Invoke();
-        } else {
-            Hide();
-            BlockManager.SyncComplete += ClientOnSyncComplete;
-            BlockManager.ClientGetWorldData();
-        }
-    }
+    #region public utils
 
     public bool IsInBounds(Vector2I coords) {
         return coords.X >= 0
@@ -90,11 +74,27 @@ public partial class World : Node2D {
         return PropManager.PropCells.ContainsKey(coords);
     }
 
+    // @todo this shouldn't check for in bounds
     public bool IsInOrthogonalRange(Vector2I a, Vector2I b, int range) {
         if (!IsInBounds(a) || !IsInBounds(b)) return false;
         if (Math.Abs(a.X - b.X) > range) return false;
         if (Math.Abs(a.Y - b.Y) > range) return false;
         return true;
+    }
+
+    public Array<Vector2I> GetCellsInRange(Vector2I coords, int range) {
+        int startX = Math.Max(coords.X - range, 0);
+        int endX = Math.Min(coords.X + range, WorldSize.X - 1);
+        int startY = Math.Max(coords.Y - range, 0);
+        int endY = Math.Min(coords.Y + range, WorldSize.Y - 1);
+
+        Array<Vector2I> cells = new();
+        for (int x = startX; x <= endX; x++) {
+            for (int y = startY; y <= endY; y++) {
+                cells.Add(new Vector2I(x, y));
+            }
+        }
+        return cells;
     }
 
     public CellEntity GetPriorityCellEntity(
@@ -127,14 +127,6 @@ public partial class World : Node2D {
         return CellEntity.None;
     }
 
-    private void ClientOnSyncComplete() {
-        PlayerManager.SpawnPlayersOnClient(_localPlayerData);
-        _localPlayerData = null;
-        BlockManager.SyncComplete -= ClientOnSyncComplete;
-        Show();
-        GameLoaded?.Invoke();
-    }
-
     public Array<Vector2I> GetNewCellsInRange(
         Vector2I newCoords, Vector2I oldCoords, int range
     ) {
@@ -155,5 +147,33 @@ public partial class World : Node2D {
         }
 
         return cells;
+    }
+
+    #endregion
+
+    private void ClientOnSyncComplete() {
+        PlayerManager.SpawnPlayersOnClient(_localPlayerData);
+        _localPlayerData = null;
+        BlockManager.SyncComplete -= ClientOnSyncComplete;
+        Show();
+        GameLoaded?.Invoke();
+    }
+
+    private void OnExitGameClicked() {
+        Visible = false;
+    }
+
+    public override void _Ready() {
+        Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
+        TreeExiting += () => { Interface.GameMenu.ExitGameButtonDown -= OnExitGameClicked; };
+        if (IsHost) {
+            PlayerManager.SpawnHostPlayer(_localPlayerData);
+            _localPlayerData = null;
+            GameLoaded?.Invoke();
+        } else {
+            Hide();
+            BlockManager.SyncComplete += ClientOnSyncComplete;
+            BlockManager.ClientGetWorldData();
+        }
     }
 }
