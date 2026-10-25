@@ -70,7 +70,7 @@ public partial class World : Node2D {
     }
 
     public bool IsCellFilled(Vector2I coords) {
-        if (BlockManager.Blocks[coords.X, coords.Y] is not null) return true;
+        if (BlockManager.GetBlock(coords) is not null) return true;
         return PropManager.PropCells.ContainsKey(coords);
     }
 
@@ -102,7 +102,7 @@ public partial class World : Node2D {
         foreach (CellEntity type in types) {
             switch (type) {
                 case CellEntity.Block:
-                    if (BlockManager.Blocks[coords.X, coords.Y] is not null) {
+                    if (BlockManager.GetBlock(coords) is not null) {
                         return type;
                     }
 
@@ -114,7 +114,7 @@ public partial class World : Node2D {
 
                     break;
                 case CellEntity.Wall:
-                    if (BlockManager.Walls[coords.X, coords.Y] is not null) {
+                    if (BlockManager.GetBlock(coords) is not null) {
                         return type;
                     }
 

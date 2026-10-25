@@ -39,11 +39,9 @@ public partial class GameUnloader : Node {
     private void SaveWorld() {
         // Serialize blocks, walls, and props in parallel
         Task<Dictionary<string, Dictionary>> blocksTask =
-            Task.Run(() =>
-                SerializeBlocks(_blockManager.Blocks));
+            Task.Run(() => _blockManager.SerializeBlocks());
         Task<Dictionary<string, Dictionary>> wallsTask =
-            Task.Run(() =>
-                SerializeBlocks(_blockManager.Walls));
+            Task.Run(() => _blockManager.SerializeWalls());
         Task<Dictionary<string, Dictionary>> propsTask =
             Task.Run(SerializeProps);
 
@@ -63,36 +61,7 @@ public partial class GameUnloader : Node {
         _completedSave = true;
     }
 
-    private Dictionary<string, Dictionary> SerializeBlocks(Block?[,] data) {
-        Dictionary<string, Dictionary> groupedByItemId = new();
-        int itemCount = _itemIdBimap.GetItemCount();
-        for (int i = 0; i < itemCount; i++) {
-            string idStr = i.ToString();
-            groupedByItemId[idStr] = new Dictionary();
-        }
 
-        for (int x = 0; x < _worldSize.X; x++) {
-            string xStr = x.ToString();
-
-            // Pre-create arrays for this column and cache references
-            Array[] columnArrays = new Array[itemCount];
-            for (int i = 0; i < itemCount; i++) {
-                string idStr = i.ToString();
-                Array arr = new();
-                groupedByItemId[idStr][xStr] = arr;
-                columnArrays[i] = arr;
-            }
-
-            for (int y = 0; y < _worldSize.Y; y++) {
-                Block? value = data[x, y];
-                if (value is not { } block) continue;
-
-                columnArrays[block.ItemId].Add(y);
-            }
-        }
-
-        return groupedByItemId;
-    }
 
     private Dictionary<string, Dictionary> SerializeProps() {
         Dictionary<string, Dictionary> groupedByItemId = new();

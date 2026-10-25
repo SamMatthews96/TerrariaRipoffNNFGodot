@@ -112,7 +112,7 @@ public partial class WorldCollision : Node2D {
     }
     
     private bool HasBlockEntity(int x, int y) {
-        return _blockManager.Blocks[x, y] is not null;
+        return _blockManager.GetBlock(x, y) is not null;
     }
 
     private void CreateCollisionBlock(Vector2I position) {

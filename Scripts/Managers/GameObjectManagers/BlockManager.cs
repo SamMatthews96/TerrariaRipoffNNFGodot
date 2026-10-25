@@ -6,8 +6,8 @@ using Array = Godot.Collections.Array;
 namespace TerrariaRipoffNNF;
 
 public partial class BlockManager : Node2D {
-    public Block?[,] Blocks { get; private set; }
-    public Block?[,] Walls { get; private set; }
+    private Block?[,] _blocks;
+    private Block?[,] _walls;
 
     [Export] private World _world;
     private PlayerManager _playerManager;
@@ -19,14 +19,58 @@ public partial class BlockManager : Node2D {
     public event Action<Vector2I, ushort> BlockDestroyed;
     public event Action<Vector2I> WallCreated;
     public event Action<Vector2I, ushort> WallDestroyed;
+    
+    public Block? GetBlock(int x, int y) => _blocks[x, y];
+    public Block? GetBlock(Vector2I coords) => _blocks[coords.X, coords.Y];
+    public Block? GetWall(int x, int y) => _walls[x, y];
+    public Block? GetWall(Vector2I coords) => _walls[coords.X, coords.Y];
+
+    public Dictionary<string, Dictionary> SerializeBlocks() {
+        return SerializeData(_blocks);
+    }
+    
+    public Dictionary<string, Dictionary> SerializeWalls() {
+        return SerializeData(_walls);
+    }
+    
+    private Dictionary<string, Dictionary> SerializeData(Block?[,] data) {
+        Dictionary<string, Dictionary> groupedByItemId = new();
+        int itemCount = _itemIdBimap.GetItemCount();
+        for (int i = 0; i < itemCount; i++) {
+            string idStr = i.ToString();
+            groupedByItemId[idStr] = new Dictionary();
+        }
+
+        for (int x = 0; x < _worldSize.X; x++) {
+            string xStr = x.ToString();
+
+            // Pre-create arrays for this column and cache references
+            Array[] columnArrays = new Array[itemCount];
+            for (int i = 0; i < itemCount; i++) {
+                string idStr = i.ToString();
+                Array arr = new();
+                groupedByItemId[idStr][xStr] = arr;
+                columnArrays[i] = arr;
+            }
+
+            for (int y = 0; y < _worldSize.Y; y++) {
+                Block? value = data[x, y];
+                if (value is not { } block) continue;
+
+                columnArrays[block.ItemId].Add(y);
+            }
+        }
+
+        return groupedByItemId;
+    }
 
     public override void _Ready() {
         _playerManager = _world.PlayerManager;
         _itemIdBimap = _world.ItemIdBimap;
         _worldSize = _world.WorldSize;
 
-        Blocks = new Block?[_worldSize.X, _worldSize.Y];
-        Walls = new Block?[_worldSize.X, _worldSize.Y];
+        _blocks = new Block?[_worldSize.X, _worldSize.Y];
+        _walls = new Block?[_worldSize.X, _worldSize.Y];
 
         if (!_world.IsHost) return;
 
@@ -35,7 +79,7 @@ public partial class BlockManager : Node2D {
         foreach ((ushort itemId, Dictionary<int, Array> xDict) in savedBlocks) {
             foreach ((int x, Array yArray) in xDict) {
                 foreach (int y in yArray) {
-                    Blocks[x, y] = new Block {
+                    _blocks[x, y] = new Block {
                         CurrentHealth = 1,
                         ItemId = itemId
                     };
@@ -48,7 +92,7 @@ public partial class BlockManager : Node2D {
         foreach ((ushort itemId, Dictionary<int, Array> xDict) in savedWalls) {
             foreach ((int x, Array yArray) in xDict) {
                 foreach (int y in yArray) {
-                    Walls[x, y] = new Block {
+                    _walls[x, y] = new Block {
                         CurrentHealth = 1,
                         ItemId = itemId
                     };
@@ -84,7 +128,7 @@ public partial class BlockManager : Node2D {
 
     [Rpc(CallLocal = true)]
     private void RpcAllCreateBlock(ushort itemId, Vector2I coords) {
-        Blocks[coords.X, coords.Y] = new Block {
+        _blocks[coords.X, coords.Y] = new Block {
             CurrentHealth = 1,
             ItemId = itemId
         };
@@ -98,7 +142,7 @@ public partial class BlockManager : Node2D {
 
     [Rpc(CallLocal = true)]
     private void RpcAllCreateWall(ushort itemId, Vector2I coords) {
-        Walls[coords.X, coords.Y] = new Block {
+        _walls[coords.X, coords.Y] = new Block {
             CurrentHealth = 1,
             ItemId = itemId
         };
@@ -106,7 +150,7 @@ public partial class BlockManager : Node2D {
     }
 
     private void OnHostGatheredBlock(Vector2I coords, float damage) {
-        Block? res = Blocks[coords.X, coords.Y];
+        Block? res = _blocks[coords.X, coords.Y];
         if (res is not { } block) return;
         block.CurrentHealth -= damage;
         if (block.CurrentHealth <= 0) {
@@ -116,12 +160,12 @@ public partial class BlockManager : Node2D {
 
     [Rpc(CallLocal = true)]
     private void RpcAllDestroyBlock(Vector2I coords, ushort itemId) {
-        Blocks[coords.X, coords.Y] = null;
+        _blocks[coords.X, coords.Y] = null;
         BlockDestroyed?.Invoke(coords, itemId);
     }
 
     private void OnHostGatheredWall(Vector2I coords, float damage) {
-        Block? value = Walls[coords.X, coords.Y];
+        Block? value = _walls[coords.X, coords.Y];
         if (value is not { } block) return;
         block.CurrentHealth -= damage;
         if (block.CurrentHealth <= 0) {
@@ -131,9 +175,9 @@ public partial class BlockManager : Node2D {
 
     [Rpc(CallLocal = true)]
     private void RpcAllDestroyWall(Vector2I coords) {
-        Block? value = Walls[coords.X, coords.Y];
+        Block? value = _walls[coords.X, coords.Y];
         if (value is not { } block) return;
-        Walls[coords.X, coords.Y] = null;
+        _walls[coords.X, coords.Y] = null;
         WallDestroyed?.Invoke(coords, block.ItemId);
     }
 
@@ -144,8 +188,8 @@ public partial class BlockManager : Node2D {
         int requestingPeerId = Multiplayer.GetRemoteSenderId();
 
         Dictionary data = new() {
-            ["blocks"] = SerializeChunk(Blocks),
-            ["walls"] = SerializeChunk(Walls)
+            ["blocks"] = SerializeChunk(_blocks),
+            ["walls"] = SerializeChunk(_walls)
         };
         
         RpcId(requestingPeerId, nameof(RpcProcessWorld),
@@ -189,7 +233,7 @@ public partial class BlockManager : Node2D {
                 Array yArray = (Array)xKvp.Value;
 
                 foreach (int y in yArray) {
-                    Blocks[x, y] = new Block {
+                    _blocks[x, y] = new Block {
                         CurrentHealth = 1,
                         ItemId = itemId
                     };
@@ -206,7 +250,7 @@ public partial class BlockManager : Node2D {
                 Array yArray = (Array)xKvp.Value;
 
                 foreach (int y in yArray) {
-                    Walls[x, y] = new Block {
+                    _walls[x, y] = new Block {
                         CurrentHealth = 1,
                         ItemId = itemId
                     };
