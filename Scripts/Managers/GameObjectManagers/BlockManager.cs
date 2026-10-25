@@ -14,7 +14,6 @@ public partial class BlockManager : Node2D {
     private ItemIdBimap _itemIdBimap;
     private Vector2I _worldSize;
 
-    public event Action SyncComplete;
     public event Action<Vector2I> BlockCreated;
     public event Action<Vector2I, ushort> BlockDestroyed;
     public event Action<Vector2I> WallCreated;
@@ -177,87 +176,4 @@ public partial class BlockManager : Node2D {
         _walls[coords.X, coords.Y] = null;
         WallDestroyed?.Invoke(coords, block.ItemId);
     }
-
-    #region World Synchronization
-
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
-    private void RpcRequestWorldData() {
-        int requestingPeerId = Multiplayer.GetRemoteSenderId();
-
-        Dictionary data = new() {
-            ["blocks"] = SerializeChunk(_blocks),
-            ["walls"] = SerializeChunk(_walls)
-        };
-        
-        RpcId(requestingPeerId, nameof(RpcProcessWorld),
-            data);
-    }
-
-    private Dictionary<ushort, Dictionary> SerializeChunk(Block?[,] data) {
-        Dictionary<ushort, Dictionary> groupedByItemId = new();
-
-        for (int x = 0; x < _worldSize.X; x++) {
-            for (int y = 0; y < _worldSize.Y; y++) {
-                Block? value = data[x, y];
-                if (value is not { } block) continue;
-                
-                if (!groupedByItemId.ContainsKey(block.ItemId)) {
-                    groupedByItemId[block.ItemId] = new Dictionary();
-                }
-
-                if (!groupedByItemId[block.ItemId].ContainsKey($"{x}")) {
-                    groupedByItemId[block.ItemId][$"{x}"] = new Array();
-                }
-
-                ((Array)groupedByItemId[block.ItemId][$"{x}"]).Add(y);
-            }
-        }
-
-        return groupedByItemId;
-    }
-
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
-    private void RpcProcessWorld(Dictionary data) {
-        Dictionary blocksByItemId = data["blocks"].AsGodotDictionary();
-        Dictionary wallsByItemId = data["walls"].AsGodotDictionary();
-
-        foreach (var kvp in blocksByItemId) {
-            ushort itemId = (ushort)kvp.Key;
-            Dictionary xDict = (Dictionary)kvp.Value;
-
-            foreach (var xKvp in xDict) {
-                int x = xKvp.Key.ToString().ToInt();
-                Array yArray = (Array)xKvp.Value;
-
-                foreach (int y in yArray) {
-                    _blocks[x, y] = new Block {
-                        CurrentHealth = 1,
-                        ItemId = itemId
-                    };
-                }
-            }
-        }
-
-        foreach (var kvp in wallsByItemId) {
-            ushort itemId = (ushort)kvp.Key;
-            Dictionary xDict = (Dictionary)kvp.Value;
-
-            foreach (var xKvp in xDict) {
-                int x = xKvp.Key.ToString().ToInt();
-                Array yArray = (Array)xKvp.Value;
-
-                foreach (int y in yArray) {
-                    _walls[x, y] = new Block {
-                        CurrentHealth = 1,
-                        ItemId = itemId
-                    };
-                }
-            }
-        }
-
-        SyncComplete?.Invoke();
-
-    }
-
-    #endregion
 }

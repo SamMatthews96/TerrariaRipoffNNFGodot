@@ -9,7 +9,6 @@ public partial class PlayerManager : Node2D {
     [Export] private World _world;
     private StationManager _stationManager;
     private Player _localPlayer;
-    private Dictionary _playerData;
     private Dictionary<long, Player> _players = new();
 
     public event Action<Player> LocalPlayerSpawned;
@@ -17,12 +16,14 @@ public partial class PlayerManager : Node2D {
 
     public override void _Ready() {
         _stationManager = _world.StationManager;
-        if (!_world.IsHost) return;
+        if (_world.IsHost) {
+            Multiplayer.PeerDisconnected += OnPeerDisconnected;
+            TreeExiting += () => {
+                Multiplayer.PeerDisconnected -= OnPeerDisconnected;
+            };
+        }
 
-        Multiplayer.PeerDisconnected += OnPeerDisconnected;
-        TreeExiting += () => {
-            Multiplayer.PeerDisconnected -= OnPeerDisconnected;
-        };
+        SpawnLocalPlayer(_world.LocalPlayerData);
     }
     
     private void OnPeerDisconnected(long id) {
@@ -36,24 +37,24 @@ public partial class PlayerManager : Node2D {
         player.QueueFree();
     }
 
-    public void SpawnHostPlayer(Dictionary playerData) {
-        int peerId = Multiplayer.GetUniqueId();
-        _localPlayer = CreateNewPlayer(peerId, playerData);
+    private void SpawnLocalPlayer(Dictionary playerData) {
+        if (_world.IsHost) {
+            int peerId = Multiplayer.GetUniqueId();
+            _localPlayer = CreateNewPlayer(peerId, playerData);
 
-        LocalPlayerSpawned?.Invoke(_localPlayer);
-        HostPlayerSpawned?.Invoke(_localPlayer);
-    }
+            LocalPlayerSpawned?.Invoke(_localPlayer);
+            HostPlayerSpawned?.Invoke(_localPlayer);
+        } else {
+            int[] peers = Multiplayer.GetPeers();
+            foreach (int peer in peers) {
+                CreateNewPlayer(peer);
+            }
 
-    public void SpawnPlayersOnClient(Dictionary playerData) {
-        int[] peers = Multiplayer.GetPeers();
-        foreach (int peer in peers) {
-            CreateNewPlayer(peer);
+            int peerId = Multiplayer.GetUniqueId();
+            _localPlayer = CreateNewPlayer(peerId, playerData);
+            LocalPlayerSpawned?.Invoke(_localPlayer);
+            RpcId(1, nameof(RpcHostHandleNewPeer), playerData);
         }
-
-        int peerId = Multiplayer.GetUniqueId();
-        _localPlayer = CreateNewPlayer(peerId, playerData);
-        LocalPlayerSpawned?.Invoke(_localPlayer);
-        RpcId(1, nameof(RpcHostHandleNewPeer), playerData);
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]

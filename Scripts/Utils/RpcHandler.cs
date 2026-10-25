@@ -4,8 +4,6 @@ using Godot;
 namespace TerrariaRipoffNNF;
 
 public static class RpcHandler {
-    private const int HostId = 1;
-
     public static void RpcPeers(
         this Node node,
         IEnumerable<int> peers,
@@ -23,7 +21,7 @@ public static class RpcHandler {
         StringName method,
         params Variant[] args
     ) {
-        node.RpcId(HostId, method, args);
+        node.RpcId(Game.HostId, method, args);
     }
 
     public static void RpcPeer(

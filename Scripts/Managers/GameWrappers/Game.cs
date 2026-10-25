@@ -21,7 +21,7 @@ public partial class Game : Node {
     private Dictionary _playerData;
 
     public void InitAsSinglePlayer(Dictionary worldData, Dictionary playerData) {
-        _world = World.Create(this, playerData, worldData);
+        _world = World.Create(playerData, worldData);
         _world.GameLoaded += OnWorldLoaded;
         _world.Interface.GameMenu.ExitGameButtonDown += OnExitGameButtonDown;
         AddChild(_world);
@@ -32,7 +32,7 @@ public partial class Game : Node {
         _multiplayerHost = new MultiplayerHost();
         AddChild(_multiplayerHost);
 
-        _world = World.Create(this, playerData, worldData);
+        _world = World.Create(playerData, worldData);
         _world.GameLoaded += OnWorldLoaded;
         AddChild(_world);
         _world.Interface.GameMenu.ExitGameButtonDown += OnExitGameButtonDown;
@@ -60,7 +60,7 @@ public partial class Game : Node {
     
     [Rpc]
     private void PeerReceivedWorldData(Dictionary worldData) {
-        _world = World.Create(this, _playerData, worldData);
+        _world = World.Create(_playerData, worldData);
         _world.GameLoaded += OnWorldLoaded;
         AddChild(_world);
         _world.Interface.GameMenu.ExitGameButtonDown += OnExitGameButtonDown;

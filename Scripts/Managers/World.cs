@@ -7,7 +7,6 @@ using TerrariaRipoffNNF.Scripts.Managers;
 namespace TerrariaRipoffNNF;
 
 public partial class World : Node2D {
-    private Game _game;
     public Vector2I WorldSize { get; private set; }
     public bool IsHost { get; private set; }
     public Vector2I DefaultSpawnPosition { get; private set; } = new(4, 14);
@@ -24,7 +23,6 @@ public partial class World : Node2D {
 
     public event Action GameLoaded;
 
-    // Event wrappers to reduce Law of Demeter violations
     public event Action UnequipWeaponClicked {
         add => Interface.PlayerEquipment.UnequipWeaponClicked += value;
         remove => Interface.PlayerEquipment.UnequipWeaponClicked -= value;
@@ -35,18 +33,16 @@ public partial class World : Node2D {
         remove => Interface.PlayerEquipment.UnequipPickaxeClicked -= value;
     }
 
-    // Property wrapper for CraftingInterface
     public Interface.Crafting CraftingInterface => Interface.CraftingInterface;
 
-    private Dictionary _localPlayerData;
+    public Dictionary LocalPlayerData { get; private set; }
     public Dictionary WorldData { get; private set; }
 
-    public static World Create(Game game, Dictionary playerData, Dictionary worldData) {
+    public static World Create(Dictionary playerData, Dictionary worldData) {
         World world = Data.PackedScenes.World.Instantiate<World>();
         world.WorldSize = new Vector2I(
             (int)worldData["Width"], (int)worldData["Height"]);
-        world._game = game;
-        world._localPlayerData = playerData;
+        world.LocalPlayerData = playerData;
         world.WorldData = worldData;
 
         return world;
@@ -177,14 +173,7 @@ public partial class World : Node2D {
     public override void _Ready() {
         Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
         TreeExiting += () => { Interface.GameMenu.ExitGameButtonDown -= OnExitGameClicked; };
-        if (IsHost) {
-            PlayerManager.SpawnHostPlayer(_localPlayerData);
-        } else {
-            PlayerManager.SpawnPlayersOnClient(_localPlayerData);
-            // BlockManager.ClientGetWorldData();
-        }
-
-        _localPlayerData = null;
+        LocalPlayerData = null;
         GameLoaded?.Invoke();
     }
 }

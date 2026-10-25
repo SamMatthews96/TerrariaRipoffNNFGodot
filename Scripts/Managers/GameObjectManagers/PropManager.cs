@@ -49,7 +49,6 @@ public partial class PropManager : Node {
         _propCells = new PropsByCoords();
         _props = new PropsByCoords();
 
-        // if (_world.IsHost) {
         ColumnByXByBlockId props =
             (ColumnByXByBlockId)_world.WorldData["props"];
         foreach ((ushort itemId, ColumnByX xDict) in props) {
@@ -64,37 +63,6 @@ public partial class PropManager : Node {
 
         _playerManager.HostPlayerSpawned += OnPlayerSpawnedOnHost;
         TreeExiting += () => { _playerManager.HostPlayerSpawned -= OnPlayerSpawnedOnHost; };
-        // } else {
-        //     RpcId(1, nameof(RpcHostRequestWorldData));
-        // }
-    }
-
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
-    private void RpcHostRequestWorldData() {
-        int senderId = Multiplayer.GetRemoteSenderId();
-
-        Array<Dictionary> propData = new();
-        foreach ((Vector2I cell, ActiveProp prop) in _props) {
-            int id = _itemIdBimap.GetId(prop.Item);
-            Dictionary propDict = new() {
-                { "coords", cell },
-                { "id", id }
-            };
-            propData.Add(propDict);
-        }
-
-        RpcId(senderId, nameof(RpcClientProcessPropData),
-            propData);
-    }
-
-    [Rpc]
-    private void RpcClientProcessPropData(Array<Dictionary> packet) {
-        foreach (Dictionary propDict in packet) {
-            ushort itemId = (ushort)propDict["id"];
-            Vector2I coords = (Vector2I)propDict["coords"];
-            Item item = _itemIdBimap.GetItem(itemId);
-            AddProp(item, coords);
-        }
     }
 
     private void OnPlayerSpawnedOnHost(Player player) {
