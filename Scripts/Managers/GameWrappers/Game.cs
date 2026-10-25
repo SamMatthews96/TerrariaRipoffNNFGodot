@@ -7,7 +7,7 @@ namespace TerrariaRipoffNNF;
 
 public partial class Game : Node {
     public const int BlockSize = 32;
-    public World World { get; private set; }
+    private World _world;
 
     public event Action Loaded;
     public event Action ExitGameStarted;
@@ -20,10 +20,10 @@ public partial class Game : Node {
     private Dictionary _playerData;
 
     public void InitAsSinglePlayer(Dictionary worldData, Dictionary playerData) {
-        World = World.CreateAsHost(this, worldData, playerData);
-        World.GameLoaded += OnWorldLoaded;
-        World.Interface.GameMenu.ExitGameButtonDown += OnExitGameButtonDown;
-        AddChild(World);
+        _world = World.CreateAsHost(this, playerData, worldData);
+        _world.GameLoaded += OnWorldLoaded;
+        _world.Interface.GameMenu.ExitGameButtonDown += OnExitGameButtonDown;
+        AddChild(_world);
         _playerData = FileManager.LoadPlayer(playerData);
     }
 
@@ -31,17 +31,17 @@ public partial class Game : Node {
         _multiplayerHost = new MultiplayerHost();
         AddChild(_multiplayerHost);
 
-        World = World.CreateAsHost(this, worldData, playerData);
-        World.GameLoaded += OnWorldLoaded;
-        AddChild(World);
-        World.Interface.GameMenu.ExitGameButtonDown += OnExitGameButtonDown;
+        _world = World.CreateAsHost(this, playerData, worldData);
+        _world.GameLoaded += OnWorldLoaded;
+        AddChild(_world);
+        _world.Interface.GameMenu.ExitGameButtonDown += OnExitGameButtonDown;
         _playerData = FileManager.LoadPlayer(playerData);
 
         MultiplayerApi.PeerConnectedEventHandler peerConnectedHandler = id => {
             Dictionary metadata = new();
             metadata["Width"] = worldData["Width"];
             metadata["Height"] = worldData["Height"];
-            metadata["itemMap"] = World.ItemIdBimap.ToDictionary();
+            metadata["itemMap"] = _world.ItemIdBimap.ToDictionary();
             RpcId(id, nameof(RpcClientCreateWorld), metadata);
         };
         Multiplayer.PeerConnected += peerConnectedHandler;
@@ -65,18 +65,18 @@ public partial class Game : Node {
 
     [Rpc]
     private void RpcClientCreateWorld(Dictionary metadata) {
-        World = World.CreateAsClient(metadata, _playerData, this);
-        World.GameLoaded += OnWorldLoaded;
-        AddChild(World);
-        World.Interface.GameMenu.ExitGameButtonDown += OnExitGameButtonDown;
+        _world = World.CreateAsClient(this, _playerData, metadata);
+        _world.GameLoaded += OnWorldLoaded;
+        AddChild(_world);
+        _world.Interface.GameMenu.ExitGameButtonDown += OnExitGameButtonDown;
     }
 
     private void OnExitGameButtonDown() {
-        World.Interface.GameMenu.ExitGameButtonDown -= OnExitGameButtonDown;
+        _world.Interface.GameMenu.ExitGameButtonDown -= OnExitGameButtonDown;
         ExitGameStarted?.Invoke();
 
-        if (World.IsHost) {
-            _gameUnloader = new GameUnloader(World);
+        if (_world.IsHost) {
+            _gameUnloader = new GameUnloader(_world);
             _gameUnloader.SaveComplete += OnSaveComplete;
             AddChild(_gameUnloader);
         } else {
@@ -92,7 +92,7 @@ public partial class Game : Node {
     }
 
     private void OnWorldLoaded() {
-        World.GameLoaded -= OnWorldLoaded;
+        _world.GameLoaded -= OnWorldLoaded;
         Loaded?.Invoke();
     }
 }

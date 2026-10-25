@@ -40,7 +40,7 @@ public partial class World : Node2D {
     private Dictionary _localPlayerData;
     public Dictionary WorldData { get; private set; }
 
-    public static World CreateAsHost(Game game, Dictionary worldData, Dictionary playerData) {
+    public static World CreateAsHost(Game game, Dictionary playerData, Dictionary worldData) {
         World world = Data.PackedScenes.World.Instantiate<World>();
         world.IsHost = true;
         world.WorldSize = new Vector2I((int)worldData["Width"], (int)worldData["Height"]);
@@ -51,7 +51,7 @@ public partial class World : Node2D {
         return world;
     }
 
-    public static World CreateAsClient(Dictionary metadata, Dictionary playerData, Game game) {
+    public static World CreateAsClient(Game game, Dictionary playerData, Dictionary metadata) {
         World world = Data.PackedScenes.World.Instantiate<World>();
         world.WorldSize = new Vector2I((int)metadata["Width"], (int)metadata["Height"]);
         world.Game = game;
@@ -94,6 +94,7 @@ public partial class World : Node2D {
                 cells.Add(new Vector2I(x, y));
             }
         }
+
         return cells;
     }
 
