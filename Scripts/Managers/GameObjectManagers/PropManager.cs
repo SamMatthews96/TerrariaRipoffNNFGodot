@@ -1,6 +1,7 @@
 ﻿using System;
 using Godot;
 using Godot.Collections;
+using Array = Godot.Collections.Array;
 
 namespace TerrariaRipoffNNF;
 
@@ -14,15 +15,40 @@ public partial class PropManager : Node {
     private PlayerManager _playerManager;
     private ItemIdBimap _itemIdBimap;
 
-    public PropsByCoords PropCells { get; private set; } = new();
-    public PropsByCoords Props { get; private set; } = new();
+    private PropsByCoords _propCells;
+    private PropsByCoords _props;
 
     public event Action<ActiveProp, Vector2I> HostPropDestroyed;
+    
+    public bool IsPropAt(Vector2I coords) => _propCells.ContainsKey(coords);
+    
+    public Dictionary<string, Dictionary> SerializeProps() {
+        Dictionary<string, Dictionary> groupedByItemId = new();
+
+        foreach ((Vector2I coords, ActiveProp prop) in _props) {
+            Item item = prop.Item;
+            string itemId = _itemIdBimap.GetId(item).ToString();
+
+            if (!groupedByItemId.ContainsKey(itemId)) {
+                groupedByItemId[itemId] = new Dictionary();
+            }
+
+            if (!groupedByItemId[itemId].ContainsKey($"{coords.X}")) {
+                groupedByItemId[itemId][$"{coords.X}"] = new Array();
+            }
+
+            ((Array)groupedByItemId[itemId][$"{coords.X}"]).Add(coords.Y);
+        }
+
+        return groupedByItemId;
+    }
 
     public override void _Ready() {
         _playerManager = _world.PlayerManager;
         _itemIdBimap = _world.ItemIdBimap;
-
+        _propCells = new PropsByCoords();
+        _props = new PropsByCoords();
+        
         if (_world.IsHost) {
             ColumnByXByBlockId props =
                 (ColumnByXByBlockId)_world.WorldData["props"];
@@ -48,7 +74,7 @@ public partial class PropManager : Node {
         int senderId = Multiplayer.GetRemoteSenderId();
 
         Array<Dictionary> propData = new();
-        foreach ((Vector2I cell, ActiveProp prop) in Props) {
+        foreach ((Vector2I cell, ActiveProp prop) in _props) {
             int id = _itemIdBimap.GetId(prop.Item);
             Dictionary propDict = new() {
                 { "coords", cell },
@@ -93,7 +119,7 @@ public partial class PropManager : Node {
     }
 
     private void OnHostGatherProp(Vector2I coords, float damage) {
-        ActiveProp activeProp = PropCells[coords];
+        ActiveProp activeProp = _propCells[coords];
         Rpc(nameof(RpcClientsGatherProp), coords);
         HostPropDestroyed?.Invoke(activeProp, activeProp.Anchor);
     }
@@ -107,10 +133,10 @@ public partial class PropManager : Node {
         ActiveProp activeProp = ActiveProp.Create(item, coords);
 
         foreach (Vector2I cell in activeProp.Cells) {
-            PropCells[cell] = activeProp;
+            _propCells[cell] = activeProp;
         }
 
-        Props[coords] = activeProp;
+        _props[coords] = activeProp;
         ItemProp itemProp = item.GetProperty<ItemProp>();
         foreach (PropProperty propProperty in itemProp.Properties) {
             propProperty.Apply(activeProp, _world);
@@ -121,12 +147,12 @@ public partial class PropManager : Node {
     }
 
     private void RemoveProp(Vector2I coords) {
-        ActiveProp activeProp = PropCells[coords];
+        ActiveProp activeProp = _propCells[coords];
         foreach (Vector2I cell in activeProp.Cells) {
-            PropCells.Remove(cell);
+            _propCells.Remove(cell);
         }
 
-        Props.Remove(activeProp.Anchor);
+        _props.Remove(activeProp.Anchor);
         activeProp.QueueFree();
     }
 }

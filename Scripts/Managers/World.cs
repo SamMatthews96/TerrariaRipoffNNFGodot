@@ -71,7 +71,7 @@ public partial class World : Node2D {
 
     public bool IsCellFilled(Vector2I coords) {
         if (BlockManager.GetBlock(coords) is not null) return true;
-        return PropManager.PropCells.ContainsKey(coords);
+        return PropManager.IsPropAt(coords);
     }
 
     // @todo this shouldn't check for in bounds
@@ -108,7 +108,7 @@ public partial class World : Node2D {
 
                     break;
                 case CellEntity.Prop:
-                    if (PropManager.PropCells.ContainsKey(coords)) {
+                    if (PropManager.IsPropAt(coords)) {
                         return type;
                     }
 

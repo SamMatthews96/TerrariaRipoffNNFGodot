@@ -1,7 +1,6 @@
 ﻿using System;
 using Godot;
 using Godot.Collections;
-using Array = Godot.Collections.Array;
 using System.Threading.Tasks;
 
 namespace TerrariaRipoffNNF;
@@ -43,7 +42,7 @@ public partial class GameUnloader : Node {
         Task<Dictionary<string, Dictionary>> wallsTask =
             Task.Run(() => _blockManager.SerializeWalls());
         Task<Dictionary<string, Dictionary>> propsTask =
-            Task.Run(SerializeProps);
+            Task.Run(() => _propManager.SerializeProps());
 
         Task.WaitAll(blocksTask, wallsTask, propsTask);
 
@@ -61,26 +60,4 @@ public partial class GameUnloader : Node {
         _completedSave = true;
     }
 
-
-
-    private Dictionary<string, Dictionary> SerializeProps() {
-        Dictionary<string, Dictionary> groupedByItemId = new();
-
-        foreach ((Vector2I coords, ActiveProp prop) in _propManager.Props) {
-            Item item = prop.Item;
-            string itemId = _itemIdBimap.GetId(item).ToString();
-
-            if (!groupedByItemId.ContainsKey(itemId)) {
-                groupedByItemId[itemId] = new Dictionary();
-            }
-
-            if (!groupedByItemId[itemId].ContainsKey($"{coords.X}")) {
-                groupedByItemId[itemId][$"{coords.X}"] = new Array();
-            }
-
-            ((Array)groupedByItemId[itemId][$"{coords.X}"]).Add(coords.Y);
-        }
-
-        return groupedByItemId;
-    }
 }
