@@ -1,0 +1,37 @@
+﻿using System.Collections.Generic;
+using Godot;
+
+namespace TerrariaRipoffNNF;
+
+public static class RpcHandler {
+    private const int HostId = 1;
+
+    public static void RpcPeers(
+        this Node node,
+        IEnumerable<int> peers,
+        StringName method,
+        params Variant[] args
+    ) {
+        // int[] allPeers = node.Multiplayer.GetPeers();
+        foreach (int peer in peers) {
+            node.RpcId(peer, method, args);
+        }
+    }
+
+    public static void RpcHost(
+        this Node node,
+        StringName method,
+        params Variant[] args
+    ) {
+        node.RpcId(HostId, method, args);
+    }
+
+    public static void RpcPeer(
+        this Node node,
+        StringName method,
+        params Variant[] args
+    ) {
+        int peerId = node.Multiplayer.GetRemoteSenderId();
+        node.RpcId(peerId, method, args);
+    }
+}

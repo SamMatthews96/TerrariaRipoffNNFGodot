@@ -20,6 +20,7 @@ public partial class BlockManager : Node2D {
     public event Action<Vector2I> WallCreated;
     public event Action<Vector2I, ushort> WallDestroyed;
     
+    #region public utils
     public Block? GetBlock(int x, int y) => _blocks[x, y];
     public Block? GetBlock(Vector2I coords) => _blocks[coords.X, coords.Y];
     public Block? GetWall(int x, int y) => _walls[x, y];
@@ -64,6 +65,8 @@ public partial class BlockManager : Node2D {
         return groupedByItemId;
     }
 
+    #endregion
+    
     public override void _Ready() {
         _playerManager = _world.PlayerManager;
         _itemIdBimap = _world.ItemIdBimap;
@@ -71,8 +74,6 @@ public partial class BlockManager : Node2D {
 
         _blocks = new Block?[_worldSize.X, _worldSize.Y];
         _walls = new Block?[_worldSize.X, _worldSize.Y];
-
-        if (!_world.IsHost) return;
 
         Dictionary<ushort, Dictionary<int, Array>> savedBlocks =
             (Dictionary<ushort, Dictionary<int, Array>>)_world.WorldData["blocks"];
@@ -102,10 +103,6 @@ public partial class BlockManager : Node2D {
 
         _playerManager.HostPlayerSpawned += OnPlayerSpawnedOnHost;
         TreeExiting += () => { _playerManager.HostPlayerSpawned -= OnPlayerSpawnedOnHost; };
-    }
-
-    public void ClientGetWorldData() {
-        RpcId(1, nameof(RpcRequestWorldData));
     }
 
     private void OnPlayerSpawnedOnHost(Player player) {

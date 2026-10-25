@@ -36,26 +36,7 @@ public partial class GameUnloader : Node {
     }
 
     private void SaveWorld() {
-        // Serialize blocks, walls, and props in parallel
-        Task<Dictionary<string, Dictionary>> blocksTask =
-            Task.Run(() => _blockManager.SerializeBlocks());
-        Task<Dictionary<string, Dictionary>> wallsTask =
-            Task.Run(() => _blockManager.SerializeWalls());
-        Task<Dictionary<string, Dictionary>> propsTask =
-            Task.Run(() => _propManager.SerializeProps());
-
-        Task.WaitAll(blocksTask, wallsTask, propsTask);
-
-        Dictionary worldData = new() {
-            ["Name"] = _world.WorldData["Name"],
-            ["Width"] = _worldSize.X,
-            ["Height"] = _worldSize.Y,
-            ["blocks"] = blocksTask.Result,
-            ["walls"] = wallsTask.Result,
-            ["props"] = propsTask.Result,
-            ["itemMap"] = _itemIdBimap.ToDictionary()
-        };
-
+        Dictionary worldData = _world.SerializeWorld();
         FileManager.SaveWorld(worldData);
         _completedSave = true;
     }

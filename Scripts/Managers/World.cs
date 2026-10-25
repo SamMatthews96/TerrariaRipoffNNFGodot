@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Godot;
 using Godot.Collections;
 using TerrariaRipoffNNF.Scripts.Managers;
@@ -6,7 +7,7 @@ using TerrariaRipoffNNF.Scripts.Managers;
 namespace TerrariaRipoffNNF;
 
 public partial class World : Node2D {
-    public Game Game { get; private set; }
+    private Game _game;
     public Vector2I WorldSize { get; private set; }
     public bool IsHost { get; private set; }
     public Vector2I DefaultSpawnPosition { get; private set; } = new(4, 14);
@@ -40,26 +41,39 @@ public partial class World : Node2D {
     private Dictionary _localPlayerData;
     public Dictionary WorldData { get; private set; }
 
-    public static World CreateAsHost(Game game, Dictionary playerData, Dictionary worldData) {
+    public static World Create(Game game, Dictionary playerData, Dictionary worldData) {
         World world = Data.PackedScenes.World.Instantiate<World>();
-        world.IsHost = true;
-        world.WorldSize = new Vector2I((int)worldData["Width"], (int)worldData["Height"]);
-        world.Game = game;
+        world.WorldSize = new Vector2I(
+            (int)worldData["Width"], (int)worldData["Height"]);
+        world._game = game;
         world._localPlayerData = playerData;
         world.WorldData = worldData;
 
         return world;
     }
 
-    public static World CreateAsClient(Game game, Dictionary playerData, Dictionary metadata) {
-        World world = Data.PackedScenes.World.Instantiate<World>();
-        world.WorldSize = new Vector2I((int)metadata["Width"], (int)metadata["Height"]);
-        world.Game = game;
-        world.WorldData = metadata;
-        world._localPlayerData = playerData;
-        return world;
-    }
+    public Dictionary SerializeWorld() {
+        Task<Dictionary<string, Dictionary>> blocksTask =
+            Task.Run(() => BlockManager.SerializeBlocks());
+        Task<Dictionary<string, Dictionary>> wallsTask =
+            Task.Run(() => BlockManager.SerializeWalls());
+        Task<Dictionary<string, Dictionary>> propsTask =
+            Task.Run(() => PropManager.SerializeProps());
 
+        Task.WaitAll(blocksTask, wallsTask, propsTask);
+
+        Dictionary worldData = new() {
+            ["Name"] = WorldData["Name"],
+            ["Width"] = WorldSize.X,
+            ["Height"] = WorldSize.Y,
+            ["blocks"] = blocksTask.Result,
+            ["walls"] = wallsTask.Result,
+            ["props"] = propsTask.Result,
+            ["itemMap"] = ItemIdBimap.ToDictionary()
+        };
+        return worldData;
+    }
+    
     #region public utils
 
     public bool IsInBounds(Vector2I coords) {
@@ -152,16 +166,12 @@ public partial class World : Node2D {
 
     #endregion
 
-    private void ClientOnSyncComplete() {
-        PlayerManager.SpawnPlayersOnClient(_localPlayerData);
-        _localPlayerData = null;
-        BlockManager.SyncComplete -= ClientOnSyncComplete;
-        Show();
-        GameLoaded?.Invoke();
-    }
-
     private void OnExitGameClicked() {
         Visible = false;
+    }
+
+    public override void _EnterTree() {
+        IsHost = Multiplayer.GetUniqueId() == Game.HostId;
     }
 
     public override void _Ready() {
@@ -169,12 +179,12 @@ public partial class World : Node2D {
         TreeExiting += () => { Interface.GameMenu.ExitGameButtonDown -= OnExitGameClicked; };
         if (IsHost) {
             PlayerManager.SpawnHostPlayer(_localPlayerData);
-            _localPlayerData = null;
-            GameLoaded?.Invoke();
         } else {
-            Hide();
-            BlockManager.SyncComplete += ClientOnSyncComplete;
-            BlockManager.ClientGetWorldData();
+            PlayerManager.SpawnPlayersOnClient(_localPlayerData);
+            // BlockManager.ClientGetWorldData();
         }
+
+        _localPlayerData = null;
+        GameLoaded?.Invoke();
     }
 }

@@ -19,9 +19,9 @@ public partial class PropManager : Node {
     private PropsByCoords _props;
 
     public event Action<ActiveProp, Vector2I> HostPropDestroyed;
-    
+
     public bool IsPropAt(Vector2I coords) => _propCells.ContainsKey(coords);
-    
+
     public Dictionary<string, Dictionary> SerializeProps() {
         Dictionary<string, Dictionary> groupedByItemId = new();
 
@@ -48,25 +48,25 @@ public partial class PropManager : Node {
         _itemIdBimap = _world.ItemIdBimap;
         _propCells = new PropsByCoords();
         _props = new PropsByCoords();
-        
-        if (_world.IsHost) {
-            ColumnByXByBlockId props =
-                (ColumnByXByBlockId)_world.WorldData["props"];
-            foreach ((ushort itemId, ColumnByX xDict) in props) {
-                Item item = _itemIdBimap.GetItem(itemId);
-                foreach ((int x, Array<int> yArray) in xDict) {
-                    foreach (int y in yArray) {
-                        Vector2I coords = new(x, y);
-                        AddProp(item, coords);
-                    }
+
+        // if (_world.IsHost) {
+        ColumnByXByBlockId props =
+            (ColumnByXByBlockId)_world.WorldData["props"];
+        foreach ((ushort itemId, ColumnByX xDict) in props) {
+            Item item = _itemIdBimap.GetItem(itemId);
+            foreach ((int x, Array<int> yArray) in xDict) {
+                foreach (int y in yArray) {
+                    Vector2I coords = new(x, y);
+                    AddProp(item, coords);
                 }
             }
-
-            _playerManager.HostPlayerSpawned += OnPlayerSpawnedOnHost;
-            TreeExiting += () => { _playerManager.HostPlayerSpawned -= OnPlayerSpawnedOnHost; };
-        } else {
-            RpcId(1, nameof(RpcHostRequestWorldData));
         }
+
+        _playerManager.HostPlayerSpawned += OnPlayerSpawnedOnHost;
+        TreeExiting += () => { _playerManager.HostPlayerSpawned -= OnPlayerSpawnedOnHost; };
+        // } else {
+        //     RpcId(1, nameof(RpcHostRequestWorldData));
+        // }
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
