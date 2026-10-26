@@ -36,13 +36,13 @@ public partial class Game : Node {
         _world.Interface.GameMenu.ExitGameButtonDown += OnExitGameButtonDown;
         _playerData = FileManager.LoadPlayer(playerData);
 
-        MultiplayerApi.PeerConnectedEventHandler peerConnectedHandler = id => {
-            Dictionary currentWorldData = _world.SerializeWorld();
+        Multiplayer.PeerConnected += OnPeerConnected;
+        TreeExiting += () => { Multiplayer.PeerConnected -= OnPeerConnected; };
+    }
 
-            this.RpcPeer(id, nameof(PeerReceivedWorldData), currentWorldData);
-        };
-        Multiplayer.PeerConnected += peerConnectedHandler;
-        TreeExiting += () => { Multiplayer.PeerConnected -= peerConnectedHandler; };
+    private void OnPeerConnected(long id) {
+        Dictionary currentWorldData = _world.SerializeWorld();
+        RpcId(id, nameof(PeerReceivedWorldData), currentWorldData);
     }
 
     public void InitAsClient(Dictionary playerData) {

@@ -23,13 +23,4 @@ public static class RpcHandler {
     ) {
         node.RpcId(Game.HostId, method, args);
     }
-
-    public static void RpcPeer(
-        this Node node,
-        long peerId,
-        StringName method,
-        params Variant[] args
-    ) {
-        node.RpcId(peerId, method, args);
-    }
 }
