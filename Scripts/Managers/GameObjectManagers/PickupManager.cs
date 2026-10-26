@@ -75,6 +75,7 @@ public partial class PickupManager : Node2D {
             }
             
             ProcessMode = ProcessModeEnum.Disabled;
+            this.RpcHost(nameof(RpcHostAddClientToSync));
         }
     }
 
@@ -166,7 +167,6 @@ public partial class PickupManager : Node2D {
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
     private void RpcHostAddClientToSync() {
         int senderId = Multiplayer.GetRemoteSenderId();
-        // enable every pickup sync
         foreach (PickupEntity pickup in _activePickups) {
             pickup.Synchronizer.SetVisibilityFor(senderId, true);
         }
