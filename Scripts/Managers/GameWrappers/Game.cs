@@ -35,10 +35,11 @@ public partial class Game : Node {
         AddChild(_world);
         _world.Interface.GameMenu.ExitGameButtonDown += OnExitGameButtonDown;
         _playerData = FileManager.LoadPlayer(playerData);
-        
-        MultiplayerApi.PeerConnectedEventHandler peerConnectedHandler = _ => {
+
+        MultiplayerApi.PeerConnectedEventHandler peerConnectedHandler = id => {
             Dictionary currentWorldData = _world.SerializeWorld();
-            this.RpcPeer(nameof(PeerReceivedWorldData), currentWorldData);
+
+            this.RpcPeer(id, nameof(PeerReceivedWorldData), currentWorldData);
         };
         Multiplayer.PeerConnected += peerConnectedHandler;
         TreeExiting += () => { Multiplayer.PeerConnected -= peerConnectedHandler; };
@@ -47,15 +48,13 @@ public partial class Game : Node {
     public void InitAsClient(Dictionary playerData) {
         _multiplayerClient = new MultiplayerClient();
         AddChild(_multiplayerClient);
-        
+
         Multiplayer.ServerDisconnected += OnServerDisconnected;
-        TreeExiting += () => {
-            Multiplayer.ServerDisconnected -= OnServerDisconnected;
-        };
-        
+        TreeExiting += () => { Multiplayer.ServerDisconnected -= OnServerDisconnected; };
+
         _playerData = FileManager.LoadPlayer(playerData);
     }
-    
+
     [Rpc]
     private void PeerReceivedWorldData(Dictionary worldData) {
         _world = World.Create(_playerData, worldData);
@@ -72,7 +71,7 @@ public partial class Game : Node {
     private void OnExitGameButtonDown() {
         _world.Interface.GameMenu.ExitGameButtonDown -= OnExitGameButtonDown;
         ExitGameStarted?.Invoke();
-    
+
         if (_world.IsHost) {
             _world.ProcessMode = ProcessModeEnum.Disabled;
             SaveGame();

@@ -26,10 +26,10 @@ public static class RpcHandler {
 
     public static void RpcPeer(
         this Node node,
+        long peerId,
         StringName method,
         params Variant[] args
     ) {
-        int peerId = node.Multiplayer.GetRemoteSenderId();
         node.RpcId(peerId, method, args);
     }
 }
