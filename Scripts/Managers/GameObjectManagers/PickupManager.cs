@@ -25,7 +25,7 @@ public partial class PickupManager : Node2D {
         foreach (PickupEntity activePickup in _activePickups) {
             Dictionary dict = new();
             dict["ItemId"] = _itemIdBimap.GetId(activePickup.Item);
-            dict["Name"] = activePickup.Name.ToString();
+            dict["Name"] = activePickup.Name.ToString().ToInt();
             dict["Position"] = new Array {
                 activePickup.Position.X,
                 activePickup.Position.Y
@@ -42,6 +42,9 @@ public partial class PickupManager : Node2D {
         _propManager = _world.PropManager;
         _itemIdBimap = _world.ItemIdBimap;
 
+        Array<Dictionary> savedPickups =
+            (Array<Dictionary>)_world.WorldData["pickups"];
+        
         if (_world.IsHost) {
             _blockManager.BlockDestroyed += HostOnBlockDestroyed;
             _playerManager.HostPlayerSpawned += OnPlayedSpawnedOnHost;
@@ -53,21 +56,25 @@ public partial class PickupManager : Node2D {
                 _propManager.HostPropDestroyed -= OnHostPropDestroyed;
                 _blockManager.WallDestroyed -= HostOnBlockDestroyed;
             };
+            
+            foreach (Dictionary pickupDict in savedPickups) {
+                Array<float> positionArray = pickupDict["Position"].AsGodotArray<float>();
+                Vector2 position = new(positionArray[0], positionArray[1]);
+                ushort itemId = (ushort)pickupDict["ItemId"];
+                HostCreatePickup(position, itemId);
+            }
 
             ProcessMode = ProcessModeEnum.Always;
         } else {
+            foreach (Dictionary pickupDict in savedPickups) {
+                Array<float> positionArray = pickupDict["Position"].AsGodotArray<float>();
+                Vector2 position = new(positionArray[0], positionArray[1]);
+                ushort itemId = (ushort)pickupDict["ItemId"];
+                int pickupId = pickupDict["Name"].ToString().ToInt();
+                CreatePickup(position, itemId, pickupId);
+            }
+            
             ProcessMode = ProcessModeEnum.Disabled;
-        }
-
-        Array<Dictionary> savedPickups =
-            (Array<Dictionary>)_world.WorldData["pickups"];
-
-        foreach (Dictionary pickupDict in savedPickups) {
-            Array<float> positionArray = pickupDict["Position"].AsGodotArray<float>();
-            Vector2 position = new(positionArray[0], positionArray[1]);
-            ushort itemId = (ushort)pickupDict["ItemId"];
-            int pickupId = pickupDict["Name"].ToString().ToInt();
-            CreatePickup(position, itemId, pickupId);
         }
     }
 
@@ -110,6 +117,17 @@ public partial class PickupManager : Node2D {
             ushort itemId = _itemIdBimap.GetId(activeProp.Item);
             HostCreatePickup(coords, itemId);
         }
+    }
+
+    private void HostCreatePickup(Vector2 position, ushort itemId) {
+        Vector2I coords = new(
+            (int)(position.X / Game.BlockSize - 0.5f),
+            (int)(position.Y / Game.BlockSize - 0.5f)
+        );
+        _pickupCount++;
+        Rpc(nameof(CreatePickup),
+            position, itemId, _pickupCount);
+        ServerPickupCreated?.Invoke(coords);
     }
 
     private void HostCreatePickup(Vector2I coords, ushort itemId) {
