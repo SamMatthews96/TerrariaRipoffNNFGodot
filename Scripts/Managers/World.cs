@@ -128,7 +128,7 @@ public partial class World : Node2D {
 
                     break;
                 case CellEntity.Wall:
-                    if (BlockManager.GetBlock(coords) is not null) {
+                    if (BlockManager.GetWall(coords) is not null) {
                         return type;
                     }
 
