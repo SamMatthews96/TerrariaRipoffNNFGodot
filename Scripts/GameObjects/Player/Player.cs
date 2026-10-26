@@ -66,18 +66,18 @@ public partial class Player : CharacterBody2D {
     }
 
     public event GatherActionDelegate BlockGathered {
-        add => ActionState.Gather.HostGatheredBlock += value;
-        remove => ActionState.Gather.HostGatheredBlock -= value;
+        add => ActionState.Gather.BlockGather += value;
+        remove => ActionState.Gather.BlockGather -= value;
     }
 
     public event GatherActionDelegate WallGathered {
-        add => ActionState.Gather.HostGatheredWall += value;
-        remove => ActionState.Gather.HostGatheredWall -= value;
+        add => ActionState.Gather.WallGather += value;
+        remove => ActionState.Gather.WallGather -= value;
     }
 
     public event GatherActionDelegate PropGathered {
-        add => ActionState.Gather.HostGatherProp += value;
-        remove => ActionState.Gather.HostGatherProp -= value;
+        add => ActionState.Gather.PropGather += value;
+        remove => ActionState.Gather.PropGather -= value;
     }
     
     public event CraftEventDelegate HostItemCrafted {

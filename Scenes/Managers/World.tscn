@@ -40,6 +40,10 @@ World = NodePath("..")
 script = ExtResource("10_5fdyc")
 _world = NodePath("..")
 
+[node name="PropManager" type="Node2D" parent="." unique_id=1023107457 node_paths=PackedStringArray("_world")]
+script = ExtResource("9_oby1v")
+_world = NodePath("..")
+
 [node name="WorldCollision" type="Node2D" parent="." unique_id=1252720866 node_paths=PackedStringArray("_world")]
 script = ExtResource("3_r1w0f")
 _world = NodePath("..")
@@ -60,10 +64,6 @@ script = ExtResource("7_2udm8")
 
 [node name="PlayerManager" type="Node2D" parent="." unique_id=179624163 node_paths=PackedStringArray("_world")]
 script = ExtResource("5_2qn38")
-_world = NodePath("..")
-
-[node name="PropManager" type="Node2D" parent="." unique_id=1023107457 node_paths=PackedStringArray("_world")]
-script = ExtResource("9_oby1v")
 _world = NodePath("..")
 
 [node name="NpcManager" type="Node2D" parent="." unique_id=1420301131 node_paths=PackedStringArray("_world")]

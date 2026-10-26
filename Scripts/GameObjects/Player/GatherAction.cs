@@ -7,9 +7,9 @@ namespace TerrariaRipoffNNF;
 public delegate void GatherActionDelegate(Vector2I coords, float damage);
 
 public partial class GatherAction : PlayerAction {
-    public event GatherActionDelegate HostGatheredBlock;
-    public event GatherActionDelegate HostGatherProp;
-    public event GatherActionDelegate HostGatheredWall;
+    public event GatherActionDelegate BlockGather;
+    public event GatherActionDelegate PropGather;
+    public event GatherActionDelegate WallGather;
 
     [Export] private Timer _gatherCooldown;
     private Array<CellEntity> _gatherTypes = new();
@@ -69,9 +69,9 @@ public partial class GatherAction : PlayerAction {
             targetCoords, _gatherTypes
         );
         GatherActionDelegate action = gatherType switch {
-            CellEntity.Block => HostGatheredBlock,
-            CellEntity.Prop => HostGatherProp,
-            CellEntity.Wall => HostGatheredWall,
+            CellEntity.Block => BlockGather,
+            CellEntity.Prop => PropGather,
+            CellEntity.Wall => WallGather,
             _ => null
         };
         if (action is null) return;
