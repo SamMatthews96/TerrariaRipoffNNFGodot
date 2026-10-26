@@ -14,9 +14,9 @@ public partial class Inventory : Control {
 
     private Player _localPlayer;
 
+    public event Action<StackedItems> ItemActionClicked;
     public event Action<InventoryItem> MouseEnteredItemIcon;
     public event Action MouseLeftItemIcon;
-    public event Action<StackedItems> ItemActionClicked;
 
     private void OnInputManagerToggleInventoryPressed() {
         Visible = !Visible;

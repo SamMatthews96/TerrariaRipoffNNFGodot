@@ -32,6 +32,15 @@ public partial class Inventory : Node {
 
     public override void _Ready() {
         _itemMap = _player.World.ItemIdBimap;
+        Interface.Inventory inventoryUi = _player.World.Interface.InventoryUi;
+
+        if (_player.IsLocalPlayer) {
+            inventoryUi.ItemActionClicked += OnItemActionClicked;
+            TreeExiting += () => {
+                inventoryUi.ItemActionClicked -= OnItemActionClicked;
+            };
+        }
+        
         if (_player.IsLocalPlayer || _player.World.IsHost) {
             Godot.Collections.Dictionary<string, Array> inventory =
                 _player.PlayerData["Inventory"].AsGodotDictionary<string, Array>();

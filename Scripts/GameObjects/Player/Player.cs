@@ -167,7 +167,9 @@ public partial class Player : CharacterBody2D {
         MoveAndSlide();
 
         if (previousCoords == Coords) return;
-        Rpc(nameof(RpcHostMovedCell), Coords, previousCoords);
+        RpcId(Game.HostId, nameof(RpcHostMovedCell), 
+            Coords, previousCoords);
+        CellMoved?.Invoke(Coords, previousCoords);
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
