@@ -70,6 +70,7 @@ public static class WorldCreator {
         worldDictionary.Add("props", propList);
         worldDictionary.Add("blocks", blockList);
         worldDictionary.Add("walls", wallList);
+        worldDictionary.Add("pickups", new Array());
         worldDictionary.Add("itemMap", mapDict);
 
         FileManager.SaveWorld(worldDictionary);

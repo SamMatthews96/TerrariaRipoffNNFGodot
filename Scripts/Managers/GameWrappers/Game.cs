@@ -16,8 +16,6 @@ public partial class Game : Node {
 
     private MultiplayerHost _multiplayerHost;
     private MultiplayerClient _multiplayerClient;
-    private GameUnloader _gameUnloader;
-
     private Dictionary _playerData;
 
     public void InitAsSinglePlayer(Dictionary worldData, Dictionary playerData) {
@@ -76,19 +74,22 @@ public partial class Game : Node {
         ExitGameStarted?.Invoke();
     
         if (_world.IsHost) {
-            _gameUnloader = new GameUnloader(_world);
-            _gameUnloader.SaveComplete += OnSaveComplete;
-            AddChild(_gameUnloader);
+            _world.ProcessMode = ProcessModeEnum.Disabled;
+            SaveGame();
         } else {
             ExitGameFinished?.Invoke();
         }
     }
 
-    private void OnSaveComplete() {
-        _gameUnloader.SaveComplete -= OnSaveComplete;
-        _gameUnloader.QueueFree();
-        _gameUnloader = null;
-        ExitGameFinished?.Invoke();
+    private async void SaveGame() {
+        try {
+            Dictionary worldData = _world.SerializeWorld();
+            await Task.Run(() => FileManager.SaveWorld(worldData));
+        } catch (Exception e) {
+            GD.PrintErr("Failed to save world: " + e + "");
+        } finally {
+            ExitGameFinished?.Invoke();
+        }
     }
 
     private void OnWorldLoaded() {

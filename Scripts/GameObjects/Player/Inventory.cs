@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Godot;
 using Godot.Collections;
-using TerrariaRipoffNNF.TestScenes;
 using Array = Godot.Collections.Array;
 
 namespace TerrariaRipoffNNF;

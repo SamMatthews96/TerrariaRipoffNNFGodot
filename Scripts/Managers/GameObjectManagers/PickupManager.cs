@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Godot;
 using Godot.Collections;
+using Array = Godot.Collections.Array;
 
 namespace TerrariaRipoffNNF;
 
@@ -18,6 +19,22 @@ public partial class PickupManager : Node2D {
     public delegate void CellMovedDelegate(Vector2I newCoords, Vector2I oldCoords);
     public event CellMovedDelegate ServerPickupMoved;
     public event Action<Vector2I> ServerPickupDestroyed;
+
+    public Array<Dictionary> SerializePickups() {
+        Array<Dictionary> pickupData = new();
+        foreach (PickupEntity activePickup in _activePickups) {
+            Dictionary dict = new();
+            dict["ItemId"] = _itemIdBimap.GetId(activePickup.Item);
+            dict["Name"] = activePickup.Name.ToString();
+            dict["Position"] = new Array {
+                activePickup.Position.X,
+                activePickup.Position.Y
+            };
+            pickupData.Add(dict);
+        }
+
+        return pickupData;
+    }
 
     public override void _Ready() {
         _blockManager = _world.BlockManager;
@@ -40,7 +57,30 @@ public partial class PickupManager : Node2D {
             ProcessMode = ProcessModeEnum.Always;
         } else {
             ProcessMode = ProcessModeEnum.Disabled;
-            RpcId(1, nameof(RpcHostRequestWorldData));
+        }
+
+        Array<Dictionary> savedPickups =
+            (Array<Dictionary>)_world.WorldData["pickups"];
+
+        foreach (Dictionary pickupDict in savedPickups) {
+            Array<float> positionArray = pickupDict["Position"].AsGodotArray<float>();
+            Vector2 position = new(positionArray[0], positionArray[1]);
+            ushort itemId = (ushort)pickupDict["ItemId"];
+            int pickupId = pickupDict["Name"].ToString().ToInt();
+            CreatePickup(position, itemId, pickupId);
+        }
+    }
+
+    public override void _PhysicsProcess(double delta) {
+        foreach (PickupEntity pickup in _activePickups) {
+            Vector2I newCoords = new(
+                (int)(pickup.Position.X / Game.BlockSize - 0.5f),
+                (int)(pickup.Position.Y / Game.BlockSize - 0.5f)
+            );
+            if (pickup.Coords == newCoords) continue;
+
+            ServerPickupMoved?.Invoke(newCoords, pickup.Coords);
+            pickup.Coords = newCoords;
         }
     }
 
@@ -65,6 +105,7 @@ public partial class PickupManager : Node2D {
             ushort itemId = _itemIdBimap.GetId(propDrop.Item);
             HostCreatePickup(coords, itemId);
         }
+
         if (itemProp.DoesDropSelf) {
             ushort itemId = _itemIdBimap.GetId(activeProp.Item);
             HostCreatePickup(coords, itemId);
@@ -76,13 +117,13 @@ public partial class PickupManager : Node2D {
             (coords.X + 0.5f) * Game.BlockSize,
             (coords.Y + 0.5f) * Game.BlockSize);
         _pickupCount++;
-        Rpc(nameof(RpcAllCreatePickup),
+        Rpc(nameof(CreatePickup),
             position, itemId, _pickupCount);
         ServerPickupCreated?.Invoke(coords);
     }
 
     [Rpc(CallLocal = true)]
-    private void RpcAllCreatePickup(
+    private void CreatePickup(
         Vector2 position, ushort itemId, int pickupCount
     ) {
         PickupEntity pickup =
@@ -102,44 +143,6 @@ public partial class PickupManager : Node2D {
 
         AddChild(pickup);
         _activePickups.Add(pickup);
-    }
-
-    public override void _PhysicsProcess(double delta) {
-        foreach (PickupEntity pickup in _activePickups) {
-            Vector2I newCoords = new(
-                (int)(pickup.Position.X / Game.BlockSize - 0.5f),
-                (int)(pickup.Position.Y / Game.BlockSize - 0.5f)
-            );
-            if (pickup.Coords == newCoords) continue;
-
-            ServerPickupMoved?.Invoke(newCoords, pickup.Coords);
-            pickup.Coords = newCoords;
-        }
-    }
-
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
-    private void RpcHostRequestWorldData() {
-        int senderId = Multiplayer.GetRemoteSenderId();
-        Array<Dictionary> pickupData = new();
-        foreach (PickupEntity activePickup in _activePickups) {
-            Dictionary dict = new();
-            dict["ItemId"] = _itemIdBimap.GetId(activePickup.Item);
-            dict["Name"] = activePickup.Name;
-            pickupData.Add(dict);
-        }
-
-        RpcId(senderId, nameof(RpcClientProcessPickupData), pickupData);
-    }
-
-    [Rpc]
-    private void RpcClientProcessPickupData(Array<Dictionary> pickupArray) {
-        foreach (Dictionary pickupDict in pickupArray) {
-            int pickupId = pickupDict["Name"].ToString().ToInt();
-            ushort itemId = (ushort)pickupDict["ItemId"];
-            RpcAllCreatePickup(Vector2.Zero, itemId, pickupId);
-        }
-
-        RpcId(1, nameof(RpcHostAddClientToSync));
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]

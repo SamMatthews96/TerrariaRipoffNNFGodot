@@ -48,6 +48,8 @@ public partial class World : Node2D {
         return world;
     }
 
+    #region public utils
+
     public Dictionary SerializeWorld() {
         Task<Dictionary<string, Dictionary>> blocksTask =
             Task.Run(() => BlockManager.SerializeBlocks());
@@ -55,8 +57,10 @@ public partial class World : Node2D {
             Task.Run(() => BlockManager.SerializeWalls());
         Task<Dictionary<string, Dictionary>> propsTask =
             Task.Run(() => PropManager.SerializeProps());
-
-        Task.WaitAll(blocksTask, wallsTask, propsTask);
+        Array<Dictionary> pickups = PickupManager.SerializePickups();
+        
+        Task[] tasks = { blocksTask, wallsTask, propsTask };
+        Task.WaitAll(tasks);
 
         Dictionary worldData = new() {
             ["Name"] = WorldData["Name"],
@@ -65,12 +69,11 @@ public partial class World : Node2D {
             ["blocks"] = blocksTask.Result,
             ["walls"] = wallsTask.Result,
             ["props"] = propsTask.Result,
+            ["pickups"] = pickups,
             ["itemMap"] = ItemIdBimap.ToDictionary()
         };
         return worldData;
     }
-    
-    #region public utils
 
     public bool IsInBounds(Vector2I coords) {
         return coords.X >= 0

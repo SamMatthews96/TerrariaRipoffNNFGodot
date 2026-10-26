@@ -7,7 +7,6 @@ namespace TerrariaRipoffNNF;
 
 public partial class PlayerManager : Node2D {
     [Export] private World _world;
-    private StationManager _stationManager;
     private Player _localPlayer;
     private Dictionary<long, Player> _players = new();
 
@@ -15,7 +14,6 @@ public partial class PlayerManager : Node2D {
     public event Action<Player> HostPlayerSpawned;
 
     public override void _Ready() {
-        _stationManager = _world.StationManager;
         if (_world.IsHost) {
             Multiplayer.PeerDisconnected += OnPeerDisconnected;
             TreeExiting += () => {
