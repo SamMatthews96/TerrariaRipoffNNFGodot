@@ -16,7 +16,6 @@ public partial class WeaponAction : PlayerAction {
         
         WeaponAttackNode.Create(weapon, Player, mouseWorldPosition);
         
-        
         _weaponCooldown.Start();
     }
 

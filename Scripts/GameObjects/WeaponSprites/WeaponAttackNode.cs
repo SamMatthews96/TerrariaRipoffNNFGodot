@@ -3,7 +3,7 @@ using Godot;
 
 namespace TerrariaRipoffNNF;
 
-public partial class WeaponAttackNode : Area2D {
+public abstract partial class WeaponAttackNode : Area2D {
     public ItemWeapon Weapon { get; private set; }
     protected Player Player { get; private set; }
     protected Vector2 TargetPosition { get; private set; }
@@ -16,6 +16,7 @@ public partial class WeaponAttackNode : Area2D {
         newNode.Weapon = weapon;
         newNode.Player = player;
         newNode.TargetPosition = targetPosition;
+        player.AddChild(newNode);
         return newNode;
     }
 }
