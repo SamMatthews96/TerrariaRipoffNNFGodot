@@ -11,7 +11,7 @@ public partial class WeaponAttackSwing : WeaponAttackNode {
     private Vector2 _centerOffset = new(22, -50);
 
     public override void _Ready() {
-        Position = _centerOffset;
+        Position = _centerOffset + Player.Position;
 
         Vector2 delta = TargetPosition - GlobalPosition;
         float swingMiddle = (float)Math.Atan2(delta.Y, delta.X);
@@ -29,6 +29,7 @@ public partial class WeaponAttackSwing : WeaponAttackNode {
     }
 
     public override void _PhysicsProcess(double delta) {
+        Position = _centerOffset + Player.Position;
         Rotation += _rotationSpeed * _swingDirection * (float)delta;
     }
 }

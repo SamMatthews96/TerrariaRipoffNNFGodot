@@ -1,0 +1,73 @@
+[gd_resource type="Resource" script_class="Recipe" format=3 uid="uid://cd287cmdgbctr"]
+
+[ext_resource type="Script" uid="uid://bfcev5h2r3enq" path="res://Scripts/Resources/Recipes/RecipeFieldMaps/String/RecipeFieldMapStringConstant.cs" id="1_qeow4"]
+[ext_resource type="Script" uid="uid://drhtbuywngnuq" path="res://Scripts/Resources/Recipes/RecipeFieldMaps/Float/RecipeFieldMapFloatConstant.cs" id="2_fd5g7"]
+[ext_resource type="PackedScene" uid="uid://oqop40vb15di" path="res://Scenes/WeaponNodes/Projectile.tscn" id="3_qeow4"]
+[ext_resource type="Script" uid="uid://c6jyj842ux7cg" path="res://Scripts/Resources/Recipes/OutputTemplates/ItemWeaponOutputTemplate.cs" id="4_sdtgx"]
+[ext_resource type="Texture2D" uid="uid://bpdgo62ad65vu" path="res://Assets/Images/ItemIcons/spear.png" id="5_fd5g7"]
+[ext_resource type="Script" uid="uid://d2pqak21epjnt" path="res://Scripts/Resources/Recipes/RecipeFieldMaps/Texture/RecipeFieldMapTextureConstant.cs" id="6_nwv75"]
+[ext_resource type="Script" uid="uid://cj21dtr1mr43w" path="res://Scripts/Resources/Recipes/OutputTemplates/ItemOutputTemplate.cs" id="7_ccure"]
+[ext_resource type="Texture2D" uid="uid://wrf00jfy174v" path="res://Assets/Images/woodPlaceholder.png" id="8_y3lnx"]
+[ext_resource type="Script" uid="uid://fn1nx4h2shbl" path="res://Scripts/Resources/Recipes/Ingredient.cs" id="9_snchn"]
+[ext_resource type="Texture2D" uid="uid://3mp4qibtswyy" path="res://Assets/Images/ItemIcons/spearPlaceholder.png" id="10_8wor2"]
+[ext_resource type="Script" uid="uid://wufmphxsnnhm" path="res://Scripts/Resources/Recipes/Recipe.cs" id="11_uo5my"]
+
+[sub_resource type="Resource" id="Resource_alhcd"]
+script = ExtResource("1_qeow4")
+_value = "Javelin"
+metadata/_custom_type_script = "uid://bfcev5h2r3enq"
+
+[sub_resource type="Resource" id="Resource_1qhs7"]
+script = ExtResource("2_fd5g7")
+_value = 5.0
+metadata/_custom_type_script = "uid://drhtbuywngnuq"
+
+[sub_resource type="Resource" id="Resource_027j2"]
+script = ExtResource("2_fd5g7")
+_value = 1.0
+metadata/_custom_type_script = "uid://drhtbuywngnuq"
+
+[sub_resource type="Resource" id="Resource_21teu"]
+script = ExtResource("4_sdtgx")
+Speed = SubResource("Resource_027j2")
+Damage = SubResource("Resource_1qhs7")
+Scene = ExtResource("3_qeow4")
+metadata/_custom_type_script = "uid://c6jyj842ux7cg"
+
+[sub_resource type="Resource" id="Resource_e3e88"]
+script = ExtResource("2_fd5g7")
+_value = 4.0
+metadata/_custom_type_script = "uid://drhtbuywngnuq"
+
+[sub_resource type="Resource" id="Resource_jn5oc"]
+script = ExtResource("6_nwv75")
+_value = ExtResource("5_fd5g7")
+metadata/_custom_type_script = "uid://d2pqak21epjnt"
+
+[sub_resource type="Resource" id="Resource_ukgkc"]
+script = ExtResource("7_ccure")
+Name = SubResource("Resource_alhcd")
+Texture = SubResource("Resource_jn5oc")
+Space = SubResource("Resource_e3e88")
+Properties = Array[Object]([SubResource("Resource_21teu")])
+metadata/_custom_type_script = "uid://cj21dtr1mr43w"
+
+[sub_resource type="Resource" id="Resource_e5i4w"]
+script = ExtResource("9_snchn")
+IngredientType = 2
+Amount = 4
+Icon = ExtResource("8_y3lnx")
+Required = true
+metadata/_custom_type_script = "uid://fn1nx4h2shbl"
+
+[resource]
+script = ExtResource("11_uo5my")
+Id = 5
+RecipeName = "Javelin"
+RequiredStation = 1
+TemplateIcon = ExtResource("10_8wor2")
+RecipeIngredients = Dictionary[String, Object]({
+"wood": SubResource("Resource_e5i4w")
+})
+ItemOutputTemplate = SubResource("Resource_ukgkc")
+metadata/_custom_type_script = "uid://wufmphxsnnhm"

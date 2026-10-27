@@ -16,7 +16,6 @@ public abstract partial class WeaponAttackNode : Area2D {
         newNode.Weapon = weapon;
         newNode.Player = player;
         newNode.TargetPosition = targetPosition;
-        player.AddChild(newNode);
         return newNode;
     }
 }

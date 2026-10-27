@@ -14,8 +14,9 @@ public partial class WeaponAction : PlayerAction {
         if (weapon is null) return;
         if (!_weaponCooldown.IsStopped()) return;
         
-        WeaponAttackNode.Create(weapon, Player, mouseWorldPosition);
-        
+        WeaponAttackNode node = 
+            WeaponAttackNode.Create(weapon, Player, mouseWorldPosition);
+        Player.World.AddChild(node);
         _weaponCooldown.Start();
     }
 
