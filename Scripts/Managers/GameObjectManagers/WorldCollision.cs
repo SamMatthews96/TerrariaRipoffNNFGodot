@@ -6,7 +6,7 @@ namespace TerrariaRipoffNNF;
 public partial class WorldCollision : Node2D {
     [Export] private World _world;
     [Export] private PackedScene _collisionBlockScene;
-    [Export] private int _observerRadius = 3;
+    [Export] private int _observerRadius = 2;
 
     private PlayerManager _playerManager;
     private BlockManager _blockManager;

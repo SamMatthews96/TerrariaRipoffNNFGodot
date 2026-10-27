@@ -50,6 +50,7 @@ public partial class Player : CharacterBody2D {
     public event CellMovedDelegate CellMoved;
 
     #region Event Wrappers
+
     public event BuildActionDelegate BlockPlaced {
         add => ActionState.Build.HostPlacedBlock += value;
         remove => ActionState.Build.HostPlacedBlock -= value;
@@ -79,17 +80,17 @@ public partial class Player : CharacterBody2D {
         add => ActionState.Gather.PropGather += value;
         remove => ActionState.Gather.PropGather -= value;
     }
-    
+
     public event CraftEventDelegate HostItemCrafted {
         add => Crafting.HostItemCrafted += value;
         remove => Crafting.HostItemCrafted -= value;
     }
-    
+
     public event PickupCollectedDelegate CollectedPickup {
         add => ServerPickupArea.CollectedPickup += value;
         remove => ServerPickupArea.CollectedPickup -= value;
     }
-    
+
     #endregion
 
     public override void _EnterTree() {
@@ -167,8 +168,10 @@ public partial class Player : CharacterBody2D {
         MoveAndSlide();
 
         if (previousCoords == Coords) return;
-        RpcId(Game.HostId, nameof(RpcHostMovedCell), 
-            Coords, previousCoords);
+        if (!World.IsHost) {
+            RpcId(Game.HostId, nameof(RpcHostMovedCell),
+                Coords, previousCoords);
+        }
         CellMoved?.Invoke(Coords, previousCoords);
     }
 
