@@ -19,22 +19,22 @@ public partial class Game : Node {
     private Dictionary _playerData;
 
     public void InitAsSinglePlayer(Dictionary worldData, Dictionary playerData) {
-        _world = World.Create(playerData, worldData);
+        _playerData = FileManager.LoadPlayer(playerData);
+        _world = World.Create(_playerData, worldData);
         _world.GameLoaded += OnWorldLoaded;
         _world.Interface.GameMenu.ExitGameButtonDown += OnExitGameButtonDown;
         AddChild(_world);
-        _playerData = FileManager.LoadPlayer(playerData);
     }
 
     public void InitAsHost(Dictionary worldData, Dictionary playerData) {
         _multiplayerHost = new MultiplayerHost();
         AddChild(_multiplayerHost);
 
-        _world = World.Create(playerData, worldData);
-        _world.GameLoaded += OnWorldLoaded;
-        AddChild(_world);
-        _world.Interface.GameMenu.ExitGameButtonDown += OnExitGameButtonDown;
         _playerData = FileManager.LoadPlayer(playerData);
+        _world = World.Create(_playerData, worldData);
+        _world.GameLoaded += OnWorldLoaded;
+        _world.Interface.GameMenu.ExitGameButtonDown += OnExitGameButtonDown;
+        AddChild(_world);
 
         Multiplayer.PeerConnected += OnPeerConnected;
         TreeExiting += () => { Multiplayer.PeerConnected -= OnPeerConnected; };
