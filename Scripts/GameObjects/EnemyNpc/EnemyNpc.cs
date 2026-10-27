@@ -3,7 +3,7 @@
 namespace TerrariaRipoffNNF.Scripts.GameObjects.EnemyNpc;
 
 public partial class EnemyNpc : CharacterBody2D {
-    private float _health = 100;
+    private float _health = 10;
     [Export] private Area2D _hitbox;
     [Export] private ColorRect _healthBar;
 
@@ -22,6 +22,10 @@ public partial class EnemyNpc : CharacterBody2D {
     }
 
     private void OnAreaEntered(Area2D area) {
-        
+        if (area is not WeaponAttackNode node) return;
+        _health -= node.Weapon.Damage;
+        if (_health <= 0) {
+            QueueFree();
+        }
     }
 }
