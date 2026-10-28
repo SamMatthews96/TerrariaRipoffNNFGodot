@@ -6,6 +6,8 @@ using Array = Godot.Collections.Array;
 
 namespace TerrariaRipoffNNF;
 
+public delegate void CellMovedDelegate(Vector2I newCoords, Vector2I oldCoords);
+
 public partial class PickupManager : Node2D {
     private readonly List<PickupEntity> _activePickups = new();
     [Export] private World _world;
@@ -16,7 +18,6 @@ public partial class PickupManager : Node2D {
     private int _pickupCount;
 
     public event Action<Vector2I> ServerPickupCreated;
-    public delegate void CellMovedDelegate(Vector2I newCoords, Vector2I oldCoords);
     public event CellMovedDelegate ServerPickupMoved;
     public event Action<Vector2I> ServerPickupDestroyed;
 

@@ -46,7 +46,6 @@ public partial class Player : CharacterBody2D {
 
     public bool IsLocalPlayer { get; private set; }
 
-    public delegate void CellMovedDelegate(Vector2I newCoords, Vector2I oldCoords);
     public event CellMovedDelegate CellMoved;
 
     #region Event Wrappers

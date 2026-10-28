@@ -21,6 +21,7 @@ public partial class WorldCollision : Node2D {
         _blockManager = _world.BlockManager;
         _pickupManager = _world.PickupManager;
         _worldSize = _world.WorldSize;
+        NpcManager npcManager = _world.NpcManager;
 
         _playerManager.LocalPlayerSpawned += OnLocalPlayerSpawned;
         _blockManager.BlockDestroyed += OnBlockDestroyed;
@@ -40,8 +41,29 @@ public partial class WorldCollision : Node2D {
             _pickupManager.ServerPickupMoved -= OnPickupMoved;
             _pickupManager.ServerPickupDestroyed -= OnPickupDestroyed;
         };
+
+        npcManager.NpcCreated += OnNpcCreated;
+        npcManager.NpcMoved += OnNpcMoved;
+        npcManager.NpcDestroyed += OnNpcDestroyed;
+        TreeExiting += () => {
+            npcManager.NpcCreated -= OnNpcCreated;
+            npcManager.NpcMoved -= OnNpcMoved;
+            npcManager.NpcDestroyed -= OnNpcDestroyed;
+        };
     }
-    
+
+    private void OnNpcCreated(Vector2I vector2I) {
+        IncrementObserverCounts(vector2I);
+    }
+
+    private void OnNpcMoved(Vector2I newPosition, Vector2I oldPosition) {
+        MoveObserver(newPosition, oldPosition);
+    }
+
+    private void OnNpcDestroyed(Vector2I vector2I) {
+        DecrementObserverCounts(vector2I);
+    }
+
     private void OnLocalPlayerSpawned(Player player) {
         IncrementObserverCounts(player.Coords);
         player.CellMoved += MoveObserver;
@@ -64,7 +86,7 @@ public partial class WorldCollision : Node2D {
     private void OnPickupMoved(Vector2I newPosition, Vector2I oldPosition) {
         MoveObserver(newPosition, oldPosition);
     }
-    
+
     private void OnPickupDestroyed(Vector2I position) {
         DecrementObserverCounts(position);
     }
@@ -110,7 +132,7 @@ public partial class WorldCollision : Node2D {
             }
         }
     }
-    
+
     private bool HasBlockEntity(int x, int y) {
         return _blockManager.GetBlock(x, y) is not null;
     }

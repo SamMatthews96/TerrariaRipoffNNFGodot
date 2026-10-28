@@ -6,7 +6,12 @@ namespace TerrariaRipoffNNF.Scripts.GameObjects.WeaponSprites;
 public partial class WeaponAttackProjectile : WeaponAttackNode {
     private Vector2 _velocity;
     private Vector2 _centerOffset = new(22, -50);
+    
+    public Vector2I Coords => (Vector2I)(Position / Game.BlockSize);
 
+    public event Action<Vector2I, Vector2I> MovedCell;
+    
+    
     [Export] private Timer _timer;
 
     public override void _Ready() {
@@ -38,8 +43,11 @@ public partial class WeaponAttackProjectile : WeaponAttackNode {
     }
 
     public override void _PhysicsProcess(double delta) {
+        Vector2I previousCoords = Coords;
         Position += _velocity * (float)delta;
         _velocity += new Vector2(0, 1000) * (float)delta;
         Rotation = (float)Math.Atan2(_velocity.Y, _velocity.X);
+        if (previousCoords == Coords) return;
+        MovedCell?.Invoke(Coords, previousCoords);
     }
 }

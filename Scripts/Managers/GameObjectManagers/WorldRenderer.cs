@@ -40,7 +40,7 @@ public partial class WorldRenderer : Node2D {
 
         Action<Vector2I> onCreated = _ => UpdateView();
         Action<Vector2I, ushort> onDestroyed = (_, _) => UpdateView();
-        Player.CellMovedDelegate onMoved = (_, _) => UpdateView();
+        CellMovedDelegate onMoved = (_, _) => UpdateView();
 
         _blockManager.BlockCreated += onCreated;
         _blockManager.BlockDestroyed += onDestroyed;
