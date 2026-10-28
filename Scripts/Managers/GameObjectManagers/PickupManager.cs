@@ -20,7 +20,7 @@ public partial class PickupManager : Node2D {
     public event CellMovedDelegate ServerPickupMoved;
     public event Action<Vector2I> ServerPickupDestroyed;
 
-    public Array<Dictionary> SerializePickups() {
+    public Array<Dictionary> Serialize() {
         Array<Dictionary> pickupData = new();
         foreach (PickupEntity activePickup in _activePickups) {
             Dictionary dict = new();

@@ -22,28 +22,34 @@ public partial class World : Node2D {
     [Export] public NpcManager NpcManager { get; private set; }
 
     public event Action GameLoaded;
-
     public event Action UnequipWeaponClicked {
         add => Interface.PlayerEquipment.UnequipWeaponClicked += value;
         remove => Interface.PlayerEquipment.UnequipWeaponClicked -= value;
     }
-
     public event Action UnequipPickaxeClicked {
         add => Interface.PlayerEquipment.UnequipPickaxeClicked += value;
         remove => Interface.PlayerEquipment.UnequipPickaxeClicked -= value;
     }
+    public event Action<Dictionary> PeerConnected {
+        add => _game.PeerConnected += value;
+        remove => _game.PeerConnected -= value;
+    }
 
     public Interface.Crafting CraftingInterface => Interface.CraftingInterface;
-
     public Dictionary LocalPlayerData { get; private set; }
     public Dictionary WorldData { get; private set; }
 
-    public static World Create(Dictionary playerData, Dictionary worldData) {
+    private Game _game;
+
+    public static World Create(
+        Game game, Dictionary playerData, Dictionary worldData
+    ) {
         World world = Data.PackedScenes.World.Instantiate<World>();
         world.WorldSize = new Vector2I(
             (int)worldData["Width"], (int)worldData["Height"]);
         world.LocalPlayerData = playerData;
         world.WorldData = worldData;
+        world._game = game;
 
         return world;
     }
@@ -57,8 +63,7 @@ public partial class World : Node2D {
             Task.Run(() => BlockManager.SerializeWalls());
         Task<Dictionary<string, Dictionary>> propsTask =
             Task.Run(() => PropManager.SerializeProps());
-        Array<Dictionary> pickups = PickupManager.SerializePickups();
-        
+
         Task[] tasks = { blocksTask, wallsTask, propsTask };
         Task.WaitAll(tasks);
 
@@ -69,8 +74,8 @@ public partial class World : Node2D {
             ["blocks"] = blocksTask.Result,
             ["walls"] = wallsTask.Result,
             ["props"] = propsTask.Result,
-            ["pickups"] = pickups,
-            ["itemMap"] = ItemIdBimap.ToDictionary()
+            ["pickups"] = PickupManager.Serialize(),
+            ["itemMap"] = ItemIdBimap.Serialize()
         };
         return worldData;
     }

@@ -12,23 +12,6 @@ public partial class ItemIdBimap : Node {
     [Export] private World _world;
     private PlayerManager _playerManager;
 
-    public override void _Ready() {
-        _playerManager = _world.PlayerManager;
-
-        Dictionary dict = _world.WorldData["itemMap"].AsGodotDictionary();
-        _idToString = dict["IdToString"].AsGodotArray<string>();
-        _stringToId = dict["StringToId"].AsGodotDictionary<string, ushort>();
-
-        Dictionary<string, Dictionary> stringToItemDict =
-            dict["StringToItem"].AsGodotDictionary<string, Dictionary>();
-        foreach ((string key, Dictionary itemDict) in stringToItemDict) {
-            _stringToItem[key] = Item.FromDictionary(itemDict);
-        }
-
-        _playerManager.HostPlayerSpawned += OnPlayerSpawnedOnHost;
-        TreeExiting += () => { _playerManager.HostPlayerSpawned -= OnPlayerSpawnedOnHost; };
-    }
-
     public Item GetItem(ushort id) {
         string itemString = _idToString[id];
         return _stringToItem[itemString];
@@ -39,7 +22,7 @@ public partial class ItemIdBimap : Node {
         bool isIdSet = _stringToId.TryGetValue(itemString, out ushort id);
         if (isIdSet) return id;
 
-        if (!_world.IsHost) throw new Exception("Item not found on client");
+        if (!_world.IsHost) throw new Exception("Client missing item id");
         ushort count = (ushort)_idToString.Count;
         Rpc(nameof(RpcAddItem),
             count, itemString, item.ToDictionary());
@@ -56,7 +39,7 @@ public partial class ItemIdBimap : Node {
         return _idToString.Count;
     }
 
-    public Dictionary ToDictionary() {
+    public Dictionary Serialize() {
         Dictionary<string, Dictionary> stringToItemDict = new();
         foreach ((string key, Item item) in _stringToItem) {
             stringToItemDict[key] = item.ToDictionary();
@@ -69,14 +52,40 @@ public partial class ItemIdBimap : Node {
         };
     }
 
-    private void OnPlayerSpawnedOnHost(Player player) {
-        foreach (StackedItems stackedItems in player.Inventory.StackedItemsList) {
-            Item item = stackedItems.Item;
+    public override void _Ready() {
+        _playerManager = _world.PlayerManager;
+
+        Dictionary dict = _world.WorldData["itemMap"].AsGodotDictionary();
+        _idToString = dict["IdToString"].AsGodotArray<string>();
+        _stringToId = dict["StringToId"].AsGodotDictionary<string, ushort>();
+
+        Dictionary<string, Dictionary> stringToItemDict =
+            dict["StringToItem"].AsGodotDictionary<string, Dictionary>();
+        foreach ((string key, Dictionary itemDict) in stringToItemDict) {
+            _stringToItem[key] = Item.FromDictionary(itemDict);
+        }
+
+        if (!_world.IsHost) return;
+        ProcessNewPlayer(_world.LocalPlayerData);
+
+        _world.PeerConnected += ProcessNewPlayer;
+        TreeExiting += () => {
+            _world.PeerConnected -= ProcessNewPlayer;
+        };
+        
+    }
+
+    private void ProcessNewPlayer(Dictionary playerData) {
+        Array<Dictionary> stackedItemsList =
+            playerData["Inventory"].AsGodotDictionary()
+                ["InventoryItemsList"].AsGodotArray<Dictionary>();
+        foreach (Dictionary stackedItemDict in stackedItemsList) {
+            Dictionary itemDict = stackedItemDict["Item"].AsGodotDictionary();
+            Item item = Item.FromDictionary(itemDict);
             string itemString = GetItemString(item);
             if (!_stringToId.ContainsKey(itemString)) {
                 ushort id = (ushort)_idToString.Count;
-                Rpc(nameof(RpcAddItem),
-                    id, itemString, item.ToDictionary());
+                RpcAddItem(id, itemString, item.ToDictionary());
             }
         }
     }

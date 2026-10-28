@@ -9,18 +9,24 @@ public partial class Game : Node {
     public const int BlockSize = 32;
     public const int HostId = 1;
     private World _world;
+    // generally, an rpc should go to all peers.
+    // but, if a peer hasn't been fully connected, we need to buffer
+    // the rpc until the peer is connected.
 
     public event Action Loaded;
     public event Action ExitGameStarted;
     public event Action ExitGameFinished;
+    public event Action<Dictionary> PeerConnected;
+    public event Action AfterPeerConnected;
 
     private MultiplayerHost _multiplayerHost;
     private MultiplayerClient _multiplayerClient;
-    private Dictionary _playerData;
+    private Dictionary _localPlayerData;
 
     public void InitAsSinglePlayer(Dictionary worldData, Dictionary playerData) {
-        _playerData = FileManager.LoadPlayer(playerData);
-        _world = World.Create(_playerData, worldData);
+        RpcHandler.Init();
+        _localPlayerData = FileManager.LoadPlayer(playerData);
+        _world = World.Create(this, _localPlayerData, worldData);
         _world.GameLoaded += OnWorldLoaded;
         _world.Interface.GameMenu.ExitGameButtonDown += OnExitGameButtonDown;
         AddChild(_world);
@@ -29,38 +35,56 @@ public partial class Game : Node {
     public void InitAsHost(Dictionary worldData, Dictionary playerData) {
         _multiplayerHost = new MultiplayerHost();
         AddChild(_multiplayerHost);
-
-        _playerData = FileManager.LoadPlayer(playerData);
-        _world = World.Create(_playerData, worldData);
+        
+        RpcHandler.Init();
+        _localPlayerData = FileManager.LoadPlayer(playerData);
+        _world = World.Create(this, _localPlayerData, worldData);
         _world.GameLoaded += OnWorldLoaded;
         _world.Interface.GameMenu.ExitGameButtonDown += OnExitGameButtonDown;
         AddChild(_world);
-
-        Multiplayer.PeerConnected += OnPeerConnected;
-        TreeExiting += () => { Multiplayer.PeerConnected -= OnPeerConnected; };
-    }
-
-    private void OnPeerConnected(long id) {
-        Dictionary currentWorldData = _world.SerializeWorld();
-        RpcId(id, nameof(PeerReceivedWorldData), currentWorldData);
     }
 
     public void InitAsClient(Dictionary playerData) {
         _multiplayerClient = new MultiplayerClient();
         AddChild(_multiplayerClient);
 
+        Multiplayer.ConnectedToServer += OnConnectedToServer;
         Multiplayer.ServerDisconnected += OnServerDisconnected;
-        TreeExiting += () => { Multiplayer.ServerDisconnected -= OnServerDisconnected; };
+        TreeExiting += () => {
+            Multiplayer.ConnectedToServer -= OnConnectedToServer;
+            Multiplayer.ServerDisconnected -= OnServerDisconnected;
+        };
 
-        _playerData = FileManager.LoadPlayer(playerData);
+        _localPlayerData = FileManager.LoadPlayer(playerData);
+    }
+
+    private void OnConnectedToServer() {
+        RpcId(HostId, nameof(ProcessNewPeer), _localPlayerData);
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    private void ProcessNewPeer(Dictionary playerData) {
+        int senderId = Multiplayer.GetRemoteSenderId();
+        
+        RpcHandler.AddNewPeer(senderId);
+        PeerConnected?.Invoke(playerData);
+        Dictionary currentWorldData = _world.SerializeWorld();
+        RpcId(senderId, nameof(PeerReceivedWorldData), currentWorldData);
     }
 
     [Rpc]
     private void PeerReceivedWorldData(Dictionary worldData) {
-        _world = World.Create(_playerData, worldData);
+        _world = World.Create(this, _localPlayerData, worldData);
         _world.GameLoaded += OnWorldLoaded;
         AddChild(_world);
         _world.Interface.GameMenu.ExitGameButtonDown += OnExitGameButtonDown;
+        RpcId(HostId, nameof(AfterPeerReceivedWorldData));
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    private void AfterPeerReceivedWorldData() {
+        int senderId = Multiplayer.GetRemoteSenderId();
+        RpcHandler.RemoveNewPeer(senderId);
     }
 
     private void OnServerDisconnected() {
