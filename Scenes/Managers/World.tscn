@@ -62,14 +62,14 @@ _world = NodePath("..")
 [node name="InputManager" type="Node2D" parent="." unique_id=495752160]
 script = ExtResource("7_2udm8")
 
-[node name="PlayerManager" type="Node2D" parent="." unique_id=179624163 node_paths=PackedStringArray("_world")]
-script = ExtResource("5_2qn38")
-_world = NodePath("..")
-
 [node name="NpcManager" type="Node2D" parent="." unique_id=1420301131 node_paths=PackedStringArray("_world")]
 script = ExtResource("14_lnmrc")
 _world = NodePath("..")
 _npcScene = ExtResource("15_wknws")
+
+[node name="PlayerManager" type="Node2D" parent="." unique_id=179624163 node_paths=PackedStringArray("_world")]
+script = ExtResource("5_2qn38")
+_world = NodePath("..")
 
 [node name="StationManager" type="Node" parent="." unique_id=674416704 node_paths=PackedStringArray("_world")]
 script = ExtResource("12_mm7vv")

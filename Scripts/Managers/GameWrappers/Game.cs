@@ -17,7 +17,6 @@ public partial class Game : Node {
     public event Action ExitGameStarted;
     public event Action ExitGameFinished;
     public event Action<Dictionary> PeerConnected;
-    public event Action AfterPeerConnected;
 
     private MultiplayerHost _multiplayerHost;
     private MultiplayerClient _multiplayerClient;

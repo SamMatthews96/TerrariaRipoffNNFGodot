@@ -111,7 +111,7 @@ public sealed partial class Crafting : Node {
         AddedNewStation?.Invoke(type);
     }
 
-    public void HostRemoveCraftingStation(Vector2I coords, StationType type) {
+    private void HostRemoveCraftingStation(Vector2I coords, StationType type) {
         _nearbyStations.Remove(coords);
         if (!_nearbyStations.Values.Contains(type)) {
             RpcId(_player.PeerId,

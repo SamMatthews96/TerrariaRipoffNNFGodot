@@ -80,6 +80,11 @@ public partial class Player : CharacterBody2D {
         add => ActionState.Gather.PropGather += value;
         remove => ActionState.Gather.PropGather -= value;
     }
+    
+    public event AttackActionDelegate WeaponSwung {
+        add => ActionState.WeaponAction.WeaponSwung += value;
+        remove => ActionState.WeaponAction.WeaponSwung -= value;
+    }
 
     public event CraftEventDelegate HostItemCrafted {
         add => Crafting.HostItemCrafted += value;
