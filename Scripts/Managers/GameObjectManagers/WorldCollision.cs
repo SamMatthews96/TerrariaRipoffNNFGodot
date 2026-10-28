@@ -24,8 +24,8 @@ public partial class WorldCollision : Node2D {
         NpcManager npcManager = _world.NpcManager;
 
         _playerManager.LocalPlayerSpawned += OnLocalPlayerSpawned;
-        _blockManager.BlockDestroyed += OnBlockDestroyed;
         _blockManager.BlockCreated += OnBlockCreated;
+        _blockManager.BlockDestroyed += OnBlockDestroyed;
         TreeExiting += () => {
             _playerManager.LocalPlayerSpawned -= OnLocalPlayerSpawned;
             _blockManager.BlockCreated -= OnBlockCreated;
@@ -33,40 +33,32 @@ public partial class WorldCollision : Node2D {
         };
 
         if (!_world.IsHost) return;
-        _pickupManager.ServerPickupCreated += OnPickupCreated;
-        _pickupManager.ServerPickupMoved += OnPickupMoved;
-        _pickupManager.ServerPickupDestroyed += OnPickupDestroyed;
+        _pickupManager.ServerPickupCreated += IncrementObserverCounts;
+        _pickupManager.ServerPickupMoved += MoveObserver;
+        _pickupManager.ServerPickupDestroyed += DecrementObserverCounts;
         TreeExiting += () => {
-            _pickupManager.ServerPickupCreated -= OnPickupCreated;
-            _pickupManager.ServerPickupMoved -= OnPickupMoved;
-            _pickupManager.ServerPickupDestroyed -= OnPickupDestroyed;
+            _pickupManager.ServerPickupCreated -= IncrementObserverCounts;
+            _pickupManager.ServerPickupMoved -= MoveObserver;
+            _pickupManager.ServerPickupDestroyed -= DecrementObserverCounts;
         };
 
-        npcManager.NpcCreated += OnNpcCreated;
-        npcManager.NpcMoved += OnNpcMoved;
-        npcManager.NpcDestroyed += OnNpcDestroyed;
+        npcManager.NpcCreated += IncrementObserverCounts;
+        npcManager.NpcMoved += MoveObserver;
+        npcManager.NpcDestroyed += DecrementObserverCounts;
         TreeExiting += () => {
-            npcManager.NpcCreated -= OnNpcCreated;
-            npcManager.NpcMoved -= OnNpcMoved;
-            npcManager.NpcDestroyed -= OnNpcDestroyed;
+            npcManager.NpcCreated -= IncrementObserverCounts;
+            npcManager.NpcMoved -= MoveObserver;
+            npcManager.NpcDestroyed -= DecrementObserverCounts;
         };
-    }
-
-    private void OnNpcCreated(Vector2I vector2I) {
-        IncrementObserverCounts(vector2I);
-    }
-
-    private void OnNpcMoved(Vector2I newPosition, Vector2I oldPosition) {
-        MoveObserver(newPosition, oldPosition);
-    }
-
-    private void OnNpcDestroyed(Vector2I vector2I) {
-        DecrementObserverCounts(vector2I);
     }
 
     private void OnLocalPlayerSpawned(Player player) {
         IncrementObserverCounts(player.Coords);
         player.CellMoved += MoveObserver;
+        player.TreeExiting += () => {
+            DecrementObserverCounts(player.Coords);
+            player.CellMoved -= MoveObserver;
+        };
     }
 
     private void OnBlockCreated(Vector2I position) {
@@ -77,18 +69,6 @@ public partial class WorldCollision : Node2D {
 
     private void OnBlockDestroyed(Vector2I position, ushort _) {
         RemoveCollisionBlock(position);
-    }
-
-    private void OnPickupCreated(Vector2I position) {
-        IncrementObserverCounts(position);
-    }
-
-    private void OnPickupMoved(Vector2I newPosition, Vector2I oldPosition) {
-        MoveObserver(newPosition, oldPosition);
-    }
-
-    private void OnPickupDestroyed(Vector2I position) {
-        DecrementObserverCounts(position);
     }
 
     private void MoveObserver(Vector2I newPosition, Vector2I oldPosition) {
