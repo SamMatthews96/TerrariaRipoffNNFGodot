@@ -26,13 +26,8 @@ public partial class EnemyNpc : CharacterBody2D {
         _healthBar.Value = _health;
         TreeExiting += () => {
             _hitbox.AreaEntered -= OnAreaEntered;
-            this.RpcAllPeers(nameof(PeerQueueFree));
+            
         };
-    }
-
-    [Rpc(CallLocal = true)]
-    private void PeerQueueFree() {
-        QueueFree();
     }
 
     private void OnAreaEntered(Area2D area) {
@@ -40,7 +35,12 @@ public partial class EnemyNpc : CharacterBody2D {
         _health -= node.Weapon.Damage;
         _healthBar.Value = _health;
         if (_health <= 0) {
-            QueueFree();
+            this.RpcAllPeers(nameof(PeerQueueFree));
         }
+    }
+
+    [Rpc(CallLocal = true)]
+    private void PeerQueueFree() {
+        QueueFree();
     }
 }
