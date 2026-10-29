@@ -1,4 +1,5 @@
-﻿using Godot;
+﻿using System;
+using Godot;
 
 namespace TerrariaRipoffNNF.Scripts.GameObjects.EnemyNpc;
 
@@ -6,6 +7,8 @@ public partial class EnemyNpc : CharacterBody2D {
     [Export] private float _health = 10;
     [Export] private Area2D _hitbox;
     [Export] private ProgressBar _healthBar;
+
+    public event Action<EnemyNpc> HitZeroHealth;
 
     public static EnemyNpc Create(Vector2I spawnCoords, int id) {
         EnemyNpc newEnemyNpc = Data.PackedScenes.TestNpc.Instantiate<EnemyNpc>();
@@ -35,12 +38,8 @@ public partial class EnemyNpc : CharacterBody2D {
         _health -= node.Weapon.Damage;
         _healthBar.Value = _health;
         if (_health <= 0) {
-            this.RpcAllPeers(nameof(PeerQueueFree));
+            HitZeroHealth?.Invoke(this);
         }
     }
 
-    [Rpc(CallLocal = true)]
-    private void PeerQueueFree() {
-        QueueFree();
-    }
 }

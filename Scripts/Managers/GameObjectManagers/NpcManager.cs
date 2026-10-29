@@ -47,7 +47,7 @@ public partial class NpcManager : Node2D {
         );
     }
 
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer,CallLocal = true)]
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void RpcHostAttackAction(Vector2 position, int playerId) {
         Rpc(nameof(SpawnWeaponNode), position, playerId, ++_count);
     }
@@ -55,8 +55,8 @@ public partial class NpcManager : Node2D {
     [Rpc(CallLocal = true)]
     private void SpawnWeaponNode(Vector2 position, int playerId, int id) {
         Player player = _playerManager.GetPlayer(playerId);
-        ItemWeapon weapon = player.PlayerEquipment.Weapon; 
-        WeaponAttackNode node = 
+        ItemWeapon weapon = player.PlayerEquipment.Weapon;
+        WeaponAttackNode node =
             WeaponAttackNode.Create(weapon, player, position);
         node.Name = id.ToString();
         AddChild(node);
@@ -69,7 +69,7 @@ public partial class NpcManager : Node2D {
             void TimeoutAction() {
                 HostDespawnProjectile(GetNodeId(projectile));
             }
-            
+
             NpcCreated?.Invoke(projectile.Coords);
 
             projectile.MovedCell += OnNpcMovedCell;
@@ -77,7 +77,7 @@ public partial class NpcManager : Node2D {
             projectile.BodyEntered += BodyEnteredAction;
             projectile.TreeExiting += () => {
                 NpcDestroyed?.Invoke(projectile.Coords);
-                
+
                 projectile.MovedCell -= OnNpcMovedCell;
                 projectile.Timeout -= TimeoutAction;
                 projectile.BodyEntered -= BodyEnteredAction;
@@ -88,8 +88,8 @@ public partial class NpcManager : Node2D {
     private void HostDespawnProjectile(int id) {
         this.RpcAllPeers(nameof(RpcDespawnProjectile), id);
     }
-    
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer,CallLocal = true)]
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void RpcDespawnProjectile(int id) {
         Node node = GetNode(id);
         node.QueueFree();
@@ -103,7 +103,7 @@ public partial class NpcManager : Node2D {
         this.RpcHost(nameof(RpcHostSpawnEnemy), ++_count);
     }
 
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer,CallLocal = true)]
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void RpcHostSpawnEnemy(int id) {
         this.RpcAllPeers(nameof(RpcPeerSpawnEnemy), id);
     }
@@ -112,5 +112,19 @@ public partial class NpcManager : Node2D {
     private void RpcPeerSpawnEnemy(int id) {
         EnemyNpc npc = EnemyNpc.Create(new Vector2I(20, 10), id);
         AddChild(npc);
+        if (_world.IsHost) {
+            npc.HitZeroHealth += OnHitZeroHealth;
+        }
+    }
+
+    private void OnHitZeroHealth(EnemyNpc npc) {
+        npc.HitZeroHealth -= OnHitZeroHealth;
+        this.RpcAllPeers(nameof(RpcDeleteNode), GetNodeId(npc));
+    }
+
+    [Rpc(CallLocal = true)]
+    private void RpcDeleteNode(int id) {
+        Node npc = GetNode(id);
+        npc.QueueFree();
     }
 }
