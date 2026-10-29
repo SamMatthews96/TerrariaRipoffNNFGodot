@@ -16,6 +16,14 @@ public partial class NpcManager : Node2D {
     public event CellMovedDelegate NpcMoved;
     public event Action<Vector2I> NpcDestroyed;
 
+    private int GetNodeId(Node node) {
+        return node.Name.ToString().ToInt();
+    }
+
+    private Node GetNode(int id) {
+        return GetNode(id.ToString());
+    }
+
     public override void _Ready() {
         _devTools = _world.Interface.DevTools;
         _playerManager = _world.PlayerManager;
@@ -34,27 +42,57 @@ public partial class NpcManager : Node2D {
     }
 
     private void OnWeaponSwung(Vector2 position, Player player) {
-        int peerId = _playerManager.GetPlayerId(player);
-        Rpc(nameof(RpcCreateWeaponSprite),
-            position, peerId);
+        this.RpcHost(nameof(RpcHostAttackAction),
+            position, _playerManager.GetPlayerId(player)
+        );
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer,CallLocal = true)]
+    private void RpcHostAttackAction(Vector2 position, int playerId) {
+        Rpc(nameof(SpawnWeaponNode), position, playerId, ++_count);
     }
 
     [Rpc(CallLocal = true)]
-    private void RpcCreateWeaponSprite(Vector2 position, int playerId) {
+    private void SpawnWeaponNode(Vector2 position, int playerId, int id) {
         Player player = _playerManager.GetPlayer(playerId);
         ItemWeapon weapon = player.PlayerEquipment.Weapon; 
         WeaponAttackNode node = 
             WeaponAttackNode.Create(weapon, player, position);
+        node.Name = id.ToString();
         AddChild(node);
+        if (!player.World.IsHost) return;
         if (node is WeaponAttackProjectile projectile) {
+            void BodyEnteredAction(Node body) {
+                HostDespawnProjectile(GetNodeId(projectile));
+            }
+
+            void TimeoutAction() {
+                HostDespawnProjectile(GetNodeId(projectile));
+            }
+            
             NpcCreated?.Invoke(projectile.Coords);
+
             projectile.MovedCell += OnNpcMovedCell;
-        
+            projectile.Timeout += TimeoutAction;
+            projectile.BodyEntered += BodyEnteredAction;
             projectile.TreeExiting += () => {
                 NpcDestroyed?.Invoke(projectile.Coords);
+                
                 projectile.MovedCell -= OnNpcMovedCell;
+                projectile.Timeout -= TimeoutAction;
+                projectile.BodyEntered -= BodyEnteredAction;
             };
         }
+    }
+
+    private void HostDespawnProjectile(int id) {
+        this.RpcAllPeers(nameof(RpcDespawnProjectile), id);
+    }
+    
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer,CallLocal = true)]
+    private void RpcDespawnProjectile(int id) {
+        Node node = GetNode(id);
+        node.QueueFree();
     }
 
     private void OnNpcMovedCell(Vector2I newCoords, Vector2I oldCoords) {

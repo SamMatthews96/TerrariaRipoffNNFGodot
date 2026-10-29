@@ -10,6 +10,10 @@ public partial class WeaponAttackProjectile : WeaponAttackNode {
     public Vector2I Coords => (Vector2I)(Position / Game.BlockSize);
 
     public event Action<Vector2I, Vector2I> MovedCell;
+    public event Action Timeout {
+        add => _timer.Timeout += value;
+        remove => _timer.Timeout -= value;
+    }
     
     
     [Export] private Timer _timer;
@@ -26,16 +30,6 @@ public partial class WeaponAttackProjectile : WeaponAttackNode {
         _velocity = new Vector2(xVelocity, yVelocity);
         
         _timer.Start();
-        _timer.Timeout += OnTimeout;
-        BodyEntered += OnBodyEntered;
-    }
-
-    private void OnBodyEntered(Node2D body) {
-        QueueFree();
-    }
-
-    public override void _ExitTree() {
-        _timer.Timeout -= OnTimeout;
     }
 
     private void OnTimeout() {
