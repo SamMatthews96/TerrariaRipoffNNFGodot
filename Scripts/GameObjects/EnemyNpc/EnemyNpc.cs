@@ -5,7 +5,7 @@ namespace TerrariaRipoffNNF.Scripts.GameObjects.EnemyNpc;
 public partial class EnemyNpc : CharacterBody2D {
     private float _health = 10;
     [Export] private Area2D _hitbox;
-    [Export] private ColorRect _healthBar;
+    [Export] private ProgressBar _healthBar;
 
     public static EnemyNpc Create(Vector2I spawnCoords) {
         EnemyNpc newEnemyNpc = Data.PackedScenes.TestNpc.Instantiate<EnemyNpc>();
@@ -19,11 +19,14 @@ public partial class EnemyNpc : CharacterBody2D {
 
     public override void _Ready() {
         _hitbox.AreaEntered += OnAreaEntered;
+        _healthBar.MaxValue = _health;
+        _healthBar.Value = _health;
     }
 
     private void OnAreaEntered(Area2D area) {
         if (area is not WeaponAttackNode node) return;
         _health -= node.Weapon.Damage;
+        _healthBar.Value = _health;
         if (_health <= 0) {
             QueueFree();
         }

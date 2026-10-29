@@ -11,7 +11,7 @@ collision_layer = 32
 collision_mask = 18
 script = ExtResource("1_gti2g")
 _hitbox = NodePath("HitBox")
-_healthBar = NodePath("")
+_healthBar = NodePath("Node2D/ProgressBar")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=420222866]
 shape = SubResource("RectangleShape2D_gti2g")
@@ -29,9 +29,13 @@ shape = SubResource("RectangleShape2D_gti2g")
 
 [node name="Node2D" type="Node2D" parent="." unique_id=1051700965]
 
-[node name="ColorRect" type="ColorRect" parent="Node2D" unique_id=1602005771]
+[node name="ProgressBar" type="ProgressBar" parent="Node2D" unique_id=622200969]
+modulate = Color(0.1254902, 0.9098039, 0.13725491, 1)
 offset_left = -23.0
 offset_top = -29.0
 offset_right = 23.0
 offset_bottom = -24.0
-color = Color(0.19607843, 0.70980394, 0.19215687, 1)
+step = 1.0
+value = 100.0
+rounded = true
+show_percentage = false
