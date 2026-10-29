@@ -13,6 +13,14 @@ public partial class PlayerManager : Node2D {
     public event Action<Player> LocalPlayerSpawned;
     public event Action<Player> HostPlayerSpawned;
 
+    public int GetPlayerId(Player player) {
+        return player.PeerId;
+    }
+    
+    public Player GetPlayer(int id) {
+        return _players[id];
+    }
+
     public override void _Ready() {
         if (_world.IsHost) {
             Multiplayer.PeerDisconnected += OnPeerDisconnected;

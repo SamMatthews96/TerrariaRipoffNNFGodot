@@ -10,7 +10,7 @@ public partial class NpcManager : Node2D {
     [Export] private PackedScene _npcScene;
     private Interface.DevTools _devTools;
     private PlayerManager _playerManager;
-    
+
     public event Action<Vector2I> NpcCreated;
     public event CellMovedDelegate NpcMoved;
     public event Action<Vector2I> NpcDestroyed;
@@ -19,22 +19,28 @@ public partial class NpcManager : Node2D {
         _devTools = _world.Interface.DevTools;
         _playerManager = _world.PlayerManager;
 
-        _playerManager.LocalPlayerSpawned += OnLocalPlayerSpawned;
+        _playerManager.HostPlayerSpawned += OnPlayerSpawned;
         _devTools.SpawnPressed += OnSpawnPressed;
         TreeExiting += () => {
-            _playerManager.LocalPlayerSpawned -= OnLocalPlayerSpawned;
+            _playerManager.HostPlayerSpawned -= OnPlayerSpawned;
             _devTools.SpawnPressed -= OnSpawnPressed;
         };
     }
 
-    private void OnLocalPlayerSpawned(Player player) {
+    private void OnPlayerSpawned(Player player) {
         player.WeaponSwung += OnWeaponSwung;
-        player.TreeExiting += () => {
-            player.WeaponSwung -= OnWeaponSwung;
-        };
+        player.TreeExiting += () => { player.WeaponSwung -= OnWeaponSwung; };
     }
 
     private void OnWeaponSwung(Vector2 position, Player player) {
+        int peerId = _playerManager.GetPlayerId(player);
+        Rpc(nameof(RpcCreateWeaponSprite),
+            position, peerId);
+    }
+
+    [Rpc(CallLocal = true)]
+    private void RpcCreateWeaponSprite(Vector2 position, int playerId) {
+        Player player = _playerManager.GetPlayer(playerId);
         ItemWeapon weapon = player.PlayerEquipment.Weapon; 
         WeaponAttackNode node = 
             WeaponAttackNode.Create(weapon, player, position);
@@ -42,18 +48,13 @@ public partial class NpcManager : Node2D {
         if (node is WeaponAttackProjectile projectile) {
             NpcCreated?.Invoke(projectile.Coords);
             projectile.MovedCell += OnNpcMovedCell;
-
+        
             projectile.TreeExiting += () => {
                 NpcDestroyed?.Invoke(projectile.Coords);
                 projectile.MovedCell -= OnNpcMovedCell;
             };
         }
     }
-
-    // [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    // private void RpcCreateWorldSprite() {
-    //     
-    // }
 
     private void OnNpcMovedCell(Vector2I newCoords, Vector2I oldCoords) {
         NpcMoved?.Invoke(newCoords, oldCoords);

@@ -19,8 +19,13 @@ public partial class WeaponAction : PlayerAction {
         if (weapon is null) return;
         if (!_weaponCooldown.IsStopped()) return;
 
-        WeaponSwung?.Invoke(mouseWorldPosition, Player);
+        RpcId(Game.HostId, nameof(RpcAttack), mouseWorldPosition);
         _weaponCooldown.Start();
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+    private void RpcAttack(Vector2 mouseWorldPosition) {
+        WeaponSwung?.Invoke(mouseWorldPosition, Player);
     }
 
     public override void EndLeftMouseAction(Vector2 mouseWorldPosition) { }
