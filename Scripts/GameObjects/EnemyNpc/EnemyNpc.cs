@@ -19,9 +19,20 @@ public partial class EnemyNpc : CharacterBody2D {
     }
 
     public override void _Ready() {
+        if (!Multiplayer.IsServer()) return;
+        
         _hitbox.AreaEntered += OnAreaEntered;
         _healthBar.MaxValue = _health;
         _healthBar.Value = _health;
+        TreeExiting += () => {
+            _hitbox.AreaEntered -= OnAreaEntered;
+            this.RpcAllPeers(nameof(PeerQueueFree));
+        };
+    }
+
+    [Rpc(CallLocal = true)]
+    private void PeerQueueFree() {
+        QueueFree();
     }
 
     private void OnAreaEntered(Area2D area) {
