@@ -3,16 +3,17 @@
 namespace TerrariaRipoffNNF.Scripts.GameObjects.EnemyNpc;
 
 public partial class EnemyNpc : CharacterBody2D {
-    private float _health = 10;
+    [Export] private float _health = 10;
     [Export] private Area2D _hitbox;
     [Export] private ProgressBar _healthBar;
 
-    public static EnemyNpc Create(Vector2I spawnCoords) {
+    public static EnemyNpc Create(Vector2I spawnCoords, int id) {
         EnemyNpc newEnemyNpc = Data.PackedScenes.TestNpc.Instantiate<EnemyNpc>();
         newEnemyNpc.Position = new Vector2(
             spawnCoords.X * Game.BlockSize,
             spawnCoords.Y * Game.BlockSize
         );
+        newEnemyNpc.Name = id.ToString();
 
         return newEnemyNpc;
     }

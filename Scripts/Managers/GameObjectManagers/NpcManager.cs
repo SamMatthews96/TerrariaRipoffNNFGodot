@@ -10,6 +10,7 @@ public partial class NpcManager : Node2D {
     [Export] private PackedScene _npcScene;
     private Interface.DevTools _devTools;
     private PlayerManager _playerManager;
+    private int _count = 0;
 
     public event Action<Vector2I> NpcCreated;
     public event CellMovedDelegate NpcMoved;
@@ -61,7 +62,17 @@ public partial class NpcManager : Node2D {
     }
 
     private void OnSpawnPressed() {
-        EnemyNpc npc = EnemyNpc.Create(new Vector2I(20, 10));
+        this.RpcHost(nameof(RpcHostSpawnEnemy), ++_count);
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer,CallLocal = true)]
+    private void RpcHostSpawnEnemy(int id) {
+        this.RpcAllPeers(nameof(RpcPeerSpawnEnemy), id);
+    }
+
+    [Rpc(CallLocal = true)]
+    private void RpcPeerSpawnEnemy(int id) {
+        EnemyNpc npc = EnemyNpc.Create(new Vector2I(20, 10), id);
         AddChild(npc);
     }
 }

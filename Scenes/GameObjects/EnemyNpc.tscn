@@ -6,6 +6,17 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_gti2g"]
 size = Vector2(38, 38)
 
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_gti2g"]
+properties/0/path = NodePath(".:_health")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath("Node2D/ProgressBar:value")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+properties/2/path = NodePath("Node2D/ProgressBar:max_value")
+properties/2/spawn = true
+properties/2/replication_mode = 1
+
 [node name="EnemyNpc" type="CharacterBody2D" unique_id=619522432 node_paths=PackedStringArray("_hitbox", "_healthBar")]
 collision_layer = 32
 collision_mask = 18
@@ -39,3 +50,6 @@ step = 1.0
 value = 100.0
 rounded = true
 show_percentage = false
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=615574662]
+replication_config = SubResource("SceneReplicationConfig_gti2g")
