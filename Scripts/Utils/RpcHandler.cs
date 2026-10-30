@@ -37,7 +37,7 @@ public static class RpcHandler {
         _bufferedSynchronizers.Remove(peerId);
     }
 
-    public static void RpcAllPeers(
+    public static void RpcAll(
         this Node node,
         StringName method,
         params Variant[] args
@@ -68,9 +68,6 @@ public static class RpcHandler {
         StringName method,
         params Variant[] args
     ) {
-        if (_multiplayer.IsServer()) {
-            throw new Exception("RpcHost can only be called on a client");
-        }
         node.RpcId(Game.HostId, method, args);
     }
 

@@ -33,7 +33,7 @@ public partial class PlayerManager : Node2D {
     }
     
     private void OnPeerDisconnected(long id) {
-        Rpc(nameof(RpcAllDeletePlayer), id);
+        this.RpcAll(nameof(RpcAllDeletePlayer), id);
     }
 
     [Rpc(CallLocal = true)]

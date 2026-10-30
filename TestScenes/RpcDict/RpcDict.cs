@@ -6,7 +6,7 @@ public partial class RpcDict : Node {
     public override void _Ready() {
         Item item = Data.Items.Earth;
         
-        Rpc(nameof(RpcTest), item);
+        this.RpcAll(nameof(RpcTest), item);
     }
 
     [Rpc(CallLocal = true)]

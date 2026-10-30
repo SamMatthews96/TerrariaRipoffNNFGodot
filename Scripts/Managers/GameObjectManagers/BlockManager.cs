@@ -119,7 +119,7 @@ public partial class BlockManager : Node2D {
 
     private void OnHostPlacedBlock(Item item, Vector2I coords) {
         ushort itemId = _itemIdBimap.GetId(item);
-        this.RpcAllPeers(nameof(RpcAllCreateBlock), itemId, coords);
+        this.RpcAll(nameof(RpcAllCreateBlock), itemId, coords);
     }
 
     [Rpc(CallLocal = true)]
@@ -133,7 +133,7 @@ public partial class BlockManager : Node2D {
 
     private void OnHostPlacedWall(Item item, Vector2I coords) {
         ushort itemId = _itemIdBimap.GetId(item);
-        this.RpcAllPeers(nameof(RpcAllCreateWall), itemId, coords);
+        this.RpcAll(nameof(RpcAllCreateWall), itemId, coords);
     }
 
     [Rpc(CallLocal = true)]
@@ -150,7 +150,7 @@ public partial class BlockManager : Node2D {
         if (res is not { } block) return;
         block.CurrentHealth -= damage;
         if (block.CurrentHealth <= 0) {
-            this.RpcAllPeers(nameof(RpcAllDestroyBlock), coords, block.ItemId);
+            this.RpcAll(nameof(RpcAllDestroyBlock), coords, block.ItemId);
         }
     }
 
@@ -165,7 +165,7 @@ public partial class BlockManager : Node2D {
         if (value is not { } block) return;
         block.CurrentHealth -= damage;
         if (block.CurrentHealth <= 0) {
-            this.RpcAllPeers(nameof(RpcAllDestroyWall), coords);
+            this.RpcAll(nameof(RpcAllDestroyWall), coords);
         }
     }
 

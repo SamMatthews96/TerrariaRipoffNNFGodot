@@ -13,7 +13,7 @@ public partial class PickupEntity : RigidBody2D {
     }
 
     public void QueueFreeAllPeers() {
-        Rpc(nameof(RpcAllDestroy));
+        this.RpcAll(nameof(RpcAllDestroy));
     }
 
     [Rpc(CallLocal = true)]

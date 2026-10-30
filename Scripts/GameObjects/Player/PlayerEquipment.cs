@@ -36,7 +36,7 @@ public partial class PlayerEquipment : Node {
 
     private void OnEquipItemClicked(Item item) {
         ushort itemId = _itemIdBimap.GetId(item);
-        Rpc(nameof(RpcEquipItem), itemId);
+        this.RpcAll(nameof(RpcEquipItem), itemId);
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer,CallLocal = true)]

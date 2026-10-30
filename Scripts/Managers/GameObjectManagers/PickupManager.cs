@@ -128,7 +128,7 @@ public partial class PickupManager : Node2D {
             (int)(position.Y / Game.BlockSize - 0.5f)
         );
         _pickupCount++;
-        this.RpcAllPeers(nameof(CreatePickup),
+        this.RpcAll(nameof(CreatePickup),
             position, itemId, _pickupCount);
         ServerPickupCreated?.Invoke(coords);
     }
@@ -138,7 +138,7 @@ public partial class PickupManager : Node2D {
             (coords.X + 0.5f) * Game.BlockSize,
             (coords.Y + 0.5f) * Game.BlockSize);
         _pickupCount++;
-        this.RpcAllPeers(nameof(CreatePickup),
+        this.RpcAll(nameof(CreatePickup),
             position, itemId, _pickupCount);
         ServerPickupCreated?.Invoke(coords);
     }

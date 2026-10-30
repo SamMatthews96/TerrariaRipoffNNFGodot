@@ -75,12 +75,11 @@ public partial class PropManager : Node {
     }
 
     private void OnHostPlaceProp(Item item, Vector2I coords) {
-        AddProp(item, coords);
         ushort itemId = _itemIdBimap.GetId(item);
-        Rpc(nameof(RpcClientsPlaceProp), itemId, coords);
+        this.RpcAll(nameof(RpcClientsPlaceProp), itemId, coords);
     }
 
-    [Rpc]
+    [Rpc(CallLocal = true)]
     private void RpcClientsPlaceProp(ushort itemId, Vector2I coords) {
         Item item = _itemIdBimap.GetItem(itemId);
         AddProp(item, coords);
@@ -88,7 +87,7 @@ public partial class PropManager : Node {
 
     private void OnHostGatherProp(Vector2I coords, float damage) {
         ActiveProp activeProp = _propCells[coords];
-        Rpc(nameof(RpcClientsGatherProp), coords);
+        this.RpcAll(nameof(RpcClientsGatherProp), coords);
         HostPropDestroyed?.Invoke(activeProp, activeProp.Anchor);
     }
 

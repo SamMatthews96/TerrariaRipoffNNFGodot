@@ -6,7 +6,7 @@ public partial class RpcDataTest : Node {
     
     public override void _Ready() {
         Vector2I myData = new(1, 2);
-        Rpc(nameof(MyRpc), myData);
+        // this.RpcAll(nameof(MyRpc), myData);
     }
     
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]

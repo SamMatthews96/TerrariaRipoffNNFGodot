@@ -12,7 +12,7 @@ public partial class SendRpc : Node {
     }
 
     private void OnJoined() {
-        // Rpc(nameof(RpcTest), _recipe);
+        // Rpc (nameof(RpcTest), _recipe);
     }
 
     // [Rpc(MultiplayerApi.RpcMode.AnyPeer)]

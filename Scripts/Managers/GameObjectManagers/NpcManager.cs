@@ -49,7 +49,7 @@ public partial class NpcManager : Node2D {
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void RpcHostAttackAction(Vector2 position, int playerId) {
-        Rpc(nameof(SpawnWeaponNode), position, playerId, ++_count);
+        this.RpcAll(nameof(SpawnWeaponNode), position, playerId, ++_count);
     }
 
     [Rpc(CallLocal = true)]
@@ -86,7 +86,7 @@ public partial class NpcManager : Node2D {
     }
 
     private void HostDespawnProjectile(int id) {
-        this.RpcAllPeers(nameof(RpcDespawnProjectile), id);
+        this.RpcAll(nameof(RpcDespawnProjectile), id);
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
@@ -105,7 +105,7 @@ public partial class NpcManager : Node2D {
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void RpcHostSpawnEnemy(int id) {
-        this.RpcAllPeers(nameof(RpcPeerSpawnEnemy), id);
+        this.RpcAll(nameof(RpcPeerSpawnEnemy), id);
     }
 
     [Rpc(CallLocal = true)]
@@ -119,7 +119,7 @@ public partial class NpcManager : Node2D {
 
     private void OnHitZeroHealth(EnemyNpc npc) {
         npc.HitZeroHealth -= OnHitZeroHealth;
-        this.RpcAllPeers(nameof(RpcDeleteNode), GetNodeId(npc));
+        this.RpcAll(nameof(RpcDeleteNode), GetNodeId(npc));
     }
 
     [Rpc(CallLocal = true)]

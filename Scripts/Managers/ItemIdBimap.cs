@@ -24,7 +24,7 @@ public partial class ItemIdBimap : Node {
 
         if (!_world.IsHost) throw new Exception("Client missing item id");
         ushort count = (ushort)_idToString.Count;
-        Rpc(nameof(RpcAddItem),
+        this.RpcAll(nameof(RpcAddItem),
             count, itemString, item.ToDictionary());
         return count;
     }
