@@ -17,13 +17,14 @@ public partial class Game : Node {
     public event Action ExitGameStarted;
     public event Action ExitGameFinished;
     public event Action<Dictionary> PeerConnected;
+    public event Action<int> AfterPeerConnected;
 
     private MultiplayerHost _multiplayerHost;
     private MultiplayerClient _multiplayerClient;
     private Dictionary _localPlayerData;
 
     public void InitAsSinglePlayer(Dictionary worldData, Dictionary playerData) {
-        RpcHandler.Init();
+        RpcHandler.Init(this);
         _localPlayerData = FileManager.LoadPlayer(playerData);
         _world = World.Create(this, _localPlayerData, worldData);
         _world.GameLoaded += OnWorldLoaded;
@@ -35,7 +36,7 @@ public partial class Game : Node {
         _multiplayerHost = new MultiplayerHost();
         AddChild(_multiplayerHost);
         
-        RpcHandler.Init();
+        RpcHandler.Init(this);
         _localPlayerData = FileManager.LoadPlayer(playerData);
         _world = World.Create(this, _localPlayerData, worldData);
         _world.GameLoaded += OnWorldLoaded;
@@ -73,17 +74,26 @@ public partial class Game : Node {
 
     [Rpc]
     private void PeerReceivedWorldData(Dictionary worldData) {
-        _world = World.Create(this, _localPlayerData, worldData);
-        _world.GameLoaded += OnWorldLoaded;
-        AddChild(_world);
-        _world.Interface.GameMenu.ExitGameButtonDown += OnExitGameButtonDown;
-        RpcId(HostId, nameof(AfterPeerReceivedWorldData));
+        // simulate a delay
+        Timer timer = new();
+        AddChild(timer);
+        timer.WaitTime = 10f;
+        timer.Start();
+        timer.Timeout += () => {
+            timer.QueueFree();
+            _world = World.Create(this, _localPlayerData, worldData);
+            _world.GameLoaded += OnWorldLoaded;
+            AddChild(_world);
+            _world.Interface.GameMenu.ExitGameButtonDown += OnExitGameButtonDown;
+            RpcId(HostId, nameof(AfterPeerReceivedWorldData));
+        };
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
     private void AfterPeerReceivedWorldData() {
         int senderId = Multiplayer.GetRemoteSenderId();
         RpcHandler.RemoveNewPeer(senderId);
+        AfterPeerConnected?.Invoke(senderId);
     }
 
     private void OnServerDisconnected() {

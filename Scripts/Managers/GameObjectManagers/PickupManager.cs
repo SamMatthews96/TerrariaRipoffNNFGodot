@@ -45,19 +45,21 @@ public partial class PickupManager : Node2D {
 
         Array<Dictionary> savedPickups =
             (Array<Dictionary>)_world.WorldData["pickups"];
-        
+
         if (_world.IsHost) {
             _blockManager.BlockDestroyed += HostOnBlockDestroyed;
             _playerManager.HostPlayerSpawned += OnPlayedSpawnedOnHost;
             _propManager.HostPropDestroyed += OnHostPropDestroyed;
             _blockManager.WallDestroyed += HostOnBlockDestroyed;
+            _world.AfterPeerConnected += OnAfterPeerConnected;
             TreeExiting += () => {
+                _world.AfterPeerConnected -= OnAfterPeerConnected;
                 _blockManager.BlockDestroyed -= HostOnBlockDestroyed;
                 _playerManager.HostPlayerSpawned -= OnPlayedSpawnedOnHost;
                 _propManager.HostPropDestroyed -= OnHostPropDestroyed;
                 _blockManager.WallDestroyed -= HostOnBlockDestroyed;
             };
-            
+
             foreach (Dictionary pickupDict in savedPickups) {
                 Array<float> positionArray = pickupDict["Position"].AsGodotArray<float>();
                 Vector2 position = new(positionArray[0], positionArray[1]);
@@ -74,9 +76,8 @@ public partial class PickupManager : Node2D {
                 int pickupId = pickupDict["Name"].ToString().ToInt();
                 CreatePickup(position, itemId, pickupId);
             }
-            
+
             ProcessMode = ProcessModeEnum.Disabled;
-            this.RpcHost(nameof(RpcHostAddClientToSync));
         }
     }
 
@@ -127,7 +128,7 @@ public partial class PickupManager : Node2D {
             (int)(position.Y / Game.BlockSize - 0.5f)
         );
         _pickupCount++;
-        Rpc(nameof(CreatePickup),
+        this.RpcAllPeers(nameof(CreatePickup),
             position, itemId, _pickupCount);
         ServerPickupCreated?.Invoke(coords);
     }
@@ -137,7 +138,7 @@ public partial class PickupManager : Node2D {
             (coords.X + 0.5f) * Game.BlockSize,
             (coords.Y + 0.5f) * Game.BlockSize);
         _pickupCount++;
-        Rpc(nameof(CreatePickup),
+        this.RpcAllPeers(nameof(CreatePickup),
             position, itemId, _pickupCount);
         ServerPickupCreated?.Invoke(coords);
     }
@@ -156,18 +157,18 @@ public partial class PickupManager : Node2D {
         );
         pickup.Item = item;
         pickup.Name = $"{pickupCount}";
-        int[] peers = Multiplayer.GetPeers();
-        foreach (int peerId in peers) {
-            pickup.Synchronizer.SetVisibilityFor(peerId, true);
+
+        if (_world.IsHost) {
+            pickup.Synchronizer.SetVisible();
+        } else {
+            pickup.Synchronizer.SetVisibilityFor(1, true);
         }
 
         AddChild(pickup);
         _activePickups.Add(pickup);
     }
-
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
-    private void RpcHostAddClientToSync() {
-        int senderId = Multiplayer.GetRemoteSenderId();
+    
+    private void OnAfterPeerConnected(int senderId) {
         foreach (PickupEntity pickup in _activePickups) {
             pickup.Synchronizer.SetVisibilityFor(senderId, true);
         }

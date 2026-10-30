@@ -34,6 +34,10 @@ public partial class World : Node2D {
         add => _game.PeerConnected += value;
         remove => _game.PeerConnected -= value;
     }
+    public event Action<int> AfterPeerConnected {
+        add => _game.AfterPeerConnected += value;
+        remove => _game.AfterPeerConnected -= value;
+    }
 
     public Interface.Crafting CraftingInterface => Interface.CraftingInterface;
     public Dictionary LocalPlayerData { get; private set; }
@@ -180,7 +184,9 @@ public partial class World : Node2D {
 
     public override void _Ready() {
         Interface.GameMenu.ExitGameButtonDown += OnExitGameClicked;
-        TreeExiting += () => { Interface.GameMenu.ExitGameButtonDown -= OnExitGameClicked; };
+        TreeExiting += () => {
+            Interface.GameMenu.ExitGameButtonDown -= OnExitGameClicked;
+        };
         LocalPlayerData = null;
         GameLoaded?.Invoke();
     }

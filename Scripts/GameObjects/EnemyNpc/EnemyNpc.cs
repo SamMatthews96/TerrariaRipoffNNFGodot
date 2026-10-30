@@ -41,5 +41,4 @@ public partial class EnemyNpc : CharacterBody2D {
             HitZeroHealth?.Invoke(this);
         }
     }
-
 }
