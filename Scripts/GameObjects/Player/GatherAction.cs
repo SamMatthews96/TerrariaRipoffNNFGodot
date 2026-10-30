@@ -54,7 +54,7 @@ public partial class GatherAction : PlayerAction {
         if (!Player.World.IsInOrthogonalRange(
                 targetCoords, Player.Coords, range)) return;
         _gatherCooldown.Start();
-        RpcId(1, nameof(AttemptGatherOnHost), targetCoords);
+        this.RpcHost(nameof(AttemptGatherOnHost), targetCoords);
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]

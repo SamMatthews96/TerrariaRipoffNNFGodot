@@ -146,8 +146,8 @@ public sealed partial class Crafting : Node {
             Dictionary itemDictionary = item.ToDictionary();
             ingredientsDictionary[key] = itemDictionary;
         }
-
-        RpcId(1, nameof(RpcHostTryCraft),
+        
+        this.RpcHost(nameof(RpcHostTryCraft),
             _selectedRecipe.Id, ingredientsDictionary);
     }
 

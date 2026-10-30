@@ -173,7 +173,7 @@ public partial class Player : CharacterBody2D {
 
         if (previousCoords == Coords) return;
         if (!World.IsHost) {
-            RpcId(Game.HostId, nameof(RpcHostMovedCell),
+            this.RpcHost(nameof(RpcHostMovedCell),
                 Coords, previousCoords);
         }
         CellMoved?.Invoke(Coords, previousCoords);

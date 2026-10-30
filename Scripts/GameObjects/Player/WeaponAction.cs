@@ -19,7 +19,7 @@ public partial class WeaponAction : PlayerAction {
         if (weapon is null) return;
         if (!_weaponCooldown.IsStopped()) return;
 
-        RpcId(Game.HostId, nameof(RpcAttack), mouseWorldPosition);
+        this.RpcHost(nameof(RpcAttack), mouseWorldPosition);
         _weaponCooldown.Start();
     }
 

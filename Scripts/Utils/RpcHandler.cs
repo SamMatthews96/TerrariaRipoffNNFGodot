@@ -57,7 +57,6 @@ public static class RpcHandler {
                     Args = args
                 };
                 _bufferedRpcs[peer].Add(bufferedRpc);
-                ;
             } else {
                 node.RpcId(peer, method, args);
             }
@@ -69,9 +68,11 @@ public static class RpcHandler {
         StringName method,
         params Variant[] args
     ) {
+        if (_multiplayer.IsServer()) {
+            throw new Exception("RpcHost can only be called on a client");
+        }
         node.RpcId(Game.HostId, method, args);
     }
-
 
     public static void SetVisible(this MultiplayerSynchronizer synchronizer) {
         int[] peers = _multiplayer.GetPeers();

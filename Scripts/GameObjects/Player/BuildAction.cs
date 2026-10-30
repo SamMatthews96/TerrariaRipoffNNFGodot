@@ -42,7 +42,7 @@ public partial class BuildAction : PlayerAction {
     public override void LeftMouseAction(Vector2 mouseWorldPosition) {
         if (_blockItem is null) return;
         ushort itemId = _itemMap.GetId(_blockItem);
-        RpcId(1, nameof(RpcHostAttemptBuildPrimary),
+        this.RpcHost(nameof(RpcHostAttemptBuildPrimary),
             mouseWorldPosition, itemId);
     }
 
@@ -98,7 +98,7 @@ public partial class BuildAction : PlayerAction {
     public override void RightMouseAction(Vector2 mousePosition) {
         if (_blockItem is null) return;
         ushort itemId = _itemMap.GetId(_blockItem);
-        RpcId(1, nameof(RpcHostAttemptBuildSecondary),
+        this.RpcHost(nameof(RpcHostAttemptBuildSecondary),
             mousePosition, itemId);
     }
 

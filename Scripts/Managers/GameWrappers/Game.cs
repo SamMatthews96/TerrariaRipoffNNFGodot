@@ -48,6 +48,7 @@ public partial class Game : Node {
         _multiplayerClient = new MultiplayerClient();
         AddChild(_multiplayerClient);
 
+        RpcHandler.Init(this);
         Multiplayer.ConnectedToServer += OnConnectedToServer;
         Multiplayer.ServerDisconnected += OnServerDisconnected;
         TreeExiting += () => {
@@ -59,7 +60,7 @@ public partial class Game : Node {
     }
 
     private void OnConnectedToServer() {
-        RpcId(HostId, nameof(ProcessNewPeer), _localPlayerData);
+        this.RpcHost(nameof(ProcessNewPeer), _localPlayerData);
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
@@ -77,7 +78,7 @@ public partial class Game : Node {
         // simulate a delay
         Timer timer = new();
         AddChild(timer);
-        timer.WaitTime = 10f;
+        timer.WaitTime = 5f;
         timer.Start();
         timer.Timeout += () => {
             timer.QueueFree();
@@ -85,7 +86,7 @@ public partial class Game : Node {
             _world.GameLoaded += OnWorldLoaded;
             AddChild(_world);
             _world.Interface.GameMenu.ExitGameButtonDown += OnExitGameButtonDown;
-            RpcId(HostId, nameof(AfterPeerReceivedWorldData));
+            this.RpcHost(nameof(AfterPeerReceivedWorldData));
         };
     }
 

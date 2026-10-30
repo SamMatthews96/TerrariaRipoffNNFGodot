@@ -59,7 +59,7 @@ public partial class PlayerManager : Node2D {
             int peerId = Multiplayer.GetUniqueId();
             _localPlayer = CreateNewPlayer(peerId, playerData);
             LocalPlayerSpawned?.Invoke(_localPlayer);
-            RpcId(1, nameof(RpcHostHandleNewPeer), playerData);
+            this.RpcHost(nameof(RpcHostHandleNewPeer), playerData);
         }
     }
 

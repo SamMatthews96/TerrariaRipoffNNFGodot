@@ -7,7 +7,7 @@ namespace TerrariaRipoffNNF.LocalRpcIdTest;
 public partial class LocalRpcIdTest : Node {
     public override void _Ready() {
 
-        RpcId(1, nameof(RpcTest));
+        // this.RpcHost(nameof(RpcTest));
     }
     
     [Rpc]
