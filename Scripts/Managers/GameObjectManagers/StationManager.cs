@@ -21,8 +21,8 @@ public partial class StationManager : Node {
     public override void _Ready() {
         _propManager = _world.PropManager;
 
-        _propManager.HostPropDestroyed += OnHostPropDestroyed;
-        TreeExiting += () => { _propManager.HostPropDestroyed -= OnHostPropDestroyed; };
+        _propManager.PropDestroyed += OnPropDestroyed;
+        TreeExiting += () => { _propManager.PropDestroyed -= OnPropDestroyed; };
     }
 
     public Dictionary<Vector2I, StationType> GetStationsInRegion(
@@ -37,7 +37,7 @@ public partial class StationManager : Node {
         return localStations;
     }
 
-    private void OnHostPropDestroyed(ActiveProp _, Vector2I coords) {
+    private void OnPropDestroyed(ActiveProp _, Vector2I coords) {
         if (!_stations.TryGetValue(coords, out StationType type)) return;
         StationDestroyed?.Invoke(coords, type);
         _stations.Remove(coords);

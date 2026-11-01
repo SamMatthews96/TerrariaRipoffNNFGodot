@@ -18,7 +18,7 @@ public partial class PropManager : Node {
     private PropsByCoords _propCells;
     private PropsByCoords _props;
 
-    public event Action<ActiveProp, Vector2I> HostPropDestroyed;
+    public event Action<ActiveProp, Vector2I> PropDestroyed;
 
     public bool IsPropAt(Vector2I coords) => _propCells.ContainsKey(coords);
 
@@ -86,14 +86,19 @@ public partial class PropManager : Node {
     }
 
     private void OnHostGatherProp(Vector2I coords, float damage) {
-        ActiveProp activeProp = _propCells[coords];
         this.RpcAll(nameof(RpcClientsGatherProp), coords);
-        HostPropDestroyed?.Invoke(activeProp, activeProp.Anchor);
     }
 
     [Rpc(CallLocal = true)]
     private void RpcClientsGatherProp(Vector2I coords) {
-        RemoveProp(coords);
+        ActiveProp activeProp = _propCells[coords];
+        foreach (Vector2I cell in activeProp.Cells) {
+            _propCells.Remove(cell);
+        }
+
+        _props.Remove(activeProp.Anchor);
+        activeProp.QueueFree();
+        PropDestroyed?.Invoke(activeProp, activeProp.Anchor);
     }
 
     private ActiveProp AddProp(Item item, Vector2I coords) {
@@ -111,15 +116,5 @@ public partial class PropManager : Node {
 
         AddChild(activeProp);
         return activeProp;
-    }
-
-    private void RemoveProp(Vector2I coords) {
-        ActiveProp activeProp = _propCells[coords];
-        foreach (Vector2I cell in activeProp.Cells) {
-            _propCells.Remove(cell);
-        }
-
-        _props.Remove(activeProp.Anchor);
-        activeProp.QueueFree();
     }
 }

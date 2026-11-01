@@ -49,14 +49,14 @@ public partial class PickupManager : Node2D {
         if (_world.IsHost) {
             _blockManager.BlockDestroyed += HostOnBlockDestroyed;
             _playerManager.HostPlayerSpawned += OnPlayedSpawnedOnHost;
-            _propManager.HostPropDestroyed += OnHostPropDestroyed;
+            _propManager.PropDestroyed += OnPropDestroyed;
             _blockManager.WallDestroyed += HostOnBlockDestroyed;
             _world.AfterPeerConnected += OnAfterPeerConnected;
             TreeExiting += () => {
                 _world.AfterPeerConnected -= OnAfterPeerConnected;
                 _blockManager.BlockDestroyed -= HostOnBlockDestroyed;
                 _playerManager.HostPlayerSpawned -= OnPlayedSpawnedOnHost;
-                _propManager.HostPropDestroyed -= OnHostPropDestroyed;
+                _propManager.PropDestroyed -= OnPropDestroyed;
                 _blockManager.WallDestroyed -= HostOnBlockDestroyed;
             };
 
@@ -109,7 +109,7 @@ public partial class PickupManager : Node2D {
         HostCreatePickup(coords, itemId);
     }
 
-    private void OnHostPropDestroyed(ActiveProp activeProp, Vector2I coords) {
+    private void OnPropDestroyed(ActiveProp activeProp, Vector2I coords) {
         ItemProp itemProp = activeProp.Item.GetProperty<ItemProp>();
         if (itemProp.TryGetProperty(out PropDrop propDrop)) {
             ushort itemId = _itemIdBimap.GetId(propDrop.Item);
