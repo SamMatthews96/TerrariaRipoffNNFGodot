@@ -10,12 +10,12 @@ public partial class PlayerEquipment : Node {
     [Export] public ItemWeapon Weapon { get; private set; }
 
     public event Action<Item> ItemEquipped;
-    
+
     public override void _Ready() {
         _itemIdBimap = _player.World.ItemIdBimap;
-        
+
         if (!_player.IsLocalPlayer) return;
-        
+
         _player.Inventory.EquipItemClicked += OnEquipItemClicked;
         _player.World.UnequipWeaponClicked += OnUnequipWeaponClicked;
         _player.World.UnequipPickaxeClicked += OnUnequipPickaxeClicked;
@@ -36,10 +36,15 @@ public partial class PlayerEquipment : Node {
 
     private void OnEquipItemClicked(Item item) {
         ushort itemId = _itemIdBimap.GetId(item);
+        this.RpcHost(nameof(HostEquipItem), itemId);
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+    private void HostEquipItem(ushort itemId) {
         this.RpcAll(nameof(RpcEquipItem), itemId);
     }
 
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer,CallLocal = true)]
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void RpcEquipItem(ushort itemId) {
         Item item = _player.World.ItemIdBimap.GetItem(itemId);
         ItemEquipment itemEquipment = item.GetProperty<ItemEquipment>();
