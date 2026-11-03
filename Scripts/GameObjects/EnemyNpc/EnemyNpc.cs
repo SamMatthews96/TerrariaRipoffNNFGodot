@@ -7,7 +7,8 @@ public partial class EnemyNpc : CharacterBody2D {
     [Export] private float _health = 10;
     [Export] private Area2D _hitbox;
     [Export] private ProgressBar _healthBar;
-
+    [Export] private NpcController _npcController;
+    
     public event Action<EnemyNpc> HitZeroHealth;
 
     public static EnemyNpc Create(Vector2I spawnCoords, int id) {
@@ -29,7 +30,6 @@ public partial class EnemyNpc : CharacterBody2D {
         _healthBar.Value = _health;
         TreeExiting += () => {
             _hitbox.AreaEntered -= OnAreaEntered;
-            
         };
     }
 

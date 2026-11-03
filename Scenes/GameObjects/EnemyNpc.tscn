@@ -2,6 +2,9 @@
 
 [ext_resource type="Texture2D" uid="uid://3mp4qibtswyy" path="res://Assets/Images/ItemIcons/spearPlaceholder.png" id="1_1knae"]
 [ext_resource type="Script" uid="uid://grnulx3obxgd" path="res://Scripts/GameObjects/EnemyNpc/EnemyNpc.cs" id="1_gti2g"]
+[ext_resource type="Script" uid="uid://cu4bpclqs4nry" path="res://Scripts/GameObjects/EnemyNpc/NpcController.cs" id="3_bqah3"]
+[ext_resource type="Script" uid="uid://bx36mcfottahm" path="res://Scripts/GameObjects/EnemyNpc/StateTransition/StateTransition.cs" id="4_4eijp"]
+[ext_resource type="Script" uid="uid://c7lejka5tldhb" path="res://Scripts/GameObjects/EnemyNpc/StateAction/StateIdle.cs" id="5_03c6n"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_gti2g"]
 size = Vector2(38, 38)
@@ -17,12 +20,17 @@ properties/2/path = NodePath("Node2D/ProgressBar:max_value")
 properties/2/spawn = true
 properties/2/replication_mode = 1
 
-[node name="EnemyNpc" type="CharacterBody2D" unique_id=619522432 node_paths=PackedStringArray("_hitbox", "_healthBar")]
+[sub_resource type="Resource" id="Resource_ap2vn"]
+script = ExtResource("5_03c6n")
+metadata/_custom_type_script = "uid://c7lejka5tldhb"
+
+[node name="EnemyNpc" type="CharacterBody2D" unique_id=619522432 node_paths=PackedStringArray("_hitbox", "_healthBar", "_npcController")]
 collision_layer = 32
 collision_mask = 18
 script = ExtResource("1_gti2g")
 _hitbox = NodePath("HitBox")
 _healthBar = NodePath("Node2D/ProgressBar")
+_npcController = NodePath("NpcController")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=420222866]
 shape = SubResource("RectangleShape2D_gti2g")
@@ -53,3 +61,14 @@ show_percentage = false
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=615574662]
 replication_config = SubResource("SceneReplicationConfig_gti2g")
+
+[node name="NpcController" type="Node" parent="." unique_id=202858478 node_paths=PackedStringArray("_npc", "_stateTimer")]
+script = ExtResource("3_bqah3")
+_npc = NodePath("..")
+_states = Dictionary[String, Object]({
+"idle": SubResource("Resource_ap2vn")
+})
+_stateTimer = NodePath("Timer")
+
+[node name="Timer" type="Timer" parent="NpcController" unique_id=1787691638]
+autostart = true
